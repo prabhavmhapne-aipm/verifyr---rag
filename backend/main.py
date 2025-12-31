@@ -8,8 +8,10 @@ Provides endpoints for health checks, queries, and product information.
 import sys
 import uuid
 import time
+import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,6 +39,11 @@ class QueryRequest(BaseModel):
     question: str = Field(..., min_length=1, description="User question")
     model: Optional[str] = Field(default="gpt-4o-mini", description="LLM model to use")
     language: Optional[str] = Field(default="en", description="Response language: 'en' or 'de'")
+    conversation_history: Optional[List[Dict[str, str]]] = Field(
+        default_factory=list,
+        description="Previous messages: [{'role': 'user', 'content': '...'}, {'role': 'assistant', 'content': '...'}]"
+    )
+    conversation_id: Optional[str] = Field(default=None, description="Conversation ID for tracking")
 
 
 class Source(BaseModel):
@@ -72,6 +79,19 @@ class HealthResponse(BaseModel):
 class ProductsResponse(BaseModel):
     """Response model for products endpoint."""
     products: List[str]
+
+
+class ConversationResponse(BaseModel):
+    """Response model for conversation endpoint."""
+    conversation_id: str
+    messages: List[Dict[str, Any]]
+    created_at: str
+    updated_at: str
+
+
+class ConversationsListResponse(BaseModel):
+    """Response model for conversations list endpoint."""
+    conversations: List[Dict[str, Any]]
 
 
 # ============================================================================
@@ -153,6 +173,15 @@ async def startup_event():
             for chunk in hybrid_searcher.bm25_index.chunks:
                 products_set.add(chunk["product_name"])
             products_list = sorted(list(products_set))
+
+        # Create conversations directory if it doesn't exist
+        conversations_dir = project_root / "data" / "conversations"
+        try:
+            conversations_dir.mkdir(parents=True, exist_ok=True)
+            print(f"\n✅ Conversations directory ready at {conversations_dir}")
+        except Exception as e:
+            print(f"\n⚠️  Warning: Could not create conversations directory: {e}")
+            print("   Conversation storage will be disabled")
 
         print(f"\n✅ Indexes loaded successfully!")
         print(f"   Products available: {len(products_list)}")
@@ -250,11 +279,27 @@ async def query(request: QueryRequest):
         )
 
     try:
-        # Step 1: Perform hybrid search
+        # Step 0: Analyze query to determine retrieval strategy
+        query_analysis = hybrid_searcher._analyze_query(request.question)
+        
+        # Determine retrieval parameters based on analysis
+        target_products = query_analysis["target_products"] if query_analysis["target_products"] else None
+        apply_diversity = query_analysis["is_comparison"]  # Apply diversity only for comparisons
+        top_k = query_analysis["top_k"]
+        
+        print(f"\n📊 Query Analysis:")
+        print(f"   Products: {target_products if target_products else 'All'}")
+        print(f"   Type: {'Comparison' if query_analysis['is_comparison'] else 'Single Product'}")
+        print(f"   Complexity: {query_analysis['complexity']}")
+        print(f"   Top-K: {top_k}")
+        
+        # Step 1: Perform hybrid search with intelligent parameters
         search_results = hybrid_searcher.search_hybrid(
             query=request.question,
-            top_k=5,
-            retrieve_k=20
+            top_k=top_k,
+            retrieve_k=20,
+            target_products=target_products,
+            apply_diversity=apply_diversity
         )
 
         # Extract chunks for LLM
@@ -267,7 +312,12 @@ async def query(request: QueryRequest):
         else:
             generator = rag_generator
 
-        llm_result = generator.generate_answer(request.question, retrieved_chunks, language=request.language or "en")
+        llm_result = generator.generate_answer(
+            request.question,
+            retrieved_chunks,
+            language=request.language or "en",
+            conversation_history=request.conversation_history or []
+        )
 
         # Step 3: Format sources
         sources = [
@@ -288,6 +338,51 @@ async def query(request: QueryRequest):
 
         # Generate query ID
         query_id = str(uuid.uuid4())
+
+        # Step 4: Save conversation to disk (if conversation_id provided)
+        if request.conversation_id:
+            try:
+                project_root = Path(__file__).parent.parent
+                conversations_dir = project_root / "data" / "conversations"
+                conversation_file = conversations_dir / f"{request.conversation_id}.json"
+
+                # Load existing conversation or create new one
+                if conversation_file.exists():
+                    with open(conversation_file, 'r', encoding='utf-8') as f:
+                        conversation_data = json.load(f)
+                else:
+                    conversation_data = {
+                        "conversation_id": request.conversation_id,
+                        "messages": [],
+                        "created_at": datetime.now().isoformat(),
+                        "updated_at": datetime.now().isoformat()
+                    }
+
+                # Append new messages
+                conversation_data["messages"].append({
+                    "role": "user",
+                    "content": request.question,
+                    "timestamp": datetime.now().isoformat()
+                })
+                conversation_data["messages"].append({
+                    "role": "assistant",
+                    "content": llm_result["answer"],
+                    "timestamp": datetime.now().isoformat(),
+                    "metadata": {
+                        "query_id": query_id,
+                        "model_used": llm_result["model_used"],
+                        "chunks_retrieved": len(retrieved_chunks)
+                    }
+                })
+                conversation_data["updated_at"] = datetime.now().isoformat()
+
+                # Save to disk
+                with open(conversation_file, 'w', encoding='utf-8') as f:
+                    json.dump(conversation_data, f, ensure_ascii=False, indent=2)
+
+            except Exception as e:
+                # Log error but don't fail the request
+                print(f"⚠️  Warning: Could not save conversation {request.conversation_id}: {e}")
 
         return QueryResponse(
             answer=llm_result["answer"],
@@ -325,6 +420,84 @@ async def get_products():
         )
 
     return ProductsResponse(products=products_list)
+
+
+@app.get("/conversations", response_model=ConversationsListResponse, tags=["Conversations"])
+async def list_conversations():
+    """
+    List all conversation IDs.
+
+    Returns a list of conversation IDs and metadata for all saved conversations.
+    """
+    try:
+        project_root = Path(__file__).parent.parent
+        conversations_dir = project_root / "data" / "conversations"
+
+        if not conversations_dir.exists():
+            return ConversationsListResponse(conversations=[])
+
+        conversations = []
+        for conv_file in conversations_dir.glob("*.json"):
+            try:
+                with open(conv_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                conversations.append({
+                    "conversation_id": data.get("conversation_id", conv_file.stem),
+                    "created_at": data.get("created_at", ""),
+                    "updated_at": data.get("updated_at", ""),
+                    "message_count": len(data.get("messages", []))
+                })
+            except Exception as e:
+                print(f"⚠️  Error loading conversation {conv_file}: {e}")
+                continue
+
+        # Sort by updated_at descending (most recent first)
+        conversations.sort(key=lambda x: x.get("updated_at", ""), reverse=True)
+
+        return ConversationsListResponse(conversations=conversations)
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error listing conversations: {str(e)}"
+        )
+
+
+@app.get("/conversations/{conversation_id}", response_model=ConversationResponse, tags=["Conversations"])
+async def get_conversation(conversation_id: str):
+    """
+    Get a specific conversation by ID.
+
+    Returns the full conversation history including all messages.
+    """
+    try:
+        project_root = Path(__file__).parent.parent
+        conversations_dir = project_root / "data" / "conversations"
+        conversation_file = conversations_dir / f"{conversation_id}.json"
+
+        if not conversation_file.exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Conversation {conversation_id} not found"
+            )
+
+        with open(conversation_file, 'r', encoding='utf-8') as f:
+            conversation_data = json.load(f)
+
+        return ConversationResponse(
+            conversation_id=conversation_data["conversation_id"],
+            messages=conversation_data["messages"],
+            created_at=conversation_data["created_at"],
+            updated_at=conversation_data["updated_at"]
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error loading conversation: {str(e)}"
+        )
 
 
 # ============================================================================

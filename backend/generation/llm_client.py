@@ -217,16 +217,14 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
 
         return sources
 
-    def _call_anthropic(self, user_prompt: str, max_tokens: int) -> Dict[str, Any]:
-        """Call Anthropic Claude API."""
+    def _call_anthropic(self, messages: List[Dict[str, str]], max_tokens: int) -> Dict[str, Any]:
+        """Call Anthropic Claude API with messages array."""
         response = self.client.messages.create(
             model=self.config["model_id"],
             max_tokens=max_tokens,
             temperature=0.3,
             system=self.SYSTEM_PROMPT,
-            messages=[
-                {"role": "user", "content": user_prompt}
-            ]
+            messages=messages
         )
 
         return {
@@ -237,16 +235,18 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
             }
         }
 
-    def _call_openai(self, user_prompt: str, max_tokens: int) -> Dict[str, Any]:
-        """Call OpenAI GPT API."""
+    def _call_openai(self, messages: List[Dict[str, str]], max_tokens: int) -> Dict[str, Any]:
+        """Call OpenAI GPT API with messages array."""
+        # OpenAI uses system message in messages array, not separate parameter
+        full_messages = [
+            {"role": "system", "content": self.SYSTEM_PROMPT}
+        ] + messages
+
         response = self.client.chat.completions.create(
             model=self.config["model_id"],
             max_tokens=max_tokens,
             temperature=0.3,
-            messages=[
-                {"role": "system", "content": self.SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt}
-            ]
+            messages=full_messages
         )
 
         return {
@@ -257,7 +257,13 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
             }
         }
 
-    def generate_answer(self, query: str, retrieved_chunks: List[Dict[str, Any]], language: str = "en") -> Dict[str, Any]:
+    def generate_answer(
+        self,
+        query: str,
+        retrieved_chunks: List[Dict[str, Any]],
+        language: str = "en",
+        conversation_history: Optional[List[Dict[str, str]]] = None
+    ) -> Dict[str, Any]:
         """
         Generate answer from query and retrieved chunks.
 
@@ -265,6 +271,7 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
             query: User question
             retrieved_chunks: List of relevant chunks from retrieval
             language: Response language ('en' or 'de')
+            conversation_history: Optional list of previous messages [{'role': 'user'/'assistant', 'content': '...'}]
 
         Returns:
             Dictionary with answer, sources, and metadata
@@ -288,11 +295,32 @@ CRITICAL INSTRUCTIONS:
 Example format: "{example}"
 Write your answer with citations now:"""
 
+        # Build messages array
+        messages = []
+
+        # Add conversation history (limit to last 10 messages: 5 user + 5 assistant)
+        if conversation_history:
+            # Take last 10 messages
+            recent_history = conversation_history[-10:] if len(conversation_history) > 10 else conversation_history
+            for msg in recent_history:
+                # Only add messages with 'role' and 'content' keys
+                if 'role' in msg and 'content' in msg:
+                    messages.append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
+
+        # Add current query with context as the final user message
+        messages.append({
+            "role": "user",
+            "content": user_prompt
+        })
+
         # Call appropriate provider
         if self.provider == "anthropic":
-            result = self._call_anthropic(user_prompt, self.config["max_tokens"])
+            result = self._call_anthropic(messages, self.config["max_tokens"])
         elif self.provider == "openai":
-            result = self._call_openai(user_prompt, self.config["max_tokens"])
+            result = self._call_openai(messages, self.config["max_tokens"])
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
 

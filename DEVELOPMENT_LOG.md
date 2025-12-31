@@ -876,9 +876,513 @@ Sources:
 
 ---
 
+## Phase 10: Conversation Management & Multi-Turn Support
+
+**Goal**: Implement conversation history, context retention, and conversation management UI
+
+**Date**: 2026-01-01
+
+### Implementation
+
+Added comprehensive conversation management system with:
+1. Backend conversation history support
+2. Persistent conversation storage (disk + localStorage)
+3. Multi-turn context-aware responses
+4. Conversation sidebar UI
+5. API endpoints for conversation management
+
+### Key Features
+
+**Backend Conversation Support:**
+- `conversation_history` parameter in `/query` endpoint
+- `conversation_id` parameter for conversation tracking
+- Automatic conversation persistence to disk (data/conversations/)
+- Conversation metadata (created_at, updated_at, message_count)
+- Messages array with role, content, timestamp, metadata
+
+**Frontend Conversation Management:**
+- LocalStorage persistence (conversations + active conversation ID)
+- Conversation sidebar with list of all conversations
+- New conversation creation
+- Conversation switching (loads history + updates UI)
+- Auto-save on every query/response
+- Page reload persistence
+
+**Context-Aware Responses:**
+- LLM receives last 10 messages for context
+- Messages formatted as `[{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]`
+- Supports follow-up questions referencing previous context
+- Works across all 4 LLM models (Claude & GPT)
+
+### Files Modified
+
+**1. backend/main.py**
+
+**Imports Added:**
+```python
+import json
+from datetime import datetime
+```
+
+**QueryRequest Model Updated:**
+```python
+class QueryRequest(BaseModel):
+    question: str = Field(..., min_length=1, description="User question")
+    model: Optional[str] = Field(default="gpt-4o-mini", description="LLM model to use")
+    language: Optional[str] = Field(default="en", description="Response language: 'en' or 'de'")
+    conversation_history: Optional[List[Dict[str, str]]] = Field(
+        default_factory=list,
+        description="Previous messages: [{'role': 'user', 'content': '...'}, {'role': 'assistant', 'content': '...'}]"
+    )
+    conversation_id: Optional[str] = Field(default=None, description="Conversation ID for tracking")
+```
+
+**New Response Models:**
+```python
+class ConversationResponse(BaseModel):
+    conversation_id: str
+    messages: List[Dict[str, Any]]
+    created_at: str
+    updated_at: str
+
+class ConversationsListResponse(BaseModel):
+    conversations: List[Dict[str, Any]]
+```
+
+**Startup Event Enhanced:**
+- Added conversations directory creation (`data/conversations/`)
+- Creates directory with `mkdir(parents=True, exist_ok=True)`
+- Error handling for directory creation failures
+
+**Query Endpoint Enhanced (lines 342-385):**
+- Saves conversation to disk after each query
+- Loads existing conversation or creates new one
+- Appends user question and assistant answer to messages array
+- Stores metadata (query_id, model_used, chunks_retrieved) with assistant messages
+- Updates conversation updated_at timestamp
+- Error handling (logs warning but doesn't fail request if save fails)
+
+**New API Endpoints:**
+
+1. **GET /conversations** (lines 425-463):
+   - Lists all conversation IDs with metadata
+   - Returns: `{conversations: [{conversation_id, created_at, updated_at, message_count}]}`
+   - Sorted by updated_at descending (most recent first)
+   - Error handling for corrupt conversation files
+
+2. **GET /conversations/{conversation_id}** (lines 466-500):
+   - Retrieves full conversation by ID
+   - Returns: `{conversation_id, messages, created_at, updated_at}`
+   - 404 error if conversation not found
+   - Full message history included
+
+**2. backend/generation/llm_client.py**
+
+**generate_answer() Signature Updated:**
+```python
+def generate_answer(
+    self,
+    query: str,
+    retrieved_chunks: List[Dict[str, Any]],
+    language: str = "en",
+    conversation_history: Optional[List[Dict[str, str]]] = None
+) -> Dict[str, Any]:
+```
+
+**Conversation History Processing:**
+- Limits to last 10 messages (prevents token overflow)
+- Converts to messages array format for both Anthropic and OpenAI
+- Inserts conversation history before current question
+
+**_call_anthropic() Refactored:**
+```python
+def _call_anthropic(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
+    # Changed from single user_prompt to messages array
+    response = self.client.messages.create(
+        model=self.model_name,
+        system=self.SYSTEM_PROMPT,
+        messages=messages,  # Now accepts conversation history
+        max_tokens=800,
+        temperature=0.3
+    )
+```
+
+**_call_openai() Refactored:**
+```python
+def _call_openai(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
+    # Changed from single user message to messages array
+    response = self.client.chat.completions.create(
+        model=self.model_name,
+        messages=[
+            {"role": "system", "content": self.SYSTEM_PROMPT},
+            *messages  # Spreads conversation history
+        ],
+        max_tokens=800,
+        temperature=0.3
+    )
+```
+
+**3. frontend/index.html**
+
+**Sidebar HTML Added:**
+```html
+<aside class="conversation-sidebar" id="conversationSidebar">
+    <div class="sidebar-header">
+        <h2>Conversations</h2>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" onclick="toggleSidebar()">×</button>
+    </div>
+    <button class="new-conversation-btn" id="newConversationBtn" onclick="createNewConversation()">
+        + New Conversation
+    </button>
+    <div class="conversations-list" id="conversationsList">
+        <!-- Conversations populated by JavaScript -->
+    </div>
+</aside>
+```
+
+**Sidebar Toggle Button:**
+```html
+<button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">
+    ☰
+</button>
+```
+
+**4. frontend/styles.css**
+
+**Sidebar Styling Added:**
+```css
+.conversation-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: var(--white);
+    box-shadow: var(--shadow-elevated);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.conversation-sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-base);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.new-conversation-btn {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: background 0.2s ease;
+}
+
+.conversation-item {
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--light-gray);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.conversation-item:hover,
+.conversation-item.active {
+    background: var(--light-gray);
+}
+```
+
+**Mobile Responsive:**
+```css
+@media (max-width: 768px) {
+    .conversation-sidebar {
+        width: 100%;
+    }
+
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+```
+
+**5. frontend/app.js**
+
+**New State Variables:**
+```javascript
+let currentConversationId = null;
+let conversations = {}; // Object mapping conversation_id → conversation data
+let conversationHistory = []; // Array of {role, content} for current conversation
+```
+
+**LocalStorage Functions:**
+```javascript
+function loadConversationsFromStorage() {
+    const stored = localStorage.getItem('verifyr_conversations');
+    conversations = stored ? JSON.parse(stored) : {};
+
+    const activeId = localStorage.getItem('verifyr_active_conversation_id');
+    if (activeId && conversations[activeId]) {
+        loadConversation(activeId);
+    }
+}
+
+function saveConversationToStorage(conversationId, conversation) {
+    conversations[conversationId] = conversation;
+    localStorage.setItem('verifyr_conversations', JSON.stringify(conversations));
+    localStorage.setItem('verifyr_active_conversation_id', conversationId);
+}
+```
+
+**Conversation Management Functions:**
+```javascript
+function createNewConversation() {
+    const conversationId = 'conv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const conversation = {
+        id: conversationId,
+        title: 'New Conversation',
+        messages: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+
+    conversations[conversationId] = conversation;
+    currentConversationId = conversationId;
+    conversationHistory = [];
+
+    // Clear chat UI
+    messagesDiv.innerHTML = '';
+    displayWelcomeMessage();
+
+    saveConversationToStorage(conversationId, conversation);
+    renderConversationsList();
+}
+
+function loadConversation(conversationId) {
+    if (!conversations[conversationId]) return;
+
+    const conversation = conversations[conversationId];
+    currentConversationId = conversationId;
+    conversationHistory = conversation.messages || [];
+
+    // Clear and reload messages
+    messagesDiv.innerHTML = '';
+    displayWelcomeMessage();
+
+    conversation.messages.forEach(msg => {
+        if (msg.role === 'user') {
+            displayUserMessage(msg.content);
+        } else {
+            displayAssistantMessage(msg.content, msg.sources || [], msg.metadata || {});
+        }
+    });
+
+    renderConversationsList();
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('conversationSidebar');
+    sidebar.classList.toggle('open');
+}
+
+function renderConversationsList() {
+    const listDiv = document.getElementById('conversationsList');
+    const sortedConvs = Object.values(conversations).sort((a, b) =>
+        new Date(b.updatedAt) - new Date(a.updatedAt)
+    );
+
+    listDiv.innerHTML = sortedConvs.map(conv => `
+        <div class="conversation-item ${conv.id === currentConversationId ? 'active' : ''}"
+             onclick="loadConversation('${conv.id}')">
+            <div class="conversation-title">${escapeHtml(conv.title)}</div>
+            <div class="conversation-date">${formatTimestamp(conv.updatedAt)}</div>
+        </div>
+    `).join('');
+}
+```
+
+**handleSend() Updated:**
+```javascript
+async function handleSend() {
+    const question = chatInput.value.trim();
+    if (!question) return;
+
+    // Create new conversation if none exists
+    if (!currentConversationId) {
+        createNewConversation();
+    }
+
+    displayUserMessage(question);
+    setLoading(true);
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/query`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                question,
+                model: selectedModel,
+                language: currentLanguage,
+                conversation_history: conversationHistory,  // NEW
+                conversation_id: currentConversationId      // NEW
+            })
+        });
+
+        const data = await response.json();
+
+        // Update conversation history
+        conversationHistory.push({ role: 'user', content: question });
+        conversationHistory.push({ role: 'assistant', content: data.answer });
+
+        // Update conversation in storage
+        const conversation = conversations[currentConversationId];
+        conversation.messages.push(
+            { role: 'user', content: question },
+            { role: 'assistant', content: data.answer, sources: data.sources, metadata: data }
+        );
+        conversation.updatedAt = new Date().toISOString();
+
+        // Generate title from first question if needed
+        if (conversation.title === 'New Conversation' && conversation.messages.length === 2) {
+            conversation.title = question.substring(0, 50) + (question.length > 50 ? '...' : '');
+        }
+
+        saveConversationToStorage(currentConversationId, conversation);
+        renderConversationsList();
+
+        displayAssistantMessage(data.answer, data.sources, data);
+    } catch (error) {
+        displayError('Error: ' + error.message);
+    } finally {
+        setLoading(false);
+    }
+}
+```
+
+### Testing & Verification
+
+**Backend Testing Completed:**
+- ✅ Server health check (indexes loaded successfully)
+- ✅ Basic conversation flow (queries with conversation_id save to disk)
+- ✅ Follow-up question context handling (LLM receives conversation_history)
+- ✅ Backend conversation storage (data/conversations/test_save_conv.json created)
+- ✅ API endpoints working:
+  - GET /conversations → Returns conversation list
+  - GET /conversations/{id} → Returns full conversation
+
+**Test Examples:**
+
+1. **Basic Conversation Flow:**
+   - Request: `{"question": "What about waterproof ratings?", "conversation_id": "test_save_conv"}`
+   - Result: Conversation saved to data/conversations/test_save_conv.json with proper structure
+
+2. **Follow-up Question Context:**
+   - Previous: "What is the battery life?" → "Apple Watch has 41 hours, Garmin has 15 days."
+   - Follow-up: "Which one is better for marathon training?"
+   - Result: LLM correctly inferred context and compared based on marathon training needs
+
+3. **API Endpoints:**
+   - GET /conversations → `{"conversations": [{"conversation_id": "test_save_conv", "message_count": 2, ...}]}`
+   - GET /conversations/test_save_conv → Full conversation with messages array
+
+**Frontend Testing (Pending Manual Verification):**
+- ⏳ Conversation sidebar UI (requires browser testing)
+- ⏳ New conversation creation (requires browser testing)
+- ⏳ Conversation switching (requires browser testing)
+- ⏳ Page reload persistence (requires browser testing)
+- ⏳ LocalStorage verification (requires browser testing)
+
+### Known Issues & Pending Tasks
+
+**Manual Testing Required:**
+- Frontend sidebar UI interaction (toggle, close button)
+- Conversation switching between multiple conversations
+- Page reload persistence (verify localStorage loads correctly)
+- Mobile responsive behavior (sidebar overlay)
+- Conversation title auto-generation from first question
+
+**Future Enhancements:**
+- Conversation deletion
+- Conversation renaming
+- Search conversations
+- Export conversation history
+- Conversation sharing
+
+### Results
+
+**Backend Implementation:**
+- ✅ Complete conversation history support
+- ✅ Persistent conversation storage (JSON files)
+- ✅ API endpoints for conversation management
+- ✅ Context-aware LLM responses
+- ✅ Automatic conversation saving
+- ✅ Metadata tracking (query_id, model, chunks)
+
+**Frontend Implementation:**
+- ✅ LocalStorage integration
+- ✅ Conversation sidebar UI (HTML + CSS)
+- ✅ Conversation management functions (JavaScript)
+- ✅ Responsive design (mobile overlay)
+- ✅ Design system integration (consistent styling)
+
+**Testing Status:**
+- ✅ Backend: Fully tested and operational
+- ⏳ Frontend: Manual testing required in browser
+
+**Impact:**
+- Multi-turn conversations with context retention
+- Seamless follow-up question support
+- Conversation persistence across page reloads
+- User-friendly conversation management
+- Full conversation history tracking
+- Context-aware LLM responses
+
+**Conversation Storage Format:**
+```json
+{
+  "conversation_id": "conv_1735689411422_abc123",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the battery life?",
+      "timestamp": "2026-01-01T00:06:51.422719"
+    },
+    {
+      "role": "assistant",
+      "content": "The Apple Watch Series 11 has a battery life of over 41 hours [1]...",
+      "timestamp": "2026-01-01T00:06:51.422723",
+      "metadata": {
+        "query_id": "b0050f6c-229a-47d4-9431-1c467b9f5c64",
+        "model_used": "gpt-4o-mini",
+        "chunks_retrieved": 5
+      }
+    }
+  ],
+  "created_at": "2026-01-01T00:06:51.422090",
+  "updated_at": "2026-01-01T00:06:51.422726"
+}
+```
+
+---
+
 ## Next Steps
 
-**Phase 10**: Evaluation Framework
+**Phase 11**: Evaluation Framework
 - Create test cases for different query types
 - Measure retrieval quality (precision, recall)
 - Assess answer quality
@@ -1286,7 +1790,143 @@ def generate_answer(self, query: str, retrieved_chunks: List[Dict[str, Any]], la
 
 ---
 
-*Development log last updated: 2025-01-15*
+## Update: Intelligent Query Analysis & Dynamic Retrieval Strategy (2025-01-15)
+
+**Date**: 2025-01-15
+**Related Phase**: Phase 5 (Hybrid Search) + Phase 8 (Full Pipeline Integration)
+
+**Goal**: Implement intelligent query analysis to optimize chunk retrieval based on query intent
+
+**Problem Identified**:
+- Single product queries were retrieving chunks from both products unnecessarily
+- Comparison queries sometimes showed imbalance (e.g., 4-1 or 5-0 splits)
+- Complex queries needed more chunks but weren't getting them
+- Product diversity algorithm was too weak (minimum `top_k // 3` allowed 4-1 splits)
+
+**Solution Implemented**:
+
+### 1. Query Analysis (`_analyze_query` method)
+Added intelligent query analysis to `backend/retrieval/hybrid_search.py`:
+
+**Product Detection:**
+- Keyword matching for Apple Watch ("apple watch", "apple", "series 11")
+- Keyword matching for Garmin ("garmin", "forerunner", "970")
+- Returns `target_products` list for filtering
+
+**Comparison Detection:**
+- English keywords: "compare", "versus", "difference", "better", "which", "between"
+- German keywords: "vergleich", "unterschied", "besser", "welche", "zwischen"
+- Auto-detects comparison when both products mentioned
+
+**Complexity Detection:**
+- Indicators: "how", "why", "explain", "guide", "setup", "configure"
+- German indicators: "wie", "warum", "erklären", "anleitung", "einrichten"
+- Multiple questions or long queries (>15 words) = complex
+
+**Dynamic Top-K:**
+- Complex queries: 8 chunks (more context needed)
+- Comparison queries: 5 chunks (balanced representation)
+- Simple queries: 5 chunks (factual answers)
+
+### 2. Enhanced Search Hybrid Method
+Updated `search_hybrid()` with new parameters:
+
+```python
+def search_hybrid(
+    self, 
+    query: str, 
+    top_k: int = 5, 
+    retrieve_k: int = 20,
+    target_products: Optional[List[str]] = None,  # NEW: Filter by products
+    apply_diversity: bool = True  # NEW: Control diversity application
+)
+```
+
+**Product Filtering:**
+- If `target_products` specified, only chunks from those products are included
+- Filters results from both BM25 and Vector search before RRF fusion
+- Single product queries get only relevant chunks
+
+**Diversity Control:**
+- `apply_diversity` only enabled for comparison queries
+- Single product queries: diversity disabled (no need for balance)
+- Multiple products: diversity enabled (ensures balance)
+
+### 3. Improved Product Diversity Algorithm
+Enhanced `_ensure_product_diversity()` method:
+
+**Key Improvements:**
+- Changed minimum from `top_k // 3` to `top_k // 2` for better balance
+- For top_k=5: ensures at least 2 chunks per product (was allowing 4-1 splits)
+- For top_k=8: ensures at least 3 chunks per product
+- Added skip logic to avoid duplicate chunk processing
+- Early termination when balance achieved
+
+**Balance Examples:**
+- Before: top_k=5 could yield [4 Apple, 1 Garmin] or [5 Apple, 0 Garmin]
+- After: top_k=5 yields [3 Apple, 2 Garmin] or [2 Apple, 3 Garmin]
+
+### 4. Backend Integration
+Updated `backend/main.py` query endpoint:
+
+```python
+# Step 0: Analyze query
+query_analysis = hybrid_searcher._analyze_query(request.question)
+target_products = query_analysis["target_products"] if query_analysis["target_products"] else None
+apply_diversity = query_analysis["is_comparison"]
+top_k = query_analysis["top_k"]
+
+# Step 1: Intelligent retrieval
+search_results = hybrid_searcher.search_hybrid(
+    query=request.question,
+    top_k=top_k,
+    target_products=target_products,
+    apply_diversity=apply_diversity
+)
+```
+
+**Query Analysis Logging:**
+- Logs detected products, query type, complexity, and selected top_k
+- Helps debug retrieval strategy selection
+
+**Files Modified**:
+- `backend/retrieval/hybrid_search.py`: Added `_analyze_query()`, updated `search_hybrid()`, improved `_ensure_product_diversity()`
+- `backend/main.py`: Integrated query analysis into query endpoint
+
+**Results**:
+- ✅ Single product queries: Only relevant product chunks retrieved (e.g., "Apple Watch battery" → only Apple chunks)
+- ✅ Comparison queries: Balanced 3-2 or 2-3 splits (no more 4-1 or 5-0)
+- ✅ Complex queries: 8 chunks retrieved for detailed context
+- ✅ Better balance: Minimum `top_k // 2` ensures fair representation
+- ✅ Query analysis logged for transparency
+
+**Impact**:
+- More focused retrieval for single-product questions
+- Better balanced comparisons with equal product representation
+- Sufficient context for complex queries
+- Optimal chunk distribution based on query intent
+- Improved answer quality through better context selection
+
+**Examples**:
+
+1. **Single Product Query:**
+   - Query: "What is the battery life of Apple Watch Series 11?"
+   - Analysis: `target_products: ["Apple Watch Series 11"]`, `is_comparison: False`
+   - Result: 5 chunks, all from Apple Watch only
+
+2. **Comparison Query:**
+   - Query: "Compare battery life between the watches"
+   - Analysis: `target_products: []`, `is_comparison: True` (detected via "compare")
+   - Result: 5 chunks with balanced split (3-2 or 2-3)
+
+3. **Complex Query:**
+   - Query: "How do I set up the Apple Watch for running?"
+   - Analysis: `target_products: ["Apple Watch Series 11"]`, `is_comparison: False`, `complexity: "complex"`
+   - Result: 8 chunks, all from Apple Watch (more context for detailed answer)
+
+---
+
+*Development log last updated: 2026-01-01*
 *System: Verifyr RAG for Product Comparison*
 *Tech Stack: Python, FastAPI, Qdrant, Claude/GPT, LangChain, HTML/JavaScript*
-*Status: Phase 9 Complete - Model Selection & Language Fixes - Ready for Phase 10 (Evaluation)*
+*Status: Phase 10 Complete - Conversation Management & Multi-Turn Support - Ready for Phase 11 (Evaluation)*

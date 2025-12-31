@@ -33,34 +33,75 @@
 
 ## Retrieval Strategy
 
+### Intelligent Query Analysis & Dynamic Retrieval
+- **Method:** Query analysis → Product filtering → Hybrid search with adaptive diversity
+- **Analysis:** Detects product mentions, comparison intent, and query complexity
+- **Adaptive Top-K:** Dynamically adjusts chunk count based on query type:
+  - **Complex queries:** 8 chunks (how-to, detailed explanations)
+  - **Comparison queries:** 5 chunks (balanced product representation)
+  - **Simple queries:** 5 chunks (factual, single-answer)
+- **Rationale:** Optimizes retrieval based on query intent for better context and efficiency
+
+### Query Analysis (`_analyze_query` method)
+**Product Detection:**
+- Identifies mentioned products via keyword matching (Apple Watch, Garmin, Series 11, Forerunner 970)
+- Returns `target_products` list for filtering
+
+**Comparison Detection:**
+- Detects comparison intent via keywords: "compare", "versus", "difference", "better", "between"
+- German equivalents: "vergleich", "unterschied", "besser", "zwischen"
+- Both products mentioned = automatic comparison detection
+
+**Complexity Detection:**
+- Identifies complex queries: "how", "why", "explain", "guide", "setup"
+- German equivalents: "wie", "warum", "erklären", "anleitung"
+- Multiple questions or long queries (>15 words) = complex
+
+**Retrieval Strategy Selection:**
+- **Single product query:** Filters chunks to that product only, no diversity
+- **Comparison query:** Retrieves from all products, applies diversity balancing
+- **Complex query:** Retrieves more chunks (8) with diversity when multiple products present
+
 ### Hybrid Search with Product Diversity
-- **Method:** Reciprocal Rank Fusion (RRF) with diversity enhancement
+- **Method:** Reciprocal Rank Fusion (RRF) with intelligent diversity enhancement
 - **BM25 Top-K:** 20 results
 - **Vector Top-K:** 20 results
 - **RRF Formula:** `score = 1 / (60 + rank)`
-- **Final Top-K:** 5 chunks for answer generation
+- **Final Top-K:** Dynamic (5 for simple/comparison, 8 for complex)
 - **Rationale:** Combines strengths of both semantic and keyword search. RRF normalizes scores without needing weight tuning.
 
 ### Product Diversity Algorithm
 **Problem Addressed:** Pure relevance ranking could return all chunks from one product, preventing meaningful comparisons.
 
-**Solution:** `_ensure_product_diversity()` method ensures balanced representation:
+**Solution:** `_ensure_product_diversity()` method ensures balanced representation with intelligent application:
 
-1. **First Pass**: Select top-K chunks by RRF score
-2. **Product Tracking**: Count chunks from each product
-3. **Diversity Enforcement**:
-   - Minimum: 1 chunk per product (or 1/3 of top-K, whichever is higher)
-   - If product under-represented: replace lowest-scoring chunk from over-represented product
-   - Maintains relevance while ensuring both products appear
+1. **Query-Based Application:**
+   - Single product queries: Diversity disabled, only relevant product chunks
+   - Comparison queries: Diversity enabled, balanced product representation
+   - Complex queries: Diversity enabled when multiple products detected
 
-**Example** (top-5 results):
+2. **Diversity Enforcement** (when enabled):
+   - **First Pass**: Select top-K chunks by RRF score
+   - **Product Tracking**: Count chunks from each product
+   - **Minimum Calculation**: `max(1, top_k // 2)` chunks per product
+     - For top_k=5: ensures 2-3 split (at least 2 per product)
+     - For top_k=8: ensures 3-4 split (at least 3 per product)
+   - **Replacement Logic**: If product under-represented, replace lowest-scoring chunk from over-represented product
+   - **Early Termination**: Stops when balance achieved
+
+**Example** (top-5 comparison query):
 - Without diversity: [Apple Watch × 5, Garmin × 0] ❌
-- With diversity: [Apple Watch × 3-4, Garmin × 1-2] ✅
+- With diversity: [Apple Watch × 3, Garmin × 2] or [Apple Watch × 2, Garmin × 3] ✅
+
+**Example** (single product query):
+- Query: "Apple Watch battery life"
+- Result: [Apple Watch × 5] ✅ (all chunks from Apple Watch, no Garmin)
 
 **Impact:**
-- Enables true product comparisons
-- LLM receives context from BOTH products
-- Better comparative answers with balanced insights
+- Single product queries get focused, relevant chunks
+- Comparison queries get balanced representation from both products
+- Complex queries get sufficient context with proper diversity
+- LLM receives optimal context for each query type
 
 ## LLM Integration
 
@@ -256,6 +297,13 @@ data/raw/
 - **Extracted Text:** `data/processed/{product}_{doctype}.json` (Note: Current implementation uses `extracted_pages.json`)
 - **Chunks:** `data/processed/chunks.json` (single file, all chunks)
 - **BM25 Index:** `data/processed/bm25_index.pkl`
+
+### Intelligent Retrieval Features
+- **Query Analysis:** Automatic detection of product mentions, comparison intent, and complexity
+- **Product Filtering:** Single-product queries only retrieve relevant product chunks
+- **Adaptive Diversity:** Comparison queries ensure balanced 50/50 split (e.g., 3-2 or 2-3 for top_k=5)
+- **Dynamic Chunk Count:** 5 chunks for simple/comparison queries, 8 chunks for complex queries
+- **Improved Balance:** Minimum `top_k // 2` chunks per product (was `top_k // 3`)
 
 ### Current System Stats
 - **Total PDFs:** 12 documents (Apple Watch Series 11: 6 docs, Garmin Forerunner 970: 6 docs)
@@ -520,6 +568,7 @@ Core libraries:
 - ✅ **Phase 7:** Multi-Model LLM Integration (4 models supported)
 - ✅ **Phase 8:** Full Pipeline Integration (end-to-end RAG working)
 - ✅ **Phase 9:** Frontend Chat Interface (web UI with design system integration)
+- ✅ **Phase 10:** Conversation Management & Multi-Turn Support (conversation history, localStorage, sidebar UI)
 
 ### Current Capabilities
 - 📄 5 PDF documents indexed and searchable
@@ -544,6 +593,16 @@ Core libraries:
 - 📝 Source URL metadata support (source_url and source_name fields)
 - ✅ Citation filtering (only cited sources appear in sources list)
 - 🔢 Preserved citation numbers (sources match answer text citations)
+- 🧠 Intelligent query analysis (product detection, comparison intent, complexity)
+- 🎯 Dynamic chunk retrieval (adaptive top_k based on query type)
+- ⚖️ Improved product diversity (balanced 50/50 splits for comparisons)
+- 🔍 Product filtering (single-product queries only retrieve relevant chunks)
+- 💬 Multi-turn conversations with context retention (conversation history)
+- 💾 Conversation persistence (localStorage + backend JSON storage)
+- 🗂️ Conversation management (create, load, switch, list conversations)
+- 📋 Conversation sidebar UI (responsive, design system integrated)
+- 🔄 Follow-up question support (context-aware responses)
+- 📡 Conversation API endpoints (GET /conversations, GET /conversations/{id})
 
 ### User Feedback Improvements (Post-Phase 9)
 **Issues Resolved:**
@@ -591,9 +650,9 @@ Core libraries:
 - Consistent defaults across frontend and backend
 
 ### Next Steps
-- **Phase 10:** Evaluation Framework (not started)
+- **Phase 11:** Evaluation Framework (planned)
 
 ---
 
-**Last Updated:** 2025-01-15
-**Phase:** Phase 9 - Frontend Chat Interface (Completed + Source URL Support + Citation Filtering)
+**Last Updated:** 2026-01-01
+**Phase:** Phase 10 - Conversation Management & Multi-Turn Support (Completed)

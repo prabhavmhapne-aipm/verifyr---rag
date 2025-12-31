@@ -12,7 +12,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Conversation Sidebar -->
+    <aside class="conversation-sidebar" id="conversationSidebar">
+        <div class="sidebar-header">
+            <h2>Conversations</h2>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" onclick="toggleSidebar()">×</button>
+        </div>
+        <button class="new-conversation-btn" id="newConversationBtn" onclick="createNewConversation()">
+            + New Conversation
+        </button>
+        <div class="conversations-list" id="conversationsList">
+            <!-- Conversation items will be inserted by JavaScript -->
+        </div>
+    </aside>
+
     <div class="chat-container">
+        <!-- Sidebar Toggle Button (Mobile) -->
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">
+            ☰
+        </button>
+
         <!-- Header -->
         <header class="chat-header">
             <div class="header-top">

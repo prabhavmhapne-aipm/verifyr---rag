@@ -44,11 +44,18 @@ let quickReplies;
 let modelSelector;
 let chatSubtitle;
 let inputNote;
+let conversationSidebar;
+let conversationsList;
 
 // State
 let isLoading = false;
 let currentLanguage = 'en';
 let selectedModel = 'gpt-4o-mini'; // Default matches HTML, will be synced in init()
+
+// Conversation Management State
+let currentConversationId = null;
+let conversations = {}; // Object mapping conversation_id -> conversation data
+let conversationHistory = []; // Array of {role, content} for current conversation
 
 /**
  * Initialize the chat interface
@@ -62,15 +69,29 @@ function init() {
     modelSelector = document.getElementById('modelSelector');
     chatSubtitle = document.getElementById('chatSubtitle');
     inputNote = document.getElementById('inputNote');
+    conversationSidebar = document.getElementById('conversationSidebar');
+    conversationsList = document.getElementById('conversationsList');
 
     // Sync selectedModel with actual dropdown value
     updateModelNote();
 
-    // Show welcome message
-    displayWelcomeMessage();
+    // Load conversations from localStorage
+    loadConversationsFromStorage();
+
+    // Check if we have an active conversation
+    const activeConvId = localStorage.getItem('verifyr_active_conversation_id');
+    if (activeConvId && conversations[activeConvId]) {
+        loadConversation(activeConvId);
+    } else {
+        // No active conversation, show welcome message
+        displayWelcomeMessage();
+    }
 
     // Setup quick reply buttons
     updateQuickReplies();
+
+    // Render conversation list in sidebar
+    renderConversationsList();
 
     // Event listeners
     sendButton.addEventListener('click', handleSend);
@@ -146,6 +167,197 @@ function updateModelNote() {
     inputNote.textContent = `${t.inputNote} • Powered by ${modelNames[selectedModel]}`;
 }
 
+/* ============================================================================
+   Conversation Management Functions
+   ============================================================================ */
+
+/**
+ * Load all conversations from localStorage
+ */
+function loadConversationsFromStorage() {
+    try {
+        const storedConversations = localStorage.getItem('verifyr_conversations');
+        if (storedConversations) {
+            conversations = JSON.parse(storedConversations);
+        }
+    } catch (error) {
+        console.error('Error loading conversations from localStorage:', error);
+        conversations = {};
+    }
+}
+
+/**
+ * Save current conversation to localStorage
+ */
+function saveConversationToStorage() {
+    if (!currentConversationId) return;
+
+    try {
+        const now = new Date().toISOString();
+
+        // Update or create conversation
+        if (!conversations[currentConversationId]) {
+            // Get first user message as title
+            const firstUserMsg = conversationHistory.find(msg => msg.role === 'user');
+            const title = firstUserMsg ? firstUserMsg.content.substring(0, 40) + (firstUserMsg.content.length > 40 ? '...' : '') : 'New Conversation';
+
+            conversations[currentConversationId] = {
+                id: currentConversationId,
+                title: title,
+                messages: [],
+                createdAt: now,
+                updatedAt: now
+            };
+        }
+
+        // Update conversation data
+        conversations[currentConversationId].messages = [...conversationHistory];
+        conversations[currentConversationId].updatedAt = now;
+
+        // Save to localStorage
+        localStorage.setItem('verifyr_conversations', JSON.stringify(conversations));
+        localStorage.setItem('verifyr_active_conversation_id', currentConversationId);
+
+        // Re-render sidebar
+        renderConversationsList();
+    } catch (error) {
+        console.error('Error saving conversation to localStorage:', error);
+    }
+}
+
+/**
+ * Create new conversation
+ */
+function createNewConversation() {
+    // Clear current conversation
+    currentConversationId = null;
+    conversationHistory = [];
+    chatMessages.innerHTML = '';
+
+    // Show welcome message
+    displayWelcomeMessage();
+
+    // Show quick replies
+    if (quickReplies) {
+        quickReplies.style.display = 'flex';
+    }
+
+    // Clear active conversation ID from localStorage
+    localStorage.removeItem('verifyr_active_conversation_id');
+
+    // Re-render sidebar
+    renderConversationsList();
+
+    // Close sidebar on mobile
+    if (window.innerWidth <= 768) {
+        conversationSidebar.classList.remove('active');
+    }
+}
+
+/**
+ * Load a conversation by ID
+ */
+function loadConversation(conversationId) {
+    if (!conversations[conversationId]) {
+        console.error('Conversation not found:', conversationId);
+        return;
+    }
+
+    const conversation = conversations[conversationId];
+
+    // Set as active conversation
+    currentConversationId = conversationId;
+    conversationHistory = [...conversation.messages];
+
+    // Clear chat messages
+    chatMessages.innerHTML = '';
+
+    // Hide quick replies
+    if (quickReplies) {
+        quickReplies.style.display = 'none';
+    }
+
+    // Display all messages
+    conversation.messages.forEach(msg => {
+        if (msg.role === 'user') {
+            displayUserMessage(msg.content);
+        } else if (msg.role === 'assistant') {
+            // For assistant messages, we might not have sources anymore, so display without them
+            displayAssistantMessage(msg.content, [], null);
+        }
+    });
+
+    // Save as active conversation
+    localStorage.setItem('verifyr_active_conversation_id', conversationId);
+
+    // Re-render sidebar to highlight active
+    renderConversationsList();
+
+    // Close sidebar on mobile
+    if (window.innerWidth <= 768) {
+        conversationSidebar.classList.remove('active');
+    }
+}
+
+/**
+ * Render conversations list in sidebar
+ */
+function renderConversationsList() {
+    if (!conversationsList) return;
+
+    // Convert conversations object to array and sort by updatedAt
+    const conversationsArray = Object.values(conversations);
+    conversationsArray.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    // Clear list
+    conversationsList.innerHTML = '';
+
+    // Add each conversation
+    conversationsArray.forEach(conv => {
+        const item = document.createElement('div');
+        item.className = 'conversation-item';
+        if (conv.id === currentConversationId) {
+            item.classList.add('active');
+        }
+
+        item.innerHTML = `
+            <div class="conversation-title">${escapeHtml(conv.title)}</div>
+            <div class="conversation-timestamp">${formatTimestamp(conv.updatedAt)}</div>
+        `;
+
+        item.onclick = () => loadConversation(conv.id);
+
+        conversationsList.appendChild(item);
+    });
+}
+
+/**
+ * Toggle sidebar visibility
+ */
+function toggleSidebar() {
+    conversationSidebar.classList.toggle('active');
+}
+
+/**
+ * Format timestamp for conversation list
+ */
+function formatTimestamp(isoString) {
+    const date = new Date(isoString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+
+    // Otherwise show date
+    return date.toLocaleDateString();
+}
+
 /**
  * Display welcome message based on current language
  */
@@ -191,6 +403,11 @@ async function handleSend() {
         return;
     }
 
+    // Create new conversation ID if this is the first message
+    if (!currentConversationId) {
+        currentConversationId = 'conv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
     // Hide quick replies after first message
     if (quickReplies && chatMessages.children.length === 1) {
         quickReplies.style.display = 'none';
@@ -198,6 +415,12 @@ async function handleSend() {
 
     // Display user message
     displayUserMessage(question);
+
+    // Add user message to conversation history
+    conversationHistory.push({
+        role: 'user',
+        content: question
+    });
 
     // Clear input
     chatInput.value = '';
@@ -210,7 +433,7 @@ async function handleSend() {
     const loadingId = displayLoadingIndicator();
 
     try {
-        // Call API with selected model
+        // Call API with selected model and conversation history
         const response = await fetch(`${API_BASE_URL}/query`, {
             method: 'POST',
             headers: {
@@ -219,7 +442,9 @@ async function handleSend() {
             body: JSON.stringify({
                 question,
                 model: selectedModel,
-                language: currentLanguage
+                language: currentLanguage,
+                conversation_history: conversationHistory.slice(0, -1), // Exclude current message (already sent as question)
+                conversation_id: currentConversationId
             })
         });
 
@@ -232,6 +457,15 @@ async function handleSend() {
         }
 
         const data = await response.json();
+
+        // Add assistant response to conversation history
+        conversationHistory.push({
+            role: 'assistant',
+            content: data.answer
+        });
+
+        // Save conversation to localStorage
+        saveConversationToStorage();
 
         // Display assistant response
         displayAssistantMessage(data.answer, data.sources, data);

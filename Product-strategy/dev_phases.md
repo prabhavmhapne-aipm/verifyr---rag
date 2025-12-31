@@ -912,7 +912,7 @@ for model in models:
 
 ### Model Selection Guide
 
-For evaluation in Phase 10, test queries with all 4 models:
+For evaluation in Phase 11, test queries with all 4 models:
 - **claude-sonnet-4.5**: Baseline (best quality)
 - **claude-3.5-haiku**: Cost comparison (73% cheaper)
 - **gpt-4o**: OpenAI comparison (similar quality)
@@ -1238,7 +1238,186 @@ python -m http.server 3000
 
 ---
 
-## Phase 10: Evaluation Framework with Langfuse
+## Phase 10: Chat History Storage with Conversation Management
+
+### Objective
+Add conversation history storage for context-aware follow-up responses, message persistence across page reloads, conversation management UI with sidebar, and backend storage for evaluations.
+
+### Prompt for Claude Code
+
+```
+Add conversation history storage and conversation management sidebar to the RAG chat interface.
+
+Requirements:
+
+1. Backend Changes (backend/main.py):
+   - Add to QueryRequest model:
+     * conversation_history: Optional[List[Dict[str, str]]] = Field(default_factory=list, description="Previous messages: [{'role': 'user', 'content': '...'}, {'role': 'assistant', 'content': '...'}]")
+     * conversation_id: Optional[str] = Field(default=None, description="Conversation ID for tracking")
+   - Update /query endpoint:
+     * Pass conversation_history to generate_answer()
+     * Save conversations to data/conversations/{conversation_id}.json if conversation_id provided
+     * Wrap storage in try/except - failures don't affect query response
+   - Add new endpoints:
+     * GET /conversations/{conversation_id} - Get conversation by ID
+     * GET /conversations - List all conversation IDs
+   - Create data/conversations/ directory at startup (with error handling)
+
+2. Backend LLM Client Changes (backend/generation/llm_client.py):
+   - Update generate_answer() signature: add conversation_history: Optional[List[Dict[str, str]]] = None
+   - Refactor _call_anthropic() to accept messages: List[Dict[str, str]] parameter
+   - Refactor _call_openai() to accept messages: List[Dict[str, str]] parameter
+   - Build messages array with:
+     * Conversation history (limit to last 10 messages: 5 user + 5 assistant)
+     * Current query with context formatted as before
+   - If history is empty, use single-message format (maintains current behavior)
+
+3. Frontend Conversation Storage (frontend/app.js):
+   - Change localStorage structure to support multiple conversations:
+     * Key: 'verifyr_conversations' - object mapping conversation_id → conversation data
+     * Key: 'verifyr_active_conversation_id' - current conversation ID
+     * Key: 'verifyr_conversations_list' - array of conversation IDs for easy sorting
+   - Each conversation object contains:
+     * id: string
+     * title: string (first user message, truncated to 40 chars)
+     * messages: array of message objects
+     * createdAt: ISO timestamp
+     * updatedAt: ISO timestamp
+   - Functions needed:
+     * saveConversation() - save current conversation to localStorage
+     * loadConversation(conversationId) - load conversation by ID
+     * createNewConversation() - create new conversation, clear chat area
+     * listConversations() - get all conversations sorted by updatedAt
+     * deleteConversation(conversationId) - optional: delete conversation
+   - On page load:
+     * Load conversation list
+     * If active_conversation_id exists, load that conversation
+     * Otherwise show welcome message
+   - When sending messages:
+     * Save to current conversation
+     * Update conversation's updatedAt timestamp
+     * Send conversation_history to API (format: array of {role, content} objects)
+
+4. Frontend Conversation Sidebar UI (frontend/index.html and frontend/styles.css):
+   - Add sidebar container:
+     * Position: Fixed or sliding panel on left side (250-300px wide on desktop)
+     * Background: Use design system --light-gray
+     * Show/hide toggle button in header (☰ menu icon)
+   - Sidebar content:
+     * "New Conversation" button at top (prominent, uses .submit-btn styling)
+     * Divider line
+     * Scrollable conversation list
+   - Conversation list items:
+     * Display conversation title (truncated first message)
+     * Display timestamp ("2h ago", "Yesterday", "3d ago" format)
+     * Highlight active conversation (different background color)
+     * Click to load conversation
+     * Optional: Delete button (trash icon) on hover
+   - Responsive behavior:
+     * Desktop: Sidebar can be toggled visible/hidden
+     * Mobile: Sidebar as overlay/modal (slides in from left when opened)
+   - Styling:
+     * Use design system tokens for colors, spacing, typography
+     * Smooth transitions for sidebar show/hide
+     * Hover effects on conversation items
+
+5. Error Handling:
+   - All localStorage operations wrapped in try/catch
+   - If localStorage fails, app continues (sends empty conversation_history)
+   - Backend storage failures logged but don't affect API response
+   - Corrupt data: Clear and show welcome message
+
+Test: Create multiple conversations, switch between them, verify history persists on page reload.
+```
+
+### Your Validation Steps
+
+1. **Test backend API changes:**
+```bash
+# Test with conversation history
+curl -X POST http://localhost:8000/query \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "Which is better?",
+    "conversation_history": [
+      {"role": "user", "content": "What is the battery life?"},
+      {"role": "assistant", "content": "The Apple Watch has 18 hours..."}
+    ],
+    "conversation_id": "test_conv_123"
+  }'
+```
+
+2. **Test conversation storage:**
+```bash
+# List conversations
+curl http://localhost:8000/conversations
+
+# Get specific conversation
+curl http://localhost:8000/conversations/test_conv_123
+```
+
+3. **Test frontend conversation management:**
+   - Open chat interface
+   - Start a conversation (ask a question)
+   - Click "New Conversation" button
+   - Verify chat area clears and new conversation starts
+   - Ask question in new conversation
+   - Click previous conversation in sidebar
+   - Verify previous messages load
+   - Refresh page
+   - Verify conversations persist and active conversation loads
+
+4. **Test follow-up responses:**
+   - Start conversation: "What is the battery life?"
+   - Ask follow-up: "Which is better?"
+   - Verify response understands context from first question
+   - Check that conversation history is sent to backend
+
+5. **Test error scenarios:**
+   - Disable localStorage in browser dev tools
+   - Verify app still works (sends empty history)
+   - Test with corrupted localStorage data
+   - Verify graceful fallback
+
+6. **Test sidebar UI:**
+   - Toggle sidebar visibility (desktop)
+   - Create 5+ conversations
+   - Verify list scrolls correctly
+   - Test active conversation highlighting
+   - Test mobile overlay behavior (resize window)
+
+### Success Criteria
+- ✅ Backend accepts conversation_history and stores conversations
+- ✅ LLM uses conversation history for context-aware responses
+- ✅ Frontend stores multiple conversations in localStorage
+- ✅ Conversation sidebar displays list of conversations
+- ✅ Users can switch between conversations
+- ✅ Users can create new conversations
+- ✅ Conversations persist across page reloads
+- ✅ Follow-up questions work with context
+- ✅ Error handling prevents storage failures from breaking queries
+- ✅ Sidebar is responsive (works on mobile)
+
+### Common Issues & Fixes
+
+**Issue:** Conversation history not improving responses
+**Fix:** Verify history is formatted correctly (role/content structure), check LLM API receives messages array
+
+**Issue:** Sidebar not showing conversations
+**Fix:** Check localStorage structure, verify conversation list is being loaded correctly
+
+**Issue:** Conversations lost on page reload
+**Fix:** Verify saveConversation() is called after each message, check localStorage is not being cleared
+
+**Issue:** Token limit exceeded with long conversations
+**Fix:** History is limited to last 10 messages, but verify this is working correctly
+
+**Issue:** Sidebar breaks layout on mobile
+**Fix:** Use overlay/modal pattern for mobile instead of fixed sidebar
+
+---
+
+## Phase 11: Evaluation Framework with Langfuse
 
 ### Objective
 Build systematic testing and metrics collection using Langfuse for observability and evaluation, running locally via Docker.
@@ -1469,7 +1648,7 @@ Langfuse provides:
 
 ---
 
-## 🎯 Next Steps After Phase 10
+## 🎯 Next Steps After Phase 11
 
 Once all phases complete:
 
@@ -1518,7 +1697,8 @@ Use this to track your progress:
 - [ ] Phase 7: Claude Integration
 - [ ] Phase 8: Full Pipeline
 - [ ] Phase 9: Frontend UI
-- [ ] Phase 10: Evaluation
+- [ ] Phase 10: Chat History Storage
+- [ ] Phase 11: Evaluation
 
 ---
 
