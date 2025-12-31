@@ -1,0 +1,74 @@
+/**
+ * Forms
+ * Verifyr Design System - Form Components
+ * 
+ * Input fields, email forms, and form-related elements
+ */
+
+/* Email Form Container */
+.email-form {
+    display: flex;
+    gap: var(--gap-sm);
+    max-width: var(--max-width-form);
+    margin: 0 auto;
+    background: var(--light-gray);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-input);
+    box-shadow: var(--shadow-md);
+}
+
+/* Email Input */
+.email-input {
+    flex: 1;
+    padding: var(--input-padding);
+    border: none;
+    background: transparent;
+    font-size: var(--font-size-md);
+    color: var(--dark);
+    font-family: var(--font-primary);
+}
+
+.email-input::placeholder {
+    color: var(--gray);
+}
+
+.email-input:focus {
+    outline: none;
+}
+
+/* Form Messages */
+.form-message {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-base);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-base);
+}
+
+.form-message.success {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.form-message.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+}
+
+/* Pilot Note */
+.pilot-note {
+    margin-top: var(--spacing-lg);
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+}
+
+/* Loading Spinner */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-full);
+    border-top-color: var(--white);
+    animation: spin 0.8s linear infinite;
+}
+

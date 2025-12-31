@@ -1,0 +1,35 @@
+/**
+ * Verifyr Design System - Master Import File
+ * 
+ * Import all design system files in the correct order
+ * 
+ * Usage: <link rel="stylesheet" href="design-system/design-system.css">
+ */
+
+/* 1. Design Tokens (must be first) */
+@import url('tokens/colors.css');
+@import url('tokens/typography.css');
+@import url('tokens/spacing.css');
+@import url('tokens/shadows.css');
+@import url('tokens/borders.css');
+
+/* 2. Animations */
+@import url('animations/keyframes.css');
+@import url('animations/transitions.css');
+
+/* 3. Base Styles */
+@import url('base.css');
+
+/* 4. Layout */
+@import url('layout/grid.css');
+@import url('layout/containers.css');
+@import url('layout/responsive.css');
+
+/* 5. Components */
+@import url('components/buttons.css');
+@import url('components/cards.css');
+@import url('components/navigation.css');
+@import url('components/forms.css');
+@import url('components/modals.css');
+@import url('components/sections.css');
+

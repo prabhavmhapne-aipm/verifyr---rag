@@ -1,0 +1,62 @@
+/**
+ * Grid System
+ * Verifyr Design System - Grid Layouts
+ * 
+ * Grid definitions for layouts and component arrangements
+ */
+
+/* Comparison Grid */
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-2xl);
+    margin-top: var(--spacing-2xl);
+}
+
+/* Trust Benefits Grid */
+.trust-benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-2xl);
+}
+
+/* Steps Grid */
+.step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-3xl);
+    align-items: start;
+}
+
+/* Hero Stats Grid */
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-2xl);
+    margin: var(--spacing-base) 0;
+    flex-wrap: wrap;
+}
+
+/* Navigation Grid */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: var(--nav-gap);
+}
+
+/* Email Form Grid */
+.email-form {
+    display: flex;
+    gap: var(--gap-sm);
+    max-width: var(--max-width-form);
+    margin: 0 auto;
+}
+

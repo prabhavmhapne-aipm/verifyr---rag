@@ -1,0 +1,27 @@
+# Phase 1: PDF Text Extraction
+PyMuPDF>=1.23.0
+pytesseract>=0.3.10
+Pillow>=10.0.0
+
+# Phase 2: Text Chunking
+langchain>=0.1.0
+langchain-text-splitters>=0.0.1
+
+# Phase 3: Vector Embeddings & Qdrant
+sentence-transformers>=2.2.0
+qdrant-client>=1.7.0
+torch>=2.0.0
+
+# Phase 4: BM25 Keyword Search
+rank-bm25>=0.2.2
+
+# Phase 6-8: FastAPI Backend & Claude Integration
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+anthropic>=0.18.0
+python-dotenv>=1.0.0
+
+# Utilities
+tqdm>=4.66.0  # Progress bars
+pydantic>=2.0.0  # Data validation

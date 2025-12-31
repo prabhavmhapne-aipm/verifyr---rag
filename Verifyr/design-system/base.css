@@ -1,0 +1,70 @@
+/**
+ * Base Styles
+ * Verifyr Design System - Base Reset and Global Styles
+ * 
+ * CSS reset, base element styles, and global utilities
+ */
+
+/* CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Body Styles */
+body {
+    font-family: var(--font-primary);
+    color: var(--dark);
+    background: var(--white);
+    overflow-x: hidden;
+    line-height: var(--line-height-normal);
+}
+
+/* Animated Background */
+.bg-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+}
+
+.bg-gradient::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--shadow-blue-light) 0%, transparent 70%);
+    border-radius: var(--radius-full);
+    animation: float 20s var(--ease-in-out) infinite;
+}
+
+.bg-gradient::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.06) 0%, transparent 70%);
+    border-radius: var(--radius-full);
+    animation: float 15s var(--ease-in-out) infinite reverse;
+}
+
+/* Scroll Animations */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+

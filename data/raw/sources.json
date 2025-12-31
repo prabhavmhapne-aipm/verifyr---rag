@@ -1,0 +1,56 @@
+{
+  "_comment": "This is an example sources.json file. Copy this to sources.json and update with your actual URLs.",
+  "_instructions": "For each product, map PDF filenames to their source URLs and names. Use forward slashes for paths.",
+  "garmin_forerunner_970_2025": {
+    "user_manual.pdf": {
+      "source_url": "https://www.garmin.com/de-DE/p/1462801/",
+      "source_name": "Garmin Official"
+    },
+    "specifications.pdf": {
+      "source_url": "https://www.garmin.com/de-DE/p/1462801/",
+      "source_name": "Garmin Official"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/heise.de_review_18072025": {
+      "source_url": "https://www.heise.de/bestenlisten/testbericht/garmin-forerunner-970-im-test-die-beste-sportuhr-2025-hat-jetzt-ekg/xx73c4h",
+      "source_name": "Heise.de"
+    },
+    "reviews/outdoorgearlab.com_review_18122025.pdf": {
+      "source_url": "https://www.outdoorgearlab.com/reviews/camping-and-hiking/gps-watch/garmin-forerunner-970",
+      "source_name": "Outdoor Gear Lab"
+    },
+    "reviews/trustedreviews.com_review_03072025.pdf": {
+      "source_url": "https://www.trustedreviews.com/reviews/garmin-forerunner-970",
+      "source_name": "Trusted Reviews"
+    }
+  },
+  "apple_watch_series11_2025": {
+    "user_manual.pdf": {
+      "source_url": "https://support.apple.com/manuals/apple-watch-series-11",
+      "source_name": "Apple Support"
+    },
+    "specifications.pdf": {
+      "source_url": "https://www.apple.com/de/apple-watch-series-11/specs/",
+      "source_name": "Apple Official"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/chip.de_review_09102025.pdf": {
+      "source_url": "https://www.chip.de/test/Apple-Watch-Series-11-im-Test_186301596.html",
+      "source_name": "Chip.de"
+    },
+    "reviews/stiftung_warentest_review_14112025.pdf": {
+      "source_url": "https://www.test.de/Smartwatches-und-Fitness-Tracker-im-Test-5254021-detail/IC19640-2323!SW19640-0266-02/",
+      "source_name": "Stiftung Warentest"
+    },
+    "reviews/techradar_review_16092025.pdf": {
+      "source_url": "https://www.techradar.com/health-fitness/smartwatches/apple-watch-series-11-review",
+      "source_name": "Techradar"
+    }
+  }
+}

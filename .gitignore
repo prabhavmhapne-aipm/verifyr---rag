@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Environment variables
+.env
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data
+data/raw/*.pdf
+data/processed/*.json
+data/processed/*.pkl
+data/qdrant_storage/
+
+# Logs
+*.log
+backend/server.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+/**
+ * Borders
+ * Verifyr Design System - Border Tokens
+ * 
+ * Border radius, border widths, and border styles
+ */
+
+:root {
+    /* Border Radius */
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 50px;        /* Pill shape */
+    --radius-full: 50%;        /* Circle */
+    
+    /* Border Widths */
+    --border-width-thin: 1px;
+    --border-width-medium: 3px;
+    --border-width-thick: 4px;
+    
+    /* Border Styles */
+    --border-light: var(--border-width-thin) solid var(--border-light);
+    --border-blue: var(--border-width-medium) solid var(--border-blue);
+    --border-red: var(--border-width-medium) solid var(--border-red);
+    --border-gradient: var(--border-width-thick) solid transparent;
+    
+    /* Border Radius Utilities */
+    --radius-button: var(--radius-sm);
+    --radius-card: var(--radius-lg);
+    --radius-input: var(--radius-xl);
+    --radius-badge: var(--radius-xl);
+    --radius-modal: 20px;
+    --radius-video: var(--radius-md);
+}
+
+/* Border Utilities */
+.border { border: var(--border-light); }
+.border-blue { border-left: var(--border-blue); }
+.border-red { border-left: var(--border-red); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-full { border-radius: var(--radius-xl); }
+.rounded-circle { border-radius: var(--radius-full); }
+

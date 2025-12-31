@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifyr - Product Comparison Assistant</title>
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="../Verifyr/design-system/design-system.css">
+
+    <!-- Chat-specific styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="header-top">
+                <h1 class="chat-title">Verifyr - Product Comparison Assistant</h1>
+
+                <!-- Controls: Language + Model Selection -->
+                <div class="header-controls">
+                    <!-- Language Switcher (matching landing page design) -->
+                    <div class="lang-switch">
+                        <span class="lang-option active" data-lang="en" onclick="switchLanguage('en')">EN</span>
+                        <span class="lang-option" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                    </div>
+
+                    <!-- Model Selector -->
+                    <select id="modelSelector" class="model-selector" onchange="updateModelNote()">
+                        <option value="claude-sonnet-4.5">Claude Sonnet 4.5</option>
+                        <option value="claude-3.5-haiku">Claude Haiku</option>
+                        <option value="gpt-4o">GPT-4o</option>
+                        <option value="gpt-4o-mini" selected>GPT-4o Mini</option>
+                    </select>
+                </div>
+            </div>
+            <p class="chat-subtitle" id="chatSubtitle">Ask me anything about Apple Watch Series 11 vs Garmin Forerunner 970</p>
+        </header>
+
+        <!-- Chat Messages Area -->
+        <div class="chat-messages" id="chatMessages">
+            <!-- Welcome message will be inserted by JavaScript -->
+        </div>
+
+        <!-- Quick Reply Buttons (Optional) -->
+        <div class="quick-replies" id="quickReplies">
+            <button class="quick-reply-btn" data-query="What is the battery life comparison?">
+                Battery Life
+            </button>
+            <button class="quick-reply-btn" data-query="Which watch is better for running?">
+                Best for Running
+            </button>
+            <button class="quick-reply-btn" data-query="Compare the waterproof ratings">
+                Waterproof Ratings
+            </button>
+            <button class="quick-reply-btn" data-query="What are the key differences?">
+                Key Differences
+            </button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <div class="chat-input-container">
+                <input
+                    type="text"
+                    id="chatInput"
+                    class="chat-input"
+                    placeholder="Ask about product features..."
+                    autocomplete="off"
+                >
+                <button id="sendButton" class="submit-btn" disabled>
+                    <span class="send-text">Send</span>
+                    <span class="loading" style="display: none;"></span>
+                </button>
+            </div>
+            <p class="input-note" id="inputNote">Press Enter to send • Powered by GPT-4o Mini</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="chat-footer">
+            <p>Data sources: Product specifications, user manuals, and reviews</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

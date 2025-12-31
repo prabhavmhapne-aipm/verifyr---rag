@@ -1,0 +1,117 @@
+/**
+ * Typography
+ * Verifyr Design System - Typography Tokens
+ * 
+ * Font families, sizes, weights, and line heights
+ */
+
+/* Font Imports */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700;800&display=swap');
+
+:root {
+    /* Font Families */
+    --font-primary: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Sora', sans-serif;
+    
+    /* Font Weights */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    
+    /* Font Sizes */
+    --font-size-xs: 0.875rem;      /* 14px */
+    --font-size-sm: 0.9rem;        /* 14.4px */
+    --font-size-base: 0.95rem;     /* 15.2px */
+    --font-size-md: 1rem;          /* 16px */
+    --font-size-lg: 1.05rem;       /* 16.8px */
+    --font-size-xl: 1.1rem;        /* 17.6px */
+    --font-size-2xl: 1.15rem;      /* 18.4px */
+    --font-size-3xl: 1.25rem;      /* 20px */
+    --font-size-4xl: 1.5rem;       /* 24px */
+    --font-size-5xl: 1.75rem;      /* 28px */
+    --font-size-6xl: 2rem;         /* 32px */
+    --font-size-7xl: 2.5rem;        /* 40px */
+    --font-size-8xl: 3rem;         /* 48px */
+    --font-size-9xl: 4.5rem;        /* 72px */
+    
+    /* Line Heights */
+    --line-height-tight: 1.1;
+    --line-height-normal: 1.6;
+    --line-height-relaxed: 1.7;
+    
+    /* Letter Spacing */
+    --letter-spacing-tight: -0.03em;
+    --letter-spacing-normal: -0.02em;
+    --letter-spacing-wide: 0.1em;
+    
+    /* Typography Scale */
+    --text-hero-title: clamp(2.5rem, 6vw, 4.5rem);
+    --text-section-title: clamp(2rem, 4vw, 3rem);
+    --text-cta-title: clamp(1.75rem, 4vw, 2.5rem);
+    --text-hero-subtitle: clamp(1.1rem, 2vw, 1.35rem);
+}
+
+/* Base Typography */
+body {
+    font-family: var(--font-primary);
+    color: var(--dark);
+    line-height: var(--line-height-normal);
+}
+
+/* Heading Styles */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-bold);
+    color: var(--dark);
+    line-height: var(--line-height-tight);
+}
+
+h1 {
+    font-size: var(--text-hero-title);
+    font-weight: var(--font-weight-extrabold);
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+h2 {
+    font-size: var(--text-section-title);
+    font-weight: var(--font-weight-bold);
+}
+
+h3 {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+}
+
+h4 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+}
+
+/* Text Utilities */
+.text-primary {
+    color: var(--primary-blue);
+}
+
+.text-dark {
+    color: var(--dark);
+}
+
+.text-gray {
+    color: var(--gray);
+}
+
+.text-white {
+    color: var(--white);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+

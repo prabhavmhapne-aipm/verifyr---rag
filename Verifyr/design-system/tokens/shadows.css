@@ -1,0 +1,53 @@
+/**
+ * Shadows
+ * Verifyr Design System - Shadow Tokens
+ * 
+ * Box shadow definitions for depth and elevation
+ */
+
+:root {
+    /* Subtle Shadows */
+    --shadow-sm: 0 2px 8px var(--shadow-dark-light);
+    --shadow-md: 0 2px 12px var(--shadow-dark-light);
+    --shadow-lg: 0 4px 12px var(--shadow-dark-medium);
+    
+    /* Elevated Shadows */
+    --shadow-xl: 0 8px 24px var(--shadow-dark-medium);
+    --shadow-2xl: 0 20px 50px var(--shadow-dark-medium);
+    
+    /* Colored Shadows (Blue) */
+    --shadow-blue-sm: 0 2px 8px var(--shadow-blue-medium);
+    --shadow-blue-md: 0 4px 12px var(--shadow-blue-medium);
+    --shadow-blue-lg: 0 6px 20px var(--shadow-blue-strong);
+    
+    /* Button Shadows */
+    --shadow-button: 0 4px 12px var(--shadow-blue-medium);
+    --shadow-button-hover: 0 6px 20px var(--shadow-blue-strong);
+    
+    /* Card Shadows */
+    --shadow-card: 0 2px 12px var(--shadow-dark-light);
+    --shadow-card-hover: 0 8px 24px var(--shadow-dark-medium);
+    
+    /* Video Container Shadow */
+    --shadow-video: 
+        0 20px 50px var(--shadow-dark-medium),
+        0 0 0 1px var(--overlay-light);
+    
+    /* Modal Shadow */
+    --shadow-modal: 0 10px 30px var(--shadow-dark-strong);
+    
+    /* Play Button Shadow */
+    --shadow-play: 0 10px 30px var(--shadow-dark-strong);
+    --shadow-play-hover: 0 15px 40px rgba(0, 0, 0, 0.25);
+    
+    /* Step Number Shadow */
+    --shadow-step: 0 0 0 8px var(--shadow-blue-light);
+}
+
+/* Shadow Utilities */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-blue { box-shadow: var(--shadow-blue-md); }
+

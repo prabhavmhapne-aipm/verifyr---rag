@@ -1,0 +1,533 @@
+/**
+ * Verifyr Chat Interface - Chat-Specific Styles
+ *
+ * Uses Verifyr design system tokens and components
+ * All colors, spacing, typography from design system CSS variables
+ */
+
+/* ============================================================================
+   Layout & Container
+   ============================================================================ */
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    font-family: var(--font-primary);
+}
+
+.chat-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-lg);
+}
+
+/* ============================================================================
+   Header
+   ============================================================================ */
+
+.chat-header {
+    padding: var(--spacing-xl);
+    border-bottom: 1px solid var(--border-light);
+    background: var(--white);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow: var(--shadow-md);
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-base);
+}
+
+.chat-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--dark);
+    margin: 0;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-base);
+}
+
+.chat-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--gray);
+    margin: 0;
+    text-align: center;
+}
+
+/* Model Selector */
+.model-selector {
+    padding: var(--spacing-sm) var(--spacing-base);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+    background: var(--light-gray);
+    color: var(--dark);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.model-selector:hover {
+    border-color: var(--primary-blue);
+    background: var(--white);
+}
+
+.model-selector:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============================================================================
+   Messages Area
+   ============================================================================ */
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-xl);
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar Styling */
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: var(--radius-sm);
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: var(--gray);
+    border-radius: var(--radius-sm);
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-blue);
+}
+
+/* ============================================================================
+   Message Bubbles
+   ============================================================================ */
+
+.message {
+    max-width: 75%;
+    animation: slideUp 0.3s ease-out;
+}
+
+.message-content {
+    padding: var(--spacing-base) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    line-height: var(--line-height-normal);
+    font-size: var(--font-size-base);
+    word-wrap: break-word;
+}
+
+/* User Message (Right-aligned, Blue) */
+.user-message {
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.user-message .message-content {
+    background: var(--primary-blue);
+    color: var(--white);
+    box-shadow: var(--shadow-card);
+}
+
+/* Assistant Message (Left-aligned, Gray) */
+.assistant-message {
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+.assistant-message .message-content {
+    background: var(--light-gray);
+    color: var(--dark);
+    box-shadow: var(--shadow-card);
+}
+
+/* Welcome Message */
+.welcome-message {
+    max-width: 85%;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--bg-gradient-blue-start) 0%, var(--bg-gradient-blue-end) 100%);
+}
+
+.welcome-message .message-content {
+    background: transparent;
+    box-shadow: none;
+}
+
+.welcome-text-de {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--dark);
+    font-weight: var(--font-weight-semibold);
+}
+
+.welcome-text-en {
+    margin: 0;
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+}
+
+/* Loading Message */
+.loading-message .message-content {
+    padding: var(--spacing-lg);
+}
+
+.loading-dots {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.loading-dots span {
+    width: 8px;
+    height: 8px;
+    background: var(--gray);
+    border-radius: var(--radius-full);
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+/* Error Message */
+.error-message {
+    max-width: 85%;
+    align-self: center;
+}
+
+/* ============================================================================
+   Sources
+   ============================================================================ */
+
+.message-sources {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-light);
+}
+
+.sources-title {
+    font-size: var(--font-size-sm);
+    font-weight: normal;
+    color: var(--gray);
+    margin-bottom: var(--spacing-xs);
+    font-family: monospace;
+}
+
+.source-card {
+    background: transparent;
+    padding: 2px 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    border-left: none;
+    box-shadow: none;
+    transition: none;
+    font-weight: normal;
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+    font-family: monospace;
+}
+
+.source-link {
+    color: var(--primary-blue, #0066cc);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.2s;
+}
+
+.source-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.source-link-icon {
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+.source-name {
+    color: var(--gray, #666);
+    font-size: 0.9em;
+    margin-left: 0.5rem;
+    font-family: var(--font-primary, sans-serif);
+}
+
+/* ============================================================================
+   Metadata
+   ============================================================================ */
+
+.message-metadata {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    gap: var(--spacing-base);
+    flex-wrap: wrap;
+}
+
+.metadata-item {
+    font-size: var(--font-size-sm);
+    color: var(--gray);
+    font-family: monospace;
+}
+
+/* ============================================================================
+   Quick Replies
+   ============================================================================ */
+
+.quick-replies {
+    padding: var(--spacing-base) var(--spacing-xl);
+    background: var(--white);
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.quick-reply-btn {
+    padding: var(--spacing-sm) var(--spacing-base);
+    border-radius: var(--radius-xl);
+    background: var(--light-gray);
+    border: 1px solid var(--border-light);
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+}
+
+.quick-reply-btn:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-blue-sm);
+}
+
+.quick-reply-btn:active {
+    transform: translateY(0);
+}
+
+/* ============================================================================
+   Input Area
+   ============================================================================ */
+
+.chat-input-area {
+    padding: var(--spacing-xl);
+    background: var(--white);
+    border-top: 1px solid var(--border-light);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+.chat-input-container {
+    display: flex;
+    gap: var(--spacing-sm);
+    background: var(--light-gray);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-input);
+    box-shadow: var(--shadow-sm);
+}
+
+.chat-input {
+    flex: 1;
+    padding: var(--input-padding);
+    border: none;
+    background: transparent;
+    font-size: var(--font-size-md);
+    color: var(--dark);
+    font-family: var(--font-primary);
+}
+
+.chat-input::placeholder {
+    color: var(--gray);
+}
+
+.chat-input:focus {
+    outline: none;
+}
+
+.chat-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Send Button (uses design system .submit-btn) */
+.submit-btn {
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-note {
+    margin-top: var(--spacing-sm);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--gray);
+}
+
+/* ============================================================================
+   Footer
+   ============================================================================ */
+
+.chat-footer {
+    padding: var(--spacing-base) 0;
+    text-align: center;
+}
+
+.chat-footer p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--gray);
+}
+
+/* ============================================================================
+   Responsive Design - Mobile
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .chat-container {
+        padding: var(--spacing-sm);
+    }
+
+    .chat-header {
+        padding: var(--spacing-lg) var(--spacing-base);
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-base);
+    }
+
+    .chat-title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .header-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .model-selector {
+        flex: 1;
+        font-size: var(--font-size-xs);
+    }
+
+    .chat-subtitle {
+        font-size: var(--font-size-sm);
+    }
+
+    .chat-messages {
+        padding: var(--spacing-base);
+        gap: var(--spacing-base);
+    }
+
+    .message {
+        max-width: 90%;
+    }
+
+    .welcome-message {
+        max-width: 95%;
+    }
+
+    .quick-replies {
+        padding: var(--spacing-base);
+        gap: var(--spacing-xs);
+    }
+
+    .quick-reply-btn {
+        font-size: var(--font-size-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .chat-input-area {
+        padding: var(--spacing-base);
+    }
+
+    .submit-btn {
+        min-width: 80px;
+        padding: var(--spacing-sm) var(--spacing-base);
+        font-size: var(--font-size-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .message-content {
+        font-size: var(--font-size-sm);
+    }
+
+    .quick-replies {
+        flex-direction: column;
+    }
+
+    .quick-reply-btn {
+        width: 100%;
+    }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+    .chat-header,
+    .chat-input-area,
+    .chat-footer,
+    .quick-replies {
+        display: none;
+    }
+
+    .chat-messages {
+        height: auto;
+        overflow: visible;
+    }
+
+    .message {
+        page-break-inside: avoid;
+    }
+}

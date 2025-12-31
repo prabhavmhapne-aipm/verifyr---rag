@@ -1,0 +1,47 @@
+/**
+ * Navigation
+ * Verifyr Design System - Navigation Components
+ * 
+ * Header, navigation bar, and logo styles
+ */
+
+/* Navigation Bar */
+nav {
+    padding: var(--nav-padding);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: var(--max-width-container);
+    margin: 0 auto;
+    position: relative;
+    z-index: 100;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: var(--nav-gap);
+}
+
+/* Logo */
+.logo {
+    font-family: var(--font-display);
+    font-size: var(--font-size-5xl);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--primary-blue);
+    letter-spacing: var(--letter-spacing-normal);
+}
+
+/* Hero Badge */
+.hero-badge {
+    display: inline-block;
+    background: var(--light-blue);
+    color: var(--dark-blue);
+    padding: var(--spacing-sm) 1.25rem;
+    border-radius: var(--radius-badge);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-xl);
+    animation: fadeInUp 0.6s ease;
+}
+

@@ -1,0 +1,62 @@
+/**
+ * Containers
+ * Verifyr Design System - Container Definitions
+ * 
+ * Max-width containers and layout constraints
+ */
+
+:root {
+    /* Container Max Widths */
+    --max-width-container: 1200px;
+    --max-width-content: 1000px;
+    --max-width-cta: 600px;
+    --max-width-form: 480px;
+    --max-width-modal: 700px;
+}
+
+/* Base Container */
+.container {
+    max-width: var(--max-width-container);
+    margin: 0 auto;
+    padding: 0 var(--spacing-xl);
+}
+
+/* Content Container */
+.content-container {
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+}
+
+/* Section Container */
+.section-container {
+    max-width: var(--max-width-container);
+    margin: var(--section-margin);
+    padding: var(--section-padding);
+}
+
+/* Hero Container */
+.hero {
+    max-width: var(--max-width-container);
+    margin: 0 auto;
+    padding: var(--hero-padding);
+}
+
+/* CTA Container */
+.cta-section {
+    max-width: var(--max-width-cta);
+    margin: var(--section-margin);
+    padding: var(--section-padding);
+}
+
+/* Form Container */
+.email-form {
+    max-width: var(--max-width-form);
+    margin: 0 auto;
+}
+
+/* Modal Container */
+.modal-content {
+    max-width: var(--max-width-modal);
+    width: 100%;
+}
+

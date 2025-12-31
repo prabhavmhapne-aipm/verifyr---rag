@@ -1,0 +1,54 @@
+/**
+ * Color Palette
+ * Verifyr Design System - Color Tokens
+ * 
+ * All color values used throughout the application
+ */
+
+:root {
+    /* Primary Colors */
+    --primary-blue: #3B82F6;
+    --dark-blue: #1E40AF;
+    --light-blue: #DBEAFE;
+    --accent: #60A5FA;
+    
+    /* Neutral Colors */
+    --dark: #0F172A;
+    --gray: #64748B;
+    --light-gray: #F1F5F9;
+    --white: #FFFFFF;
+    
+    /* Semantic Colors */
+    --error: #EF4444;
+    --error-light: rgba(239, 68, 68, 0.05);
+    --success: #065F46;
+    --success-bg: #D1FAE5;
+    --error-bg: #FEE2E2;
+    --error-text: #991B1B;
+    
+    /* Background Gradients */
+    --bg-gradient-start: #FFFFFF;
+    --bg-gradient-end: #F8FAFC;
+    --bg-gradient-blue-start: #FFFFFF;
+    --bg-gradient-blue-end: #F0F9FF;
+    --bg-gradient-light-start: #F0F9FF;
+    --bg-gradient-light-end: #E0F2FE;
+    
+    /* Overlay Colors */
+    --overlay-dark: rgba(0, 0, 0, 0.7);
+    --overlay-light: rgba(0, 0, 0, 0.03);
+    
+    /* Border Colors */
+    --border-light: rgba(0, 0, 0, 0.06);
+    --border-blue: var(--primary-blue);
+    --border-red: var(--error);
+    
+    /* Shadow Colors */
+    --shadow-blue-light: rgba(59, 130, 246, 0.08);
+    --shadow-blue-medium: rgba(59, 130, 246, 0.2);
+    --shadow-blue-strong: rgba(59, 130, 246, 0.3);
+    --shadow-dark-light: rgba(0, 0, 0, 0.04);
+    --shadow-dark-medium: rgba(0, 0, 0, 0.08);
+    --shadow-dark-strong: rgba(0, 0, 0, 0.2);
+}
+

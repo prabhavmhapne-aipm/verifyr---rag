@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifyr - Dein Health-Tech Kaufberater</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="description" content="Verifyr ist dein persönlicher AI-Assistent für Health-Tech Produkte. Vergleiche Produkte, lies kuratierte Testberichte und triff sichere Kaufentscheidungen – neutral, transparent und in Sekunden.">
+    <meta name="keywords" content="Health-Tech, Produktvergleich, Kaufberatung, AI-Assistent, neutrale Empfehlungen, Testberichte, product comparison, AI assistant, health tech">
+    <meta name="author" content="Verifyr">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Language Alternatives (für Google) -->
+    <link rel="alternate" hreflang="de" href="https://veryfyr.netlify.app/?lang=de">
+    <link rel="alternate" hreflang="en" href="https://veryfyr.netlify.app/?lang=en">
+    <link rel="alternate" hreflang="x-default" href="https://veryfyr.netlify.app/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://veryfyr.netlify.app/">
+    <meta property="og:title" content="Verifyr - Dein Health-Tech Kaufberater">
+    <meta property="og:description" content="Nie wieder stundenlang Produkte vergleichen. Verifyr ist dein persönlicher AI-Assistent, der Health-Tech Produkte für dich vergleicht – neutral, transparent und in Sekunden.">
+    <meta property="og:image" content="https://veryfyr.netlify.app/favicon-512x512.png">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://veryfyr.netlify.app/">
+    <meta property="twitter:title" content="Verifyr - Dein Health-Tech Kaufberater">
+    <meta property="twitter:description" content="Nie wieder stundenlang Produkte vergleichen. Verifyr ist dein persönlicher AI-Assistent für Health-Tech Produkte.">
+    <meta property="twitter:image" content="https://veryfyr.netlify.app/favicon-512x512.png">
+    
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #3B82F6;
+            --dark-blue: #1E40AF;
+            --light-blue: #DBEAFE;
+            --accent: #60A5FA;
+            --dark: #0F172A;
+            --gray: #64748B;
+            --light-gray: #F1F5F9;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--dark);
+            background: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+        }
+
+        .bg-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-gradient::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, 30px) scale(1.1); }
+        }
+
+        /* Navigation */
+        nav {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            letter-spacing: -0.02em;
+        }
+
+        /* Language Switcher */
+        .lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light-gray);
+            padding: 0.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .lang-option {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--gray);
+        }
+
+        .lang-option.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .lang-option:hover:not(.active) {
+            color: var(--primary-blue);
+        }
+
+        .nav-cta {
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--light-blue);
+            color: var(--dark-blue);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            letter-spacing: -0.03em;
+            animation: fadeInUp 0.6s ease 0.2s backwards;
+        }
+
+        .hero h1 .highlight {
+            color: var(--primary-blue);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0.1em;
+            left: 0;
+            width: 100%;
+            height: 0.15em;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent));
+            opacity: 0.3;
+            border-radius: 10px;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+            animation: fadeInUp 0.6s ease 0.4s backwards;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease 0.6s backwards;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Sora', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+        }
+
+        /* Video Section */
+        .video-section {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0 2rem;
+            animation: fadeInUp 0.6s ease 0.8s backwards;
+        }
+
+        .video-container {
+            position: relative;
+            background: white;
+            border-radius: 24px;
+            padding: 1rem;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+
+        .video-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent));
+        }
+
+        .video-placeholder {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background: linear-gradient(135deg, var(--light-blue) 0%, #E0E7FF 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .video-placeholder:hover {
+            transform: scale(1.02);
+        }
+
+        .video-placeholder-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .video-placeholder:hover .play-button {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .play-button::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 20px solid var(--primary-blue);
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 4px;
+        }
+
+        .video-text {
+            color: var(--dark-blue);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .video-caption {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .video-description {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .video-description strong {
+            display: block;
+            margin-top: 1rem;
+            color: var(--primary-blue);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        /* Problem-Solution Section */
+        .problem-solution {
+            max-width: 1200px;
+            margin: 8rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            color: var(--primary-blue);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.15rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .comparison-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-card.problem {
+            border-left: 3px solid #EF4444;
+        }
+
+        .comparison-card.problem::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .comparison-card.solution {
+            border-left: 3px solid var(--primary-blue);
+            background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%);
+        }
+
+        .comparison-card.solution::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent);
+            pointer-events: none;
+        }
+
+        .card-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .card-icon-wrapper svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .card-list {
+            list-style: none;
+        }
+
+        .card-list li {
+            padding: 0.875rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--gray);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .card-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 1.125rem;
+            width: 18px;
+            height: 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23EF4444'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M6 18L18 6M6 6l12 12'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .solution .card-list li::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233B82F6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+        }
+
+        /* How it Works */
+        .how-it-works {
+            background: var(--dark);
+            color: white;
+            padding: 8rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233B82F6' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .how-it-works .section-header {
+            position: relative;
+            z-index: 1;
+        }
+
+        .how-it-works .section-label {
+            color: var(--accent);
+        }
+
+        .how-it-works .section-title,
+        .how-it-works .section-description {
+            color: white;
+        }
+
+        .steps-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+            align-items: start;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Sora', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .step-content h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+
+        .step-content p {
+            color: #94A3B8;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* Trust & Confidence Section */
+        .trust-section {
+            max-width: 1200px;
+            margin: 8rem auto;
+            padding: 4rem 3rem;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%);
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-left: 3px solid var(--primary-blue);
+            position: relative;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .trust-section .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .trust-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .trust-benefit {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .trust-benefit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .trust-benefit h4 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .trust-benefit p {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            max-width: 600px;
+            margin: 8rem auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .cta-section .subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .email-form {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--light-gray);
+            padding: 0.5rem;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        .email-input::placeholder {
+            color: var(--gray);
+        }
+
+        .email-input:focus {
+            outline: none;
+        }
+
+        .submit-btn {
+            padding: 1rem 2rem;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .submit-btn:hover {
+            background: var(--dark-blue);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .pilot-note {
+            margin-top: 1.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .form-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+
+        .form-message.success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .form-message.error {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-left {
+                gap: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .lang-switch {
+                font-size: 0.8rem;
+                padding: 0.4rem;
+            }
+
+            .lang-option {
+                padding: 0.4rem 0.75rem;
+            }
+
+            .nav-cta {
+                padding: 0.65rem 1.25rem;
+                font-size: 0.9rem;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .step {
+                grid-template-columns: 1fr;
+            }
+
+            .step-number {
+                margin: 0 auto;
+            }
+
+            .email-form {
+                flex-direction: column;
+                border-radius: 16px;
+                padding: 0.75rem;
+            }
+
+            .email-input {
+                padding: 1rem 1.25rem;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .trust-section {
+                padding: 3rem 1.5rem;
+            }
+
+            .trust-benefits {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .faq-button {
+                padding: 0.65rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Legal Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 20px;
+            padding: 3rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 36px;
+            height: 36px;
+            background: var(--light-gray);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--gray);
+            transform: rotate(90deg);
+        }
+
+        .modal-close::before,
+        .modal-close::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 2px;
+            background: var(--dark);
+        }
+
+        .modal-close::before {
+            transform: rotate(45deg);
+        }
+
+        .modal-close::after {
+            transform: rotate(-45deg);
+        }
+
+        .modal-content h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-content p {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .modal-content ul {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .modal-content strong {
+            color: var(--dark);
+        }
+
+        .modal-content a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .modal-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* FAQ Button */
+        .faq-button {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .faq-button:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+
+        /* FAQ Items */
+        .faq-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-item h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            margin-top: 0;
+        }
+
+        .faq-item p {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .faq-item strong {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* Footer Links */
+        footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: var(--dark-blue);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <nav>
+        <div class="nav-left">
+            <div class="logo">Verifyr</div>
+            <div class="lang-switch">
+                <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+            </div>
+        </div>
+        <a href="#early-access" class="nav-cta" data-i18n="nav.cta">Early Access</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge" data-i18n="hero.badge">Dein intelligenter Health-Tech Kaufberater</div>
+        
+        <h1>
+            <span data-i18n="hero.title1">Nie wieder stundenlang</span><br>
+            <span class="highlight" data-i18n="hero.title2">Produkte vergleichen</span>
+        </h1>
+        
+        <p>
+            <span data-i18n="hero.subtitle">Verifyr ist dein conversational KI-Assistent, der Health-Tech Produkte für dich vergleicht, Testberichte kuratiert und alle deine Fragen beantwortet – markenunabhängig, transparent und in Sekunden.</span> 
+            <strong data-i18n="hero.subtitleEmotional">Kaufentscheidungen mit Selbstvertrauen treffen – keine Zweifel, kein Bedauern.</strong>
+        </p>
+
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">20+</span>
+                <span class="stat-label" data-i18n="hero.stat1">Tabs gespart</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">50%</span>
+                <span class="stat-label" data-i18n="hero.stat2">Zeitersparnis</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">100%</span>
+                <span class="stat-label" data-i18n="hero.stat3">Markenunabhängig</span>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="#early-access" class="nav-cta" data-i18n="nav.cta">Early Access</a>
+        </div>
+    </section>
+
+    <section class="video-section">
+        <div class="video-container">
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 16px;">
+                <iframe 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 16px;"
+                    src="https://www.youtube-nocookie.com/embed/Q4MmyVybU2w?rel=0&modestbranding=1" 
+                    title="Verifyr Prototype Demo" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <p class="video-description">
+                <span data-i18n="video.intro">
+                    Du brauchst einen neuen Fitness-Tracker. Du öffnest 15 Tabs, vergleichst Specs, liest widersprüchliche Reviews – und weißt immer noch nicht, welchen du kaufen sollst. Kommt dir bekannt vor?
+                </span>
+                <br><br>
+                <strong data-i18n="video.cta">
+                    Sieh dir an, wie Verifyr deine perfekte Wahl findet
+                </strong>
+            </p>
+            </div>
+    </section>
+
+    <section class="problem-solution">
+        <div class="section-header">
+            <div class="section-label" data-i18n="problem.label">Das Problem</div>
+            <h2 class="section-title" data-i18n="problem.title">Produktvergleich ist kompliziert</h2>
+            <p class="section-description" data-i18n="problem.description">
+                Besonders bei technischen Health-Tech Produkten verbringen wir Stunden mit Recherche
+            </p>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="comparison-card problem">
+                <h3 class="card-title" data-i18n="problem.without.title">Ohne Verifyr</h3>
+                <ul class="card-list">
+                    <li data-i18n="problem.without.item1">20+ Browser-Tabs durchsuchen</li>
+                    <li data-i18n="problem.without.item2">Widersprüchliche Reviews lesen</li>
+                    <li data-i18n="problem.without.item3">Komplexe Specs nicht verstehen</li>
+                    <li data-i18n="problem.without.item4">Unsicher bei der Entscheidung</li>
+                    <li data-i18n="problem.without.item5">Stunden verschwendet</li>
+                    <li data-i18n="problem.without.item6">Provisionsbasierte "Empfehlungen"</li>
+                    <li data-i18n="problem.without.item7">Keine Quellen oder Transparenz</li>
+                    <li data-i18n="problem.without.item8">Zweifel und Kaufreue</li>
+                </ul>
+            </div>
+
+            <div class="comparison-card solution">
+                <h3 class="card-title" data-i18n="problem.with.title">Mit Verifyr</h3>
+                <ul class="card-list">
+                    <li data-i18n="problem.with.item1">Alle Infos in einer App</li>
+                    <li data-i18n="problem.with.item2">Kuratierte, neutrale Reviews</li>
+                    <li data-i18n="problem.with.item3">Verständliche Erklärungen</li>
+                    <li data-i18n="problem.with.item4">Sichere Kaufentscheidung mit Selbstvertrauen</li>
+                    <li data-i18n="problem.with.item5">Minuten statt Stunden</li>
+                    <li data-i18n="problem.with.item6">100% transparente Empfehlungen</li>
+                    <li data-i18n="problem.with.item7">Markenunabhängig mit Quellen</li>
+                    <li data-i18n="problem.with.item8">Keine Zweifel, keine Kaufreue</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="section-header">
+            <div class="section-label" data-i18n="howItWorks.label">So funktioniert's</div>
+            <h2 class="section-title" data-i18n="howItWorks.title">Deine Empfehlung in 3 Schritten</h2>
+            <p class="section-description" data-i18n="howItWorks.description">
+                Einfach, schnell und auf deine Bedürfnisse zugeschnitten
+            </p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 data-i18n="howItWorks.step1.title">Sag uns, was du suchst</h3>
+                    <p data-i18n="howItWorks.step1.description">
+                        Wähle deine Kategorie (Smartwatch, Heart Rate Monitor, Metabolic Monitor, Frauen Gesundheit, etc.) und 
+                        beantworte ein paar Fragen zu deinen Prioritäten und Budget. 
+                        Unsere KI versteht genau, was für dich wichtig ist.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 data-i18n="howItWorks.step2.title">Verifyr analysiert für dich</h3>
+                    <p data-i18n="howItWorks.step2.description">
+                        In Sekunden durchsuchen wir tausende Produkte, Reviews, Testberichte 
+                        und Expert-Meinungen. Wir kuratieren nur relevante, neutrale Informationen – 
+                        ohne versteckte Provisionen oder Werbung.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 data-i18n="howItWorks.step3.title">Erhalte deine personalisierte Empfehlung</h3>
+                    <p data-i18n="howItWorks.step3.description">
+                        Du bekommst 3-4 passende Empfehlungen mit Side-by-Side Vergleich, verständlichen Erklärungen und Links zu Shops, Video-Reviews und Experten-Meinungen. Hast du noch Fragen? Unser produkt-spezifischer QA Chat beantwortet sie sofort.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Button -->
+        <div style="text-align: center; margin-top: 3rem; position: relative; z-index: 1;">
+            <button class="faq-button" onclick="openModal('faq')" data-i18n="howItWorks.faqButton">
+                Häufige Fragen
+            </button>
+        </div>
+    </section>
+
+    <section class="trust-section">
+        <div class="section-header">
+            <div class="section-label" data-i18n="trust.label">Vertrauen & Sicherheit</div>
+            <h2 class="section-title" data-i18n="trust.title">Kaufentscheidungen mit Selbstvertrauen treffen</h2>
+            <p class="section-description" data-i18n="trust.description">
+                Mit Verifyr triffst du Kaufentscheidungen mit voller Überzeugung und Klarheit.
+            </p>
+        </div>
+
+        <div class="trust-benefits">
+            <div class="trust-benefit">
+                <h4 data-i18n="trust.benefit1.title">Keine Zweifel mehr</h4>
+                <p data-i18n="trust.benefit1.description">
+                    Du bekommst klare, verständliche Empfehlungen mit transparenten Begründungen. Keine Unsicherheit, keine Kaufreue.
+                </p>
+            </div>
+            <div class="trust-benefit">
+                <h4 data-i18n="trust.benefit2.title">Transparente Quellen</h4>
+                <p data-i18n="trust.benefit2.description">
+                    Alle Empfehlungen sind mit Links zu Shops, Video-Reviews und Experten-Meinungen belegt. Du siehst genau, worauf sich unsere Empfehlungen stützen.
+                </p>
+            </div>
+            <div class="trust-benefit">
+                <h4 data-i18n="trust.benefit3.title">Selbstvertrauen & Gewissheit</h4>
+                <p data-i18n="trust.benefit3.description">
+                    Die Vorfreude auf eine kluge Investition in deine Gesundheit – ohne Zweifel oder Kaufreue.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="early-access">
+        <h2 data-i18n="cta.title">Join the Waitlist</h2>
+        <p class="subtitle" style="margin-bottom: 0.25rem;" data-i18n="cta.subtitle">
+            Sei unter den Ersten, die Verifyr 100% kostenlos testen
+        </p>
+        <p class="subtitle" style="margin-top: 0; margin-bottom: 2.5rem;" data-i18n="cta.subtitle2">
+            Ohne SPAM - Du bekommst nur 2 E-Mails: Bestätigung und Link zum Testen!
+        </p>
+        
+        <form class="email-form" id="earlyAccessForm">
+            <input 
+                type="email" 
+                class="email-input" 
+                data-i18n-placeholder="cta.placeholder"
+                placeholder="Your Email" 
+                required
+                id="emailInput"
+            >
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span data-i18n="cta.button">Join Waitlist</span>
+            </button>
+        </form>
+        
+        <p class="pilot-note" data-i18n="cta.note">In Validation-Phase</p>
+        
+        <p class="pilot-note" style="margin-top: 0.5rem; color: var(--primary-blue); font-weight: 600;" data-i18n="cta.freeForever">
+            Die App bleibt für dich immer kostenlos
+        </p>
+        
+        <div id="formMessage"></div>
+    </section>
+
+    <footer>
+        <p>
+            <span data-i18n="footer.copyright">© 2025 Verifyr</span><br>
+            <span data-i18n="footer.tagline">100% unabhängig | Verifiziert | Für dich</span>
+        </p>
+        <p style="margin-top: 1rem;">
+            <a onclick="openModal('impressum')" data-i18n="footer.impressum">Impressum</a> | 
+            <a onclick="openModal('datenschutz')" data-i18n="footer.privacy">Datenschutz</a>
+        </p>
+    </footer>
+
+    <!-- Impressum Modal -->
+    <div id="impressum" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('impressum')"></button>
+            <h2>Impressum</h2>
+            
+            <h3>Angaben gemäß § 5 TMG</h3>
+            <p>
+                <strong>Prabhav Mhapne</strong><br>
+                Kalkumer Straße 36<br>
+                40468 Düsseldorf<br>
+                Deutschland
+            </p>
+
+            <h3>Kontakt</h3>
+            <p>
+                E-Mail: prabhavmhapne@gmail.com
+            </p>
+
+            <h3>Hinweis zur Streitbeilegung</h3>
+            <p>
+                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: 
+                <a href="https://consumer-redress.ec.europa.eu/index_de" target="_blank" rel="noopener">https://consumer-redress.ec.europa.eu/index_de</a><br>
+                Unsere E-Mail-Adresse finden Sie oben im Impressum.
+            </p>
+            <p>
+                Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer 
+                Verbraucherschlichtungsstelle teilzunehmen.
+            </p>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div id="faq" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('faq')"></button>
+            <h2 data-i18n="faq.title">Häufige Fragen</h2>
+            
+            <div class="faq-item">
+                <h3 data-i18n="faq.q1.question">Was macht der QA Chat?</h3>
+                <p data-i18n="faq.q1.answer">
+                    Der QA Chat ist ein produkt-spezifischer Knowledge Bot, der sowohl Pre-Kauf als auch Post-Kauf Support bietet. 
+                    <strong>Pre-Kauf:</strong> Er beantwortet sofortige Rückfragen zu den empfohlenen Produkten, klärt Unsicherheiten, 
+                    erklärt technische Details verständlich und hilft bei der Kaufentscheidung. 
+                    <strong>Post-Kauf:</strong> Er unterstützt bei der Produkt-Einführung, Setup-Anleitungen, How-to Guides und Troubleshooting. 
+                    So kannst du selbstbewusst deine Kaufentscheidung treffen und dein Produkt erfolgreich nutzen.
+                </p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-i18n="faq.q2.question">Was ist der Unterschied zu ChatGPT, Gemini und co?</h3>
+                <p data-i18n="faq.q2.answer">
+                    Verifyr ist speziell für Health-Tech Produktvergleiche entwickelt und bietet mehrere Vorteile: 
+                    <strong>Produktspezifisches Wissen:</strong> Unser QA Chat ist auf konkrete Produkte und deren Details trainiert, 
+                    nicht nur allgemeines Wissen. <strong>Neutrale Empfehlungen:</strong> Wir sind 100% markenunabhängig und arbeiten 
+                    ohne versteckte Provisionen – im Gegensatz zu generischen KI-Tools, die keine Produktvergleiche durchführen. 
+                    <strong>Transparente Quellen:</strong> Alle Empfehlungen sind mit Links zu Shops, Video-Reviews und Experten-Meinungen belegt. 
+                    <strong>Kombinierter Flow:</strong> Wir kombinieren Produktvergleich, Review-Kuratierung und Q&A in einem Flow – 
+                    keine 10 Tabs Recherche mehr nötig.
+                </p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-i18n="faq.q3.question">Wie unterscheidet sich das zu klassischen Vergleichsportalen?</h3>
+                <p data-i18n="faq.q3.answer">
+                    Klassische Vergleichsportale zeigen oft nur Listen mit Filtern und Provisions-Rankings. Verifyr geht weiter: 
+                    <strong>Conversational:</strong> Wir führen dich durch einen Dialog, um deine Bedürfnisse zu verstehen, 
+                    statt dass du selbst durch Filter navigieren musst. <strong>Personalisierte Empfehlungen:</strong> Du bekommst 
+                    3-4 passende Empfehlungen mit transparenten Begründungen, nicht nur eine sortierte Liste. 
+                    <strong>QA Chat:</strong> Du kannst sofort Rückfragen stellen und Unsicherheiten klären – das bieten klassische 
+                    Portale nicht. <strong>Kuratierte Reviews:</strong> Wir sammeln und kuratieren Reviews aus vielen Quellen 
+                    und präsentieren sie verständlich, statt dich durch 100 Reviews scrollen zu lassen. 
+                    <strong>100% Transparenz:</strong> Keine versteckten Provisionen, alle Quellen sind sichtbar.
+                </p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-i18n="faq.q4.question">Wie werden die Empfehlungen erstellt?</h3>
+                <p data-i18n="faq.q4.answer">
+                    Unsere KI durchsucht in Sekunden tausende Produkte, Reviews, Testberichte und Expert-Meinungen. 
+                    Wir kuratieren nur relevante, neutrale Informationen und passen die Empfehlungen an deine Prioritäten 
+                    und dein Budget an. Die Empfehlungslogik ist markenunabhängig und basiert auf deinen Bedürfnissen, 
+                    nicht auf Provisionen oder Werbung. Alle Empfehlungen werden mit transparenten Begründungen und 
+                    Quellen präsentiert.
+                </p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-i18n="faq.q5.question">Ist Verifyr wirklich kostenlos?</h3>
+                <p data-i18n="faq.q5.answer">
+                    Ja, Verifyr bleibt für dich immer kostenlos. Wir finanzieren uns über Affiliate-Links zu Shops, 
+                    aber diese beeinflussen unsere Empfehlungen nicht. Unsere Empfehlungslogik ist 100% markenunabhängig 
+                    und basiert ausschließlich auf deinen Bedürfnissen und den Produkteigenschaften. Alle Affiliate-Links 
+                    sind transparent gekennzeichnet.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Datenschutz Modal -->
+    <div id="datenschutz" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('datenschutz')"></button>
+            <h2>Datenschutzerklärung</h2>
+            
+            <h3>1. Verantwortlicher</h3>
+            <p>
+                Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br><br>
+                <strong>Prabhav Mhapne</strong><br>
+                Kalkumer Straße 36<br>
+                40468 Düsseldorf<br>
+                E-Mail: prabhavmhapne@gmail.com
+            </p>
+
+            <h3>2. Erhebung und Speicherung personenbezogener Daten</h3>
+            <p>
+                Bei der Anmeldung zur Waitlist erheben wir folgende Daten:
+            </p>
+            <ul>
+                <li>E-Mail-Adresse: Die von Ihnen eingegebene E-Mail-Adresse</li>
+                <li>Zeitstempel: Datum und Uhrzeit der Anmeldung</li>
+            </ul>
+
+            <h3>2.1 Nutzungsstatistiken (anonyme Daten)</h3>
+            <p>
+                Zur Validierung des Verifyr-Prototyps erfassen wir anonyme Nutzungsstatistiken:
+            </p>
+            <ul>
+                <li>Seitenaufrufe: Welche Seiten besucht werden</li>
+                <li>Button-Klicks: Wenn Sie auf Buttons wie "Early Access" klicken</li>
+                <li>Zeitstempel: Wann der Klick erfolgte</li>
+            </ul>
+            <p>
+                <strong>Wichtig:</strong> Diese Daten sind <u>vollständig anonymisiert</u>. Es werden keine IP-Adressen, 
+                Cookies oder sonstige persönlich identifizierbaren Informationen gespeichert. 
+                Eine Zuordnung zu Ihrer Person ist nicht möglich.
+            </p>
+            <p>
+                <strong>Rechtsgrundlage:</strong> Berechtigtes Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO 
+                (Validierung und Optimierung des Prototyps).
+            </p> 
+
+            <h3>3. Zweck der Datenverarbeitung</h3>
+            <p>
+                Wir verwenden Ihre E-Mail-Adresse ausschließlich für folgende Zwecke:
+            </p>
+            <ul>
+                <li>Validierung des Verifyr-Prototyps</li>
+                <li>Zusendung von Produktinformationen und Updates</li>
+                <li>Versendung eines Early-Access-Links</li>
+            </ul>
+
+            <h3>4. Rechtsgrundlage</h3>
+            <p>
+                Die Verarbeitung Ihrer E-Mail-Adresse erfolgt auf Grundlage Ihrer <strong>ausdrücklichen Einwilligung 
+                gemäß Art. 6 Abs. 1 lit. a DSGVO</strong>. Durch die Eingabe Ihrer E-Mail-Adresse und das Klicken 
+                auf den "Join Waitlist"-Button erklären Sie sich mit der Verarbeitung einverstanden.
+            </p>
+
+            <h3>5. Speicherdauer</h3>
+            <p>
+                Ihre E-Mail-Adresse wird gespeichert:
+            </p>
+            <ul>
+                <li>Bis zum Launch von Verifyr oder</li>
+                <li>Bis Sie eine Löschung beantragen</li>
+                <li>Maximal 3 Monate ab Anmeldung</li>
+            </ul>
+
+            <h3>6. Weitergabe von Daten</h3>
+            <p>
+                Ihre Daten werden nicht an Dritte zu Werbezwecken weitergegeben. 
+                Wir nutzen folgende vertrauenswürdige Dienstleister (Auftragsverarbeiter) zur technischen Bereitstellung:
+            </p>
+
+            <p><strong>Hosting der Website:</strong></p>
+            <ul>
+                <li>Netlify Inc. (USA, DSGVO-konform)</li>
+                <li>Zweck: Bereitstellung und Auslieferung der Website</li>
+                <li>Serverstandort: Global CDN mit EU-Servern</li>
+                <li>Datenschutzerklärung: <a href="https://www.netlify.com/privacy/" target="_blank">netlify.com/privacy</a></li>
+            </ul>
+            <p>
+
+            <p><strong>Datenbank-Speicherung:</strong></p>
+            <ul>
+                <li>Supabase Inc. (USA, DSGVO-konform)</li>
+                <li>Zweck: Speicherung Ihrer E-Mail-Adresse und anonymer Nutzungsstatistiken</li>
+                <li>Serverstandort: AWS EU-Central-1 (Frankfurt, Deutschland)</li>
+                <li>Datenschutzerklärung: <a href="https://supabase.com/privacy" target="_blank">supabase.com/privacy</a></li>
+            </ul>
+
+            </p><strong>Gespeicherte Datentypen:</strong></p>
+            <ul>
+                <li>Personenbezogene Daten: E-Mail-Adressen der Waitlist (siehe Abschnitt 2)</li>
+                <li>Anonyme Daten: Click-Statistiken ohne Personenbezug (siehe Abschnitt 2.1)</li>
+            </ul>
+
+            <p>
+                Beide Dienstleister sind EU-DSGVO-konform und haben Standardvertragsklauseln (SCC) 
+                für Datentransfers abgeschlossen. Ihre Daten werden ausschließlich auf Servern 
+                innerhalb der Europäischen Union verarbeitet (Deutschland).
+            </p
+
+
+            <h3>7. Ihre Rechte</h3>
+            <p>
+                Sie haben folgende Rechte bezüglich Ihrer personenbezogenen Daten:
+            </p>
+            <ul>
+                <li>Auskunftsrecht: Sie können Auskunft über Ihre gespeicherten Daten verlangen</li>
+                <li>Löschungsrecht: Sie können die Löschung Ihrer Daten jederzeit verlangen</li>
+                <li>Widerrufsrecht: Sie können Ihre Einwilligung jederzeit widerrufen</li>
+                <li>Beschwerderecht: Sie können sich bei einer Aufsichtsbehörde beschweren</li>
+            </ul>
+            <p>
+                Um eines dieser Rechte auszuüben, senden Sie einfach eine E-Mail an: 
+                prabhavmhapne@gmail.com
+            </p>
+            <p>
+                Wir werden Ihre Anfrage innerhalb von 30 Tagen bearbeiten und Ihre Daten bei Wunsch vollständig löschen.
+            </p>
+
+            <h3>8. Datensicherheit</h3>
+            <p>
+                Wir verwenden SSL-Verschlüsselung für die Datenübertragung und speichern Ihre Daten 
+                auf sicheren Servern in der EU. Ihre E-Mail-Adresse wird ausschließlich für die 
+                angegebenen Zwecke verwendet.
+            </p>
+
+            <h3>9. Änderungen dieser Datenschutzerklärung</h3>
+            <p>
+                Diese Datenschutzerklärung kann bei Bedarf angepasst werden. Die aktuelle Version 
+                ist stets auf dieser Website verfügbar.
+            </p>
+            
+            <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--gray);">
+                <strong>Stand:</strong> 20. Dezember 2025
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // GLOBAL FUNCTIONS (must be defined first!)
+        // ============================================
+        
+        // Translations Object
+        const translations = {
+            de: {
+                nav: { cta: "Early Access" },
+                hero: {
+                    badge: "Dein intelligenter Health-Tech Kaufberater",
+                    title1: "Nie wieder stundenlang",
+                    title2: "Produkte vergleichen",
+                    subtitle: "Verifyr ist dein conversational KI-Assistent, der Health-Tech Produkte für dich vergleicht, Testberichte kuratiert und alle deine Fragen beantwortet – markenunabhängig, transparent und in Sekunden.",
+                    subtitleEmotional: "Kaufentscheidungen mit Selbstvertrauen treffen – keine Zweifel, kein Bedauern.",
+                    stat1: "Tabs gespart",
+                    stat2: "Zeitersparnis",
+                    stat3: "Markenunabhängig"
+                },
+                video: {
+                    intro: "Du brauchst einen neuen Fitness-Tracker. Du öffnest 15 Tabs, vergleichst Specs, liest widersprüchliche Reviews – und weißt immer noch nicht, welchen du kaufen sollst. Kommt dir bekannt vor?",
+                    cta: "Sieh dir an, wie Verifyr deine perfekte Wahl findet"
+                },
+                problem: {
+                    label: "Das Problem",
+                    title: "Produktvergleich ist kompliziert",
+                    description: "Besonders bei technischen Produkten verbringen wir Stunden mit Recherche",
+                    without: {
+                        title: "Ohne Verifyr",
+                        item1: "20+ Browser-Tabs durchsuchen",
+                        item2: "Widersprüchliche Reviews lesen",
+                        item3: "Komplexe Specs nicht verstehen",
+                        item4: "Unsicher bei der Entscheidung",
+                        item5: "Stunden verschwendet",
+                        item6: "Provisionsbasierte \"Empfehlungen\"",
+                        item7: "Keine Quellen oder Transparenz",
+                        item8: "Zweifel und Kaufreue"
+                    },
+                    with: {
+                        title: "Mit Verifyr",
+                        item1: "Alle Infos in einer App",
+                        item2: "Kuratierte, neutrale Reviews",
+                        item3: "Verständliche Erklärungen",
+                        item4: "Sichere Kaufentscheidung mit Selbstvertrauen",
+                        item5: "Minuten statt Stunden",
+                        item6: "100% transparente Empfehlungen",
+                        item7: "Markenunabhängig mit Quellen",
+                        item8: "Keine Zweifel, keine Kaufreue"
+                    }
+                },
+                howItWorks: {
+                    label: "So funktioniert's",
+                    title: "Deine Empfehlung in 3 Schritten",
+                    description: "Einfach, schnell und auf deine Bedürfnisse zugeschnitten",
+                    faqButton: "Häufige Fragen",
+                    step1: {
+                        title: "Sag uns, was du suchst",
+                        description: "Wähle deine Kategorie (Smartwatch, Heart Rate Monitor, Metabolic Monitor, Frauen Gesundheit, etc.) und beantworte ein paar Fragen zu deinen Prioritäten und Budget. Unsere KI versteht genau, was für dich wichtig ist."
+                    },
+                    step2: {
+                        title: "Verifyr analysiert für dich",
+                        description: "In Sekunden durchsuchen wir tausende Produkte, Reviews, Testberichte und Expert-Meinungen. Wir kuratieren nur relevante, neutrale Informationen – ohne versteckte Provisionen oder Werbung."
+                    },
+                    step3: {
+                        title: "Erhalte deine personalisierte Empfehlung",
+                        description: "Du bekommst 3-4 passende Empfehlungen mit Side-by-Side Vergleich, verständlichen Erklärungen und Links zu Shops, Video-Reviews und Experten-Meinungen. Hast du noch Fragen? Unser produkt-spezifischer QA Chat beantwortet sie sofort."
+                    }
+                },
+                faq: {
+                    title: "Häufige Fragen",
+                    q1: {
+                        question: "Was macht der QA Chat?",
+                        answer: "Der QA Chat ist ein produkt-spezifischer Knowledge Bot, der sowohl Pre-Kauf als auch Post-Kauf Support bietet. <strong>Pre-Kauf:</strong> Er beantwortet sofortige Rückfragen zu den empfohlenen Produkten, klärt Unsicherheiten, erklärt technische Details verständlich und hilft bei der Kaufentscheidung. <strong>Post-Kauf:</strong> Er unterstützt bei der Produkt-Einführung, Setup-Anleitungen, How-to Guides und Troubleshooting. So kannst du selbstbewusst deine Kaufentscheidung treffen und dein Produkt erfolgreich nutzen."
+                    },
+                    q2: {
+                        question: "Was ist der Unterschied zu ChatGPT, Gemini und co?",
+                        answer: "Verifyr ist speziell für Health-Tech Produktvergleiche entwickelt und bietet mehrere Vorteile: <strong>Produktspezifisches Wissen:</strong> Unser QA Chat ist auf konkrete Produkte und deren Details trainiert, nicht nur allgemeines Wissen. <strong>Neutrale Empfehlungen:</strong> Wir sind 100% markenunabhängig und arbeiten ohne versteckte Provisionen – im Gegensatz zu generischen KI-Tools, die keine Produktvergleiche durchführen. <strong>Transparente Quellen:</strong> Alle Empfehlungen sind mit Links zu Shops, Video-Reviews und Experten-Meinungen belegt. <strong>Kombinierter Flow:</strong> Wir kombinieren Produktvergleich, Review-Kuratierung und Q&A in einem Flow – keine 10 Tabs Recherche mehr nötig."
+                    },
+                    q3: {
+                        question: "Wie unterscheidet sich das zu klassischen Vergleichsportalen?",
+                        answer: "Klassische Vergleichsportale zeigen oft nur Listen mit Filtern und Provisions-Rankings. Verifyr geht weiter: <strong>Conversational:</strong> Wir führen dich durch einen Dialog, um deine Bedürfnisse zu verstehen, statt dass du selbst durch Filter navigieren musst. <strong>Personalisierte Empfehlungen:</strong> Du bekommst 3-4 passende Empfehlungen mit transparenten Begründungen, nicht nur eine sortierte Liste. <strong>QA Chat:</strong> Du kannst sofort Rückfragen stellen und Unsicherheiten klären – das bieten klassische Portale nicht. <strong>Kuratierte Reviews:</strong> Wir sammeln und kuratieren Reviews aus vielen Quellen und präsentieren sie verständlich, statt dich durch 100 Reviews scrollen zu lassen. <strong>100% Transparenz:</strong> Keine versteckten Provisionen, alle Quellen sind sichtbar."
+                    },
+                    q4: {
+                        question: "Wie werden die Empfehlungen erstellt?",
+                        answer: "Unsere KI durchsucht in Sekunden tausende Produkte, Reviews, Testberichte und Expert-Meinungen. Wir kuratieren nur relevante, neutrale Informationen und passen die Empfehlungen an deine Prioritäten und dein Budget an. Die Empfehlungslogik ist markenunabhängig und basiert auf deinen Bedürfnissen, nicht auf Provisionen oder Werbung. Alle Empfehlungen werden mit transparenten Begründungen und Quellen präsentiert."
+                    },
+                    q5: {
+                        question: "Ist Verifyr wirklich kostenlos?",
+                        answer: "Ja, Verifyr bleibt für dich immer kostenlos. Wir finanzieren uns über Affiliate-Links zu Shops, aber diese beeinflussen unsere Empfehlungen nicht. Unsere Empfehlungslogik ist 100% markenunabhängig und basiert ausschließlich auf deinen Bedürfnissen und den Produkteigenschaften. Alle Affiliate-Links sind transparent gekennzeichnet."
+                    }
+                },
+                trust: {
+                    label: "Vertrauen & Sicherheit",
+                    title: "Kaufentscheidungen mit Selbstvertrauen treffen",
+                    description: "Mit Verifyr triffst du Kaufentscheidungen mit voller Überzeugung und Klarheit.",
+                    benefit1: {
+                        title: "Keine Zweifel mehr",
+                        description: "Du bekommst klare, verständliche Empfehlungen mit transparenten Begründungen. Keine Unsicherheit, keine Kaufreue."
+                    },
+                    benefit2: {
+                        title: "Transparente Quellen",
+                        description: "Alle Empfehlungen sind mit Links zu Shops, Video-Reviews und Experten-Meinungen belegt. Du siehst genau, worauf sich unsere Empfehlungen stützen."
+                    },
+                    benefit3: {
+                        title: "Selbstvertrauen & Gewissheit",
+                        description: "Die Vorfreude auf eine kluge Investition in deine Gesundheit – ohne Zweifel oder Kaufreue."
+                    }
+                },
+                cta: {
+                    title: "Join the Waitlist",
+                    subtitle: "Sei unter den Ersten, die Verifyr 100% kostenlos testen",
+                    subtitle2: "Ohne SPAM - Nur 2 E-Mails: Bestätigung & Test-Link!",
+                    placeholder: "Your Email",
+                    button: "Join Waitlist",
+                    note: "In Validation-Phase",
+                    freeForever: "Die App bleibt für dich immer kostenlos"
+                },
+                footer: {
+                    copyright: "© 2025 Verifyr",
+                    tagline: "100% unabhängig | Verifiziert | Für dich",
+                    impressum: "Impressum",
+                    privacy: "Datenschutz"
+                },
+                form: {
+                    success: "✓ Perfekt! Du bist auf der Waitlist.",
+                    error: "Etwas ist schiefgelaufen. Bitte versuche es nochmal."
+                }
+            },
+            en: {
+                nav: { cta: "Early Access" },
+                hero: {
+                    badge: "Your intelligent Health-Tech shopping advisor",
+                    title1: "Never spend hours",
+                    title2: "comparing products again",
+                    subtitle: "Verifyr is your conversational AI assistant that compares Health-Tech products, curates test reports, and answers all your questions – brand-independent, transparent, and in seconds.",
+                    subtitleEmotional: "Make purchase decisions with confidence – no doubts, no regrets.",
+                    stat1: "Tabs saved",
+                    stat2: "Time saved",
+                    stat3: "Brand-Independent"
+                },
+                video: {
+                    intro: "You need a new fitness tracker. You open 15 tabs comparing specs, read contradictory reviews, and still don't know which to buy. Sound familiar?",
+                    cta: "Watch how Verifyr finds your perfect match"
+                },
+                problem: {
+                    label: "The Problem",
+                    title: "Product comparison is complicated",
+                    description: "Especially with technical products, we spend hours researching",
+                    without: {
+                        title: "Without Verifyr",
+                        item1: "Search through 20+ browser tabs",
+                        item2: "Read contradictory reviews",
+                        item3: "Don't understand complex specs",
+                        item4: "Uncertain about decisions",
+                        item5: "Hours wasted",
+                        item6: "Commission-based \"recommendations\"",
+                        item7: "No sources or transparency",
+                        item8: "Doubts and buyer's remorse"
+                    },
+                    with: {
+                        title: "With Verifyr",
+                        item1: "All info in one app",
+                        item2: "Curated, neutral reviews",
+                        item3: "Clear explanations",
+                        item4: "Confident purchase decisions with self-assurance",
+                        item5: "Minutes instead of hours",
+                        item6: "100% transparent recommendations",
+                        item7: "Brand-independent with sources",
+                        item8: "No doubts, no buyer's remorse"
+                    }
+                },
+                howItWorks: {
+                    label: "How it Works",
+                    title: "Your recommendation in 3 steps",
+                    description: "Simple, fast, and tailored to your needs",
+                    faqButton: "Frequently Asked Questions",
+                    step1: {
+                        title: "Tell us what you're looking for",
+                        description: "Choose your category (Smartwatch, Heart Rate Monitor, Metabolic Monitor, Women's Health, etc.) and answer a few questions about your priorities and budget. Our AI understands exactly what matters to you."
+                    },
+                    step2: {
+                        title: "Verifyr analyzes for you",
+                        description: "Within seconds, we search through thousands of products, reviews, test reports, and expert opinions. We curate only relevant, neutral information – without hidden commissions or advertising."
+                    },
+                    step3: {
+                        title: "Get your personalized recommendation",
+                        description: "You receive 3-4 matching recommendations with side-by-side comparison, clear explanations, and links to shops, video reviews, and expert opinions. Still have questions? Our product-specific QA chat answers them instantly."
+                    }
+                },
+                faq: {
+                    title: "Frequently Asked Questions",
+                    q1: {
+                        question: "What does the QA Chat do?",
+                        answer: "The QA Chat is a product-specific knowledge bot that provides both pre-purchase and post-purchase support. <strong>Pre-purchase:</strong> It answers immediate questions about recommended products, clarifies uncertainties, explains technical details clearly, and helps with purchase decisions. <strong>Post-purchase:</strong> It supports product introduction, setup guides, how-to guides, and troubleshooting. This way you can confidently make your purchase decision and successfully use your product."
+                    },
+                    q2: {
+                        question: "What's the difference to ChatGPT, Gemini, etc.?",
+                        answer: "Verifyr is specifically developed for Health-Tech product comparisons and offers several advantages: <strong>Product-specific knowledge:</strong> Our QA Chat is trained on concrete products and their details, not just general knowledge. <strong>Neutral recommendations:</strong> We are 100% brand-independent and work without hidden commissions – unlike generic AI tools that don't perform product comparisons. <strong>Transparent sources:</strong> All recommendations are backed by links to shops, video reviews, and expert opinions. <strong>Combined flow:</strong> We combine product comparison, review curation, and Q&A in one flow – no more 10 tabs of research needed."
+                    },
+                    q3: {
+                        question: "How does this differ from classic comparison portals?",
+                        answer: "Classic comparison portals often only show lists with filters and commission-based rankings. Verifyr goes further: <strong>Conversational:</strong> We guide you through a dialog to understand your needs, instead of you having to navigate through filters yourself. <strong>Personalized recommendations:</strong> You get 3-4 matching recommendations with transparent justifications, not just a sorted list. <strong>QA Chat:</strong> You can immediately ask follow-up questions and clarify uncertainties – classic portals don't offer this. <strong>Curated reviews:</strong> We collect and curate reviews from many sources and present them clearly, instead of making you scroll through 100 reviews. <strong>100% Transparency:</strong> No hidden commissions, all sources are visible."
+                    },
+                    q4: {
+                        question: "How are recommendations created?",
+                        answer: "Our AI searches through thousands of products, reviews, test reports, and expert opinions in seconds. We curate only relevant, neutral information and adapt recommendations to your priorities and budget. The recommendation logic is brand-independent and based on your needs, not on commissions or advertising. All recommendations are presented with transparent justifications and sources."
+                    },
+                    q5: {
+                        question: "Is Verifyr really free?",
+                        answer: "Yes, Verifyr will always be free for you. We finance ourselves through affiliate links to shops, but these do not influence our recommendations. Our recommendation logic is 100% brand-independent and based solely on your needs and product features. All affiliate links are transparently marked."
+                    }
+                },
+                trust: {
+                    label: "Trust & Confidence",
+                    title: "Make purchase decisions with confidence",
+                    description: "With Verifyr, you make purchase decisions with full conviction and clarity.",
+                    benefit1: {
+                        title: "No more doubts",
+                        description: "You receive clear, understandable recommendations with transparent justifications. No uncertainty, no buyer's remorse."
+                    },
+                    benefit2: {
+                        title: "Transparent sources",
+                        description: "All recommendations are backed by links to shops, video reviews, and expert opinions. You see exactly what our recommendations are based on."
+                    },
+                    benefit3: {
+                        title: "Self-Confidence & Certainty",
+                        description: "The anticipation of a smart investment in your health – without doubts or buyer's remorse."
+                    }
+                },
+                cta: {
+                    title: "Join the Waitlist",
+                    subtitle: "Be among the first to test Verifyr 100% free",
+                    subtitle2: "No SPAM - You'll only receive 2 emails: confirmation and test link!",
+                    placeholder: "Your Email",
+                    button: "Join Waitlist",
+                    note: "In Validation-Phase",
+                    freeForever: "The app will always be free for you"
+                },
+                footer: {
+                    copyright: "© 2025 Verifyr",
+                    tagline: "100% independent | Verified | For you",
+                    impressum: "Legal Notice",
+                    privacy: "Privacy Policy"
+                },
+                form: {
+                    success: "✓ Perfect! You're on the waitlist.",
+                    error: "Something went wrong. Please try again."
+                }
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
+
+        // Helper function
+        function getNestedTranslation(obj, path) {
+            return path.split('.').reduce((current, key) => current?.[key], obj);
+        }
+
+        // GLOBAL: Switch Language Function
+        window.switchLanguage = function(lang) {
+            console.log('Switching to:', lang);
+            currentLanguage = lang;
+            localStorage.setItem('verifyr-lang', lang);
+            
+            // Update active state
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.lang === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            // Update all text elements
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.dataset.i18n;
+                const translation = getNestedTranslation(translations[lang], key);
+                if (translation) {
+                    // Use innerHTML for FAQ answers (they contain HTML formatting)
+                    if (key.startsWith('faq.q') && key.endsWith('.answer')) {
+                        element.innerHTML = translation;
+                    } else {
+                        element.textContent = translation;
+                    }
+                }
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.dataset.i18nPlaceholder;
+                const translation = getNestedTranslation(translations[lang], key);
+                if (translation) {
+                    element.placeholder = translation;
+                }
+            });
+        };
+
+        // GLOBAL: Modal Functions
+        window.openModal = function(modalId) {
+            console.log('Opening modal:', modalId);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                console.error('Modal not found:', modalId);
+            }
+        };
+
+        window.closeModal = function(modalId) {
+            console.log('Closing modal:', modalId);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        // ============================================
+        // DOM READY - Initialize Everything
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
+            // Initialize language
+            switchLanguage(currentLanguage);
+            
+            //pageview
+            async function trackPageView() {
+                try {
+                    const SUPABASE_URL = 'https://aoeskfvjqlnxpwerzdxh.supabase.co';
+                    const SUPABASE_ANON_KEY = 'sb_publishable_6uxROb1pJC1WMgekGFUHGQ_uhe-J1kM';
+                    
+                    // Track page view
+                    await fetch(`${SUPABASE_URL}/rest/v1/page_views`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({
+                            page_path: window.location.pathname,
+                            viewed_at: new Date().toISOString()
+                        })
+                    });
+                    
+                    console.log('Page view tracked!');
+                } catch (error) {
+                    console.error('Page view tracking error:', error);
+                    // Fehler ignorieren, damit die Seite trotzdem funktioniert
+                }
+            }
+            // Track page view when page loads
+            trackPageView();
+
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+
+            // Close modal with ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal.active').forEach(modal => {
+                        closeModal(modal.id);
+                    });
+                }
+            });
+
+            // Early Access Form Handler mit Supabase Integration
+            const earlyAccessForm = document.getElementById('earlyAccessForm');
+            if (earlyAccessForm) {
+                earlyAccessForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = document.getElementById('submitBtn');
+                    const emailInput = document.getElementById('emailInput');
+                    const formMessage = document.getElementById('formMessage');
+                    const email = emailInput.value;
+
+                    //RATE LIMITING
+                    const rateLimitKey = 'last_email_submit';
+                    const lastSubmit = localStorage.getItem(rateLimitKey);
+                    const now = Date.now();
+        
+                    // Nur alle 60 Sekunden erlauben
+                    if (lastSubmit && now - lastSubmit < 60000) {
+                        formMessage.textContent = 'Bitte warte kurz vor dem nächsten Submit';
+                        formMessage.style.color = '#ef4444'; // Rot
+                        return; // Stoppt hier
+                    }
+        
+                    localStorage.setItem(rateLimitKey, now);
+                    //ENDE RATE LIMITING
+                      
+                    
+                    // Disable button and show loading
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="loading"></span>';
+                    formMessage.textContent = '';
+                    
+                    try {
+                        // WICHTIG: Hier musst du deine Supabase Credentials einfügen
+                        const SUPABASE_URL = 'https://aoeskfvjqlnxpwerzdxh.supabase.co'; 
+                        const SUPABASE_ANON_KEY = 'sb_publishable_6uxROb1pJC1WMgekGFUHGQ_uhe-J1kM';
+                        
+                        // Supabase REST API Call
+                        const response = await fetch(`${SUPABASE_URL}/rest/v1/early_access_emails`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                created_at: new Date().toISOString()
+                            })
+                        });
+                        
+                        if (response.ok || response.status === 201) {
+                            formMessage.className = 'form-message success';
+                            formMessage.textContent = translations[currentLanguage].form.success;
+                            emailInput.value = '';
+                            
+                            // Optional: Analytics Event
+                            if (typeof gtag !== 'undefined') {
+                                gtag('event', 'early_access_signup', {
+                                    'event_category': 'engagement',
+                                    'event_label': 'email_signup'
+                                });
+                            }
+                        } else {
+                            throw new Error('Netzwerkfehler');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error:', error);
+                        formMessage.className = 'form-message error';
+                        formMessage.textContent = translations[currentLanguage].form.error;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Join Waitlist';
+                    }
+                });
+            }
+        
+            // CTA Buttons (nav and hero)
+            const ctaButtons = document.querySelectorAll('.nav-cta');
+        
+            ctaButtons.forEach(ctaButton => {
+                ctaButton.addEventListener('click', async function() {
+                    try {
+                        const SUPABASE_URL = 'https://aoeskfvjqlnxpwerzdxh.supabase.co';
+                        const SUPABASE_ANON_KEY = 'sb_publishable_6uxROb1pJC1WMgekGFUHGQ_uhe-J1kM';
+                        
+                        // Click in Datenbank speichern
+                        await fetch(`${SUPABASE_URL}/rest/v1/cta_clicks`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({
+                                button_name: 'header_early_access_cta',
+                                clicked_at: new Date().toISOString()
+                            })
+                        });
+                        
+                        console.log('CTA Clicked!');
+                    } catch (error) {
+                        console.error('Tracking error:', error);
+                        // Fehler ignorieren, damit Button trotzdem funktioniert
+                    }
+                });
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all animated elements
+            document.querySelectorAll('.comparison-card, .step').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+
+            console.log('All initialization complete!');
+        }); // End of DOMContentLoaded
+    </script>
+</body>
+</html>
+        

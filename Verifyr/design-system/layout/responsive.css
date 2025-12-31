@@ -1,0 +1,105 @@
+/**
+ * Responsive Design
+ * Verifyr Design System - Breakpoints and Responsive Utilities
+ * 
+ * Media queries and responsive adjustments
+ */
+
+:root {
+    /* Breakpoints */
+    --breakpoint-mobile: 768px;
+    --breakpoint-tablet: 1024px;
+    --breakpoint-desktop: 1200px;
+}
+
+/* Mobile Styles (max-width: 768px) */
+@media (max-width: 768px) {
+    /* Navigation */
+    nav {
+        padding: var(--spacing-base);
+    }
+
+    .nav-left {
+        gap: var(--spacing-base);
+    }
+
+    .logo {
+        font-size: var(--font-size-4xl);
+    }
+
+    .lang-switch {
+        font-size: 0.8rem;
+        padding: 0.4rem;
+    }
+
+    .lang-option {
+        padding: 0.4rem 0.75rem;
+    }
+
+    .nav-cta {
+        padding: 0.65rem 1.25rem;
+        font-size: var(--font-size-sm);
+    }
+
+    /* Grid Adjustments */
+    .comparison-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    .step {
+        grid-template-columns: 1fr;
+    }
+
+    .step-number {
+        margin: 0 auto;
+    }
+
+    /* Forms */
+    .email-form {
+        flex-direction: column;
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+    }
+
+    .email-input {
+        padding: var(--spacing-base) 1.25rem;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: var(--spacing-base);
+    }
+
+    /* Stats */
+    .hero-stats {
+        gap: var(--spacing-xl);
+    }
+
+    /* Trust Section */
+    .trust-section {
+        padding: var(--spacing-2xl) var(--spacing-lg);
+    }
+
+    .trust-benefits {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+}
+
+/* Tablet Styles (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .comparison-grid {
+        gap: var(--spacing-xl);
+    }
+
+    .trust-benefits {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop Styles (1025px+) */
+@media (min-width: 1025px) {
+    /* Additional desktop-specific styles can be added here */
+}
+

@@ -1,0 +1,129 @@
+/**
+ * Cards
+ * Verifyr Design System - Card Components
+ * 
+ * Card styles for comparison cards, trust benefits, and other card-based components
+ */
+
+/* Base Card */
+.comparison-card {
+    background: var(--white);
+    padding: var(--card-padding);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: var(--border-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* Problem Card */
+.comparison-card.problem {
+    border-left: var(--border-red);
+}
+
+.comparison-card.problem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle at top right, var(--error-light), transparent);
+    pointer-events: none;
+}
+
+/* Solution Card */
+.comparison-card.solution {
+    border-left: var(--border-blue);
+    background: linear-gradient(135deg, var(--bg-gradient-blue-start) 0%, var(--bg-gradient-blue-end) 100%);
+}
+
+.comparison-card.solution::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle at top right, var(--shadow-blue-light), transparent);
+    pointer-events: none;
+}
+
+/* Card Title */
+.card-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+    color: var(--dark);
+}
+
+/* Card List */
+.card-list {
+    list-style: none;
+}
+
+.card-list li {
+    padding: 0.875rem 0;
+    padding-left: var(--spacing-xl);
+    position: relative;
+    color: var(--gray);
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-normal);
+}
+
+.card-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.125rem;
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Problem Card List Items */
+.comparison-card.problem .card-list li::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23EF4444'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M6 18L18 6M6 6l12 12'/%3E%3C/svg%3E");
+}
+
+/* Solution Card List Items */
+.comparison-card.solution .card-list li::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233B82F6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+}
+
+/* Trust Benefit Cards */
+.trust-benefit {
+    background: var(--white);
+    padding: var(--card-padding-sm);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trust-benefit:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.trust-benefit h4 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.trust-benefit p {
+    color: var(--gray);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+}
+
