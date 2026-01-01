@@ -2,6 +2,157 @@
 
 Quick reference for managing the FastAPI server and Python processes.
 
+## 🚨 CRITICAL: Server Restart Reference
+
+### Workspace & Python Locations
+
+**Workspace Root:**
+```
+C:\Users\prabh\OneDrive\Git_PM\verifyr - rag
+```
+
+**Python Executable Locations:**
+- Base Python: `C:\ProgramData\anaconda3\python.exe`
+- Virtual Environment Python: `venv\Scripts\python.exe` (relative to workspace root)
+- Full Path: `C:\Users\prabh\OneDrive\Git_PM\verifyr - rag\venv\Scripts\python.exe`
+
+**Server File:**
+```
+backend\main.py
+```
+
+**Management Script:**
+```
+manage_server.ps1 (in workspace root)
+```
+
+### Step-by-Step Restart Procedure
+
+#### Method 1: Using Management Script (Recommended)
+
+1. **Open PowerShell in workspace root:**
+   ```powershell
+   cd "C:\Users\prabh\OneDrive\Git_PM\verifyr - rag"
+   ```
+
+2. **Activate virtual environment (REQUIRED):**
+   ```powershell
+   .\venv\Scripts\Activate.ps1
+   ```
+   You should see `(venv)` in your prompt.
+
+3. **Restart the server:**
+   ```powershell
+   .\manage_server.ps1 -Action restart
+   ```
+
+   This script will:
+   - Kill all Python processes
+   - Wait 3 seconds for cleanup
+   - Navigate to `backend\` directory
+   - Run `python main.py`
+   - Start server on `http://localhost:8000`
+
+#### Method 2: Manual Restart (if script fails)
+
+1. **Open PowerShell in workspace root:**
+   ```powershell
+   cd "C:\Users\prabh\OneDrive\Git_PM\verifyr - rag"
+   ```
+
+2. **Activate virtual environment:**
+   ```powershell
+   .\venv\Scripts\Activate.ps1
+   ```
+
+3. **Kill all Python processes:**
+   ```powershell
+   Get-Process python* -ErrorAction SilentlyContinue | Stop-Process -Force
+   ```
+
+4. **Wait 3 seconds:**
+   ```powershell
+   Start-Sleep -Seconds 3
+   ```
+
+5. **Navigate to backend directory:**
+   ```powershell
+   cd backend
+   ```
+
+6. **Start the server:**
+   ```powershell
+   python main.py
+   ```
+
+### ⚠️ Important Notes
+
+1. **Virtual Environment Activation:**
+   - The `manage_server.ps1` script does NOT activate the venv automatically
+   - You MUST activate it manually before running the script: `.\venv\Scripts\Activate.ps1`
+   - If venv is not activated, the script uses system Python (may cause dependency issues)
+
+2. **Python Executable Priority:**
+   - If venv is activated: uses `venv\Scripts\python.exe`
+   - If venv is not activated: uses system Python (may cause dependency issues)
+
+3. **Port 8000:**
+   - Server runs on `http://localhost:8000`
+   - API docs: `http://localhost:8000/docs`
+   - Frontend: `http://localhost:8000/frontend/`
+
+4. **Qdrant Database Locks:**
+   - Qdrant uses SQLite which locks the database
+   - Always kill all Python processes before running indexing scripts
+   - Wait 3 seconds after killing processes for cleanup
+
+### Quick Reference Commands
+
+```powershell
+# 1. Navigate to workspace
+cd "C:\Users\prabh\OneDrive\Git_PM\verifyr - rag"
+
+# 2. Activate virtual environment (ALWAYS DO THIS FIRST)
+.\venv\Scripts\Activate.ps1
+
+# 3. Check status
+.\manage_server.ps1 -Action status
+
+# 4. Kill all Python processes
+.\manage_server.ps1 -Action kill
+
+# 5. Start server
+.\manage_server.ps1 -Action start
+
+# 6. Restart server (kill + start)
+.\manage_server.ps1 -Action restart
+
+# 7. Check port 8000
+.\manage_server.ps1 -Action port
+```
+
+### Recommended Daily Workflow
+
+```powershell
+# Morning startup routine
+cd "C:\Users\prabh\OneDrive\Git_PM\verifyr - rag"
+.\venv\Scripts\Activate.ps1
+.\manage_server.ps1 -Action restart
+
+# After code changes
+.\manage_server.ps1 -Action restart
+
+# Before running indexing scripts
+.\manage_server.ps1 -Action kill
+# ... run your indexing script ...
+.\manage_server.ps1 -Action start
+
+# End of day
+.\manage_server.ps1 -Action kill
+```
+
+---
+
 ## Helper Script: `manage_server.ps1`
 
 This PowerShell script helps you manage the FastAPI server and avoid Qdrant lock issues.
@@ -29,6 +180,9 @@ This PowerShell script helps you manage the FastAPI server and avoid Qdrant lock
 
 #### Scenario 1: Running indexing scripts (Phase 1-4)
 ```powershell
+# 0. Activate virtual environment (if not already active)
+.\venv\Scripts\Activate.ps1
+
 # 1. Stop the server if running
 .\manage_server.ps1 -Action kill
 
@@ -81,6 +235,10 @@ netstat -ano | findstr :8000
 
 ### Start server manually
 ```powershell
+# First, activate virtual environment
+.\venv\Scripts\Activate.ps1
+
+# Then navigate to backend and start
 cd backend
 python main.py
 ```
@@ -100,6 +258,65 @@ python main.py
 3. **OneDrive sync issues** - If you see persistent locks, OneDrive might be syncing Qdrant files. The lock errors mention this.
 
 4. **Server startup time** - The server takes ~3-5 seconds to load indexes. Wait for "Application startup complete" message.
+
+## Langfuse Docker Services (Observability)
+
+Langfuse v3 is deployed via Docker Compose for LLM observability and evaluation tracking.
+
+### Services
+
+The `docker-compose.yml` includes:
+- **Langfuse** (port 3000) - Main observability platform
+- **PostgreSQL** (port 5432) - Database for Langfuse
+- **Redis** (port 6379) - Cache and queue
+- **ClickHouse** (ports 8123, 9000) - Analytics database (required for v3)
+- **MinIO** (ports 9001, 9002) - S3-compatible blob storage (required for v3)
+
+### Quick Commands
+
+```powershell
+# Start all Langfuse services
+docker compose up -d
+
+# Check status
+docker compose ps
+
+# View Langfuse logs
+docker compose logs -f langfuse
+
+# Stop all services
+docker compose down
+
+# Restart services
+docker compose restart
+```
+
+### Access Points
+
+- **Langfuse Dashboard**: http://localhost:3000
+- **Langfuse Health API**: http://localhost:3000/api/public/health
+- **MinIO Console**: http://localhost:9001 (login: `minioadmin` / `minioadmin`)
+
+### Important Notes
+
+1. **Langfuse v3 Requirements**: 
+   - ClickHouse and MinIO are required (not optional)
+   - All services must be healthy for Langfuse to work
+
+2. **Port Conflicts**:
+   - MinIO uses port 9002 externally (9000 internally) to avoid conflict with ClickHouse
+   - ClickHouse uses port 9000 for native protocol
+
+3. **First Time Setup**:
+   - MinIO bucket (`langfuse-events`) is created automatically on first startup
+   - Access Langfuse dashboard to get API keys for `.env` file
+
+4. **Environment Variables** (in `.env` file):
+   ```bash
+   LANGFUSE_HOST=http://localhost:3000
+   LANGFUSE_PUBLIC_KEY=<from-dashboard>
+   LANGFUSE_SECRET_KEY=<from-dashboard>
+   ```
 
 ## API Endpoints
 
@@ -137,7 +354,9 @@ Once the server is running:
 Recommended workflow when developing:
 
 ```powershell
-# Morning startup
+# Morning startup (ALWAYS activate venv first!)
+cd "C:\Users\prabh\OneDrive\Git_PM\verifyr - rag"
+.\venv\Scripts\Activate.ps1
 .\manage_server.ps1 -Action start
 
 # Making code changes? Restart:

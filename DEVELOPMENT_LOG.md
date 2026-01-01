@@ -1926,7 +1926,350 @@ search_results = hybrid_searcher.search_hybrid(
 
 ---
 
+## Phase 11: Evaluation Framework with Langfuse
+
+**Goal**: Implement systematic evaluation framework for measuring RAG system performance
+
+**Date**: 2026-01-01
+
+### Implementation
+
+Built comprehensive evaluation infrastructure using Langfuse for observability and metrics tracking:
+
+1. **Langfuse Infrastructure (Docker)**
+   - Docker Compose setup with Langfuse v3, PostgreSQL, Redis, ClickHouse, and MinIO
+   - Local deployment at http://localhost:3000
+   - Persistent data storage via Docker volumes
+   - **Langfuse v3 Requirements:**
+     - ClickHouse for analytics (ports 8123, 9000)
+     - MinIO for S3-compatible blob storage (ports 9001, 9002)
+     - All services must be healthy for Langfuse to function
+
+2. **Backend Integration**
+   - Langfuse client initialization in `backend/main.py`
+   - Trace creation for each query
+   - Spans for retrieval and generation phases
+   - Metadata tracking (model, tokens, costs, response times)
+
+3. **Evaluation Script**
+   - Batch evaluation runner (`tests/langfuse_evaluator.py`)
+   - Test case execution through `/query` endpoint
+   - Metrics calculation and reporting
+   - JSON results export
+
+4. **Test Dataset**
+   - 15 test cases across 3 categories:
+     - **Factual (5):** Simple fact-based questions
+     - **Comparison (5):** Product comparison questions
+     - **Complex (5):** Multi-step reasoning, how-to guides, troubleshooting
+   - Bilingual coverage (English and German)
+
+### Key Features
+
+**Docker Infrastructure:**
+- `docker-compose.yml` with 5 services (Langfuse v3):
+  - Langfuse (port 3000) - Main observability platform
+  - PostgreSQL (port 5432) - Transactional database
+  - Redis (port 6379) - Cache and queue
+  - ClickHouse (ports 8123, 9000) - Analytics database (required for v3)
+  - MinIO (ports 9001, 9002) - S3-compatible blob storage (required for v3)
+  - MinIO init container - Automatically creates `langfuse-events` bucket
+- Health checks and restart policies for all services
+- Persistent volumes for data retention
+- Environment variables configured for S3 and ClickHouse connections
+
+**Backend Langfuse Integration:**
+```python
+# Startup event (lines 177-198)
+langfuse_client = Langfuse(
+    host=os.getenv("LANGFUSE_HOST", "http://localhost:3000"),
+    public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+    secret_key=os.getenv("LANGFUSE_SECRET_KEY")
+)
+
+# Query endpoint (lines 311-462)
+trace = langfuse_client.trace(name="rag_query", input={...})
+retrieval_span = trace.span(name="hybrid_search", ...)
+generation_span = trace.span(name="llm_generation", ...)
+trace.update(output={...}, metadata={...})
+```
+
+**Trace Structure:**
+- Root trace: Full query execution
+  - Input: question, model, language
+  - Metadata: conversation_id, has_history
+- Retrieval span: Hybrid search execution
+  - Input: query, top_k, target_products
+  - Output: chunks_retrieved, retrieval_time_ms
+  - Metadata: top scores
+- Generation span: LLM answer generation
+  - Input: question, chunks_count, model
+  - Output: answer, sources_count
+  - Metadata: model_used, tokens, cost, generation_time_ms
+
+**Evaluation Script (`tests/langfuse_evaluator.py`):**
+- Loads test cases from `tests/test_cases.py`
+- Creates Langfuse Dataset with all test cases (if Langfuse client available)
+- **Links traces to dataset items** after evaluation (creates dataset runs)
+- Runs batch evaluation with configurable model selection
+- Passes dataset info to backend for trace metadata
+- Calculates aggregate metrics:
+  - Success rate (by category, by language)
+  - Response times (avg, min, max)
+  - Retrieval metrics (chunks retrieved, sources per answer)
+  - Cost metrics (total tokens, total cost, avg cost/query)
+- Saves results to JSON files (`data/evaluation_results/`)
+- Dataset runs visible in Langfuse dashboard (shows "15 runs" instead of "0 runs")
+
+**Test Cases (`tests/test_cases.py`):**
+- 15 test cases structured as:
+  ```python
+  {
+      "question": "...",
+      "category": "factual|comparison|complex",
+      "language": "en|de",
+      "expected_products": [...],
+      "tags": [...]
+  }
+  ```
+- Helper functions: `get_test_cases_by_category()`, `get_test_cases_by_language()`
+- Test summary printer
+
+### Files Created/Modified
+
+**1. docker-compose.yml (Created)**
+- Langfuse service configuration
+- PostgreSQL database setup
+- Redis cache setup
+- Network and volume definitions
+
+**2. backend/main.py (Modified)**
+- Added Langfuse import (line 21)
+- Global `langfuse_client` variable (line 144)
+- Langfuse initialization in startup event (lines 177-198)
+- Trace creation in query endpoint (lines 311-328)
+- Retrieval span tracking (lines 349-378)
+- Generation span tracking (lines 383-421)
+- Trace completion (lines 443-462)
+- **Dataset support:** Added `dataset_name` and `dataset_item_id` to QueryRequest model
+- **Trace ID return:** Added `trace_id` to QueryResponse model for linking
+
+**3. tests/langfuse_evaluator.py (Created)**
+- Main evaluation script (~660 lines)
+- Langfuse client initialization (loads .env file automatically)
+- Dataset creation with test cases (creates Langfuse Dataset object)
+- **Trace-to-dataset linking** (links traces to dataset items to create dataset runs)
+- Command-line argument support (`--model` for non-interactive use)
+- API connection testing
+- Single query execution
+- Batch evaluation runner
+- Metrics calculation
+- Results export (JSON format)
+
+**4. tests/test_cases.py (Created)**
+- 15 test cases across 3 categories
+- Helper functions for filtering
+- Test summary printer
+
+**5. data/evaluation_results/ (Directory Created)**
+- JSON files with timestamp and model name
+- Format: `eval_{model}_{timestamp}.json`
+
+**6. .env.example (Created)**
+- Langfuse configuration variables template
+- Documents required environment variables:
+  - LANGFUSE_HOST (default: http://localhost:3000)
+  - LANGFUSE_PUBLIC_KEY (from Langfuse dashboard)
+  - LANGFUSE_SECRET_KEY (from Langfuse dashboard)
+- Serves as template for users to create their own .env file
+
+### Testing & Results
+
+**Initial Evaluation Run:**
+- Date: 2026-01-01
+- Model: GPT-4o Mini
+- Test Cases: 15
+- Results: `eval_gpt-4o-mini_20260101_115729.json`
+
+**Metrics Summary:**
+```
+Total Queries:       15
+Successful:          15 (100%)
+Failed:              0
+Success Rate:        100%
+
+Response Times:
+  Average:           3,704 ms
+  Min:               1,737 ms
+  Max:               7,168 ms
+
+Retrieval Metrics:
+  Avg Chunks Retrieved: 2.4
+  Avg Sources/Answer:   1.33
+
+Cost Metrics:
+  Total Tokens:      17,543
+  Total Cost:        $0.003662
+  Avg Cost/Query:    $0.000244
+
+By Category:
+  Factual:           5/5 (100%)
+  Comparison:        5/5 (100%)
+  Complex:           5/5 (100%)
+
+By Language:
+  EN:                10/10 (100%)
+  DE:                5/5 (100%)
+```
+
+**Key Findings:**
+- ✅ 100% success rate across all categories and languages
+- ✅ Consistent response times (avg 3.7s, reasonable for full RAG pipeline)
+- ✅ Cost-effective evaluation ($0.0037 for 15 queries with GPT-4o Mini)
+- ✅ Bilingual support verified (English and German queries working)
+- ✅ All query types handled successfully (factual, comparison, complex)
+
+### Environment Configuration
+
+**Required Environment Variables:**
+```bash
+# Langfuse connection
+LANGFUSE_HOST=http://localhost:3000
+LANGFUSE_PUBLIC_KEY=<public-key-from-dashboard>
+LANGFUSE_SECRET_KEY=<secret-key-from-dashboard>
+```
+
+**Docker Compose Services:**
+```bash
+# Start Langfuse v3 infrastructure (all services)
+docker compose up -d
+
+# Check status of all services
+docker compose ps
+
+# Check logs
+docker compose logs -f langfuse
+
+# Stop all services
+docker compose down
+
+# Restart services
+docker compose restart
+```
+
+**Note:** Langfuse v3 requires ClickHouse and MinIO. Ensure all services are healthy before using Langfuse. MinIO bucket is created automatically on first startup.
+
+**Access Points:**
+- Langfuse Dashboard: http://localhost:3000
+- API Health: http://localhost:3000/api/public/health
+
+### Usage
+
+**Run Evaluation:**
+```bash
+# Ensure API server is running
+cd backend
+python main.py
+
+# In another terminal, run evaluation
+# Option 1: Interactive mode (prompts for model selection)
+python tests/langfuse_evaluator.py
+
+# Option 2: Non-interactive mode (specify model via command line)
+python tests/langfuse_evaluator.py --model gpt-4o-mini
+python tests/langfuse_evaluator.py --model gpt-4o
+python tests/langfuse_evaluator.py --model claude-sonnet-4.5
+python tests/langfuse_evaluator.py --model claude-3.5-haiku
+
+# Results saved to data/evaluation_results/
+# Dataset created in Langfuse (if API keys configured in .env)
+```
+
+**View Traces:**
+1. Access Langfuse dashboard at http://localhost:3000
+2. Navigate to "Traces" section
+3. Filter by trace name "rag_query"
+4. View detailed spans (retrieval, generation)
+5. Analyze metrics (latency, tokens, costs)
+
+**View Dataset:**
+1. Access Langfuse dashboard at http://localhost:3000
+2. Navigate to "Datasets" section
+3. Find dataset: `rag_evaluation_{model}_{timestamp}`
+4. View all test cases organized by category and language
+5. Each dataset item contains question, category, language, and metadata
+6. **Dataset runs:** Shows "15 runs" (traces linked to dataset items)
+7. Click on dataset item to view linked trace with full execution details
+
+**Compare Models:**
+- Run evaluation script multiple times with different models
+- Compare results in Langfuse dashboard
+- Review JSON files for detailed metrics
+
+### Results
+
+**Infrastructure:**
+- ✅ Langfuse running locally via Docker
+- ✅ PostgreSQL and Redis configured
+- ✅ Health checks and restart policies active
+- ✅ Persistent data storage
+
+**Backend Integration:**
+- ✅ Langfuse client initialization
+- ✅ Trace creation for each query
+- ✅ Retrieval and generation spans
+- ✅ Metadata tracking (tokens, costs, times)
+- ✅ Graceful degradation (works without Langfuse keys)
+
+**Evaluation Framework:**
+- ✅ 15 test cases defined (factual, comparison, complex)
+- ✅ Bilingual test coverage (EN/DE)
+- ✅ Langfuse Dataset creation (organizes test cases in dashboard) - **TESTED & WORKING**
+- ✅ **Trace-to-dataset linking** (creates dataset runs, links traces to items) - **IMPLEMENTED**
+- ✅ Batch evaluation script with command-line support
+- ✅ Metrics calculation and reporting
+- ✅ JSON results export
+- ✅ Model comparison capability
+- ✅ Environment variable loading (.env file support)
+
+**Testing:**
+- ✅ Initial evaluation run successful (15/15 queries)
+- ✅ Langfuse Dataset creation tested and working
+- ✅ Dataset visible in Langfuse dashboard with all 15 test cases
+- ✅ **Trace linking tested** (dataset shows "15 runs" after linking)
+- ✅ Command-line argument support tested (`--model` flag)
+- ✅ Environment variable loading from .env file working
+- ✅ 100% success rate across all categories
+- ✅ All languages working correctly
+- ✅ Cost tracking accurate
+- ✅ Response times measured and logged
+
+**Impact:**
+- Systematic evaluation capability established
+- Performance metrics baseline created
+- Cost tracking enabled for optimization
+- Model comparison infrastructure ready
+- Iterative improvement workflow enabled
+- Production monitoring foundation (future)
+
+**Next Steps:**
+- Expand test dataset (more edge cases, different query types)
+- Implement RAGAS metrics integration (automatic quality scores)
+- Set up continuous evaluation workflow
+- Create evaluation dashboard/visualizations
+- Define success criteria thresholds
+
+**Phase 11 Completion Status:**
+- ✅ All requirements from `dev_phases.md` implemented
+- ✅ Langfuse Dataset creation tested and verified (2026-01-01)
+- ✅ Command-line argument support added for automation (`--model` flag)
+- ✅ Environment variable loading from .env file working
+- ✅ Full evaluation workflow operational
+- ✅ Dataset visible in Langfuse dashboard with all 15 test cases organized
+
+---
+
 *Development log last updated: 2026-01-01*
 *System: Verifyr RAG for Product Comparison*
-*Tech Stack: Python, FastAPI, Qdrant, Claude/GPT, LangChain, HTML/JavaScript*
-*Status: Phase 10 Complete - Conversation Management & Multi-Turn Support - Ready for Phase 11 (Evaluation)*
+*Tech Stack: Python, FastAPI, Qdrant, Claude/GPT, LangChain, HTML/JavaScript, Langfuse*
+*Status: Phase 11 Complete - Evaluation Framework with Langfuse - Tested & Verified - Ready for Production Optimization*

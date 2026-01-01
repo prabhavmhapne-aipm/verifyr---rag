@@ -6,13 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Verifyr** is a conversational AI assistant for health-tech product comparison, specifically targeting wearables (smartwatches, fitness trackers, health rings). The project helps users make confident purchasing decisions through neutral, source-backed product recommendations and a QA chatbot for both pre-purchase and post-purchase support.
 
-**Tech Stack (Planned):**
+**Tech Stack:**
 - Backend: FastAPI (Python)
 - Frontend: HTML/JavaScript with custom design system
 - Vector DB: Qdrant (embedded mode)
 - Keyword Search: BM25
-- LLM: Claude Sonnet 4.5
+- LLM: Claude Sonnet 4.5 / GPT-4o / GPT-4o Mini
 - Embeddings: sentence-transformers (paraphrase-multilingual-MiniLM-L12-v2, optimized for German)
+- Observability: Langfuse v3 (Docker) - Tracing, evaluation, and metrics tracking
 
 ## Project Structure
 

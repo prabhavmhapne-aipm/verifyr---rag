@@ -9,6 +9,7 @@ import sys
 import uuid
 import time
 import json
+import os
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import datetime
@@ -17,6 +18,22 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+
+# Try to import Langfuse (optional - server works without it)
+try:
+    from langfuse import Langfuse
+    LANGFUSE_AVAILABLE = True
+except (ImportError, Exception) as e:
+    LANGFUSE_AVAILABLE = False
+    Langfuse = None
+    # Use ASCII-safe warning message to avoid encoding issues
+    print("WARNING: Langfuse not available - " + str(e))
+    print("   Tracing will be disabled")
+    print("   Server will continue without Langfuse observability")
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add current directory to path for imports
 sys.path.append(str(Path(__file__).parent))
@@ -44,6 +61,7 @@ class QueryRequest(BaseModel):
         description="Previous messages: [{'role': 'user', 'content': '...'}, {'role': 'assistant', 'content': '...'}]"
     )
     conversation_id: Optional[str] = Field(default=None, description="Conversation ID for tracking")
+    skip_langfuse_trace: Optional[bool] = Field(default=False, description="Skip Langfuse trace creation (for experiment runs where trace is created externally)")
 
 
 class Source(BaseModel):
@@ -135,6 +153,7 @@ else:
 hybrid_searcher: Optional[HybridSearcher] = None
 rag_generator: Optional[RAGGenerator] = None
 products_list: List[str] = []
+langfuse_client: Optional[Langfuse] = None
 
 
 # ============================================================================
@@ -144,7 +163,7 @@ products_list: List[str] = []
 @app.on_event("startup")
 async def startup_event():
     """Initialize indexes and models on startup."""
-    global hybrid_searcher, rag_generator, products_list
+    global hybrid_searcher, rag_generator, products_list, langfuse_client
 
     print("\n" + "=" * 60)
     print("🚀 STARTING VERIFYR RAG API")
@@ -166,6 +185,35 @@ async def startup_event():
         # Initialize RAG generator with default model
         print("\n🤖 Initializing LLM (GPT-4o Mini)...")
         rag_generator = RAGGenerator(model_name="gpt-4o-mini")
+
+        # Initialize Langfuse client (Phase 11)
+        langfuse_client = None
+        if LANGFUSE_AVAILABLE:
+            try:
+                langfuse_host = os.getenv("LANGFUSE_HOST", "http://localhost:3000")
+                langfuse_public_key = os.getenv("LANGFUSE_PUBLIC_KEY")
+                langfuse_secret_key = os.getenv("LANGFUSE_SECRET_KEY")
+
+                if langfuse_public_key and langfuse_secret_key:
+                    langfuse_client = Langfuse(
+                        host=langfuse_host,
+                        public_key=langfuse_public_key,
+                        secret_key=langfuse_secret_key
+                    )
+                    print(f"\n📊 Langfuse initialized successfully!")
+                    print(f"   Host: {langfuse_host}")
+                else:
+                    print("\n⚠️  Langfuse API keys not found in environment")
+                    print("   Tracing will be disabled")
+                    print("   Set LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY to enable")
+            except Exception as e:
+                print(f"\n⚠️  Could not initialize Langfuse: {e}")
+                print("   Tracing will be disabled")
+                langfuse_client = None
+        else:
+            print("\n⚠️  Langfuse SDK not available (import failed)")
+            print("   Tracing will be disabled")
+            print("   Server will continue without Langfuse observability")
 
         # Extract unique products from chunks
         if hybrid_searcher.bm25_index.chunks:
@@ -278,22 +326,56 @@ async def query(request: QueryRequest):
             detail="Service unavailable: RAG components not loaded"
         )
 
+    # Initialize Langfuse trace if available
+    # Skip trace creation if called from evaluator (trace will be created by item.run())
+    trace = None
+    retrieval_span = None
+    generation_span = None
+
+    try:
+        if langfuse_client and not request.skip_langfuse_trace:
+            trace_metadata = {
+                "conversation_id": request.conversation_id,
+                "has_history": len(request.conversation_history) > 0
+            }
+            
+            trace = langfuse_client.trace(
+                name="rag_query",
+                input={"question": request.question, "model": request.model, "language": request.language},
+                metadata=trace_metadata
+            )
+    except Exception as e:
+        print(f"⚠️  Langfuse trace creation failed: {e}")
+        trace = None
+
     try:
         # Step 0: Analyze query to determine retrieval strategy
         query_analysis = hybrid_searcher._analyze_query(request.question)
-        
+
         # Determine retrieval parameters based on analysis
         target_products = query_analysis["target_products"] if query_analysis["target_products"] else None
         apply_diversity = query_analysis["is_comparison"]  # Apply diversity only for comparisons
         top_k = query_analysis["top_k"]
-        
+
         print(f"\n📊 Query Analysis:")
         print(f"   Products: {target_products if target_products else 'All'}")
         print(f"   Type: {'Comparison' if query_analysis['is_comparison'] else 'Single Product'}")
         print(f"   Complexity: {query_analysis['complexity']}")
         print(f"   Top-K: {top_k}")
-        
+
         # Step 1: Perform hybrid search with intelligent parameters
+        retrieval_start = time.time()
+
+        try:
+            if trace:
+                retrieval_span = trace.span(
+                    name="hybrid_search",
+                    input={"query": request.question, "top_k": top_k, "target_products": target_products}
+                )
+        except Exception as e:
+            print(f"⚠️  Langfuse retrieval span creation failed: {e}")
+            retrieval_span = None
+
         search_results = hybrid_searcher.search_hybrid(
             query=request.question,
             top_k=top_k,
@@ -305,7 +387,30 @@ async def query(request: QueryRequest):
         # Extract chunks for LLM
         retrieved_chunks = [result["chunk"] for result in search_results]
 
+        retrieval_time_ms = int((time.time() - retrieval_start) * 1000)
+
+        try:
+            if retrieval_span:
+                retrieval_span.end(
+                    output={"chunks_retrieved": len(retrieved_chunks), "retrieval_time_ms": retrieval_time_ms},
+                    metadata={"top_scores": [r.get("rrf_score", 0) for r in search_results[:3]]}
+                )
+        except Exception as e:
+            print(f"⚠️  Langfuse retrieval span end failed: {e}")
+
         # Step 2: Generate answer using LLM
+        generation_start = time.time()
+
+        try:
+            if trace:
+                generation_span = trace.span(
+                    name="llm_generation",
+                    input={"question": request.question, "chunks_count": len(retrieved_chunks), "model": request.model}
+                )
+        except Exception as e:
+            print(f"⚠️  Langfuse generation span creation failed: {e}")
+            generation_span = None
+
         # Create generator with requested model if different from default
         if request.model and request.model != rag_generator.model_name:
             generator = RAGGenerator(model_name=request.model)
@@ -318,6 +423,23 @@ async def query(request: QueryRequest):
             language=request.language or "en",
             conversation_history=request.conversation_history or []
         )
+
+        generation_time_ms = int((time.time() - generation_start) * 1000)
+
+        try:
+            if generation_span:
+                generation_span.end(
+                    output={"answer": llm_result["answer"], "sources_count": len(llm_result["sources"])},
+                    metadata={
+                        "model_used": llm_result["model_used"],
+                        "provider": llm_result["provider"],
+                        "tokens_used": llm_result["tokens_used"],
+                        "cost_usd": llm_result["cost_usd"],
+                        "generation_time_ms": generation_time_ms
+                    }
+                )
+        except Exception as e:
+            print(f"⚠️  Langfuse generation span end failed: {e}")
 
         # Step 3: Format sources
         sources = [
@@ -338,6 +460,27 @@ async def query(request: QueryRequest):
 
         # Generate query ID
         query_id = str(uuid.uuid4())
+
+        # Complete Langfuse trace
+        try:
+            if trace:
+                trace.update(
+                    output={
+                        "answer": llm_result["answer"],
+                        "sources": [s for s in llm_result["sources"]],
+                        "query_id": query_id
+                    },
+                    metadata={
+                        "response_time_ms": response_time_ms,
+                        "chunks_retrieved": len(retrieved_chunks),
+                        "model_used": llm_result["model_used"],
+                        "provider": llm_result["provider"],
+                        "tokens_used": llm_result["tokens_used"],
+                        "cost_usd": llm_result["cost_usd"]
+                    }
+                )
+        except Exception as e:
+            print(f"⚠️  Langfuse trace update failed: {e}")
 
         # Step 4: Save conversation to disk (if conversation_id provided)
         if request.conversation_id:

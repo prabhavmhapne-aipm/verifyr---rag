@@ -35,6 +35,11 @@ function Write-Info { param($Message) Write-Host "ℹ $Message" -ForegroundColor
 function Write-Warning { param($Message) Write-Host "⚠ $Message" -ForegroundColor Yellow }
 function Write-Error { param($Message) Write-Host "✗ $Message" -ForegroundColor Red }
 
+# Ensure Write-Info exists (for PowerShell versions that don't have it)
+if (-not (Get-Command Write-Info -ErrorAction SilentlyContinue)) {
+    function Write-Info { param($Message) Write-Host "ℹ $Message" -ForegroundColor Cyan }
+}
+
 # Get script directory
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
