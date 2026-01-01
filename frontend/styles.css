@@ -177,7 +177,7 @@ body {
    ============================================================================ */
 
 .chat-header {
-    padding: var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-base);
     border-bottom: 1px solid var(--border-light);
     background: var(--white);
     border-radius: var(--radius-md) var(--radius-md) 0 0;
@@ -188,7 +188,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-base);
+    margin-bottom: var(--spacing-sm);
+}
+
+.header-logo-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-base);
+    flex-wrap: wrap;
 }
 
 .chat-title {
@@ -205,11 +212,9 @@ body {
     gap: var(--spacing-base);
 }
 
-.chat-subtitle {
-    font-size: var(--font-size-base);
-    color: var(--gray);
-    margin: 0;
+.hero-badge-container {
     text-align: center;
+    margin-top: 0;
 }
 
 /* Model Selector */
@@ -586,6 +591,11 @@ body {
         gap: var(--spacing-base);
     }
 
+    .header-logo-section {
+        width: 100%;
+        gap: var(--spacing-sm);
+    }
+
     .chat-title {
         font-size: var(--font-size-3xl);
     }
@@ -600,9 +610,6 @@ body {
         font-size: var(--font-size-xs);
     }
 
-    .chat-subtitle {
-        font-size: var(--font-size-sm);
-    }
 
     .chat-messages {
         padding: var(--spacing-base);

@@ -35,16 +35,17 @@
         <!-- Header -->
         <header class="chat-header">
             <div class="header-top">
-                <h1 class="chat-title">Verifyr - Product Comparison Assistant</h1>
-
-                <!-- Controls: Language + Model Selection -->
-                <div class="header-controls">
+                <div class="header-logo-section">
+                    <div class="logo">Verifyr</div>
                     <!-- Language Switcher (matching landing page design) -->
                     <div class="lang-switch">
                         <span class="lang-option active" data-lang="en" onclick="switchLanguage('en')">EN</span>
                         <span class="lang-option" data-lang="de" onclick="switchLanguage('de')">DE</span>
                     </div>
+                </div>
 
+                <!-- Controls: Model Selection -->
+                <div class="header-controls">
                     <!-- Model Selector -->
                     <select id="modelSelector" class="model-selector" onchange="updateModelNote()">
                         <option value="claude-sonnet-4.5">Claude Sonnet 4.5</option>
@@ -54,7 +55,9 @@
                     </select>
                 </div>
             </div>
-            <p class="chat-subtitle" id="chatSubtitle">Ask me anything about Apple Watch Series 11 vs Garmin Forerunner 970</p>
+            <div class="hero-badge-container">
+                <div class="hero-badge" id="heroBadge">Your intelligent Health-Tech shopping advisor</div>
+            </div>
         </header>
 
         <!-- Chat Messages Area -->

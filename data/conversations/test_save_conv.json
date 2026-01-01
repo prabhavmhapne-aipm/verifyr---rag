@@ -1,0 +1,22 @@
+{
+  "conversation_id": "test_save_conv",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What about waterproof ratings?",
+      "timestamp": "2026-01-01T00:06:51.422719"
+    },
+    {
+      "role": "assistant",
+      "content": "The Garmin Forerunner 970 has a waterproof rating of 5ATM, which means it is suitable for swimming and showering at depths of up to 50 meters, although it is not recommended for recreational diving [1]. In contrast, the Apple Watch Series 11 also features a water resistance rating of up to 50 meters, making it similarly suitable for swimming and water activities [4]. Both watches are designed to withstand exposure to water, but neither is intended for deep-sea diving.",
+      "timestamp": "2026-01-01T00:06:51.422723",
+      "metadata": {
+        "query_id": "b0050f6c-229a-47d4-9431-1c467b9f5c64",
+        "model_used": "gpt-4o-mini",
+        "chunks_retrieved": 5
+      }
+    }
+  ],
+  "created_at": "2026-01-01T00:06:51.422090",
+  "updated_at": "2026-01-01T00:06:51.422726"
+}

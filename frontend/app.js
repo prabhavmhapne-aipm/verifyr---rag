@@ -11,6 +11,7 @@ const API_BASE_URL = 'http://localhost:8000';
 // Translations
 const TRANSLATIONS = {
     en: {
+        heroBadge: "Your intelligent Health-Tech shopping advisor",
         welcomeMessage: "Hello! How can I help you? I'm happy to help with all questions about products. What would you like to know?",
         subtitle: "Ask me anything about Apple Watch Series 11 vs Garmin Forerunner 970",
         placeholder: "Ask about product features...",
@@ -23,6 +24,7 @@ const TRANSLATIONS = {
         inputNote: "Press Enter to send"
     },
     de: {
+        heroBadge: "Dein intelligenter Health-Tech Kaufberater",
         welcomeMessage: "Hallo! Wie kann ich dir helfen? Ich helfe dir gerne bei allen Fragen zu den Produkten. Was möchtest du wissen?",
         subtitle: "Frag mich alles über Apple Watch Series 11 vs Garmin Forerunner 970",
         placeholder: "Frage nach Produktfunktionen...",
@@ -42,7 +44,6 @@ let sendButton;
 let chatMessages;
 let quickReplies;
 let modelSelector;
-let chatSubtitle;
 let inputNote;
 let conversationSidebar;
 let conversationsList;
@@ -67,7 +68,6 @@ function init() {
     chatMessages = document.getElementById('chatMessages');
     quickReplies = document.getElementById('quickReplies');
     modelSelector = document.getElementById('modelSelector');
-    chatSubtitle = document.getElementById('chatSubtitle');
     inputNote = document.getElementById('inputNote');
     conversationSidebar = document.getElementById('conversationSidebar');
     conversationsList = document.getElementById('conversationsList');
@@ -119,8 +119,8 @@ function switchLanguage(lang) {
 
     // Update UI text
     const t = TRANSLATIONS[lang];
-    chatSubtitle.textContent = t.subtitle;
     chatInput.placeholder = t.placeholder;
+    document.getElementById('heroBadge').textContent = t.heroBadge;
     updateModelNote();
 
     // Update quick replies
