@@ -242,6 +242,41 @@ body {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* User Menu */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.user-email {
+    font-size: var(--font-size-sm);
+    color: var(--gray);
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logout-btn {
+    padding: var(--spacing-sm) var(--spacing-base);
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: var(--light-gray);
+    color: var(--dark);
+    border-color: var(--gray);
+}
+
 /* ============================================================================
    Messages Area
    ============================================================================ */
@@ -683,4 +718,218 @@ body {
     .message {
         page-break-inside: avoid;
     }
+}
+
+/* ============================================================================
+   Auth Overlay (Login + Waitlist on Chat Page)
+   ============================================================================ */
+
+.auth-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: var(--spacing-lg);
+    box-sizing: border-box;
+}
+
+.auth-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    padding: var(--spacing-2xl);
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.auth-logo {
+    display: block;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-blue);
+    text-decoration: none;
+    margin-bottom: var(--spacing-sm);
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-xl);
+}
+
+.auth-tabs {
+    display: flex;
+    margin-bottom: var(--spacing-lg);
+    background: var(--light-gray);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xs);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-base);
+    border: none;
+    background: transparent;
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-primary);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+}
+
+.auth-tab.active {
+    background: var(--white);
+    color: var(--primary-blue);
+    box-shadow: var(--shadow-sm);
+}
+
+.auth-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.auth-message {
+    padding: var(--spacing-sm) var(--spacing-base);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-base);
+    font-size: var(--font-size-sm);
+    display: none;
+}
+
+.auth-message.error {
+    display: block;
+    background: #FEE2E2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+}
+
+.auth-message.success {
+    display: block;
+    background: #DCFCE7;
+    color: #16A34A;
+    border: 1px solid #BBF7D0;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-base);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--dark);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-base);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-family: var(--font-primary);
+    color: var(--dark);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.auth-submit-btn {
+    width: 100%;
+    margin-top: var(--spacing-base);
+}
+
+.signup-disabled-notice {
+    text-align: center;
+    padding: var(--spacing-base);
+    background: var(--light-gray);
+    border-radius: var(--radius-md);
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: var(--spacing-xl) 0;
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+}
+
+.auth-divider span {
+    padding: 0 var(--spacing-base);
+}
+
+.waitlist-section h3 {
+    text-align: center;
+    font-size: var(--font-size-lg);
+    color: var(--dark);
+    margin-bottom: var(--spacing-xs);
+}
+
+.waitlist-section .waitlist-note {
+    text-align: center;
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-base);
+}
+
+.waitlist-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.waitlist-btn {
+    background: var(--secondary-green);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.waitlist-btn:hover {
+    background: #059669;
+}
+
+.waitlist-message {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    text-align: center;
+}
+
+.waitlist-message.success {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
+.waitlist-message.error {
+    background: #FEE2E2;
+    color: #DC2626;
 }

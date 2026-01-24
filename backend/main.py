@@ -14,11 +14,23 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException
+# Add backend directory to path for imports (must be before local imports)
+sys.path.insert(0, str(Path(__file__).parent))
+
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
+
+from auth_middleware import (
+    AuthUser,
+    get_current_user,
+    get_optional_user,
+    require_admin,
+    get_config,
+    get_supabase_admin_client
+)
 
 # Try to import Langfuse (optional - server works without it)
 try:
@@ -34,9 +46,6 @@ except (ImportError, Exception) as e:
 
 # Load environment variables from .env file
 load_dotenv()
-
-# Add current directory to path for imports
-sys.path.append(str(Path(__file__).parent))
 
 from retrieval.hybrid_search import HybridSearcher
 from generation.llm_client import RAGGenerator
@@ -82,6 +91,7 @@ class QueryResponse(BaseModel):
     query_id: str
     response_time_ms: int
     chunks_retrieved: Optional[int] = None
+    retrieved_chunks: Optional[List[Dict[str, Any]]] = None  # For evaluation metrics
     model_used: Optional[str] = None
     provider: Optional[str] = None
     tokens_used: Optional[Dict[str, int]] = None
@@ -122,32 +132,26 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS
+# Configure CORS - Allow all origins for local development
+# This enables dev-tools.html to work when opened directly from file system
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8000", "http://127.0.0.1:8000"],
-    allow_credentials=True,
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_origins=["*"],  # Allow all origins for local dev (file://, localhost, etc.)
+    allow_credentials=False,  # Must be False when using allow_origins=["*"]
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
 )
 
-# Mount frontend static files
-# frontend/ and Verifyr/ are at project root, main.py is in backend/
+# Mount frontend static files at root
+# frontend/ is at project root, main.py is in backend/
 project_root = Path(__file__).parent.parent
 frontend_path = project_root / "frontend"
-verifyr_path = project_root / "Verifyr"
 
+# Mount static files (this will handle /chat.html, /design-system/, /images/, etc.)
 if frontend_path.exists():
-    app.mount("/frontend", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
-    print(f"✅ Frontend mounted at /frontend from {frontend_path}")
+    print(f"✅ Frontend directory found at {frontend_path}")
 else:
     print(f"⚠️  Frontend directory not found at {frontend_path}")
-
-if verifyr_path.exists():
-    app.mount("/Verifyr", StaticFiles(directory=str(verifyr_path)), name="verifyr")
-    print(f"✅ Verifyr design system mounted at /Verifyr from {verifyr_path}")
-else:
-    print(f"⚠️  Verifyr directory not found at {verifyr_path}")
 
 # Global state
 hybrid_searcher: Optional[HybridSearcher] = None
@@ -271,19 +275,33 @@ async def shutdown_event():
 # Endpoints
 # ============================================================================
 
-@app.get("/", tags=["Root"])
-async def root():
-    """Root endpoint."""
+@app.get("/api", tags=["Root"])
+async def api_info():
+    """API information endpoint."""
     return {
         "message": "Verifyr RAG API",
         "version": "1.0.0",
         "endpoints": {
             "health": "/health",
+            "config": "/config",
             "query": "/query",
             "products": "/products",
+            "conversations": "/conversations",
+            "admin": "/admin/*",
             "docs": "/docs"
         }
     }
+
+
+@app.get("/config", tags=["Config"])
+async def get_public_config():
+    """
+    Get public configuration for the frontend.
+
+    Returns Supabase URL, anon key, and signup enabled flag.
+    This endpoint is public and does not require authentication.
+    """
+    return get_config()
 
 
 @app.get("/health", response_model=HealthResponse, tags=["Health"])
@@ -302,9 +320,14 @@ async def health_check():
 
 
 @app.post("/query", response_model=QueryResponse, tags=["Query"])
-async def query(request: QueryRequest):
+async def query(
+    request: QueryRequest,
+    user: AuthUser = Depends(get_current_user)
+):
     """
     Query endpoint - Full RAG Pipeline.
+
+    Requires authentication.
 
     Performs:
     1. Hybrid search (BM25 + Vector) to retrieve relevant chunks
@@ -496,6 +519,8 @@ async def query(request: QueryRequest):
                 else:
                     conversation_data = {
                         "conversation_id": request.conversation_id,
+                        "user_id": user.id,
+                        "user_email": user.email,
                         "messages": [],
                         "created_at": datetime.now().isoformat(),
                         "updated_at": datetime.now().isoformat()
@@ -533,6 +558,7 @@ async def query(request: QueryRequest):
             query_id=query_id,
             response_time_ms=response_time_ms,
             chunks_retrieved=len(retrieved_chunks),
+            retrieved_chunks=retrieved_chunks,  # Include for evaluation metrics
             model_used=llm_result["model_used"],
             provider=llm_result["provider"],
             tokens_used=llm_result["tokens_used"],
@@ -566,11 +592,15 @@ async def get_products():
 
 
 @app.get("/conversations", response_model=ConversationsListResponse, tags=["Conversations"])
-async def list_conversations():
+async def list_conversations(user: AuthUser = Depends(get_current_user)):
     """
-    List all conversation IDs.
+    List conversation IDs for the current user.
 
-    Returns a list of conversation IDs and metadata for all saved conversations.
+    Requires authentication.
+    - Regular users see only their own conversations
+    - Admin users see all conversations
+
+    Returns a list of conversation IDs and metadata.
     """
     try:
         project_root = Path(__file__).parent.parent
@@ -584,14 +614,22 @@ async def list_conversations():
             try:
                 with open(conv_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
+
+                # Filter by user ownership (admins see all)
+                conv_user_id = data.get("user_id", "anonymous")
+                if not user.is_admin and conv_user_id != user.id and conv_user_id != "anonymous":
+                    continue
+
                 conversations.append({
                     "conversation_id": data.get("conversation_id", conv_file.stem),
+                    "user_id": conv_user_id,
+                    "user_email": data.get("user_email"),
                     "created_at": data.get("created_at", ""),
                     "updated_at": data.get("updated_at", ""),
                     "message_count": len(data.get("messages", []))
                 })
             except Exception as e:
-                print(f"⚠️  Error loading conversation {conv_file}: {e}")
+                print(f"Warning: Error loading conversation {conv_file}: {e}")
                 continue
 
         # Sort by updated_at descending (most recent first)
@@ -607,9 +645,16 @@ async def list_conversations():
 
 
 @app.get("/conversations/{conversation_id}", response_model=ConversationResponse, tags=["Conversations"])
-async def get_conversation(conversation_id: str):
+async def get_conversation(
+    conversation_id: str,
+    user: AuthUser = Depends(get_current_user)
+):
     """
     Get a specific conversation by ID.
+
+    Requires authentication.
+    - Users can only access their own conversations
+    - Admins can access any conversation
 
     Returns the full conversation history including all messages.
     """
@@ -627,6 +672,14 @@ async def get_conversation(conversation_id: str):
         with open(conversation_file, 'r', encoding='utf-8') as f:
             conversation_data = json.load(f)
 
+        # Check ownership (admins can access any, users only their own)
+        conv_user_id = conversation_data.get("user_id", "anonymous")
+        if not user.is_admin and conv_user_id != user.id and conv_user_id != "anonymous":
+            raise HTTPException(
+                status_code=403,
+                detail="Access denied: You can only view your own conversations"
+            )
+
         return ConversationResponse(
             conversation_id=conversation_data["conversation_id"],
             messages=conversation_data["messages"],
@@ -641,6 +694,160 @@ async def get_conversation(conversation_id: str):
             status_code=500,
             detail=f"Error loading conversation: {str(e)}"
         )
+
+
+# ============================================================================
+# Admin Endpoints (Requires Admin Role)
+# ============================================================================
+
+@app.get("/admin/conversations", tags=["Admin"])
+async def admin_list_all_conversations(user: AuthUser = Depends(require_admin)):
+    """
+    List all conversations (admin only).
+
+    Returns all conversations regardless of ownership.
+    """
+    try:
+        project_root = Path(__file__).parent.parent
+        conversations_dir = project_root / "data" / "conversations"
+
+        if not conversations_dir.exists():
+            return {"conversations": []}
+
+        conversations = []
+        for conv_file in conversations_dir.glob("*.json"):
+            try:
+                with open(conv_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                conversations.append({
+                    "conversation_id": data.get("conversation_id", conv_file.stem),
+                    "user_id": data.get("user_id", "anonymous"),
+                    "user_email": data.get("user_email"),
+                    "created_at": data.get("created_at", ""),
+                    "updated_at": data.get("updated_at", ""),
+                    "message_count": len(data.get("messages", []))
+                })
+            except Exception as e:
+                print(f"Warning: Error loading conversation {conv_file}: {e}")
+                continue
+
+        # Sort by updated_at descending (most recent first)
+        conversations.sort(key=lambda x: x.get("updated_at", ""), reverse=True)
+
+        return {"conversations": conversations}
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error listing conversations: {str(e)}"
+        )
+
+
+@app.get("/admin/users", tags=["Admin"])
+async def admin_list_users(user: AuthUser = Depends(require_admin)):
+    """
+    List all users from Supabase (admin only).
+
+    Returns user list from Supabase auth.users table.
+    """
+    try:
+        supabase = get_supabase_admin_client()
+
+        if not supabase:
+            # Fallback: Extract unique users from conversations
+            project_root = Path(__file__).parent.parent
+            conversations_dir = project_root / "data" / "conversations"
+
+            users_map = {}
+            if conversations_dir.exists():
+                for conv_file in conversations_dir.glob("*.json"):
+                    try:
+                        with open(conv_file, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                        user_id = data.get("user_id", "anonymous")
+                        if user_id not in users_map:
+                            users_map[user_id] = {
+                                "id": user_id,
+                                "email": data.get("user_email"),
+                                "conversation_count": 0
+                            }
+                        users_map[user_id]["conversation_count"] += 1
+                    except Exception:
+                        continue
+
+            return {"users": list(users_map.values()), "source": "conversations"}
+
+        # Use Supabase admin API to list users
+        response = supabase.auth.admin.list_users()
+        users = []
+        for u in response:
+            users.append({
+                "id": u.id,
+                "email": u.email,
+                "created_at": u.created_at.isoformat() if u.created_at else None,
+                "last_sign_in_at": u.last_sign_in_at.isoformat() if u.last_sign_in_at else None,
+                "is_admin": u.user_metadata.get("is_admin", False) if u.user_metadata else False
+            })
+
+        return {"users": users, "source": "supabase"}
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error listing users: {str(e)}"
+        )
+
+
+@app.get("/admin/stats", tags=["Admin"])
+async def admin_get_stats(user: AuthUser = Depends(require_admin)):
+    """
+    Get system statistics (admin only).
+
+    Returns counts of users, conversations, messages, and other metrics.
+    """
+    try:
+        project_root = Path(__file__).parent.parent
+        conversations_dir = project_root / "data" / "conversations"
+
+        stats = {
+            "total_conversations": 0,
+            "total_messages": 0,
+            "unique_users": set(),
+            "products_available": len(products_list),
+            "chunks_indexed": len(hybrid_searcher.bm25_index.chunks) if hybrid_searcher else 0
+        }
+
+        if conversations_dir.exists():
+            for conv_file in conversations_dir.glob("*.json"):
+                try:
+                    with open(conv_file, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    stats["total_conversations"] += 1
+                    stats["total_messages"] += len(data.get("messages", []))
+                    user_id = data.get("user_id", "anonymous")
+                    stats["unique_users"].add(user_id)
+                except Exception:
+                    continue
+
+        # Convert set to count
+        stats["unique_users"] = len(stats["unique_users"])
+
+        return stats
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error getting stats: {str(e)}"
+        )
+
+
+# ============================================================================
+# Static File Mounting (Must be last to not interfere with API routes)
+# ============================================================================
+
+# Mount frontend at root - serves landing page (index.html) and chat interface (chat.html)
+app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+print(f"✅ Frontend mounted at / from {frontend_path}")
 
 
 # ============================================================================

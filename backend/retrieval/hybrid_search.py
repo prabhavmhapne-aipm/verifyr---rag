@@ -15,6 +15,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from indexing.bm25_index import BM25Index
 from indexing.vector_store import VectorStore
+from retrieval.product_keywords import detect_products_in_query
 
 # Set UTF-8 encoding for Windows console
 if sys.platform == "win32":
@@ -61,6 +62,14 @@ class HybridSearcher:
         self.vector_store._load_embedding_model()
         self.vector_store._initialize_qdrant()
 
+        # Extract available products from BM25 index
+        self.available_products = []
+        if self.bm25_index.chunks:
+            products_set = set()
+            for chunk in self.bm25_index.chunks:
+                products_set.add(chunk["product_name"])
+            self.available_products = sorted(list(products_set))
+
         print("✅ Hybrid searcher ready!\n")
 
     def _calculate_rrf_score(self, rank: int) -> float:
@@ -90,19 +99,8 @@ class HybridSearcher:
         """
         query_lower = query.lower()
         
-        # Product keywords
-        apple_keywords = ['apple watch', 'apple', 'series 11']
-        garmin_keywords = ['garmin', 'forerunner', '970']
-        
-        # Detect products mentioned
-        mentions_apple = any(kw in query_lower for kw in apple_keywords)
-        mentions_garmin = any(kw in query_lower for kw in garmin_keywords)
-        
-        target_products = []
-        if mentions_apple:
-            target_products.append("Apple Watch Series 11")
-        if mentions_garmin:
-            target_products.append("Garmin Forerunner 970")
+        # Detect products mentioned in query using dynamic keyword mapping
+        target_products = detect_products_in_query(query, self.available_products)
         
         # Comparison indicators
         comparison_terms = [
@@ -112,7 +110,7 @@ class HybridSearcher:
             'vergleich', 'besser', 'welche', 'zwischen'
         ]
         is_comparison = (
-            len(target_products) >= 2 or  # Both products mentioned
+            len(target_products) >= 2 or  # Multiple products mentioned
             any(term in query_lower for term in comparison_terms)
         )
         

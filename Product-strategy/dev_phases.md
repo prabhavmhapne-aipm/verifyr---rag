@@ -629,8 +629,9 @@ Requirements:
    ```
 
    This enables:
-   - Chat interface access at http://localhost:8000/frontend/
-   - Design system CSS at http://localhost:8000/Verifyr/design-system/design-system.css
+   - Landing page access at http://localhost:8000/
+   - Chat interface access at http://localhost:8000/chat.html
+   - Design system CSS at http://localhost:8000/design-system/design-system.css
    - Single server for both API and frontend (no CORS issues)
 
 Run server on port 8000 with auto-reload.
@@ -684,19 +685,22 @@ Expected: 400 error
 
 8. **Test static file serving:**
 ```bash
-# Test frontend access
-curl -I http://localhost:8000/frontend/
+# Test landing page
+curl -I http://localhost:8000/
+# Expected: 200 OK
+
+# Test chat interface
+curl -I http://localhost:8000/chat.html
 # Expected: 200 OK
 
 # Test design system CSS
-curl -I http://localhost:8000/Verifyr/design-system/design-system.css
+curl -I http://localhost:8000/design-system/design-system.css
 # Expected: 200 OK
 ```
 
 9. **Verify server logs on startup:**
 ```
-✅ Frontend mounted at /frontend from C:\path\to\verifyr - rag\frontend
-✅ Verifyr design system mounted at /Verifyr from C:\path\to\verifyr - rag\Verifyr
+✅ Frontend mounted at / from C:\path\to\verifyr - rag\frontend
 ```
 
 ### Success Criteria
@@ -706,9 +710,10 @@ curl -I http://localhost:8000/Verifyr/design-system/design-system.css
 - ✅ CORS configured correctly
 - ✅ Swagger docs accessible
 - ✅ Error handling works
-- ✅ Frontend accessible at /frontend/
-- ✅ Design system CSS loads from /Verifyr/
-- ✅ Server logs show both mounts on startup
+- ✅ Landing page accessible at /
+- ✅ Chat interface accessible at /chat.html
+- ✅ Design system CSS loads from /design-system/
+- ✅ Server logs show frontend mount on startup
 
 ### Common Issues & Fixes
 
@@ -722,10 +727,10 @@ curl -I http://localhost:8000/Verifyr/design-system/design-system.css
 **Fix:** Check import errors, missing dependencies
 
 **Issue:** Frontend returns 404 Not Found
-**Fix:** Ensure StaticFiles is imported and /frontend and /Verifyr directories are mounted correctly. Check server logs for mount confirmation messages.
+**Fix:** Ensure StaticFiles is imported and frontend directory is mounted at root `/`. Check server logs for mount confirmation messages. Verify mount comes AFTER all API route definitions.
 
 **Issue:** Frontend CSS not loading (design looks broken)
-**Fix:** Verify /Verifyr directory is mounted. Check browser console for 404 errors on CSS files. Ensure frontend HTML references CSS as `/Verifyr/design-system/design-system.css`
+**Fix:** Check browser console for 404 errors on CSS files. Ensure frontend HTML references CSS as `design-system/design-system.css` (relative path). Verify design-system directory exists within frontend/.
 
 **Issue:** Path resolution errors (directories not found)
 **Fix:** Use `Path(__file__).parent.parent` to get project root, not relative paths
@@ -1053,7 +1058,7 @@ Create a simple HTML/JavaScript frontend for the RAG chatbot using the Verifyr d
 Requirements:
 
 1. Design System Integration:
-   - Import the Verifyr design system: ../Verifyr/design-system/design-system.css
+   - Import the Verifyr design system: design-system/design-system.css
    - Use design tokens for colors, typography, spacing, shadows, borders
    - Reuse existing components (buttons, cards, forms, modals) where applicable
    - Apply existing animations (fadeInUp, slideUp, spin) for message transitions
@@ -1483,16 +1488,21 @@ Requirements:
      * LANGFUSE_HOST (default: http://localhost:3000)
 
 4. Create tests/langfuse_evaluator.py:
-   - Script to run batch evaluation:
-     * Connect to Langfuse API
-     * Create evaluation dataset with test cases from test_cases.py
-     * Run each test case through /query endpoint
-     * Use Langfuse to collect traces and metrics
-     * Optional: Use RAGAS metrics via Langfuse integration
+   - **Recommended Approach:** Use Langfuse Experiment Runner (`dataset.run_experiment()`)
+     * Automatically handles trace linking to dataset items
+     * Built-in error isolation and concurrent execution
+     * Supports evaluators (custom and RAGAS)
+     * No manual `item.run()` context management needed
+   - **Alternative (Current Implementation):** Manual `item.run()` approach
+     * Uses `item.run()` context manager for each dataset item
+     * Manually updates traces with results
+     * Falls back to simple execution if experiment API fails
+     * **Note:** May have trace linking issues if Langfuse server has connection problems
    - Script should:
      * Print progress to console
      * Generate summary report
      * Link to Langfuse dashboard for detailed analysis
+   - **Migration Path:** Refactor to use Experiment Runner for better reliability
 
 5. Create .env.example:
    - Add Langfuse configuration variables
@@ -1564,12 +1574,13 @@ curl -X POST http://localhost:8000/query \
 6. **Create evaluation dataset:**
 ```bash
 # Run evaluation script
-python tests/langfuse_evaluator.py
+python tests/langfuse_evaluator.py --model gpt-4o-mini
 ```
 This should:
 - Create dataset in Langfuse
 - Run all 15 test cases
 - Collect traces for each
+- **Note:** Current implementation uses manual `item.run()` approach. For better reliability, consider migrating to Experiment Runner (`dataset.run_experiment()`)
 
 7. **View evaluation results:**
 - Go to Langfuse dashboard → "Datasets"
@@ -1642,6 +1653,15 @@ This should:
 - Ensure FastAPI server is running
 - Check that /query endpoint works independently
 
+**Issue:** Traces not linked to dataset items (no outputs in Langfuse dataset view)
+**Fix:**
+- This occurs when `item.run()` fails due to Langfuse server connection issues
+- **Recommended Solution:** Migrate to Experiment Runner (`dataset.run_experiment()`)
+  - Experiment Runner automatically handles trace linking
+  - Better error isolation and retry handling
+  - More reliable than manual `item.run()` approach
+- **Temporary Workaround:** Ensure Langfuse server is stable (no blob storage errors)
+
 ### Langfuse Dashboard Features
 
 Once set up, you can use:
@@ -1664,7 +1684,625 @@ Langfuse provides:
 
 ---
 
-## Phase 12: Guardrails Implementation
+## Phase 12: Comprehensive RAG Evaluation with RAGAS & Metrics
+
+### Objective
+Implement a production-ready evaluation system with retrieval metrics, RAGAS framework, and custom metrics to systematically measure and improve RAG quality across 8 key dimensions.
+
+**Recommended Implementation Approach:**
+- Use **Langfuse Experiment Runner** (`dataset.run_experiment()`) as per [Langfuse documentation](https://langfuse.com/docs/evaluation/experiments/experiments-via-sdk)
+- **Key Benefits:**
+  - Automatic trace linking to dataset items (solves current Phase 11 issue)
+  - Built-in error isolation (individual failures don't stop experiment)
+  - Concurrent execution with configurable limits
+  - Flexible evaluation with item-level and run-level evaluators
+  - Dataset integration for easy comparison and tracking
+- **Pattern:** Use `@observe` decorator on task function, define evaluators, call `dataset.run_experiment()`
+- More reliable than manual `item.run()` approach, especially when Langfuse server has connection issues
+
+### Strategy Overview
+
+**3-Phase Approach:**
+- **Phase 1 (Baseline)**: 50 hand-written test cases + 5 metrics + baseline evaluation
+- **Phase 2 (Expand)**: +25 RAGAS-generated cases (75 total)
+- **Phase 3 (Production)**: User feedback + monitoring + growth to 150+ cases
+
+**Test Dataset Distribution:**
+- **Total Questions**: 50 (Phase 1) → 75 (Phase 2) → 150+ (Phase 3)
+- **Language Split**: 60% German (30 DE) / 40% English (20 EN)
+- **Ground Truth**: 25 questions (50%) with expected answers
+- **Categories**: Factual, Comparison, Complex, Edge Cases, Adversarial
+
+**8 Total Metrics:**
+1. Hit Rate @ 5 (retrieval)
+2. MRR - Mean Reciprocal Rank (retrieval)
+3. Precision @ 5 (retrieval)
+4. RAGAS Faithfulness (generation)
+5. RAGAS Answer Relevancy (generation)
+6. RAGAS Context Relevancy (generation)
+7. Custom Citation Quality (generation)
+8. Custom Helpfulness (generation)
+
+### Phase 1: Baseline Evaluation
+
+**Key Implementation Order:**
+1. Set up Experiment Runner infrastructure FIRST (step 2)
+2. Then add evaluators incrementally (steps 3-5)
+3. Finally combine all evaluators (step 6)
+
+**Why:** Experiment Runner infrastructure must exist before creating evaluators, so evaluators are designed to work WITH Experiment Runner from the start.
+
+#### Prompt for Claude Code
+
+```
+Implement baseline RAG evaluation system with 50 test cases, retrieval metrics, and RAGAS framework using Langfuse Experiment Runner.
+
+Requirements:
+
+1. Create tests/test_cases_phase12.py:
+   - 50 hand-written test cases with structure:
+     {
+       "question": "What is the battery life of Apple Watch Series 11?",
+       "expected_answer": "18 hours of all-day battery life",  # Ground truth (25 cases have this)
+       "expected_chunks": ["apple_watch_manual_p5_c1"],  # For retrieval metrics
+       "category": "factual",  # factual, comparison, complex, edge, adversarial
+       "language": "en",  # en or de
+       "expected_products": ["Apple Watch Series 11"],
+       "tags": ["battery", "specifications"]
+     }
+
+   - Distribution:
+     * 30 German (60%), 20 English (40%)
+     * Categories: 20 factual, 15 comparison, 10 complex, 3 edge, 2 adversarial
+     * 25 cases with expected_answer (ground truth)
+     * 50 cases with expected_chunks (for retrieval eval)
+
+   - Include examples of:
+     * Simple factual queries
+     * Product comparisons
+     * Multi-step reasoning
+     * Edge cases (ambiguous queries, out-of-scope)
+     * Adversarial inputs (prompt injection attempts)
+
+2. **Set up Experiment Runner infrastructure first:**
+   - Create tests/evaluator_complete.py with Experiment Runner setup
+   - Define task function with `@observe` decorator:
+     ```python
+     from langfuse import get_client, observe, Evaluation
+     import requests
+     
+     langfuse = get_client()
+     
+     @observe
+     def rag_task(*, item, **kwargs):
+         """Task function that calls the RAG backend API"""
+         question = item.input.get("question")
+         model = kwargs.get("model", "gpt-4o-mini")
+         
+         response = requests.post(
+             "http://localhost:8000/query",
+             json={"question": question, "model": model, "skip_langfuse_trace": True},
+             timeout=30
+         )
+         
+         if response.status_code == 200:
+             result = response.json()
+             return {
+                 "answer": result.get("answer"),
+                 "sources": result.get("sources"),
+                 "retrieved_chunks": result.get("retrieved_chunks", [])
+             }
+         else:
+             raise Exception(f"API call failed: {response.status_code}")
+     ```
+   - Test basic Experiment Runner with minimal evaluator first
+   - This establishes the infrastructure before adding complex evaluators
+
+3. Create tests/retrieval_metrics.py:
+   - Implement 3 retrieval evaluators (for Experiment Runner):
+   
+   def hit_rate_at_5_evaluator(*, item, output, **kwargs):
+       """Check if any relevant doc appears in top 5 retrieved"""
+       retrieved_contexts = output.get("retrieved_chunks", [])[:5]
+       expected_chunks = item.metadata.get("expected_chunks", [])
+       hit = any(chunk_id in [c.get("chunk_id") for c in retrieved_contexts] 
+                 for chunk_id in expected_chunks)
+       return Evaluation(name="hit_rate_at_5", value=1.0 if hit else 0.0)
+   
+   def mrr_evaluator(*, item, output, **kwargs):
+       """Mean Reciprocal Rank"""
+       # Implementation here
+       return Evaluation(name="mrr", value=score)
+   
+   def precision_at_5_evaluator(*, item, output, **kwargs):
+       """Precision @ 5"""
+       # Implementation here
+       return Evaluation(name="precision_at_5", value=score)
+   
+   - Add these to evaluator_complete.py and test with Experiment Runner
+
+4. Create tests/ragas_evaluator.py:
+   - Install dependencies: ragas, datasets
+   - Import RAGAS metrics:
+     from ragas.metrics import (
+         Faithfulness,
+         ResponseRelevancy,
+         LLMContextPrecisionWithoutReference,
+     )
+   
+   - Configure RAGAS metrics with LLM and embeddings:
+     from langchain_openai.chat_models import ChatOpenAI
+     from langchain_openai.embeddings import OpenAIEmbeddings
+     from ragas.llms import LangchainLLMWrapper
+     from ragas.embeddings import LangchainEmbeddingsWrapper
+     from ragas.run_config import RunConfig
+     from ragas.metrics.base import MetricWithLLM, MetricWithEmbeddings
+     
+     llm = ChatOpenAI(model="gpt-4o")
+     emb = OpenAIEmbeddings()
+     
+     metrics = [
+         Faithfulness(),
+         ResponseRelevancy(),
+         LLMContextPrecisionWithoutReference(),
+     ]
+     
+     # Initialize metrics with LLM and embeddings
+     for metric in metrics:
+         if isinstance(metric, MetricWithLLM):
+             metric.llm = LangchainLLMWrapper(llm)
+         if isinstance(metric, MetricWithEmbeddings):
+             metric.embeddings = LangchainEmbeddingsWrapper(emb)
+         metric.init(RunConfig())
+
+   - Create RAGAS evaluators for Experiment Runner (as per Langfuse docs):
+     from langfuse import Evaluation
+     from ragas.dataset_schema import SingleTurnSample
+     
+     async def ragas_faithfulness_evaluator(*, input, output, **kwargs):
+         sample = SingleTurnSample(
+             user_input=input.get("question"),
+             retrieved_contexts=output.get("retrieved_chunks", []),
+             response=output.get("answer", ""),
+         )
+         score = await Faithfulness().single_turn_ascore(sample)
+         return Evaluation(name="faithfulness", value=score)
+     
+     async def ragas_answer_relevancy_evaluator(*, input, output, **kwargs):
+         sample = SingleTurnSample(
+             user_input=input.get("question"),
+             retrieved_contexts=output.get("retrieved_chunks", []),
+             response=output.get("answer", ""),
+         )
+         score = await ResponseRelevancy().single_turn_ascore(sample)
+         return Evaluation(name="answer_relevancy", value=score)
+     
+     async def ragas_context_precision_evaluator(*, input, output, **kwargs):
+         sample = SingleTurnSample(
+             user_input=input.get("question"),
+             retrieved_contexts=output.get("retrieved_chunks", []),
+             response=output.get("answer", ""),
+         )
+         score = await LLMContextPrecisionWithoutReference().single_turn_ascore(sample)
+         return Evaluation(name="context_precision", value=score)
+
+   - Note: These async evaluators work with Experiment Runner automatically
+   - Import these evaluators into evaluator_complete.py after RAGAS setup
+
+5. Create tests/custom_metrics.py:
+   - Implement 2 custom metrics using LLM-as-a-judge:
+
+   def evaluate_citation_quality(answer, sources, judge_model="gpt-4o"):
+       """Are sources correctly cited and formatted?"""
+       # Use LLM to judge: Are citations present? Well-placed? Correct format?
+       # Return: {"score": 0.0-1.0, "reasoning": str, "pass": bool}
+
+   def evaluate_helpfulness(question, answer, judge_model="gpt-4o"):
+       """Is the answer clear, actionable, and helpful?"""
+       # Use LLM to judge: Easy to understand? Actionable? Appropriate length?
+       # Return: {"score": 0.0-1.0, "reasoning": str, "pass": bool}
+
+   - Use GPT-4o as default judge
+   - Return `Evaluation()` objects (not dicts) for Experiment Runner compatibility
+   - Import these evaluators into evaluator_complete.py
+
+6. **Complete evaluator_complete.py with all evaluators:**
+   - Import all evaluators from retrieval_metrics.py, custom_metrics.py, ragas_evaluator.py
+   - Combine all evaluators in `dataset.run_experiment()`:
+     ```python
+     from tests.retrieval_metrics import hit_rate_at_5_evaluator, mrr_evaluator, precision_at_5_evaluator
+     from tests.custom_metrics import citation_quality_evaluator, helpfulness_evaluator
+     from tests.ragas_evaluator import (
+         ragas_faithfulness_evaluator,
+         ragas_answer_relevancy_evaluator,
+         ragas_context_precision_evaluator
+     )
+     
+     dataset = langfuse.get_dataset("rag_evaluation_dataset")
+     
+     result = dataset.run_experiment(
+         name="RAG Evaluation Run",
+         description="Testing retrieval and generation metrics",
+         task=rag_task,  # From step 2
+         evaluators=[
+             # Retrieval metrics (fast, no LLM)
+             hit_rate_at_5_evaluator,
+             mrr_evaluator,
+             precision_at_5_evaluator,
+             # Custom generation metrics
+             citation_quality_evaluator,
+             helpfulness_evaluator,
+             # RAGAS evaluators
+             ragas_faithfulness_evaluator,
+             ragas_answer_relevancy_evaluator,
+             ragas_context_precision_evaluator,
+         ],
+         config={"model": "claude-sonnet-4.5"}
+     )
+     
+     print(result.format())
+     langfuse.flush()
+     ```
+   
+   **Key Points:**
+   - Experiment Runner infrastructure set up FIRST (step 2)
+   - Evaluators added incrementally (steps 3, 4, 5)
+   - All evaluators combined in final step (step 6)
+   - Command-line interface:
+     python tests/evaluator_complete.py --model claude-sonnet-4.5
+     python tests/evaluator_complete.py --model gpt-4o
+     python tests/evaluator_complete.py --max-tests 10  # Quick test
+
+7. Update requirements.txt:
+   - Add evaluation dependencies:
+     ragas>=0.1.0
+     datasets>=2.14.0
+     langchain-openai>=0.1.0
+     langchain-anthropic>=0.1.0
+
+8. Create EVALUATION_PHASE12.md:
+   - Document evaluation strategy
+   - Document all 8 metrics with targets
+   - Usage instructions for evaluator_complete.py
+   - How to interpret results
+   - Best practices for test case expansion
+```
+
+#### Your Validation Steps
+
+1. **Install dependencies:**
+```bash
+pip install ragas datasets langchain-openai langchain-anthropic
+```
+
+2. **Verify test cases:**
+```bash
+python tests/test_cases_phase12.py
+# Should print: 50 total (30 DE, 20 EN)
+```
+
+3. **Test retrieval metrics:**
+```bash
+# Run quick test on 5 cases
+python tests/evaluator_complete.py --max-tests 5
+```
+
+4. **Run full baseline evaluation:**
+```bash
+# All 50 test cases
+python tests/evaluator_complete.py --model claude-sonnet-4.5
+
+# View results in terminal
+# Check Langfuse dashboard: http://localhost:3000/traces
+```
+
+5. **Verify all 8 metrics:**
+- Retrieval: hit_rate, mrr, precision_at_5
+- RAGAS: faithfulness, answer_relevancy, context_relevancy
+- Custom: citation_quality, helpfulness
+
+6. **Check Langfuse integration:**
+- Each trace should have 8 scores attached
+- Filter traces by low scores to find failures
+- Analyze patterns in failing queries
+
+### Phase 2: Expand with RAGAS Synthetic Data
+
+#### Prompt for Claude Code
+
+```
+Generate synthetic test cases using RAGAS and expand dataset to 75 questions.
+
+Requirements:
+
+1. Create tests/generate_synthetic_cases.py:
+   - Use RAGAS to generate questions from your document chunks:
+     from ragas.testset.generator import TestsetGenerator
+     from ragas.testset.evolutions import simple, reasoning, multi_context
+
+   - Load chunks from data/processed/chunks.json
+   - Generate 50 synthetic questions:
+     * 25 simple (factual)
+     * 15 reasoning (complex)
+     * 10 multi-context (comparison)
+
+   - Output format matching test_cases_phase12.py structure
+   - Save to tests/synthetic_cases_generated.json
+
+2. Manual review and filtering:
+   - Review all 50 generated questions
+   - Filter to 25 high-quality questions that:
+     * Are realistic (user would actually ask)
+     * Test different aspects than hand-written cases
+     * Have clear expected answers
+     * Cover both products
+   - Remove duplicates or too-obvious questions
+   - Add expected_chunks metadata manually
+
+3. Merge datasets:
+   - Combine 50 hand-written + 25 filtered synthetic = 75 total
+   - Update tests/test_cases_phase12.py with merged dataset
+   - Maintain 60/40 DE/EN ratio (adjust synthetic if needed)
+
+4. **Re-run evaluation using Experiment Runner:**
+   - Use `tests/evaluator_complete.py` from Phase 12.1 (already set up with Experiment Runner)
+   - Update Langfuse dataset with new 25 synthetic cases:
+     ```python
+     dataset = langfuse.get_dataset("rag_evaluation_dataset")
+     # Add new synthetic test cases to dataset
+     for test_case in synthetic_cases:
+         langfuse.create_dataset_item(
+             dataset_name="rag_evaluation_dataset",
+             input={"question": test_case["question"], "category": test_case["category"], "language": test_case["language"]},
+             expected_output=test_case.get("expected_answer"),
+             metadata={"expected_chunks": test_case.get("expected_chunks", [])}
+         )
+     ```
+   - Run `dataset.run_experiment()` with all evaluators (same as Phase 12.1):
+     ```python
+     result = dataset.run_experiment(
+         name="RAG Evaluation Run - Expanded Dataset",
+         description="Testing with 75 cases (50 hand-written + 25 synthetic)",
+         task=rag_task,  # Same task function from Phase 12.1
+         evaluators=[...],  # All evaluators from Phase 12.1
+         config={"model": "claude-sonnet-4.5"}
+     )
+     print(result.format())
+     langfuse.flush()
+     ```
+   - Compare metrics to baseline (50 cases)
+   - Document any metric changes
+   - **Key Point:** No need to rebuild infrastructure - reuse Experiment Runner setup from Phase 12.1
+```
+
+#### Your Validation Steps
+
+1. **Generate synthetic cases:**
+```bash
+python tests/generate_synthetic_cases.py
+# Outputs: tests/synthetic_cases_generated.json (50 cases)
+```
+
+2. **Manual review:**
+- Open synthetic_cases_generated.json
+- Review each question for quality
+- Mark 25 best questions for inclusion
+
+3. **Merge and test using Experiment Runner:**
+```bash
+# Run on expanded dataset (75 cases) using Experiment Runner
+python tests/evaluator_complete.py --model claude-sonnet-4.5
+# This uses the same Experiment Runner setup from Phase 12.1
+```
+
+4. **Compare metrics:**
+- Baseline (50 cases) vs Expanded (75 cases)
+- Should see similar or slightly improved scores
+- More diverse coverage of edge cases
+
+### Phase 3: Production Monitoring & Growth
+
+#### Prompt for Claude Code
+
+```
+Implement production monitoring with user feedback and continuous test set expansion.
+
+Requirements:
+
+1. User Feedback Integration:
+   - Add thumbs up/down buttons to frontend (already documented in frontend/feedback_integration.md)
+   - Implement /feedback endpoint in backend (already documented in backend/feedback_endpoint.md)
+   - Log all feedback to Langfuse as scores
+
+2. Create tests/production_monitor.py:
+   - Weekly monitoring script:
+     * Fetch all production queries from Langfuse
+     * Calculate aggregate metrics (avg scores, pass rates)
+     * Identify queries with negative user feedback
+     * Generate report: production_report_YYYYMMDD.md
+
+3. Create tests/expand_test_set.py:
+   - Script to add production queries to test set:
+     * Input: Query ID from Langfuse
+     * Fetch query, answer, chunks from trace
+     * Manual entry of expected_answer
+     * Manual entry of expected_chunks
+     * Append to test_cases_phase12.py
+   - Goal: Grow from 75 to 150+ cases over 3 months
+
+4. **Automated weekly evaluation using Experiment Runner:**
+   - Use `tests/evaluator_complete.py` pattern from Phase 12.1 (already set up with Experiment Runner)
+   - Create .github/workflows/evaluation.yml (if using GitHub) or cron job:
+     ```python
+     # Weekly evaluation script (uses Experiment Runner)
+     from tests.evaluator_complete import rag_task, all_evaluators
+     from langfuse import get_client
+     
+     langfuse = get_client()
+     dataset = langfuse.get_dataset("rag_evaluation_dataset")
+     
+     # Run weekly evaluation
+     result = dataset.run_experiment(
+         name=f"Weekly Evaluation - {datetime.now().strftime('%Y-%m-%d')}",
+         description="Automated weekly evaluation run",
+         task=rag_task,
+         evaluators=all_evaluators,  # All evaluators from Phase 12.1
+         config={"model": "claude-sonnet-4.5"}
+     )
+     
+     # Track metrics over time in Langfuse dashboard
+     metrics = result.get_metrics()
+     
+     # Alert if metrics drop >5%
+     if metrics["average_score"] < previous_week_score * 0.95:
+         send_alert("Metrics dropped >5%")
+     
+     print(result.format())
+     langfuse.flush()
+     ```
+   - Or: cron job to run `python tests/evaluator_complete.py` weekly
+   - Compare week-over-week metrics in Langfuse dashboard
+   - Alert if metrics drop >5%
+   - **Key Point:** Reuses Experiment Runner infrastructure from Phase 12.1 - no new setup needed
+```
+
+#### Your Validation Steps
+
+1. **Deploy to production:**
+- User feedback buttons active in frontend
+- /feedback endpoint working
+- Langfuse tracing all queries
+
+2. **Monitor for 1 week:**
+```bash
+# After 1 week
+python tests/production_monitor.py
+# Generates report with:
+# - Total queries
+# - Avg user feedback score
+# - Queries with negative feedback
+# - Comparison to test set metrics
+```
+
+3. **Add failing queries to test set:**
+```bash
+# Interactive script
+python tests/expand_test_set.py
+# Enter query ID from Langfuse
+# Add expected answer
+# Saves to test set
+```
+
+4. **Growth tracking:**
+- Week 1: 75 test cases
+- Month 1: 90 test cases (+15 from production)
+- Month 2: 110 test cases (+20)
+- Month 3: 150+ test cases (+40)
+
+### Success Criteria
+
+**Phase 1 (Baseline):**
+- ✅ 50 test cases (30 DE, 20 EN)
+- ✅ 8 metrics implemented and working
+- ✅ Baseline evaluation complete
+- ✅ All scores logged to Langfuse
+- ✅ Target scores:
+  * Hit Rate @ 5: >80%
+  * MRR: >0.7
+  * RAGAS Faithfulness: >0.9
+  * RAGAS Answer Relevancy: >0.85
+  * Citation Quality: >0.8
+  * Helpfulness: >0.8
+
+**Phase 2 (Expand):**
+- ✅ 75 test cases total (50 hand-written + 25 synthetic)
+- ✅ RAGAS synthetic generation working
+- ✅ Quality filtering process documented
+- ✅ Re-evaluation shows consistent metrics
+
+**Phase 3 (Production):**
+- ✅ User feedback active in production
+- ✅ Weekly monitoring reports generated
+- ✅ Test set growing (10-20 cases/month)
+- ✅ 150+ test cases within 3 months
+- ✅ Production metrics align with test set metrics (±10%)
+
+### Key Metrics & Targets
+
+| Metric | Target | Critical Threshold |
+|--------|--------|-------------------|
+| **Hit Rate @ 5** | >85% | <75% = investigate |
+| **MRR** | >0.7 | <0.6 = improve retrieval |
+| **Precision @ 5** | >0.6 | <0.5 = too much noise |
+| **RAGAS Faithfulness** | >0.95 | <0.85 = hallucinations! |
+| **RAGAS Answer Relevancy** | >0.85 | <0.75 = off-topic |
+| **RAGAS Context Relevancy** | >0.7 | <0.6 = bad retrieval |
+| **Citation Quality** | >0.85 | <0.7 = poor sourcing |
+| **Helpfulness** | >0.8 | <0.7 = unclear answers |
+
+### Common Issues & Fixes
+
+**Issue:** RAGAS installation fails
+**Fix:**
+```bash
+pip install ragas --upgrade
+pip install datasets langchain-openai
+```
+
+**Issue:** "No API key for OpenAI"
+**Fix:** Add to .env:
+```
+OPENAI_API_KEY=your_openai_key_here
+```
+
+**Issue:** Retrieval metrics show 0% hit rate
+**Fix:**
+- Check expected_chunks in test cases match actual chunk IDs
+- Verify chunk ID format: "{product}_{doctype}_p{page}_c{chunk}"
+- Update test cases with correct chunk IDs
+
+**Issue:** RAGAS faithfulness too low (<0.8)
+**Fix:**
+- Check if LLM is hallucinating facts not in chunks
+- Review generation prompt for instructions to stick to context
+- Adjust temperature (lower = less hallucination)
+
+**Issue:** Citation quality low
+**Fix:**
+- Check citation format in generation prompt
+- Verify sources are actually cited in answer
+- Update prompt to require explicit citations
+
+**Issue:** Evaluation takes too long
+**Fix:**
+- Run on subset: --max-tests 10
+- Use cheaper judge model: gpt-4o-mini instead of gpt-4o
+- Run retrieval metrics only (no LLM calls)
+
+### Cost Estimation
+
+**Per Evaluation Run (75 test cases):**
+- Retrieval metrics: Free (no LLM)
+- RAGAS (3 metrics × 75 cases × $0.015): ~$3.40
+- Custom (2 metrics × 75 cases × $0.01): ~$1.50
+- **Total: ~$4.90 per full evaluation**
+
+**Monthly Cost (Weekly Evals):**
+- 4 evaluations/month × $4.90 = **~$20/month**
+
+### Best Practices
+
+1. **Run evaluation before every deployment**
+2. **Track metrics over time in spreadsheet or dashboard**
+3. **Add every production failure to test set**
+4. **Review low-scoring queries weekly**
+5. **Aim for 10-15% test set growth per month**
+6. **Keep ground truth updated as products change**
+7. **Balance language distribution with actual user queries**
+
+---
+
+## Phase 13: Guardrails Implementation
 
 ### Objective
 Implement safety guardrails to protect against prompt injection, validate inputs/outputs, prevent abuse through rate limiting, and ensure quality responses.

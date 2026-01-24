@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifyr - Login</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Login or join the Verifyr waitlist. Access your Health-Tech shopping advisor account.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://www.verifyr.de/auth.html">
+
+    <!-- Google Analytics 4 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      const savedConsent = localStorage.getItem('verifyr-consent');
+      let analyticsAllowed = false;
+      if (savedConsent) {
+        try {
+          analyticsAllowed = JSON.parse(savedConsent).analytics === true;
+        } catch (e) {}
+      }
+
+      gtag('consent', 'default', {
+        'analytics_storage': analyticsAllowed ? 'granted' : 'denied'
+      });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1ZT0DR8VL1"></script>
+    <script>
+      gtag('config', 'G-1ZT0DR8VL1', {
+        'anonymize_ip': true,
+        'page_title': 'Authentication'
+      });
+    </script>
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="design-system/design-system.css">
+
+    <!-- Auth-specific styles -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            font-family: var(--font-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 500px;
+            padding: var(--spacing-xl);
+        }
+
+        .auth-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-elevated);
+            padding: var(--spacing-3xl) var(--spacing-2xl);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .auth-logo {
+            font-family: var(--font-display);
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: block;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .auth-subtitle {
+            color: var(--gray);
+            font-size: var(--font-size-base);
+        }
+
+        /* Three-tab switch */
+        .auth-tabs {
+            display: flex;
+            margin-bottom: var(--spacing-2xl);
+            background: var(--light-gray);
+            border-radius: var(--radius-md);
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: var(--spacing-base) var(--spacing-sm);
+            border: none;
+            background: transparent;
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            font-family: var(--font-primary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            background: var(--white);
+            color: var(--primary-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .auth-tab:hover:not(.active):not(:disabled) {
+            color: var(--dark);
+        }
+
+        .auth-tab:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .auth-tab.waitlist-tab.active {
+            color: var(--primary-blue);
+        }
+
+        /* Form Styles */
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--dark);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-base) var(--spacing-lg);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-family: var(--font-primary);
+            color: var(--dark);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: var(--spacing-base) var(--spacing-xl);
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-semibold);
+            font-family: var(--font-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-blue-sm);
+            margin-top: var(--spacing-base);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: var(--dark-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-blue-md);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn.loading .btn-text {
+            display: none;
+        }
+
+        .submit-btn.loading .loading {
+            display: inline-block;
+        }
+
+        .submit-btn .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Waitlist Button - Same blue as login */
+        .waitlist-btn {
+            background: var(--primary-blue);
+            box-shadow: var(--shadow-blue-sm);
+        }
+
+        .waitlist-btn:hover:not(:disabled) {
+            background: var(--dark-blue);
+            box-shadow: var(--shadow-blue-md);
+        }
+
+        /* Messages */
+        .auth-message {
+            padding: var(--spacing-base) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+            display: none;
+        }
+
+        .auth-message.error {
+            display: block;
+            background: #FEE2E2;
+            color: #DC2626;
+            border: 1px solid #FECACA;
+        }
+
+        .auth-message.success {
+            display: block;
+            background: #DCFCE7;
+            color: #16A34A;
+            border: 1px solid #BBF7D0;
+        }
+
+        /* Waitlist message */
+        .waitlist-message {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+            min-height: 20px;
+        }
+
+        .waitlist-message.success {
+            color: #16A34A;
+        }
+
+        .waitlist-message.error {
+            color: #DC2626;
+        }
+
+        /* Form descriptions */
+        .form-description {
+            text-align: center;
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.5;
+        }
+
+        .form-description.highlight {
+            color: var(--primary-blue);
+            font-weight: var(--font-weight-medium);
+        }
+
+        /* Signup disabled notice */
+        .signup-disabled-notice {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background: var(--light-gray);
+            border-radius: var(--radius-md);
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+        }
+
+        .signup-disabled-notice strong {
+            color: var(--dark);
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--font-size-base);
+        }
+
+        /* Password visibility toggle */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: var(--spacing-base);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            font-size: var(--font-size-sm);
+        }
+
+        .password-toggle:hover {
+            color: var(--dark);
+        }
+
+        /* Footer */
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .auth-footer-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .auth-footer-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Language Switcher */
+        .lang-switch {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: var(--spacing-base);
+        }
+
+        .lang-option {
+            padding: 4px 12px;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .lang-option:hover {
+            color: var(--dark);
+        }
+
+        .lang-option.active {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: var(--spacing-base);
+            }
+
+            .auth-card {
+                padding: var(--spacing-xl) var(--spacing-lg);
+            }
+
+            .auth-tab {
+                padding: var(--spacing-sm) var(--spacing-xs);
+                font-size: var(--font-size-xs);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="index.html" class="auth-logo">Verifyr</a>
+                <p class="auth-subtitle" data-i18n="subtitle">Dein intelligenter Health-Tech Shopping-Berater</p>
+                <!-- Language Switcher -->
+                <div class="lang-switch">
+                    <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                    <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+                </div>
+            </div>
+
+            <!-- Auth Tabs - 3 tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab" onclick="showLoginForm()" data-i18n="tabs.login">
+                    Anmelden
+                </button>
+                <button class="auth-tab waitlist-tab" id="waitlistTab" onclick="showWaitlistForm()" data-i18n="tabs.waitlist">
+                    Warteliste
+                </button>
+                <button class="auth-tab" id="signupTab" onclick="showSignupForm()" disabled data-i18n="tabs.signup" data-i18n-title="tabs.signupDisabled">
+                    Registrieren
+                </button>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div class="auth-message" id="authMessage"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                <p class="form-description" data-i18n="login.description">Willkommen zurück! Gib deine Anmeldedaten ein, um auf dein Konto zuzugreifen.</p>
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail" data-i18n="form.email">E-Mail</label>
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        class="form-input"
+                        data-i18n-placeholder="form.emailPlaceholder"
+                        placeholder="deine@email.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword" data-i18n="form.password">Passwort</label>
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            class="form-input"
+                            data-i18n-placeholder="form.passwordPlaceholder"
+                            placeholder="Gib dein Passwort ein"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                            <span id="loginPasswordToggleIcon" data-i18n="form.show">Zeigen</span>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="loginBtn">
+                    <span class="btn-text" data-i18n="login.button">Anmelden</span>
+                    <span class="loading"></span>
+                </button>
+            </form>
+
+            <!-- Waitlist Form -->
+            <form id="waitlistForm" class="auth-form" onsubmit="handleWaitlist(event)">
+                <p class="form-description highlight" data-i18n="waitlist.description">Fordere einen Early Access zu Verifyr an! Trag dich in die Warteliste ein und wir benachrichtigen dich, sobald dein Zugang freigeschaltet ist.</p>
+                <div class="form-group">
+                    <label class="form-label" for="waitlistEmail" data-i18n="form.email">E-Mail</label>
+                    <input
+                        type="email"
+                        id="waitlistEmail"
+                        class="form-input"
+                        data-i18n-placeholder="form.emailPlaceholder"
+                        placeholder="deine@email.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                <button type="submit" class="submit-btn waitlist-btn" id="waitlistBtn">
+                    <span class="btn-text" data-i18n="waitlist.button">Auf Warteliste setzen</span>
+                    <span class="loading"></span>
+                </button>
+                <p class="waitlist-message" id="waitlistMessage"></p>
+            </form>
+
+            <!-- Signup Form (Disabled) -->
+            <div id="signupForm" class="auth-form">
+                <div class="signup-disabled-notice">
+                    <strong data-i18n="signup.disabledTitle">Registrierung ist derzeit deaktiviert</strong>
+                    <span data-i18n="signup.disabledMessage">Wir sind im Early Access Modus. Bitte trag dich in die Warteliste ein, um Zugang anzufordern. Wir benachrichtigen dich, sobald dein Konto bereit ist.</span>
+                </div>
+            </div>
+
+            <div class="auth-footer">
+                <a href="index.html" class="auth-footer-link" data-i18n="footer.backHome">Zurück zur Startseite</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Translations -->
+    <script>
+        const translations = {
+            de: {
+                subtitle: "Dein intelligenter Health-Tech Shopping-Berater",
+                tabs: {
+                    login: "Anmelden",
+                    waitlist: "Warteliste",
+                    signup: "Registrieren",
+                    signupDisabled: "Registrierung ist derzeit deaktiviert"
+                },
+                login: {
+                    description: "Willkommen zurück! Gib deine Anmeldedaten ein, um auf dein Konto zuzugreifen.",
+                    button: "Anmelden"
+                },
+                waitlist: {
+                    description: "Fordere einen Early Access zu Verifyr an! Trag dich in die Warteliste ein und wir benachrichtigen dich, sobald dein Zugang freigeschaltet ist.",
+                    button: "Auf Warteliste setzen",
+                    success: "Du stehst auf der Warteliste! Wir benachrichtigen dich, sobald dein Zugang freigeschaltet ist.",
+                    alreadyOnList: "Diese E-Mail steht bereits auf der Warteliste. Wir benachrichtigen dich, sobald dein Zugang freigeschaltet ist.",
+                    joining: "Wird hinzugefügt...",
+                    rateLimit: "Bitte warte kurz, bevor du es erneut versuchst."
+                },
+                signup: {
+                    disabledTitle: "Registrierung ist derzeit deaktiviert",
+                    disabledMessage: "Wir sind im Early Access Modus. Bitte trag dich in die Warteliste ein, um Zugang anzufordern. Wir benachrichtigen dich, sobald dein Konto bereit ist."
+                },
+                form: {
+                    email: "E-Mail",
+                    emailPlaceholder: "deine@email.com",
+                    password: "Passwort",
+                    passwordPlaceholder: "Gib dein Passwort ein",
+                    show: "Zeigen",
+                    hide: "Verbergen"
+                },
+                footer: {
+                    backHome: "Zurück zur Startseite"
+                },
+                messages: {
+                    loginSuccess: "Anmeldung erfolgreich! Weiterleitung...",
+                    error: "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+                }
+            },
+            en: {
+                subtitle: "Your intelligent Health-Tech shopping advisor",
+                tabs: {
+                    login: "Login",
+                    waitlist: "Waitlist",
+                    signup: "Sign Up",
+                    signupDisabled: "Registration is currently disabled"
+                },
+                login: {
+                    description: "Welcome back! Enter your credentials to access your account.",
+                    button: "Login"
+                },
+                waitlist: {
+                    description: "Request early access to Verifyr! Join our waitlist and we'll notify you when your access is approved.",
+                    button: "Join Waitlist",
+                    success: "You're on the waitlist! We'll notify you when your access is approved.",
+                    alreadyOnList: "This email is already on the waitlist. We'll notify you when access is approved.",
+                    joining: "Joining...",
+                    rateLimit: "Please wait before submitting again."
+                },
+                signup: {
+                    disabledTitle: "Registration is currently disabled",
+                    disabledMessage: "We're in early access mode. Please join the waitlist to request access, and we'll notify you when your account is ready."
+                },
+                form: {
+                    email: "Email",
+                    emailPlaceholder: "your@email.com",
+                    password: "Password",
+                    passwordPlaceholder: "Enter your password",
+                    show: "Show",
+                    hide: "Hide"
+                },
+                footer: {
+                    backHome: "Back to Home"
+                },
+                messages: {
+                    loginSuccess: "Login successful! Redirecting...",
+                    error: "Something went wrong. Please try again."
+                }
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
+
+        function getNestedTranslation(obj, path) {
+            return path.split('.').reduce((current, key) => current?.[key], obj);
+        }
+
+        window.switchLanguage = function(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('verifyr-lang', lang);
+
+            // Update active state
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.lang === lang) {
+                    option.classList.add('active');
+                }
+            });
+
+            // Update all text elements
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.dataset.i18n;
+                const translation = getNestedTranslation(translations[lang], key);
+                if (translation) {
+                    element.textContent = translation;
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.dataset.i18nPlaceholder;
+                const translation = getNestedTranslation(translations[lang], key);
+                if (translation) {
+                    element.placeholder = translation;
+                }
+            });
+
+            // Update title attributes
+            document.querySelectorAll('[data-i18n-title]').forEach(element => {
+                const key = element.dataset.i18nTitle;
+                const translation = getNestedTranslation(translations[lang], key);
+                if (translation) {
+                    element.title = translation;
+                }
+            });
+        };
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            switchLanguage(currentLanguage);
+        });
+    </script>
+
+    <script src="auth.js"></script>
+</body>
+</html>

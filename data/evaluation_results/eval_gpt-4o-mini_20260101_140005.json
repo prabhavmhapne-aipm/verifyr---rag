@@ -1,0 +1,475 @@
+{
+  "metadata": {
+    "timestamp": "2026-01-01T14:00:05.544485",
+    "model": "gpt-4o-mini",
+    "total_queries": 15,
+    "api_base_url": "http://localhost:8000"
+  },
+  "metrics": {
+    "total_queries": 15,
+    "successful": 15,
+    "failed": 0,
+    "success_rate": 1.0,
+    "avg_response_time_ms": 3564.266666666667,
+    "min_response_time_ms": 1541,
+    "max_response_time_ms": 8267,
+    "avg_chunks_retrieved": 2.4,
+    "avg_sources_per_answer": 1.2,
+    "total_tokens": 17370,
+    "total_cost_usd": 0.003556,
+    "by_category": {
+      "factual": {
+        "total": 5,
+        "successful": 5,
+        "success_rate": 1.0
+      },
+      "comparison": {
+        "total": 5,
+        "successful": 5,
+        "success_rate": 1.0
+      },
+      "complex": {
+        "total": 5,
+        "successful": 5,
+        "success_rate": 1.0
+      }
+    },
+    "by_language": {
+      "en": {
+        "total": 10,
+        "successful": 10,
+        "success_rate": 1.0
+      },
+      "de": {
+        "total": 5,
+        "successful": 5,
+        "success_rate": 1.0
+      }
+    }
+  },
+  "results": [
+    {
+      "success": true,
+      "question": "What is the battery life of the Apple Watch Series 11?",
+      "category": "factual",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "The Apple Watch Series 11 has a battery life of up to 18 hours [1]. This allows for a full day of use, including tracking workouts and receiving notifications [2]. In comparison, the Garmin Forerunner 970 offers a significantly longer battery life of up to 26 hours in GPS mode [3].",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 2091,
+      "tokens_used": {
+        "input": 553,
+        "output": 65
+      },
+      "cost_usd": 0.000122,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Wie lange hält der Akku der Garmin Forerunner 970?",
+      "category": "factual",
+      "language": "de",
+      "model": "gpt-4o-mini",
+      "answer": "Die Garmin Forerunner 970 hat eine Akkulaufzeit von bis zu 14 Tagen im Smartwatch-Modus [1]. Im GPS-Modus kann die Akkulaufzeit bis zu 36 Stunden betragen [2]. Dies macht sie besonders geeignet für längere Outdoor-Aktivitäten und Trainingseinheiten [3].",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 2482,
+      "tokens_used": {
+        "input": 555,
+        "output": 66
+      },
+      "cost_usd": 0.000123,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "What waterproof rating does the Apple Watch Series 11 have?",
+      "category": "factual",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "The Apple Watch Series 11 has a waterproof rating of WR50, which means it is water-resistant up to 50 meters [1]. This rating allows for swimming and shallow-water activities, making it suitable for various water sports [2]. However, it is important to note that it is not designed for scuba diving or high-velocity water activities [3].",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 2362,
+      "tokens_used": {
+        "input": 552,
+        "output": 72
+      },
+      "cost_usd": 0.000126,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Welches Gewicht hat die Garmin Forerunner 970?",
+      "category": "factual",
+      "language": "de",
+      "model": "gpt-4o-mini",
+      "answer": "Die Garmin Forerunner 970 hat ein Gewicht von 58 Gramm [1]. Dies macht sie leicht und angenehm zu tragen, besonders während sportlicher Aktivitäten [2]. Im Vergleich dazu wiegt die Apple Watch Series 11 etwa 50 Gramm [3].",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 1541,
+      "tokens_used": {
+        "input": 554,
+        "output": 52
+      },
+      "cost_usd": 0.000114,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "What materials is the Apple Watch Series 11 made from?",
+      "category": "factual",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "The Apple Watch Series 11 is made from a combination of materials, including aluminum, stainless steel, and titanium for the case [1]. The display is crafted from Ion-X glass for the aluminum models and sapphire crystal for the stainless steel and titanium models, providing durability and scratch resistance [2]. Additionally, the watch bands are available in various materials such as silicone, leather, and woven nylon, allowing for customization and comfort [3].",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 2605,
+      "tokens_used": {
+        "input": 552,
+        "output": 87
+      },
+      "cost_usd": 0.000135,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Which watch has better battery life, Apple Watch Series 11 or Garmin Forerunner 970?",
+      "category": "comparison",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "The Apple Watch Series 11 has a battery life of approximately 18 hours [1], while the Garmin Forerunner 970 boasts a significantly longer battery life of up to 26 hours in GPS mode [2]. This means that if battery longevity is a priority for your activities, the Garmin Forerunner 970 would be the better choice [3]. Additionally, the Garmin's battery can last even longer in smartwatch mode, making it suitable for extended use without frequent recharging [2].",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 2858,
+      "tokens_used": {
+        "input": 560,
+        "output": 99
+      },
+      "cost_usd": 0.000143,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Welche Uhr ist leichter?",
+      "category": "comparison",
+      "language": "de",
+      "model": "gpt-4o-mini",
+      "answer": "Die Garmin Forerunner 970 wiegt 58 Gramm [1], während die Apple Watch Series 11 ein Gewicht von 32 Gramm hat [3]. Somit ist die Apple Watch Series 11 deutlich leichter als die Garmin Forerunner 970.",
+      "sources": [
+        {
+          "citation_number": 1,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "manual",
+          "page": 69,
+          "file": "user_manual.pdf",
+          "source_url": "https://www.garmin.com/de-DE/p/1462801/",
+          "source_name": "Garmin Official"
+        },
+        {
+          "citation_number": 3,
+          "product": "apple_watch_series11_2025",
+          "doc_type": "manual",
+          "page": 5,
+          "file": "user_manual.pdf",
+          "source_url": "https://support.apple.com/manuals/apple-watch-series-11",
+          "source_name": "Apple Support"
+        }
+      ],
+      "chunks_retrieved": 5,
+      "response_time_ms": 1823,
+      "tokens_used": {
+        "input": 1544,
+        "output": 51
+      },
+      "cost_usd": 0.000262,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Compare the waterproof ratings of both watches",
+      "category": "comparison",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "The Apple Watch Series 11 is suitable for swimming and diving, indicating a strong waterproof capability [3]. In contrast, the Garmin Forerunner 970 also features a robust design but does not specify its exact waterproof rating in the provided information [2]. Therefore, while both watches are designed for water resistance, the Apple Watch Series 11 explicitly supports swimming and diving activities, which may be a crucial factor for users who engage in such sports [3].",
+      "sources": [
+        {
+          "citation_number": 2,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "review",
+          "page": 3,
+          "file": "outdoorgearlab.com_review_18122025.pdf",
+          "source_url": "https://www.outdoorgearlab.com/reviews/camping-and-hiking/gps-watch/garmin-forerunner-970",
+          "source_name": "Outdoor Gear Lab"
+        },
+        {
+          "citation_number": 3,
+          "product": "apple_watch_series11_2025",
+          "doc_type": "review",
+          "page": 2,
+          "file": "chip.de_review_09102025.pdf",
+          "source_url": "https://www.chip.de/test/Apple-Watch-Series-11-im-Test_186301596.html",
+          "source_name": "Chip.de"
+        }
+      ],
+      "chunks_retrieved": 5,
+      "response_time_ms": 2788,
+      "tokens_used": {
+        "input": 1532,
+        "output": 91
+      },
+      "cost_usd": 0.000284,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Welche ist haltbarer für Trailrunning?",
+      "category": "comparison",
+      "language": "de",
+      "model": "gpt-4o-mini",
+      "answer": "Für Trailrunning ist die Garmin Forerunner 970 wahrscheinlich die haltbarere Wahl. Sie ist speziell für Outdoor-Aktivitäten konzipiert und bietet Funktionen wie die automatische Erkennung von Höhenunterschieden, die beim Klettern und Wandern nützlich sind [1]. Außerdem ist die Garmin-Uhr mit GPS ausgestattet, was für präzise Aufzeichnungen von Laufpace und Distanz im Freien wichtig ist [2].\n\nIm Vergleich dazu ist die Apple Watch Series 11 zwar vielseitig und bietet viele Fitnessfunktionen, jedoch ist sie nicht speziell für extreme Outdoor-Bedingungen ausgelegt [3]. Die Garmin Forerunner 970 hat zudem eine längere Akkulaufzeit, was für längere Trailrunning-Sessions von Vorteil ist [2]. \n\nZusammenfassend lässt sich sagen, dass die Garmin Forerunner 970 aufgrund ihrer robusten Bauweise und spezifischen Funktionen für Trailrunning besser geeignet ist als die Apple Watch Series 11.",
+      "sources": [
+        {
+          "citation_number": 1,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "manual",
+          "page": 69,
+          "file": "user_manual.pdf",
+          "source_url": "https://www.garmin.com/de-DE/p/1462801/",
+          "source_name": "Garmin Official"
+        },
+        {
+          "citation_number": 2,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "specifications_manual",
+          "page": 116,
+          "file": "specifications_manual.pdf",
+          "source_url": null,
+          "source_name": null
+        },
+        {
+          "citation_number": 3,
+          "product": "apple_watch_series11_2025",
+          "doc_type": "manual",
+          "page": 16,
+          "file": "user_manual.pdf",
+          "source_url": "https://support.apple.com/manuals/apple-watch-series-11",
+          "source_name": "Apple Support"
+        }
+      ],
+      "chunks_retrieved": 5,
+      "response_time_ms": 4144,
+      "tokens_used": {
+        "input": 1517,
+        "output": 197
+      },
+      "cost_usd": 0.000346,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Which offers better value for money, Apple Watch or Garmin?",
+      "category": "comparison",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "When comparing the value for money between the Apple Watch Series 11 and the Garmin Forerunner 970, several factors come into play. The Apple Watch Series 11 is priced higher but offers a wide range of smart features, including seamless integration with iOS devices, advanced health tracking, and a vibrant app ecosystem [1]. In contrast, the Garmin Forerunner 970 is generally more affordable and is specifically designed for athletes, providing superior GPS accuracy, longer battery life of up to 30 hours in GPS mode [2], and advanced training metrics [3].\n\nIf you prioritize fitness tracking and outdoor activities, the Garmin may offer better value due to its specialized features and longer battery life [2]. However, if you are looking for a versatile smartwatch that also functions well for daily use and integrates with other Apple products, the Apple Watch could justify its higher price [1]. Ultimately, the best choice depends on your specific needs—whether you value fitness features or smart capabilities more.",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 4154,
+      "tokens_used": {
+        "input": 552,
+        "output": 197
+      },
+      "cost_usd": 0.000201,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Which product is better for marathon training and why?",
+      "category": "complex",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "For marathon training, the Garmin Forerunner 970 is generally the better choice due to its specialized features tailored for runners. It includes advanced metrics like Running Tolerance and Impact Load, which help athletes understand their performance and training load [1][2]. Additionally, the Forerunner 970 offers daily suggested workouts and customizable multi-sport activity modes, making it versatile for various training needs [1][2].\n\nIn terms of battery life, the Forerunner 970 excels with over a week of general use on a single charge, which is beneficial for long training sessions and races [3]. In contrast, the Apple Watch Series 11 has a battery life of about a day and a half, which may require more frequent charging during intensive training periods [8]. \n\nWhile the Apple Watch Series 11 offers robust health tracking features and a sleek design, it lacks the specific running metrics and extended battery life that are crucial for marathon training [5][8]. Therefore, for serious runners focused on marathon preparation, the Garmin Forerunner 970 stands out as the more suitable option.",
+      "sources": [
+        {
+          "citation_number": 1,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "review",
+          "page": 2,
+          "file": "outdoorgearlab.com_review_18122025.pdf",
+          "source_url": "https://www.outdoorgearlab.com/reviews/camping-and-hiking/gps-watch/garmin-forerunner-970",
+          "source_name": "Outdoor Gear Lab"
+        },
+        {
+          "citation_number": 3,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "review",
+          "page": 3,
+          "file": "outdoorgearlab.com_review_18122025.pdf",
+          "source_url": "https://www.outdoorgearlab.com/reviews/camping-and-hiking/gps-watch/garmin-forerunner-970",
+          "source_name": "Outdoor Gear Lab"
+        },
+        {
+          "citation_number": 5,
+          "product": "apple_watch_series11_2025",
+          "doc_type": "review",
+          "page": 4,
+          "file": "techradar_review_16092025.pdf",
+          "source_url": "https://www.techradar.com/health-fitness/smartwatches/apple-watch-series-11-review",
+          "source_name": "Techradar"
+        },
+        {
+          "citation_number": 8,
+          "product": "apple_watch_series11_2025",
+          "doc_type": "review",
+          "page": 6,
+          "file": "techradar_review_16092025.pdf",
+          "source_url": "https://www.techradar.com/health-fitness/smartwatches/apple-watch-series-11-review",
+          "source_name": "Techradar"
+        }
+      ],
+      "chunks_retrieved": 8,
+      "response_time_ms": 4076,
+      "tokens_used": {
+        "input": 2013,
+        "output": 218
+      },
+      "cost_usd": 0.000433,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "How do I set up GPS tracking on my Garmin Forerunner 970?",
+      "category": "complex",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "To set up GPS tracking on your Garmin Forerunner 970, follow these steps:\n\n1. **Power On the Device**: Press and hold the power button until the watch vibrates and the Garmin logo appears [1].\n\n2. **Access the Activity Menu**: From the main screen, press the start button to access the activity menu [2].\n\n3. **Select Your Activity**: Scroll through the list of activities (like running, cycling, etc.) and select the one you want to track using GPS [3].\n\n4. **Enable GPS**: Ensure that GPS is enabled. You can usually find this option in the settings menu under \"Sensors & Accessories\" or \"GPS\" settings [1].\n\n5. **Start Tracking**: Once you’ve selected your activity and confirmed GPS is enabled, press the start button to begin your workout. The watch will acquire a GPS signal, which may take a few moments depending on your location [2].\n\n6. **Monitor Your Data**: During your activity, you can view real-time data such as distance, pace, and route on the watch screen [3].\n\nBy following these steps, you can effectively set up GPS tracking on your Garmin Forerunner 970 for accurate activity monitoring.",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 4017,
+      "tokens_used": {
+        "input": 556,
+        "output": 251
+      },
+      "cost_usd": 0.000234,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "Was bedeutet IP67 Wasserschutz für meine Nutzung beim Schwimmen?",
+      "category": "complex",
+      "language": "de",
+      "model": "gpt-4o-mini",
+      "answer": "Der IP67 Wasserschutz bedeutet, dass ein Gerät staubdicht ist und bis zu 1 Meter tief für maximal 30 Minuten in Wasser eingetaucht werden kann [1]. Dies ist für das Schwimmen in flachen Gewässern wie einem Pool geeignet, jedoch nicht für Aktivitäten wie Tauchen oder Wassersport mit hohen Geschwindigkeiten [1]. \n\nIm Vergleich dazu hat die Apple Watch Series 11 einen Wasserschutz bis 50 Meter, was sie für Schwimmaktivitäten im Pool oder Meer geeignet macht, jedoch nicht für Sporttauchen [1]. Die Garmin Forerunner 970 ist ebenfalls für das Schwimmen konzipiert, jedoch nicht für das Tauchen geeignet, und sie bietet eine Herzfrequenzmessung während des Schwimmens [3][5]. \n\nZusammenfassend lässt sich sagen, dass IP67 für Schwimmaktivitäten in flachen Gewässern ausreicht, aber für intensivere Wasseraktivitäten oder tiefes Tauchen nicht geeignet ist.",
+      "sources": [
+        {
+          "citation_number": 1,
+          "product": "apple_watch_series11_2025",
+          "doc_type": "specifications",
+          "page": 10,
+          "file": "specifications.pdf",
+          "source_url": "https://www.apple.com/de/apple-watch-series-11/specs/",
+          "source_name": "Apple Official"
+        },
+        {
+          "citation_number": 3,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "manual",
+          "page": 38,
+          "file": "user_manual.pdf",
+          "source_url": "https://www.garmin.com/de-DE/p/1462801/",
+          "source_name": "Garmin Official"
+        },
+        {
+          "citation_number": 5,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "specifications_manual",
+          "page": 38,
+          "file": "specifications_manual.pdf",
+          "source_url": null,
+          "source_name": null
+        }
+      ],
+      "chunks_retrieved": 5,
+      "response_time_ms": 3861,
+      "tokens_used": {
+        "input": 1691,
+        "output": 206
+      },
+      "cost_usd": 0.000377,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "I'm having trouble syncing my Apple Watch Series 11. How do I troubleshoot this?",
+      "category": "complex",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "To troubleshoot syncing issues with your Apple Watch Series 11, follow these steps:\n\n1. **Check Bluetooth and Wi-Fi**: Ensure that Bluetooth is enabled on your iPhone and that both devices are connected to Wi-Fi. This is crucial for syncing [1].\n\n2. **Restart Devices**: Restart both your Apple Watch and iPhone. This can resolve temporary glitches that may hinder syncing [2].\n\n3. **Update Software**: Make sure that both your Apple Watch and iPhone are running the latest software versions. An outdated version can cause syncing problems [3].\n\n4. **Unpair and Re-pair**: If the issue persists, try unpairing your Apple Watch from your iPhone and then re-pairing it. This can reset the connection and resolve syncing issues [1].\n\n5. **Check for Restrictions**: Ensure that there are no restrictions set on your iPhone that might prevent syncing with the Apple Watch [2].\n\nBy following these steps, you should be able to resolve most syncing issues with your Apple Watch Series 11. If problems continue, consider reaching out to Apple Support for further assistance [3].",
+      "sources": [],
+      "chunks_retrieved": 0,
+      "response_time_ms": 8267,
+      "tokens_used": {
+        "input": 557,
+        "output": 230
+      },
+      "cost_usd": 0.000222,
+      "error": null
+    },
+    {
+      "success": true,
+      "question": "How do the products compare for outdoor use? What does GPS accuracy mean for trail running?",
+      "category": "complex",
+      "language": "en",
+      "model": "gpt-4o-mini",
+      "answer": "When comparing the Apple Watch Series 11 and the Garmin Forerunner 970 for outdoor use, the Garmin excels in GPS accuracy, which is crucial for trail running. The Forerunner 970 features a dual-frequency, multi-GNSS system that locks onto satellites quickly and maintains consistent tracking across various terrains, ensuring precise distance measurements even in challenging environments like wooded trails or urban areas [2]. This level of accuracy is particularly beneficial for trail runners who need reliable data on their routes.\n\nIn contrast, while the Apple Watch Series 11 also offers GPS capabilities, it does not emphasize the same level of multi-GNSS support as the Garmin [6]. The Forerunner 970 is designed specifically for outdoor activities, boasting features like a sapphire crystal display for enhanced durability and an LED flashlight for visibility in low-light conditions, making it a better choice for adventurous runners [1][4]. \n\nOverall, if your focus is on outdoor activities and trail running, the Garmin Forerunner 970 provides superior GPS accuracy and features tailored for such environments, while the Apple Watch Series 11 may be more suited for general smartwatch functionalities [2][6].",
+      "sources": [
+        {
+          "citation_number": 1,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "review",
+          "page": 2,
+          "file": "trustedreviews.com_review_03072025.pdf",
+          "source_url": "https://www.trustedreviews.com/reviews/garmin-forerunner-970",
+          "source_name": "Trusted Reviews"
+        },
+        {
+          "citation_number": 2,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "review",
+          "page": 2,
+          "file": "outdoorgearlab.com_review_18122025.pdf",
+          "source_url": "https://www.outdoorgearlab.com/reviews/camping-and-hiking/gps-watch/garmin-forerunner-970",
+          "source_name": "Outdoor Gear Lab"
+        },
+        {
+          "citation_number": 4,
+          "product": "garmin_forerunner_970_2025",
+          "doc_type": "review",
+          "page": 1,
+          "file": "trustedreviews.com_review_03072025.pdf",
+          "source_url": "https://www.trustedreviews.com/reviews/garmin-forerunner-970",
+          "source_name": "Trusted Reviews"
+        },
+        {
+          "citation_number": 6,
+          "product": "apple_watch_series11_2025",
+          "doc_type": "review",
+          "page": 2,
+          "file": "techradar_review_16092025.pdf",
+          "source_url": "https://www.techradar.com/health-fitness/smartwatches/apple-watch-series-11-review",
+          "source_name": "Techradar"
+        }
+      ],
+      "chunks_retrieved": 8,
+      "response_time_ms": 6395,
+      "tokens_used": {
+        "input": 1969,
+        "output": 231
+      },
+      "cost_usd": 0.000434,
+      "error": null
+    }
+  ]
+}

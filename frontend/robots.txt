@@ -1,0 +1,13 @@
+# Robots.txt for Verifyr
+# Allows all search engines to crawl public pages
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://www.verifyr.de/sitemap.xml
+
+# Crawl delay (optional, prevents aggressive crawling)
+# Crawl-delay: 1

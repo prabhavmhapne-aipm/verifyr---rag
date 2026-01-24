@@ -98,13 +98,48 @@ manage_server.ps1 (in workspace root)
 
 3. **Port 8000:**
    - Server runs on `http://localhost:8000`
+   - Landing Page: `http://localhost:8000/`
+   - Chat Interface: `http://localhost:8000/chat.html`
    - API docs: `http://localhost:8000/docs`
-   - Frontend: `http://localhost:8000/frontend/`
 
 4. **Qdrant Database Locks:**
    - Qdrant uses SQLite which locks the database
    - Always kill all Python processes before running indexing scripts
    - Wait 3 seconds after killing processes for cleanup
+
+5. **PowerShell Execution Policy:**
+   - Windows may block PowerShell scripts by default
+   - If you see "execution of scripts is disabled" errors, you need to change the execution policy
+   - See the "PowerShell Execution Policy Setup" section below for details
+
+### PowerShell Execution Policy Setup
+
+If you encounter errors like:
+```
+cannot be loaded because running scripts is disabled on this system
+```
+
+You need to allow PowerShell scripts to run. **Choose one of the following methods:**
+
+#### Method 1: Bypass for Current Session (Recommended for Testing)
+```powershell
+# Run this once per PowerShell session
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+```
+
+#### Method 2: Allow Scripts for Current User (Persistent)
+```powershell
+# Run this once (requires Administrator privileges)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+#### Method 3: Check Current Policy
+```powershell
+# See what your current execution policy is
+Get-ExecutionPolicy -List
+```
+
+**Recommended:** Use Method 1 for quick testing, or Method 2 if you want it to persist across sessions. Method 2 is safer than setting it system-wide.
 
 ### Quick Reference Commands
 
@@ -149,6 +184,30 @@ cd "C:\Users\prabh\OneDrive\Git_PM\verifyr - rag"
 
 # End of day
 .\manage_server.ps1 -Action kill
+```
+
+## Safe Shutdown Procedure
+
+To shut down everything safely:
+
+```powershell
+# 1. Stop the FastAPI server (releases Qdrant locks)
+.\manage_server.ps1 -Action kill
+
+# 2. Stop all Docker services (Langfuse, PostgreSQL, Redis, ClickHouse, MinIO)
+docker compose down
+
+# 3. Verify everything is stopped
+.\manage_server.ps1 -Action status
+docker compose ps
+```
+
+**Order matters:** Stop the FastAPI server first (to release Qdrant database locks), then stop Docker services. This prevents database lock errors and ensures clean shutdown.
+
+**Quick shutdown (if you're sure everything is running):**
+```powershell
+.\manage_server.ps1 -Action kill
+docker compose down
 ```
 
 ---
@@ -311,12 +370,26 @@ docker compose restart
    - MinIO bucket (`langfuse-events`) is created automatically on first startup
    - Access Langfuse dashboard to get API keys for `.env` file
 
-4. **Environment Variables** (in `.env` file):
+4. **Environment Variables**:
+   
+   **Backend `.env` file** (for Python application):
    ```bash
    LANGFUSE_HOST=http://localhost:3000
    LANGFUSE_PUBLIC_KEY=<from-dashboard>
    LANGFUSE_SECRET_KEY=<from-dashboard>
    ```
+   
+   **Docker Compose S3/Blob Storage** (in `docker-compose.yml`):
+   Langfuse v3 requires S3-compatible blob storage for event uploads. The following environment variables must be configured in the `langfuse` service with the `LANGFUSE_S3_EVENT_UPLOAD_` prefix:
+   ```yaml
+   LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse-events
+   LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+   LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: minioadmin
+   LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: minioadmin
+   LANGFUSE_S3_EVENT_UPLOAD_REGION: us-east-1
+   LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+   ```
+   **Important:** These variables must use the `LANGFUSE_S3_EVENT_UPLOAD_` prefix. Generic `S3_` or `AWS_` variables will not work. See [Langfuse documentation](https://langfuse.com/self-hosting/deployment/infrastructure/blobstorage) for details.
 
 ## API Endpoints
 
@@ -328,6 +401,19 @@ Once the server is running:
 - **Query Endpoint**: http://localhost:8000/query (POST)
 
 ## Troubleshooting
+
+### PowerShell script execution is disabled
+If you see errors like "cannot be loaded because running scripts is disabled on this system":
+
+```powershell
+# Quick fix for current session
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+
+# Then try your command again
+.\manage_server.ps1 -Action status
+```
+
+For persistent fix, see the "PowerShell Execution Policy Setup" section above.
 
 ### "Storage folder already accessed" error
 ```powershell
@@ -347,6 +433,82 @@ Once the server is running:
 ```powershell
 # Full restart required
 .\manage_server.ps1 -Action restart
+```
+
+### Kill action not working / Cannot kill Python processes
+
+**First, diagnose the issue:**
+```powershell
+# Check if script is running at all
+.\manage_server.ps1 -Action status
+
+# Check what Python processes exist
+Get-Process python* -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, Path | Format-Table
+
+# Check if you have permission
+Get-Process python* -ErrorAction SilentlyContinue | ForEach-Object { 
+    Write-Host "PID: $($_.Id), Name: $($_.ProcessName), Path: $($_.Path)"
+}
+```
+
+If `.\manage_server.ps1 -Action kill` doesn't work, try these manual methods:
+
+#### Method 1: Manual PowerShell Commands
+```powershell
+# Check what Python processes are running
+Get-Process python* | Select-Object Id, ProcessName, StartTime | Format-Table
+
+# Kill all Python processes (force)
+Get-Process python* -ErrorAction SilentlyContinue | Stop-Process -Force
+
+# Verify they're gone
+Get-Process python* -ErrorAction SilentlyContinue
+```
+
+#### Method 2: Kill by Process ID (if Method 1 fails)
+```powershell
+# Find the process ID
+Get-Process python* | Select-Object Id, ProcessName
+
+# Kill specific process by ID (replace 12345 with actual PID)
+Stop-Process -Id 12345 -Force
+
+# Or kill all at once
+Get-Process python* | ForEach-Object { Stop-Process -Id $_.Id -Force }
+```
+
+#### Method 3: Using Task Manager
+1. Press `Ctrl + Shift + Esc` to open Task Manager
+2. Go to "Details" tab
+3. Find `python.exe` or `pythonw.exe` processes
+4. Right-click → "End task" or "End process tree"
+
+#### Method 4: Kill processes using port 8000
+```powershell
+# Find what's using port 8000
+netstat -ano | findstr :8000
+
+# This will show PID in the last column, then:
+Stop-Process -Id <PID> -Force
+```
+
+#### Method 5: Run PowerShell as Administrator
+If you get "Access Denied" errors:
+1. Right-click PowerShell → "Run as Administrator"
+2. Navigate to workspace: `cd "C:\Users\prabh\OneDrive\Git_PM\verifyr - rag"`
+3. Run: `Get-Process python* | Stop-Process -Force`
+
+#### Method 6: Kill all Python processes (nuclear option)
+```powershell
+# This kills ALL Python processes system-wide (use with caution)
+taskkill /F /IM python.exe
+taskkill /F /IM pythonw.exe
+```
+
+**After killing processes, wait 3 seconds before starting the server again:**
+```powershell
+Start-Sleep -Seconds 3
+.\manage_server.ps1 -Action start
 ```
 
 ## Development Workflow

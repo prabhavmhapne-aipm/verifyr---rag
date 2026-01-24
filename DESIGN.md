@@ -335,9 +335,15 @@ Each chunk contains:
 
 ## Evaluation Framework
 
+### Overview
+
+The project uses a **2-tier evaluation strategy**:
+- **Phase 11:** Langfuse observability & tracing (infrastructure)
+- **Phase 12:** Comprehensive RAG evaluation with RAGAS & retrieval metrics (quality measurement)
+
 ### Evaluation Tools & Infrastructure
 
-**Primary Framework: Langfuse v3 (Implemented in Phase 11)**
+**Phase 11: Langfuse v3 (Observability Foundation - ✅ Implemented)**
 - **Tool:** Langfuse v3 (open-source LLM observability platform)
 - **Deployment:** Local Docker Compose (http://localhost:3000)
 - **Services:**
@@ -356,7 +362,7 @@ Each chunk contains:
   - Integrates with RAGAS for automated metrics (future)
   - No vendor lock-in (runs locally, data stays local)
 
-**Implementation Status:**
+**Phase 11 Implementation Status:**
 - ✅ Docker Compose infrastructure deployed
 - ✅ Langfuse client integrated in backend (`backend/main.py`)
 - ✅ Trace creation for each query
@@ -364,80 +370,135 @@ Each chunk contains:
 - ✅ Metadata tracking (tokens, costs, response times)
 - ✅ Batch evaluation script (`tests/langfuse_evaluator.py`)
 - ✅ Langfuse Dataset creation (tested and working)
-- ✅ **Trace-to-dataset linking** (creates dataset runs, links execution traces to test cases)
+- ⚠️ **Trace-to-dataset linking** (uses manual `item.run()` approach - may fail if Langfuse server has connection issues)
 - ✅ Command-line argument support for non-interactive evaluation
 - ✅ Environment variable loading from .env file
-- ⏳ RAGAS integration (planned for future iteration)
+- 📋 **Recommended Migration:** Switch to Experiment Runner (`dataset.run_experiment()`) for automatic trace linking and better reliability
 
-**Metrics Framework: RAGAS (Planned)**
-- **Tool:** RAGAS (Retrieval Augmented Generation Assessment)
-- **Integration:** Via Langfuse RAGAS integration (future)
-- **Rationale:**
-  - Industry-standard framework for RAG evaluation
-  - Provides automated metrics without manual labeling
-  - Specifically designed for RAG systems (not generic LLM eval)
-  - Supports both retrieval and generation quality metrics
-  - Can run evaluations programmatically in batch mode
-  - Open-source and actively maintained
+**Phase 12: Comprehensive RAG Evaluation using Experiment Runner (Planned)**
+- **Framework:** Langfuse Experiment Runner with RAGAS (Retrieval Augmented Generation Assessment)
+- **Implementation Approach:** Infrastructure-first setup (task function with `@observe` decorator), then incremental evaluator addition
+- **Scope:** 8 metrics across retrieval and generation
+- **Test Dataset:** 50 cases (Phase 1) → 75 cases (Phase 2) → 150+ cases (Phase 3)
+- **Timeline:**
+  - Phase 1 (Baseline): 50 test cases, 8 metrics, baseline evaluation using Experiment Runner
+  - Phase 2 (Expand): +25 RAGAS-generated synthetic cases, re-run with Experiment Runner
+  - Phase 3 (Production): User feedback, weekly monitoring using Experiment Runner, grow to 150+ cases
+
+**8 Metrics (Phase 12):**
+1. **Retrieval Metrics (3):**
+   - Hit Rate @ 5: Did we retrieve ≥1 relevant chunk? (Target: >85%)
+   - MRR: Rank of first relevant chunk (Target: >0.7)
+   - Precision @ 5: % of top-5 that are relevant (Target: >0.6)
+
+2. **RAGAS Metrics (3):**
+   - Faithfulness: No hallucinations (Target: >0.95)
+   - Answer Relevancy: Answers the question (Target: >0.85)
+   - Context Relevancy: Retrieved chunks useful (Target: >0.7)
+
+3. **Custom Metrics (2):**
+   - Citation Quality: Sources correctly cited (Target: >0.85)
+   - Helpfulness: Clear & actionable (Target: >0.8)
+
+**Rationale for RAGAS:**
+- Industry-standard framework for RAG evaluation
+- Automated quality metrics without manual labeling
+- LLM-as-a-judge for generation quality
+- Integrates with Langfuse for score logging
+- Open-source and actively maintained
 
 ### Evaluation Structure
 
-**Test Dataset (Implemented):**
+**Phase 11 Test Dataset (✅ Implemented):**
 - **Size:** 15 test cases
 - **Location:** `tests/test_cases.py`
-- **Categories:**
-  - **Factual queries (5):** Simple, single-answer questions
-    - Example: "What is the battery life of the Apple Watch Series 11?"
-    - Example (DE): "Wie lange hält der Akku der Garmin Forerunner 970?"
-  - **Comparison queries (5):** Multi-product comparisons
-    - Example: "Which watch has better battery life, Apple Watch Series 11 or Garmin Forerunner 970?"
-    - Example (DE): "Welche ist haltbarer für Trailrunning?"
-  - **Complex queries (5):** How-to guides, technical explanations, troubleshooting
-    - Example: "Which product is better for marathon training and why?"
-    - Example: "How do I set up GPS tracking on my Garmin Forerunner 970?"
-- **Language Coverage:** Both English (10) and German (5) test cases
-- **Use Case Coverage:** Pre-purchase (comparisons, features) and post-purchase (setup, troubleshooting)
-- **Metadata:** Each test case includes `category`, `language`, `expected_products`, and `tags`
+- **Purpose:** Basic Langfuse infrastructure testing
+- **Categories:** 5 factual, 5 comparison, 5 complex
+- **Language Coverage:** 10 English, 5 German
 
-**Evaluation Workflow (Implemented):**
-1. **Dataset Creation:** 
-   - Test cases stored in `tests/test_cases.py` (15 cases defined)
-   - Langfuse Dataset object created automatically when running evaluation
-   - Dataset name format: `rag_evaluation_{model}_{timestamp}`
-   - All test cases added as dataset items with metadata (category, language, tags)
-2. **Batch Execution:** `tests/langfuse_evaluator.py` runs all test cases through `/query` endpoint
-   - Model selection via command-line argument (`--model`) or interactive prompt
-   - Configurable delay between queries
-   - Error handling and retry logic
-   - Environment variables loaded from `.env` file automatically
-   - **Dataset info passed:** Each query includes `dataset_name` and `dataset_item_id`
-   - **Trace IDs collected:** Backend returns `trace_id` for each query execution
-3. **Trace Collection:** Langfuse automatically captures:
-   - **Root trace:** Full query execution with input/output
-   - **Retrieval span:** Hybrid search execution (chunks retrieved, scores, retrieval time)
-   - **Generation span:** LLM call (prompt, response, tokens, cost, generation time)
-   - **Metadata:** Model used, conversation context, query analysis results, dataset info
-3a. **Trace Linking:** After all queries complete:
-   - Traces are linked to their corresponding dataset items
-   - Creates dataset run in Langfuse (shows "15 runs" instead of "0 runs")
-   - Each dataset item linked to its execution trace
-   - Enables viewing full execution details for each test case in dataset view
-4. **Metrics Calculation:** Script computes aggregate metrics:
-   - Success rate (overall, by category, by language)
-   - Response times (avg, min, max)
-   - Retrieval metrics (chunks retrieved, sources per answer)
-   - Cost metrics (total tokens, total cost, avg cost/query)
-5. **Results Export:** JSON files saved to `data/evaluation_results/` with timestamp
-6. **Dashboard Analysis:** Results viewable in Langfuse UI (http://localhost:3000) with filtering and comparison
-   - **Datasets section:** View organized test cases with linked runs
-     - Shows dataset with "15 items" and "15 runs" (linked traces)
-     - Click on dataset item to view linked trace with full execution details
-   - **Traces section:** View detailed query executions
-   - **Analytics section:** View aggregate metrics
+**Phase 12 Test Dataset (Planned):**
+- **Phase 1 (Baseline):** 50 hand-written test cases
+  - Distribution: 30 German (60%), 20 English (40%)
+  - Categories: 20 factual, 15 comparison, 10 complex, 3 edge cases, 2 adversarial
+  - Ground Truth: 25 cases (50%) with expected answers
+  - All 50 cases with expected chunks for retrieval metrics
+
+- **Phase 2 (Expand):** 75 total test cases
+  - Original 50 hand-written cases
+  - +25 RAGAS-generated synthetic cases (reviewed and filtered)
+
+- **Phase 3 (Production):** 150+ test cases
+  - Grow organically by adding failing production queries
+  - Target: 10-20 new cases per month
+  - Maintain 60% German / 40% English split
+
+**Test Case Structure (Phase 12):**
+```python
+{
+    "question": "Was ist die Akkulaufzeit der Apple Watch Series 11?",
+    "expected_answer": "18 Stunden bei normaler Nutzung",  # Ground truth
+    "expected_chunks": ["apple_watch_manual_p5_c1"],  # For retrieval eval
+    "category": "factual",
+    "language": "de",
+    "expected_products": ["Apple Watch Series 11"],
+    "tags": ["battery", "specifications"]
+}
+```
+
+**Phase 11 Workflow (✅ Implemented - Current Approach):**
+1. **Dataset Creation:** Test cases → Langfuse Dataset
+2. **Batch Execution:** `tests/langfuse_evaluator.py` runs 15 test cases
+   - **Current:** Uses manual `item.run()` context manager
+   - **Limitation:** Trace linking may fail if Langfuse server has connection issues
+3. **Trace Collection:** Langfuse captures retrieval + generation spans
+4. **Trace Linking:** Dataset runs linked to execution traces (when `item.run()` succeeds)
+5. **Results Export:** JSON saved to `data/evaluation_results/`
+6. **Dashboard:** View in Langfuse UI (http://localhost:3000)
+
+**Recommended Workflow (Experiment Runner - Future Migration):**
+1. **Dataset Creation:** Test cases → Langfuse Dataset
+2. **Task Function:** Define RAG task with `@observe` decorator that calls backend API
+   - Signature: `def rag_task(*, item, **kwargs)`
+   - Returns: `{"answer": str, "sources": list, "retrieved_chunks": list}`
+3. **Evaluators:** Define custom and RAGAS evaluators
+   - Signature: `def evaluator(*, item, output, **kwargs)`
+   - Return: `Evaluation(name="metric_name", value=score)`
+4. **Experiment Execution:** `dataset.run_experiment(task=rag_task, evaluators=[...])`
+   - **Benefits:** Automatic trace linking, error isolation, concurrent execution
+   - **Evaluators:** Add custom metrics (retrieval + generation) and RAGAS evaluators
+5. **Automatic Trace Linking:** Experiment Runner handles all trace-to-dataset linking
+6. **Results:** Use `result.format()` to display, call `langfuse.flush()` to ensure data is sent
+7. **View in Dashboard:** All metrics automatically attached to traces in Langfuse UI
+
+**Phase 12 Workflow (Planned - Using Experiment Runner):**
+1. **Test Case Creation:** 50 hand-written cases in `tests/test_cases_phase12.py`
+2. **Experiment Runner Infrastructure Setup:** Create task function with `@observe` decorator that calls backend API
+   - Signature: `def rag_task(*, item, **kwargs)`
+   - Returns: `{"answer": str, "sources": list, "retrieved_chunks": list}`
+3. **Incremental Evaluator Addition:**
+   - **Step 1:** Add retrieval evaluators (Hit Rate, MRR, Precision) - no LLM cost
+   - **Step 2:** Add custom evaluators (Citation Quality, Helpfulness) - LLM-as-a-judge
+   - **Step 3:** Add RAGAS evaluators (Faithfulness, Answer Relevancy, Context Relevancy) - async evaluators
+4. **Experiment Execution:** `dataset.run_experiment(task=rag_task, evaluators=[...])`
+   - Combines all evaluators in single call
+   - Automatic trace linking to dataset items
+   - Error isolation (individual failures don't stop experiment)
+5. **Results Processing:** Use `result.format()` to display, call `langfuse.flush()` to ensure data is sent
+6. **Score Logging:** All 8 metrics automatically attached to traces in Langfuse UI
+7. **Aggregate Analysis:** Calculate averages, pass rates, trends
+8. **Results Export:** JSON + summary report
+9. **Iteration:** Fix issues, re-run, compare metrics
+
+**Evaluation Script:** `tests/evaluator_complete.py`
+```bash
+# Phase 12 usage
+python tests/evaluator_complete.py --model claude-sonnet-4.5
+python tests/evaluator_complete.py --model gpt-4o --max-tests 10
+```
 
 ### Evaluation Metrics
 
-**Current Metrics (Implemented):**
+**Phase 11 Metrics (✅ Implemented):**
 - **Success Rate:** Percentage of queries that complete successfully
   - Current: 100% (15/15 test cases)
   - Tracked by: Evaluation script
@@ -466,31 +527,56 @@ Each chunk contains:
   - English: 100% (10/10)
   - German: 100% (5/5)
 
-**Future Metrics (RAGAS Integration):**
-- **Hit Rate @ K:** >80% (Is relevant chunk in top K results?)
-  - Measures: Presence of relevant information in retrieved chunks
-  - Target: >80% for K=5
-  - Status: Planned (RAGAS integration)
-- **Mean Reciprocal Rank (MRR):** >0.7 (Rank of first relevant result)
-  - Measures: Ranking quality (how high relevant chunks appear)
-  - Target: >0.7
-  - Status: Planned (RAGAS integration)
-- **Context Precision (RAGAS):** Retrieval accuracy score
-  - Measures: Proportion of retrieved chunks that are relevant
-  - Status: Planned (RAGAS integration)
-- **Answer Relevance (RAGAS):** >85% (Addresses the question?)
-  - Measures: How well the answer addresses the user's question
-  - Automated via RAGAS (LLM-as-judge)
-  - Target: >85%
-  - Status: Planned (RAGAS integration)
-- **Faithfulness (RAGAS):** Answer grounding in context
-  - Measures: Whether answer is supported by retrieved chunks
-  - Prevents hallucination
-  - Status: Planned (RAGAS integration)
-- **Citation Accuracy:** >80% (Sources cited correctly?)
-  - Measures: Whether citations [1], [2], [3] match actual sources
-  - Target: >80%
-  - Status: Manual validation currently, automated via RAGAS (planned)
+**Phase 12 Metrics (Planned - 8 Total):**
+
+**1. Retrieval Metrics (3 - No LLM Cost):**
+- **Hit Rate @ 5:** >85%
+  - Measures: Did we retrieve ≥1 relevant chunk in top-5?
+  - Implementation: Compare retrieved chunks to expected_chunks
+  - Cost: Free (simple comparison)
+
+- **Mean Reciprocal Rank (MRR):** >0.7
+  - Measures: Rank of first relevant chunk
+  - Formula: 1/rank (e.g., rank 2 = 0.5, rank 3 = 0.33)
+  - Cost: Free
+
+- **Precision @ 5:** >0.6
+  - Measures: % of top-5 chunks that are relevant
+  - Formula: (relevant chunks in top-5) / 5
+  - Cost: Free
+
+**2. RAGAS Metrics (3 - Uses GPT-4o for judging):**
+- **Faithfulness:** >0.95
+  - Measures: Answer grounded in retrieved chunks (no hallucinations)
+  - Method: RAGAS LLM-as-a-judge
+  - Cost: ~$0.015 per test case
+
+- **Answer Relevancy:** >0.85
+  - Measures: How well answer addresses the question
+  - Method: RAGAS LLM-as-a-judge
+  - Cost: ~$0.015 per test case
+
+- **Context Relevancy:** >0.7
+  - Measures: Are retrieved chunks useful for answering?
+  - Method: RAGAS analysis
+  - Cost: ~$0.015 per test case
+
+**3. Custom Metrics (2 - Uses GPT-4o for judging):**
+- **Citation Quality:** >0.85
+  - Measures: Are sources correctly cited in answer?
+  - Method: Custom LLM-as-a-judge prompt
+  - Cost: ~$0.01 per test case
+
+- **Helpfulness:** >0.8
+  - Measures: Is answer clear, actionable, and useful?
+  - Method: Custom LLM-as-a-judge prompt
+  - Cost: ~$0.01 per test case
+
+**Cost Estimation (Phase 12):**
+- Per test case: ~$0.065 (3 RAGAS + 2 custom)
+- 50 test cases: ~$3.25 per run
+- 75 test cases: ~$4.90 per run
+- Monthly (4 runs): ~$13-20/month
 
 **Performance Metrics (Automatic via Langfuse):**
 - **API Startup Time:** ~3 seconds (loads indexes)
@@ -508,35 +594,61 @@ Each chunk contains:
 
 ### Evaluation Rationale
 
-**Why Langfuse:**
-1. **Comprehensive Coverage:** Langfuse provides infrastructure (tracing, datasets, dashboard) for full observability
-2. **Automation:** Reduces manual evaluation effort (automatic trace collection, metrics calculation)
-3. **Iterative Improvement:** Easy to re-run evaluations after system changes and compare results
-4. **Local Deployment:** No external dependencies, data privacy, no API costs for evaluation infrastructure
-5. **Production-Ready:** Same tools can be used for production monitoring (future)
-6. **Multi-Model Comparison:** Easy to compare different LLM models side-by-side
-7. **Cost Transparency:** Automatic cost tracking helps optimize model selection
+**Why 2-Tier Approach (Phase 11 + Phase 12):**
+1. **Phase 11 (Langfuse):** Infrastructure for observability
+   - Tracing every query in production
+   - Cost and latency tracking
+   - Error monitoring
+   - Dataset management
+   - **Current Implementation:** Manual `item.run()` approach
+   - **Recommended:** Migrate to Experiment Runner for better reliability
 
-**Why RAGAS (Future):**
-- Industry-standard framework for RAG evaluation
-- Automated quality metrics (relevance, faithfulness, precision)
-- LLM-as-judge for answer quality assessment
-- No manual labeling required
+2. **Phase 12 (RAGAS + Metrics):** Quality measurement
+   - Systematic quality assessment
+   - Retrieval quality (Hit Rate, MRR, Precision)
+   - Generation quality (RAGAS metrics)
+   - Custom domain-specific metrics
+   - **Implementation:** Uses Experiment Runner as primary approach
+     - Infrastructure-first: Set up task function with `@observe` decorator
+     - Incremental evaluator addition: retrieval → custom → RAGAS
+     - All evaluators combined in `dataset.run_experiment()` call
+     - No manual loops or `item.run()` - Experiment Runner handles everything
+
+**Why RAGAS:**
+- Industry-standard RAG evaluation framework
+- Automated LLM-as-a-judge (no manual labeling)
+- Specifically designed for RAG systems
+- Integrates with Langfuse for score logging
+- Open-source and battle-tested
+
+**Why Focus on 8 Metrics (Not More):**
+- **Retrieval (3):** Essential for knowing if relevant info is retrieved
+- **RAGAS (3):** Industry-standard generation quality
+- **Custom (2):** Domain-specific (citations, helpfulness)
+- Avoids metric overload while covering all critical dimensions
 
 **Evaluation Frequency:**
-- **Initial Baseline:** ✅ Completed in Phase 11 (2026-01-01)
-- **Dataset Creation:** ✅ Tested and working - creates Langfuse Dataset with all test cases
-- **After Major Changes:** Re-run after chunking changes, prompt updates, retrieval strategy changes
-- **Before Production:** Final evaluation with expanded test set and RAGAS metrics
-- **Ongoing Monitoring:** Langfuse dashboard for production queries (future)
+- **Phase 11:** ✅ Completed (2026-01-01) - 15 test cases (manual `item.run()` approach)
+- **Phase 12 Implementation:** ✅ Uses Experiment Runner as primary approach (infrastructure first, then evaluators)
+- **Phase 12 Phase 1:** Baseline with 50 cases (using Experiment Runner)
+- **Phase 12 Phase 2:** Expand to 75 cases (add synthetic, re-run with Experiment Runner)
+- **Phase 12 Phase 3:** Grow to 150+ cases over 3 months (weekly monitoring using Experiment Runner)
+- **Production:** Weekly monitoring + continuous test set growth (all using Experiment Runner)
 
-**Success Criteria (Current Status):**
-- ✅ All 15 test cases execute successfully (100% success rate)
-- ⏳ Retrieval metrics meet targets (Hit Rate @ 5 >80%, MRR >0.7) - Requires RAGAS integration
-- ⏳ Generation metrics meet targets (Answer Relevance >85%, Citation Accuracy >80%) - Requires RAGAS integration
-- ✅ Product diversity works correctly (both products in comparison queries) - Verified in test results
-- ✅ Language consistency maintained (100% match) - Verified in test results
-- ✅ Cost tracking accurate across all models - Tracked via Langfuse
+**Experiment Runner Benefits:**
+- **Automatic Trace Linking:** No manual `item.run()` context management
+- **Error Isolation:** Individual failures don't stop entire experiment
+- **Concurrent Execution:** Configurable parallel processing
+- **Evaluator Support:** Easy integration of custom and RAGAS evaluators
+- **Better Reliability:** Handles connection errors gracefully
+- **Cleaner Code:** Less boilerplate, more maintainable
+
+**Success Criteria (Phase 12):**
+- ✅ All retrieval metrics >targets (Hit Rate >85%, MRR >0.7, Precision >0.6)
+- ✅ All RAGAS metrics >targets (Faithfulness >0.95, Relevancy >0.85, Context >0.7)
+- ✅ All custom metrics >targets (Citation >0.85, Helpfulness >0.8)
+- ✅ Test set grows 10-20% per month
+- ✅ Production metrics align with test set (±10%)
 
 ## Development Approach
 
@@ -626,12 +738,14 @@ Core libraries:
 
 ### Web Chat Interface
 - **Framework:** Vanilla HTML/JavaScript (no frameworks)
-- **Design System:** Verifyr design system (`../Verifyr/design-system/design-system.css`)
-- **Server:** Python HTTP server on port 3000
+- **Design System:** Verifyr design system (`design-system/design-system.css`)
+- **Server:** FastAPI on port 8000
 - **Files:**
-  - `frontend/index.html` - Main HTML structure
+  - `frontend/index.html` - Landing page
+  - `frontend/chat.html` - Chat interface
   - `frontend/app.js` - Chat logic and API integration
   - `frontend/styles.css` - Chat-specific styles with design system tokens
+  - `frontend/design-system/` - Design tokens and components
 
 ### Design System Integration
 **Color Tokens:**

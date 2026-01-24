@@ -322,7 +322,7 @@ The full RAG pipeline (retrieval + generation) was completed in Phase 7 when we:
 - Created `frontend/index.html` with design system CSS import
 - Created `frontend/app.js` with complete chat logic
 - Created `frontend/styles.css` with design system variables
-- Integrated Verifyr design system from `../Verifyr/design-system/design-system.css`
+- Integrated Verifyr design system from `design-system/design-system.css`
 
 **Key Features**:
 - **Design System Integration**: Uses Verifyr design tokens (colors, typography, spacing, shadows)
@@ -413,10 +413,11 @@ async function handleSend() {
 - ✅ XSS protection (HTML escaping)
 
 **Server Configuration**:
-- Frontend server: `python -m http.server 3000` from project root directory
-- Frontend URL: http://localhost:3000/frontend/
-- Backend API: http://localhost:8000 (must be running)
-- CORS enabled for localhost:3000
+- FastAPI server serves both frontend and backend on port 8000
+- Landing Page: http://localhost:8000/
+- Chat Interface: http://localhost:8000/chat.html
+- Backend API: http://localhost:8000 (health, query, products, conversations)
+- CORS enabled for all origins
 
 ---
 
@@ -1519,41 +1520,44 @@ async function handleSend() {
 
 **Key Technical Details**:
 - **Path Resolution**: Used `Path(__file__).parent.parent` to get project root (since main.py is in backend/ subdirectory)
-- **HTML Serving**: Enabled `html=True` parameter for `/frontend` mount to serve index.html automatically
-- **CSS Serving**: Verifyr design system serves all CSS files from `/Verifyr/design-system/`
+- **HTML Serving**: Enabled `html=True` parameter for root `/` mount to serve index.html automatically
+- **CSS Serving**: Design system serves all CSS files from `/design-system/` (within frontend)
 - **Error Handling**: Added existence checks with informative messages
+- **Restructuring**: Consolidated Verifyr/ and frontend/ into single frontend/ directory
 
 **Access Points**:
 ```
-http://localhost:8000/frontend/          # Chat interface
-http://localhost:8000/Verifyr/           # Landing page
-http://localhost:8000/Verifyr/design-system/design-system.css  # Design system CSS
+http://localhost:8000/                   # Landing page (index.html)
+http://localhost:8000/chat.html          # Chat interface
+http://localhost:8000/design-system/design-system.css  # Design system CSS
 ```
 
 **Testing & Verification**:
-- ✅ Frontend chat interface accessible at localhost:8000/frontend/
+- ✅ Landing page accessible at localhost:8000/
+- ✅ Chat interface accessible at localhost:8000/chat.html
 - ✅ All design system CSS files load successfully (200 OK status):
   - design-system.css
   - tokens/colors.css, typography.css, spacing.css, shadows.css, borders.css
   - layout/grid.css, containers.css, responsive.css
   - components/buttons.css, cards.css, navigation.css, forms.css, modals.css, sections.css
   - animations/keyframes.css, transitions.css
-- ✅ Server startup logs confirm both mounts:
+- ✅ Server startup logs confirm frontend mount:
   ```
-  ✅ Frontend mounted at /frontend from C:\Users\prabh\OneDrive\Git_PM\verifyr - rag\frontend
-  ✅ Verifyr design system mounted at /Verifyr from C:\Users\prabh\OneDrive\Git_PM\verifyr - rag\Verifyr
+  ✅ Frontend mounted at / from C:\Users\prabh\OneDrive\Git_PM\verifyr - rag\frontend
   ```
 
 **Impact**:
 - Single server serves both API and frontend (simplified deployment)
-- Frontend can reference design system CSS via relative paths (`/Verifyr/design-system/design-system.css`)
+- Unified frontend structure (landing + chat + design system in one directory)
+- Frontend can reference design system CSS via relative paths (`design-system/design-system.css`)
 - No CORS issues between frontend and backend
 - Easier local development workflow
+- Cleaner navigation: "Try Verifyr" button links directly to chat.html
 
 **Important Notes**:
-- **CRITICAL**: This configuration must persist to ensure frontend styling works correctly
-- Frontend HTML references CSS at `../Verifyr/design-system/design-system.css` which resolves to `/Verifyr/design-system/design-system.css`
-- Both mounts are essential: `/frontend` for chat UI, `/Verifyr` for design system CSS
+- **CRITICAL**: Frontend mounted at root `/` must come AFTER all API route definitions in main.py
+- Frontend HTML references CSS at `design-system/design-system.css` (relative path)
+- API endpoints (health, query, products, conversations) take precedence over static file serving
 
 ---
 
@@ -1976,7 +1980,12 @@ Built comprehensive evaluation infrastructure using Langfuse for observability a
   - MinIO init container - Automatically creates `langfuse-events` bucket
 - Health checks and restart policies for all services
 - Persistent volumes for data retention
-- Environment variables configured for S3 and ClickHouse connections
+- Environment variables configured for S3 and ClickHouse connections:
+  - **S3 Blob Storage**: Uses `LANGFUSE_S3_EVENT_UPLOAD_*` prefixed variables (required for v3):
+    - `LANGFUSE_S3_EVENT_UPLOAD_BUCKET`, `LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT`
+    - `LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID`, `LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY`
+    - `LANGFUSE_S3_EVENT_UPLOAD_REGION`, `LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE`
+  - **ClickHouse**: `CLICKHOUSE_URL`, `CLICKHOUSE_MIGRATION_URL`, `CLICKHOUSE_USER`, `CLICKHOUSE_PASSWORD`
 
 **Backend Langfuse Integration:**
 ```python

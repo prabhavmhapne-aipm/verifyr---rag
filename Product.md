@@ -121,3 +121,24 @@ Anzahl der Unique Users pro Monat, die alle drei Kriterien erfüllen:
 2. Mindestens einen Vergleich sehen
 3. Auf eine Empfehlung klicken und Link klicken
 
+##OKRS
+
+###OKR1 
+OKR1: Unsere Kund:innen können innerhalb weniger Minuten eine fundierte, vertrauensvolle und verständliche Kaufempfehlung erhalten
+KR1: Reduzieren wir die durchschnittliche Zeit vom Start des Flows bis zur finalen Empfehlung auf unter 2 Minuten
+KR2:Erhöhen wir den Anteil der Nutzer, die den kompletten Empfehlungs‑Flow vollständig abschließen, auf 70%
+KR3: Steigern wir den Anteil der Nutzer, die angeben „Die Empfehlung war verständlich und vertrauenswürdig“, auf 75% in einer kurzen In‑App Trust Score Umfrage
+
+
+###OKR2
+O2: Wir haben unseren Kund:innen über unsere Plattform die Möglichkeit geschaffen, ihre produktrelevanten Fragen vertrauensvoll zu stellen und zuverlässig klären zu lassen
+KR1: Steigern wir den durchschnittlichen Zufriedenheits‑/Trust‑Score nach einer Umfrage  auf mindestens 1 Punkt höher als andere  Vergleichsportals
+KR2: Reduzieren wir die durchschnittliche Zeit bis zur Beantwortung einer Produkt‑ oder Technikfrage auf unter 1 Minuten pro Konversation.
+KR3: Erhöhen wir den Anteil der Nutzer, deren Produkt‑ oder Technikfrage im ersten Chat‑Kontakt vollständig geklärt wird, auf mindestens 85%
+
+
+###OKR3
+O3: Wir bauen eine engagierte Nutzer-Basis auf, die verifyr wiederholt nutzt
+KR1: Erreichen wir 100 aktive Nutzer pro Monat bis Ende Q2 2026
+KR2: Steigern wir die 30-Day-Retention-Rate von 0% auf 15% bis Ende Q2 2026
+KR3: Erreichen wir einen NPS Score von 20% der Nutzer verfiyr weiterempfehlen bei mind. 100 befragten bis Ende Q2 2026

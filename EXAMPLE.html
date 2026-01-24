@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Character encoding for proper text display -->
+  <meta charset="UTF-8">
+  
+  <!-- Responsive viewport settings for mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO: Description that appears in search results -->
+  <meta name="description" content="Prabhav Mhapne - AI Product Manager who builds end-to-end product strategy, designs, codes, and ships. Turning ambiguous problems into shipped, measurable outcomes.">
+  
+  <!-- Open Graph tags for social media sharing -->
+  <meta property="og:title" content="Prabhav Mhapne - Product Manager">
+  <meta property="og:description" content="AI Product Manager who builds end-to-end product strategy, designs, codes, and ships">
+  <meta property="og:type" content="website">
+  
+  <!-- Page title shown in browser tab -->
+  <title>Prabhav Mhapne - Product Manager</title>
+  
+  <!-- Favicon: Small icon shown in browser tab with "PM" text -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232563eb'/%3E%3Ctext x='50' y='65' font-family='Inter, sans-serif' font-size='45' font-weight='700' fill='white' text-anchor='middle'%3EPM%3C/text%3E%3C/svg%3E">
+  
+  <!-- Preload Google Fonts for faster loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+Pro:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ========================================
+       CSS CUSTOM PROPERTIES (VARIABLES)
+       Define colors, spacing, and sizes once to reuse throughout
+       ======================================== */
+    :root {
+      /* Light theme colors */
+      --color-bg: #ffffff;              /* Main background color */
+      --color-surface: #f8f9fa;         /* Card/surface background */
+      --color-text: #1a1a1a;            /* Main text color */
+      --color-text-muted: #6b7280;      /* Secondary/muted text */
+      --color-primary: #2563eb;         /* Brand blue color */
+      --color-primary-hover: #1d4ed8;   /* Darker blue on hover */
+      --color-border: #e5e7eb;          /* Border color */
+      --color-shadow: rgba(0, 0, 0, 0.08); /* Shadow color */
+      
+      /* Reusable sizing */
+      --radius: 12px;                   /* Border radius for rounded corners */
+      --nav-height: 64px;               /* Navigation bar height */
+      --spacing-section: 100px;         /* Spacing between major sections */
+    }
+
+
+    /* ========================================
+       GLOBAL RESET & BASE STYLES
+       Remove browser defaults and set foundations
+       ======================================== */
+    * {
+      margin: 0;                        /* Remove default margins */
+      padding: 0;                       /* Remove default padding */
+      box-sizing: border-box;           /* Include padding/border in width calculations */
+    }
+
+    html {
+      scroll-behavior: smooth;          /* Smooth scrolling for anchor links */
+      scroll-padding-top: var(--nav-height); /* Offset scroll for fixed nav */
+    }
+
+    /* Disable animations for users who prefer reduced motion (accessibility) */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { 
+        animation-duration: 0.01ms !important; 
+        transition-duration: 0.01ms !important; 
+      }
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;                 /* Readable line spacing */
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* ========================================
+       NAVIGATION BAR
+       Fixed to top of page, stays visible when scrolling
+       ======================================== */
+    nav {
+      position: fixed;                  /* Stick to top of viewport */
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1000;                    /* Appear above other content */
+      transition: background-color 0.3s ease;
+    }
+
+    nav .container {
+      max-width: 1200px;
+      margin: 0 auto;                   /* Center horizontally */
+      padding: 0 24px;                  /* Side padding */
+      height: 100%;
+      display: flex;                    /* Flexbox for horizontal layout */
+      align-items: center;              /* Center items vertically */
+      justify-content: space-between;   /* Space between logo and menu */
+    }
+
+    /* Logo/brand text in navigation */
+    nav .logo {
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--color-text);
+      text-decoration: none;            /* Remove underline */
+    }
+
+    /* Navigation menu list */
+    nav ul {
+      display: flex;
+      list-style: none;                 /* Remove bullet points */
+      gap: 32px;                        /* Space between menu items */
+      align-items: center;
+    }
+
+    /* Navigation links styling */
+    nav a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.2s ease;      /* Smooth color change on hover */
+      position: relative;
+    }
+
+    /* Hover and active states for navigation links */
+    nav a:hover, nav a.active {
+      color: var(--color-primary);
+    }
+
+    /* Active link underline indicator */
+    nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-primary);
+    }
+
+    /* ========================================
+       LANGUAGE SWITCHER
+       Toggle between EN/DE languages
+       ======================================== */
+    .language-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .lang-option {
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--color-text-muted);
+      text-decoration: none;
+    }
+
+    .lang-option:hover {
+      color: var(--color-primary);
+      background: var(--color-surface);
+    }
+
+    .lang-option.active {
+      color: white;
+      background: var(--color-primary);
+    }
+
+    .lang-separator {
+      color: var(--color-border);
+    }
+
+    /* ========================================
+       MOBILE MENU
+       Hidden by default on desktop, shows as dropdown on mobile
+       ======================================== */
+    .mobile-menu-btn {
+      display: none;                    /* Hidden on desktop */
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      color: var(--color-text);
+    }
+
+    /* Mobile styles for screens smaller than 768px */
+    @media (max-width: 768px) {
+      .mobile-menu-btn { display: block; }
+      
+      nav ul {
+        position: fixed;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        background: var(--color-bg);
+        flex-direction: column;         /* Stack items vertically */
+        padding: 24px;
+        gap: 16px;
+        border-bottom: 1px solid var(--color-border);
+        transform: translateY(-100%);   /* Hide above viewport */
+        opacity: 0;
+        pointer-events: none;           /* Disable clicks when hidden */
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      /* Show menu when 'open' class is added by JavaScript */
+      nav ul.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      nav a.active::after { display: none; }
+    }
+
+    /* ========================================
+       CONTAINER & SECTION STYLES
+       Standard width container and section animations
+       ======================================== */
+    .container {
+      max-width: 1200px;                /* Maximum width for content */
+      margin: 0 auto;                   /* Center horizontally */
+      padding: 0 24px;                  /* Side padding */
+    }
+
+    /* All major sections start hidden and fade in when scrolled into view */
+    section {
+      padding: var(--spacing-section) 0;
+      opacity: 0;
+      transform: translateY(30px);      /* Start 30px lower */
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    /* 'visible' class added by JavaScript when section enters viewport */
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========================================
+       HERO SECTION (HOME)
+       First section with name, photo, and CTAs
+       ======================================== */
+    #home {
+      min-height: calc(100vh - var(--nav-height)); /* Full viewport height minus nav */
+      display: flex;
+      align-items: center;              /* Center content vertically */
+      padding-top: var(--nav-height);
+    }
+
+    /* Two-column grid for hero content and image */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;   /* Two equal columns */
+      gap: 64px;
+      align-items: center;
+    }
+
+    .hero-content {
+      max-width: 600px;
+    }
+
+    /* Small badge above name */
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-primary);
+      margin-bottom: 24px;
+    }
+
+    /* Main heading (name) */
+    h1 {
+      font-family: 'Source Serif Pro', serif;
+      font-size: clamp(40px, 8vw, 72px); /* Responsive: min 40px, max 72px */
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      color: var(--color-text);
+    }
+
+    /* Subtitle text under name */
+    .hero-subtitle {
+      font-size: clamp(18px, 3vw, 24px);
+      color: var(--color-text-muted);
+      margin-bottom: 32px;
+    }
+
+    /* Button container in hero */
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;                  /* Wrap to next line on small screens */
+      margin-bottom: 32px;
+    }
+
+    /* Profile image container (right side of hero) */
+    .hero-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-image img {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      border-radius: 16px;              /* Rounded corners */
+      box-shadow: 0 20px 60px var(--color-shadow); /* Soft shadow */
+      transition: transform 0.3s ease;
+      object-fit: cover;                /* Maintain aspect ratio */
+    }
+
+    .hero-image img:hover {
+      transform: scale(1.02);           /* Slight zoom on hover */
+    }
+
+    /* Stack hero content vertically on tablets and mobile */
+    @media (max-width: 968px) {
+      .hero-grid {
+        grid-template-columns: 1fr;     /* Single column */
+        gap: 40px;
+      }
+
+      .hero-image {
+        order: -1;                      /* Show image first on mobile */
+      }
+
+      .hero-image img {
+        max-width: 300px;
+      }
+    }
+
+    /* ========================================
+       BUTTONS
+       Reusable button styles throughout the site
+       ======================================== */
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* Primary button (blue background) */
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-2px);      /* Lift up on hover */
+      box-shadow: 0 8px 16px var(--color-shadow);
+    }
+
+    /* Secondary button (outlined style) */
+    .btn-secondary {
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* Demo button - matches primary blue theme */
+    .btn-demo {
+      background: var(--color-primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px var(--color-shadow);
+    }
+
+    .btn-demo:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--color-shadow);
+    }
+
+    /* ========================================
+       SOCIAL LINKS
+       LinkedIn and GitHub icon buttons
+       ======================================== */
+    .social-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .social-link:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    /* ========================================
+       SECTION HEADERS
+       Consistent styling for section titles
+       ======================================== */
+    .section-header {
+      margin-bottom: 64px;
+      text-align: center;
+    }
+
+    h2 {
+      font-family: 'Source Serif Pro', serif;
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--color-text);
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      color: var(--color-text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ========================================
+       PRODUCTS SECTION (formerly Projects)
+       Three-column grid for product cards
+       ======================================== */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    /* Individual product card styling */
+    .product-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;           /* Stack content vertically */
+      height: 100%;                     /* Ensures card fills grid cell for equal heights */
+    }
+
+    /* Hover effect on product cards */
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px var(--color-shadow);
+      border-color: var(--color-primary);
+    }
+
+    /* Product category tag/badge */
+    .product-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-primary);
+      margin-bottom: 16px;
+      align-self: flex-start;           /* Don't stretch full width */
+    }
+
+    .product-card h3 {
+      font-family: 'Source Serif Pro', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--color-text);
+    }
+
+    /* Product description sections (Problem, Approach, etc.) */
+    .product-section {
+      margin-bottom: 20px;
+    }
+
+    .product-section h4 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .product-section p {
+      color: var(--color-text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Outcome highlight box with colored border */
+    .product-outcome {
+      background: var(--color-bg);
+      border-left: 3px solid var(--color-primary);
+      padding: 16px 20px;
+      margin-top: 20px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .product-outcome strong {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    /* Product preview description */
+    .product-preview-desc {
+      color: var(--color-text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    /* Product actions container */
+    .product-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: auto;
+      min-height: 108px;               /* Ensures consistent height even with different number of buttons */
+      justify-content: flex-start;     /* Aligns first button (Learn More) consistently across all cards */
+    }
+
+    /* Demo button container - pushed to bottom of card */
+    .product-demo {
+      margin-top: auto;                 /* Push to bottom of flexible container */
+      padding-top: 24px;
+      text-align: center;
+    }
+
+    /* Responsive: 2 columns on tablets */
+    @media (max-width: 968px) {
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Responsive: 1 column on mobile */
+    @media (max-width: 640px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ========================================
+       BLOG SECTION
+       Grid of blog post cards
+       ======================================== */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .blog-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px var(--color-shadow);
+      border-color: var(--color-primary);
+    }
+
+    .blog-date {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .blog-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 12px;
+    }
+
+    .blog-card p {
+      color: var(--color-text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .blog-read-more {
+      color: var(--color-primary);
+      font-weight: 500;
+      font-size: 14px;
+      margin-top: 12px;
+      display: inline-block;
+    }
+
+    .blog-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 16px 0;
+      object-fit: cover;
+      max-height: 250px;
+    }
+
+    /* ========================================
+       CONTACT SECTION
+       Contact form and information
+       ======================================== */
+    #contact {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      padding: 64px 48px;
+    }
+
+    .contact-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-intro {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .contact-intro p {
+      color: var(--color-text-muted);
+      font-size: 16px;
+      margin-top: 16px;
+    }
+
+    /* Contact form styling */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--color-text);
+    }
+
+    input, textarea {
+      padding: 12px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 15px;
+      background: var(--color-bg);
+      color: var(--color-text);
+      transition: border-color 0.2s ease;
+    }
+
+    /* Focus state for form inputs - accessibility */
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;                 /* Allow vertical resize only */
+    }
+
+    .contact-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .contact-email {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-primary);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    .contact-email:hover {
+      text-decoration: underline;
+    }
+
+    /* ========================================
+       BACK TO TOP BUTTON
+       Floating button that appears when scrolling down
+       ======================================== */
+    #back-to-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 48px;
+      height: 48px;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: 50%;               /* Make it circular */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px var(--color-shadow);
+      opacity: 0;                       /* Hidden by default */
+      pointer-events: none;             /* Can't click when hidden */
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    /* Show button when 'visible' class added by JavaScript */
+    #back-to-top.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #back-to-top:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-4px);
+    }
+
+    /* ========================================
+       FOOTER
+       Copyright, tagline, and legal links
+       ======================================== */
+    footer {
+      text-align: center;
+      padding: 48px 24px 24px;
+      color: var(--color-text-muted);
+      font-size: 14px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .footer-copyright {
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+
+    .footer-tagline {
+      margin-bottom: 16px;
+    }
+
+    /* Legal links (Impressum, Datenschutz) */
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .footer-legal a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .footer-legal a:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+
+    /* ========================================
+       MODAL STYLES
+       Popup windows for Impressum and Datenschutz
+       ======================================== */
+    .modal {
+      display: none;                    /* Hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);   /* Dark overlay background */
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* Show modal when 'active' class is added by JavaScript */
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--color-bg);
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 700px;
+      max-height: 80vh;
+      overflow-y: auto;                 /* Scroll if content is too long */
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Close button (X) in top-right of modal */
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    .modal-content h2 {
+      margin-bottom: 24px;
+      font-size: 28px;
+    }
+
+    .modal-content h3 {
+      margin-top: 24px;
+      margin-bottom: 12px;
+      font-size: 20px;
+      color: var(--color-text);
+    }
+
+    .modal-content p {
+      margin-bottom: 16px;
+      line-height: 1.7;
+      color: var(--color-text);
+    }
+
+    .modal-content ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+      color: var(--color-text);
+    }
+
+    .modal-content li {
+      margin-bottom: 8px;
+    }
+
+    /* Product modal specific styles */
+    .product-modal-content {
+      max-width: 800px;
+    }
+
+    .product-modal-header {
+      margin-bottom: 32px;
+    }
+
+    .product-modal-header .product-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-primary);
+      margin-bottom: 12px;
+    }
+
+    .product-modal-header h2 {
+      margin-bottom: 0;
+    }
+
+    .modal-product-section {
+      margin-bottom: 24px;
+    }
+
+    .modal-product-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+
+    .modal-product-section p {
+      color: var(--color-text);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .modal-product-outcome {
+      background: var(--color-surface);
+      border-left: 3px solid var(--color-primary);
+      padding: 20px 24px;
+      margin: 32px 0;
+      border-radius: 4px;
+      font-size: 15px;
+    }
+
+    .modal-product-outcome strong {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .modal-product-footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* Modal product images */
+    .modal-product-image {
+      margin-bottom: 32px;
+    }
+
+    .modal-product-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px var(--color-shadow);
+      transition: transform 0.3s ease;
+    }
+
+    /* Product carousel (for Product 3) */
+    .modal-product-carousel {
+      position: relative;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    .carousel-image {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px var(--color-shadow);
+      display: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .carousel-image.active {
+      display: block;
+    }
+
+    /* Carousel navigation buttons */
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+
+    .carousel-nav:hover {
+      background: rgba(0, 0, 0, 0.7);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-prev {
+      left: 16px;
+    }
+
+    .carousel-next {
+      right: 16px;
+    }
+
+    /* ========================================
+       RESPONSIVE ADJUSTMENTS
+       Mobile-specific styling tweaks
+       ======================================== */
+    @media (max-width: 768px) {
+      :root {
+        --spacing-section: 64px;        /* Reduce section spacing on mobile */
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .btn {
+        text-align: center;
+      }
+
+      #contact {
+        padding: 40px 24px;
+      }
+
+      #back-to-top {
+        bottom: 24px;
+        right: 24px;
+      }
+    }
+
+    /* ========================================
+       FIGMA EMBED CONTAINER
+       Responsive iframe container for prototypes
+       ======================================== */
+    .figma-embed-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;        /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px var(--color-shadow);
+      margin-top: 16px;
+    }
+
+    .figma-embed-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+    }
+
+    /* Mobile adjustments for Figma embed */
+    @media (max-width: 768px) {
+      .figma-embed-container {
+        padding-bottom: 75%;          /* Taller on mobile for better UX */
+      }
+    }
+
+    /* ========================================
+       COOKIE CONSENT BANNER (GDPR)
+       Bottom banner for cookie/tracking consent
+       ======================================== */
+    #cookie-consent-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-bg);
+      border-top: 2px solid var(--color-primary);
+      padding: 24px;
+      box-shadow: 0 -4px 20px var(--color-shadow);
+      z-index: 10000;
+      display: none;
+      animation: slideUp 0.3s ease;
+    }
+
+    #cookie-consent-banner.show {
+      display: block;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .consent-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .consent-text {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .consent-text h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--color-text);
+    }
+
+    .consent-text p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    .consent-text a {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+
+    .consent-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .consent-btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      white-space: nowrap;
+    }
+
+    .consent-btn-accept {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .consent-btn-accept:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .consent-btn-reject {
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .consent-btn-reject:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .consent-btn-customize {
+      background: transparent;
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+    }
+
+    .consent-btn-customize:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    /* Consent preferences modal */
+    .consent-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10001;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .consent-modal.active {
+      display: flex;
+    }
+
+    .consent-modal-content {
+      background: var(--color-bg);
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .consent-category {
+      padding: 20px;
+      background: var(--color-surface);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .consent-category-info h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--color-text);
+    }
+
+    .consent-category-info p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    .consent-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .consent-toggle input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .consent-toggle input[type="checkbox"]:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .consent-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .consent-buttons {
+        flex-direction: column;
+      }
+
+      .consent-btn {
+        width: 100%;
+      }
+
+      #cookie-consent-banner {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+  
+  <!-- Supabase JavaScript Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- ========================================
+       COOKIE CONSENT BANNER (GDPR)
+       Required for Germany/EU compliance
+       ======================================== -->
+  <div id="cookie-consent-banner">
+    <div class="consent-content">
+      <div class="consent-text">
+        <h3>Cookie-Einstellungen</h3>
+        <p>
+          Wir verwenden Technologien wie Session Storage und verarbeiten personenbezogene Daten wie 
+          Nutzungsverhalten, um die Website zu verbessern und anonyme Statistiken zu erstellen. 
+          Mit Ihrer Zustimmung erlauben Sie uns, diese Daten zu verarbeiten. 
+          Sie können Ihre Einwilligung jederzeit widerrufen. 
+          Weitere Informationen finden Sie in unserer 
+          <a href="#" onclick="openModal('datenschutz'); return false;">Datenschutzerklärung</a>.
+        </p>
+      </div>
+      <div class="consent-buttons">
+        <button class="consent-btn consent-btn-accept" onclick="acceptAllConsent()">Alle akzeptieren</button>
+        <button class="consent-btn consent-btn-reject" onclick="rejectAllConsent()">Alle ablehnen</button>
+        <button class="consent-btn consent-btn-customize" onclick="openConsentModal()">Einstellungen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consent Preferences Modal -->
+  <div id="consent-modal" class="consent-modal">
+    <div class="consent-modal-content">
+      <button class="modal-close" onclick="closeConsentModal()" aria-label="Schließen">×</button>
+      <h2>Cookie-Einstellungen</h2>
+      <p style="color: var(--color-text-muted); margin-bottom: 24px;">
+        Wählen Sie, welche Kategorien von Daten Sie zulassen möchten:
+      </p>
+
+      <div class="consent-category">
+        <div class="consent-category-info">
+          <h4>Notwendige Cookies</h4>
+          <p>Erforderlich für grundlegende Funktionen der Website (Session-Management, Formulare)</p>
+        </div>
+        <div class="consent-toggle">
+          <input type="checkbox" id="necessary-consent" checked disabled>
+          <label for="necessary-consent">Immer aktiv</label>
+        </div>
+      </div>
+
+      <div class="consent-category">
+        <div class="consent-category-info">
+          <h4>Analytics & Statistiken</h4>
+          <p>Hilft uns zu verstehen, wie Besucher die Website nutzen (Seitenaufrufe, Klicks, Navigation)</p>
+        </div>
+        <div class="consent-toggle">
+          <input type="checkbox" id="analytics-consent">
+        </div>
+      </div>
+
+      <div style="margin-top: 24px; display: flex; gap: 12px;">
+        <button class="btn btn-primary" onclick="saveConsentPreferences()">Auswahl speichern</button>
+        <button class="btn btn-secondary" onclick="closeConsentModal()">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       NAVIGATION BAR
+       Fixed at top, provides site navigation
+       ======================================== -->
+  <nav>
+    <div class="container">
+      <!-- Logo/brand - links back to home -->
+      <a href="#home" class="logo">PM</a>
+      
+      <!-- Navigation menu -->
+      <ul id="nav-menu">
+        <li><a href="#home" class="nav-link active" data-i18n="nav_home">Home</a></li>
+        <li><a href="#products" class="nav-link" data-i18n="nav_products">Products</a></li>
+        <li><a href="#blog" class="nav-link" data-i18n="nav_blog">My Blog</a></li>
+        <li><a href="#contact" class="nav-link" data-i18n="nav_contact">Contact</a></li>
+        <li class="language-switcher">
+          <span class="lang-option" onclick="switchLanguage('de')" id="lang-de">DE</span>
+          <span class="lang-separator">|</span>
+          <span class="lang-option" onclick="switchLanguage('en')" id="lang-en">EN</span>
+        </li>
+      </ul>
+      
+      <!-- Mobile menu hamburger button (hidden on desktop) -->
+      <button class="mobile-menu-btn" aria-label="Toggle menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========================================
+       HERO SECTION (HOME)
+       First section visitors see with intro and photo
+       ======================================== -->
+  <section id="home">
+    <div class="container">
+      <div class="hero-grid">
+        <!-- Left side: Text content -->
+        <div class="hero-content">
+          <span class="hero-badge" data-i18n="hero_badge">AI Product Strategy & Dev. | Evals & RAG Systems | SAFe® 6 PO/PM</span>
+          <h1>Prabhav Mhapne</h1>
+          <p class="hero-subtitle" data-i18n="hero_subtitle">AI Product Manager with engineering background. I build production-ready AI products and define problem-first end-to-end product strategy that delivers customer-centric features & business outcomes.</p>
+          
+          <!-- Call-to-action buttons -->
+          <div class="hero-cta">
+            <a href="#products" class="btn btn-primary" data-i18n="hero_btn_products">View Products</a>
+            <a href="#contact" class="btn btn-secondary" data-i18n="hero_btn_contact">Contact</a>
+          </div>
+          
+          <!-- Social media links -->
+          <div class="social-links">
+            <a href="https://linkedin.com/in/prabhavmhapne" class="social-link" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg>
+            </a>
+            <a href="https://github.com/prabhavmhapne-aipm" class="social-link" target="_blank" rel="noopener" aria-label="GitHub">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Right side: Profile photo -->
+        <div class="hero-image">
+          <img src="prabhav-photo.png" alt="Prabhav Mhapne - Product Manager" loading="eager">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       PRODUCTS SECTION
+       Three featured products displayed horizontally
+       ======================================== -->
+  <section id="products">
+    <div class="container">
+      <div class="section-header">
+        <h2 data-i18n="products_title">Featured Products</h2>
+        <p class="section-subtitle" data-i18n="products_subtitle">Production-ready prototypes demonstrating end-to-end product ownership, AI integration, and measurable impact</p>
+      </div>
+      
+      <div class="products-grid">
+        <!-- Product 1: AI Shopping Assistant (Verifyr) -->
+        <div class="product-card">
+          <span class="product-tag" data-i18n="product1_tag">Health-Tech AI</span>
+          <h3 data-i18n="product1_title">AI Shopping Assistant</h3>
+          <p class="product-preview-desc" data-i18n="product1_desc">Conversational AI advisor helping fitness & health enthusiasts make confident health-tech purchase decisions through neutral, source-backed recommendations.</p>
+          
+          <div class="product-actions">
+            <button onclick="openProductModal('verifyr')" class="btn btn-secondary" data-i18n="product1_btn_learn">Learn More</button>
+            <a href="https://veryfyr.netlify.app/" target="_blank" rel="noopener" class="btn-demo">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <span data-i18n="product1_btn_visit">Visit Verifyr</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Product 2: E-Commerce QA Bot (RAG System) -->
+        <div class="product-card">
+          <span class="product-tag" data-i18n="product2_tag">Local RAG System</span>
+          <h3 data-i18n="product2_title">E-Commerce QA Bot</h3>
+          <p class="product-preview-desc" data-i18n="product2_desc">Production-ready RAG system delivering accurate answers from 250+ pages of product documentation, setup manuals & curated tests/reviews in seconds.</p>
+          
+          <div class="product-actions">
+            <button onclick="openProductModal('qabot')" class="btn btn-secondary" data-i18n="product2_btn_learn">Learn More</button>
+            <a href="#contact" class="btn-demo">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="8" cy="8" r="6"></circle>
+                <polygon points="8,5 11,8 8,11"></polygon>
+              </svg>
+              <span data-i18n="product2_btn_demo">Request Demo</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Product 3: GenAI CarPlay Assistant (Porsche Beta) -->
+        <div class="product-card">
+          <span class="product-tag" data-i18n="product3_tag">AI in Automotive Infotainment</span>
+          <h3 data-i18n="product3_title">GenAI Feature(s) in CarPlay</h3>
+          <p class="product-preview-desc" data-i18n="product3_desc">Beta Program validating GenAI features before production rollout. Dual goals: validate product quality through real customer feedback and create communication potential through innovation.</p>
+          
+          <div class="product-actions">
+            <button onclick="openProductModal('carplay')" class="btn btn-secondary" data-i18n="product3_btn_learn">Learn More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       LINKEDIN POSTS SECTION
+       Featured LinkedIn posts
+       ======================================== -->
+  <section id="blog">
+    <div class="container">
+      <div class="section-header">
+        <h2 data-i18n="blog_title">Featured on LinkedIn</h2>
+        <p class="section-subtitle" data-i18n="blog_subtitle">Insights on product strategy, AI implementation, and lessons learned</p>
+      </div>
+      
+      <div class="blog-grid">
+        <a href="https://www.linkedin.com/posts/prabhavmhapne_truly-exciting-times-two-weeks-ago-id-activity-7401616121180889088-rNBA" target="_blank" rel="noopener" class="blog-card">
+          <div class="blog-date">November 2025</div>
+          <h3>Key Insights from Digitale Leute Summit 2025</h3>
+          <img src="linkedin1.jpg" alt="Digitale Leute Summit 2025 insights" loading="lazy">
+          <p>Spent a day immersed in AI and product talks in Köln. From GenAI fundamentals and AI muscle development to cutting customer feedback analysis from weeks to hours—here's what stuck with me from industry leaders at Google, Kameleoon, Taxfix, Scout24, SIXT, and Make...</p>
+          <span class="blog-read-more" data-i18n="blog_read_more">Read on LinkedIn →</span>
+        </a>
+
+        <a href="https://www.linkedin.com/posts/prabhavmhapne_better-late-than-never-post-its-been-almost-activity-7395825260706607105-AuEm" target="_blank" rel="noopener" class="blog-card">
+          <div class="blog-date">September 2025</div>
+          <h3>Master's Thesis: GenAI in Agile Product Teams</h3>
+          <img src="linkedin2.jpg" alt="Master's thesis completion on GenAI in agile teams" loading="lazy">
+          <p>Wrapped up my MSc exploring the potential of integrating GenAI in agile product working teams at RWTH Aachen University. Key takeaways: AI boosts human capabilities in productivity, innovation, and decision-making through augmentation, not replacement...</p>
+          <span class="blog-read-more" data-i18n="blog_read_more">Read on LinkedIn →</span>
+        </a>
+
+        <a href="https://www.linkedin.com/posts/prabhavmhapne_my-first-porsche-6-hours-run-was-a-great-activity-7244618895729336320-Uhby" target="_blank" rel="noopener" class="blog-card">
+          <div class="blog-date">September 2024</div>
+          <h3>Porsche 6-Hours-Run for Ferry-Porsche-Stiftung</h3>
+          <img src="linkedin3.jpg" alt="Porsche 6-Hours-Run event" loading="lazy">
+          <p>Participated in the Porsche 6-Hours-Run alongside an amazing team at Porsche Digital, supporting children and teenagers. Completed 11 rounds of 911m laps. Grateful for the experience and proud of what we achieved together...</p>
+          <span class="blog-read-more" data-i18n="blog_read_more">Read on LinkedIn →</span>
+        </a>
+
+        <a href="https://linkedin.com/in/prabhavmhapne" target="_blank" rel="noopener" class="blog-card">
+          <div class="blog-date">More Posts</div>
+          <h3 data-i18n="blog_view_all">View All LinkedIn Posts</h3>
+          <p data-i18n="blog_view_all_desc">Follow me on LinkedIn for more insights on AI product management, discovery practices, and lessons learned from building products...</p>
+          <span class="blog-read-more" data-i18n="blog_view_all_link">Visit LinkedIn Profile →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       CONTACT SECTION
+       Contact form and email information
+       ======================================== -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-content">
+        <div class="contact-intro">
+          <h2 data-i18n="contact_title">Let's Connect</h2>
+          <p data-i18n="contact_subtitle">Open to PM roles & opportunities, or just a conversation about product and AI.</p>
+        </div>
+
+        <!-- Contact form - Integrated with Supabase -->
+        <form id="contact-form">
+          <div class="form-group">
+            <label for="name" data-i18n="contact_name">Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email" data-i18n="contact_email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="message" data-i18n="contact_message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          
+          <div class="form-group" style="margin-top: 20px;">
+            <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+              <input type="checkbox" id="data-consent" required style="margin-top: 4px; cursor: pointer;">
+              <span style="font-size: 14px; line-height: 1.6;" data-i18n="contact_consent">
+                Ich habe die <a href="#" onclick="openModal('datenschutz'); return false;" style="color: var(--color-primary); text-decoration: underline;">Datenschutzerklärung</a> 
+                gelesen und stimme der Verarbeitung meiner Daten zu. Diese Einwilligung kann ich jederzeit widerrufen.*
+              </span>
+            </label>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" data-i18n="contact_btn_send">Send Message</button>
+        </form>
+
+        <div class="contact-footer">
+          <a href="mailto:prabhavmhapne@gmx.de" class="contact-email">prabhavmhapne@gmx.de</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       FOOTER
+       Copyright, tagline, and legal links
+       ======================================== -->
+  <footer>
+    <div class="container">
+      <p class="footer-copyright" data-i18n="footer_copyright">© 2026 Prabhav Mhapne. All Rights Reserved.</p>
+      <p class="footer-tagline" data-i18n="footer_tagline">UX-driven design. Code-backed execution. PM-owned delivery.</p>
+      <div class="footer-legal">
+        <a onclick="openModal('impressum')" data-i18n="footer_impressum">Impressum</a>
+        <a onclick="openModal('datenschutz')" data-i18n="footer_privacy">Datenschutzerklärung</a>
+        <a onclick="openConsentModal()" data-i18n="footer_cookies">Cookie-Einstellungen</a>
+        <a href="mailto:prabhavmhapne@gmx.de?subject=DSGVO-Anfrage - Auskunft/Löschung/Berichtigung" data-i18n="footer_rights">Ihre Datenschutzrechte</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================
+       BACK TO TOP BUTTON
+       Floating button to scroll back to top
+       ======================================== -->
+  <button id="back-to-top" aria-label="Back to top">↑</button>
+
+  <!-- ========================================
+       IMPRESSUM MODAL
+       Legal information popup (German requirement)
+       ======================================== -->
+  <div id="impressum-modal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('impressum')" aria-label="Schließen">×</button>
+      <h2>Impressum</h2>
+      
+      <h3>Angaben gemäß § 5 TMG</h3>
+      <p>
+        Prabhav Mhapne<br>
+        Kalkumer Straße 68<br>
+        40468 Düsseldorf<br>
+        Deutschland
+      </p>
+      
+      <h3>Kontakt</h3>
+      <p>
+        E-Mail: prabhavmhapne@gmx.de
+      </p>
+      
+      <h3>Verantwortlich für den Inhalt</h3>
+      <p>Prabhav Mhapne</p>
+      
+      <h3>Haftungsausschluss</h3>
+      <p>
+        Dies ist eine persönliche Portfolio-Website zur Präsentation von Produkten und Prototypen. 
+        Über diese Website werden keine kommerziellen Dienstleistungen angeboten.
+      </p>
+      
+      <h3>Urheberrecht</h3>
+      <p>
+        Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen 
+        dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der 
+        Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung 
+        des jeweiligen Autors bzw. Erstellers.
+      </p>
+    </div>
+  </div>
+
+  <!-- ========================================
+       DATENSCHUTZ MODAL
+       Privacy policy popup (German GDPR requirement)
+       ======================================== -->
+  <div id="datenschutz-modal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('datenschutz')" aria-label="Close">×</button>
+      <h2>Datenschutzerklärung</h2>
+      
+      <h3>§1 Verantwortlicher</h3>
+      <p>
+        Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br><br>
+        <strong>Prabhav Mhapne</strong><br>
+        Kalkumer Straße 68<br>
+        40468 Düsseldorf<br>
+        Deutschland<br>
+        E-Mail: prabhavmhapne@gmx.de
+      </p>
+      
+      <h3>§2 Allgemeine Hinweise</h3>
+      <p>
+        Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der Verarbeitung 
+        personenbezogener Daten auf dieser Portfolio-Website. Die Verarbeitung erfolgt auf Grundlage 
+        der geltenden datenschutzrechtlichen Bestimmungen, insbesondere der Datenschutz-Grundverordnung (DSGVO).
+      </p>
+      
+      <h3>§3 Rechtsgrundlage der Datenverarbeitung</h3>
+      <p>
+        Die Verarbeitung personenbezogener Daten erfolgt auf folgenden Rechtsgrundlagen:
+      </p>
+      <ul>
+        <li><strong>Art. 6 Abs. 1 lit. a DSGVO</strong> (Einwilligung) - für Analytics und Session-Tracking</li>
+        <li><strong>Art. 6 Abs. 1 lit. b DSGVO</strong> (Vertragserfüllung) - für die Kontaktformular-Verarbeitung</li>
+        <li><strong>Art. 6 Abs. 1 lit. f DSGVO</strong> (berechtigtes Interesse) - für technisch notwendige Datenverarbeitung</li>
+      </ul>
+      
+      <h3>§4 Datenerhebung beim Besuch der Website</h3>
+      <p><strong>Session Storage (technisch notwendig):</strong></p>
+      <ul>
+        <li><strong>Session-ID:</strong> Eindeutige Kennung zur Zuordnung von Aktivitäten während eines Besuchs</li>
+        <li><strong>Zeitstempel:</strong> Datum und Uhrzeit des Besuchs</li>
+        <li><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an Funktionsfähigkeit)</li>
+      </ul>
+      
+      <p><strong>Analytics und Nutzungsstatistiken (nur mit Einwilligung):</strong></p>
+      <p>
+        Mit Ihrer Einwilligung erfassen wir folgende Daten zur Verbesserung der Website:
+      </p>
+      <ul>
+        <li>Seitenaufrufe und besuchte Seiten</li>
+        <li>Klicks auf Produkte und Navigationselemente</li>
+        <li>Verweisende Website (Referrer)</li>
+        <li>Browser-Typ und Version (User Agent)</li>
+        <li>Verwendetes Gerät (Desktop/Mobile)</li>
+      </ul>
+      <p>
+        <strong>Zweck:</strong> Analyse des Nutzerverhaltens zur Verbesserung der Website-Usability<br>
+        <strong>Speicherdauer:</strong> 12 Monate<br>
+        <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung)<br>
+        <strong>Widerruf:</strong> Sie können Ihre Einwilligung jederzeit über die Cookie-Einstellungen widerrufen.
+      </p>
+      
+      <h3>§5 Kontaktformular</h3>
+      <p>
+        Wenn Sie das Kontaktformular nutzen, werden folgende Daten erhoben und gespeichert:
+      </p>
+      <ul>
+        <li>Name</li>
+        <li>E-Mail-Adresse</li>
+        <li>Nachrichtentext</li>
+        <li>User Agent (Browser-Information)</li>
+        <li>Zeitstempel der Anfrage</li>
+        <li>Website-URL</li>
+      </ul>
+      <p>
+        <strong>Zweck:</strong> Bearbeitung Ihrer Kontaktanfrage und Kommunikation mit Ihnen<br>
+        <strong>Speicherdauer:</strong> 2 Jahre nach letzter Kommunikation, danach Löschung<br>
+        <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung) und Art. 6 Abs. 1 lit. a DSGVO (Einwilligung)<br>
+        <strong>Weitergabe:</strong> Keine Weitergabe an Dritte, außer an den Auftragsverarbeiter (siehe §6)
+      </p>
+      
+      <h3>§6 Einsatz von Drittanbietern (Auftragsverarbeiter)</h3>
+      <p><strong>Supabase Inc.</strong></p>
+      <p>
+        Zur Speicherung und Verwaltung der Kontaktformular-Daten und Analytics-Daten nutzen wir Supabase Inc., 
+        einen Cloud-Datenbank-Anbieter.
+      </p>
+      <ul>
+        <li><strong>Anbieter:</strong> Supabase Inc., 970 Toa Payoh North #07-04, Singapore 318992</li>
+        <li><strong>Verarbeitung:</strong> USA/EU-Region (je nach Konfiguration)</li>
+        <li><strong>Rechtsgrundlage für Drittlandtransfer:</strong> Standardvertragsklauseln (SCCs) gemäß Art. 46 Abs. 2 lit. c DSGVO</li>
+        <li><strong>Datenschutzerklärung:</strong> <a href="https://supabase.com/privacy" target="_blank" rel="noopener">https://supabase.com/privacy</a></li>
+      </ul>
+      <p>
+        Mit Supabase besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO. Supabase verarbeitet 
+        Ihre Daten ausschließlich nach unserer Weisung.
+      </p>
+      
+      <h3>§7 Ihre Rechte als betroffene Person</h3>
+      <p>Sie haben folgende Rechte bezüglich Ihrer personenbezogenen Daten:</p>
+      <ul>
+        <li><strong>Auskunftsrecht (Art. 15 DSGVO):</strong> Sie können Auskunft über Ihre gespeicherten Daten verlangen</li>
+        <li><strong>Berichtigungsrecht (Art. 16 DSGVO):</strong> Sie können die Berichtigung unrichtiger Daten verlangen</li>
+        <li><strong>Löschungsrecht (Art. 17 DSGVO):</strong> Sie können die Löschung Ihrer Daten verlangen</li>
+        <li><strong>Einschränkung der Verarbeitung (Art. 18 DSGVO):</strong> Sie können die Einschränkung der Verarbeitung verlangen</li>
+        <li><strong>Datenübertragbarkeit (Art. 20 DSGVO):</strong> Sie können Ihre Daten in einem strukturierten Format erhalten</li>
+        <li><strong>Widerspruchsrecht (Art. 21 DSGVO):</strong> Sie können der Verarbeitung widersprechen</li>
+        <li><strong>Widerruf der Einwilligung (Art. 7 Abs. 3 DSGVO):</strong> Sie können Ihre Einwilligung jederzeit widerrufen</li>
+      </ul>
+      <p>
+        <strong>Ausübung Ihrer Rechte:</strong> Senden Sie eine E-Mail an prabhavmhapne@gmx.de mit dem Betreff "DSGVO-Anfrage"
+      </p>
+      
+      <h3>§8 Widerrufsrecht</h3>
+      <p>
+        Sie haben das Recht, Ihre erteilte Einwilligung zur Datenverarbeitung jederzeit zu widerrufen. 
+        Der Widerruf gilt für die Zukunft und berührt nicht die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung.
+      </p>
+      <p>
+        <strong>Widerruf durchführen:</strong> Öffnen Sie die Cookie-Einstellungen (Link im Footer) und wählen Sie "Alle ablehnen" 
+        oder passen Sie Ihre Präferenzen an.
+      </p>
+      
+      <h3>§9 Beschwerderecht bei der Aufsichtsbehörde</h3>
+      <p>
+        Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung Ihrer 
+        personenbezogenen Daten zu beschweren.
+      </p>
+      <p>
+        <strong>Zuständige Aufsichtsbehörde für NRW:</strong><br>
+        Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen<br>
+        Kavalleriestraße 2-4<br>
+        40213 Düsseldorf<br>
+        Website: <a href="https://www.ldi.nrw.de" target="_blank" rel="noopener">www.ldi.nrw.de</a>
+      </p>
+      
+      <h3>§10 Speicherdauer</h3>
+      <ul>
+        <li><strong>Kontaktformular-Daten:</strong> 2 Jahre nach letzter Kommunikation</li>
+        <li><strong>Analytics-Daten:</strong> 12 Monate</li>
+        <li><strong>Einwilligungsnachweise:</strong> 3 Jahre (gesetzliche Nachweispflicht)</li>
+        <li><strong>Session-Daten:</strong> Werden nach Schließen des Browsers gelöscht</li>
+      </ul>
+      
+      <h3>§11 Aktualität der Datenschutzerklärung</h3>
+      <p>
+        Diese Datenschutzerklärung ist aktuell gültig und hat den Stand Januar 2026. 
+        Durch die Weiterentwicklung unserer Website oder aufgrund geänderter gesetzlicher bzw. 
+        behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung zu ändern.
+      </p>
+      <p>
+        <strong>Letzte Aktualisierung:</strong> 05. Januar 2026
+      </p>
+    </div>
+  </div>
+
+  <!-- ========================================
+       PRODUCT MODALS
+       Detailed product information popups
+       ======================================== -->
+  
+  <!-- Product Modal 1: AI Shopping Assistant (Verifyr) -->
+  <div id="product-verifyr-modal" class="modal">
+    <div class="modal-content product-modal-content">
+      <button class="modal-close" onclick="closeModal('product-verifyr')" aria-label="Close">×</button>
+      
+      <div class="product-modal-header">
+        <span class="product-tag">Health-Tech AI</span>
+        <h2>AI Shopping Assistant (Verifyr)</h2>
+      </div>
+
+      <div class="modal-product-image">
+        <img src="product-images/product1.png" alt="Verifyr AI Shopping Assistant" loading="lazy">
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Problem</h3>
+        <p>Fitness & health enthusiasts are overwhelmed and 67% experience decision paralysis from information overload, contradictory reviews, complex tech specs, and commission-biased recommendations.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Approach</h3>
+        <p>Built conversational Health-Tech advisor that guides users through wearable selection via smart questions, compares 3-4 devices side-by-side, provides neutral recommendations, review curation, and Q&A support in one personalized flow - from needs analysis to pre and post-purchase support. 100% commission-free for unbiased recommendations.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Execution</h3>
+        <p>Led discovery and user research (n=4) for AI Health-Tech shopping advisor, identifying critical pain points: 67% experience decision paralysis and lack trust in recommendations for technical products. Validated market opportunity for e-commerce smart wearables with SAM of €1.8B, SOM of 9M€ targeting 0.5% market share through 5% commission model, projecting €450K+ annual revenue potential. Defined comprehensive product strategy including Business Value Proposition, competitive analysis, Lean assumptions, technical constraints, OKRs, and North Star Metric (MAU) as foundation for MVP development alongside Go-to-Market strategy.</p>
+        <p>Designed conversational AI flow prototypes in Miro and Figma for early UX validation before development investment, reducing design risk through 4 iterative rounds of user testing and mentor feedback. Validated product assumptions via landing page demand test, achieving 8% conversion rate (16/200 visitors submitted email), confirming market interest for MVP development. Wrote and prioritized 40+ user stories with acceptance criteria in JIRA based on user value and business outcomes, structuring product backlog for efficient sprint planning across 3 sprints with clear development priorities.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Interactive Prototype</h3>
+        <p style="margin-bottom: 16px; color: var(--color-text-muted);">Explore the conversational AI flow designed in Figma:</p>
+        <div class="figma-embed-container">
+          <iframe 
+            style="border: 1px solid rgba(0, 0, 0, 0.1);" 
+            width="100%" 
+            height="450" 
+            src="https://embed.figma.com/proto/MCgoE006ZZfG9lHhbsbaqt/Verifyr---PM?node-id=3-886&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=3%3A886&embed-host=share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <div class="modal-product-outcome">
+        <strong>Outcome:</strong> Users make confident, trustworthy shopping decisions faster through neutral, source-backed recommendations - eliminating hours of product comparison, 20+ tabs, contradictory research and commission-biased advice.
+      </div>
+
+      <div class="modal-product-footer">
+        <a href="https://veryfyr.netlify.app/" target="_blank" rel="noopener" class="btn-demo">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          Visit Verifyr
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Modal 2: E-Commerce QA Bot -->
+  <div id="product-qabot-modal" class="modal">
+    <div class="modal-content product-modal-content">
+      <button class="modal-close" onclick="closeModal('product-qabot')" aria-label="Close">×</button>
+      
+      <div class="product-modal-header">
+        <span class="product-tag">Local RAG System</span>
+        <h2>E-Commerce QA Bot</h2>
+      </div>
+
+      <div class="modal-product-image">
+        <img src="product-images/Product2.png" alt="E-Commerce QA Bot" loading="lazy">
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Problem</h3>
+        <p>Online shoppers waste hours jumping between product pages, review sites, and forums to make confident purchase decisions. They need unbiased guidance based on actual product data and verified curated reviews - all in one place.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Approach</h3>
+        <p>Built product-specific knowledge bot retrieving answers from product specifications, user manuals, setup guides, and verified test results. Pre-purchase support helps users compare recommended products, clarify technical details, translate complex specs into understandable benefits, and make confident purchase decisions. Post-purchase support guides initial setup, configuration, feature usage, and troubleshooting - transforming product documentation into on-demand assistance.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Execution</h3>
+        <p>Implemented production-ready RAG pipeline with multi-model LLM integration (Claude, GPT) for cost-quality optimization. Built FastAPI backend with Langfuse observability for real-time tracking. Established RAGAS evaluation framework (87% faithfulness, 85% relevance) for continuous iteration and quality monitoring.</p>
+      </div>
+
+      <div class="modal-product-outcome">
+        <strong>Outcome:</strong> Delivers accurate, source-backed answers from 250+ pages of product documentation in 3-7 seconds. Reduced research time from hours to seconds in pilot with 2 products.
+      </div>
+
+      <div class="modal-product-footer">
+        <a href="#contact" class="btn-demo" onclick="closeModal('product-qabot')">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="6"></circle>
+            <polygon points="8,5 11,8 8,11"></polygon>
+          </svg>
+          Request Demo
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Modal 3: GenAI Feature(s) in CarPlay -->
+  <div id="product-carplay-modal" class="modal">
+    <div class="modal-content product-modal-content">
+      <button class="modal-close" onclick="closeModal('product-carplay')" aria-label="Close">×</button>
+      
+      <div class="product-modal-header">
+        <span class="product-tag">AI in Automotive Infotainment</span>
+        <h2>GenAI Feature(s) in CarPlay</h2>
+      </div>
+
+      <div class="modal-product-carousel">
+        <img src="product-images/product3_1.png" alt="GenAI Feature(s) in CarPlay - View 1" class="carousel-image active" loading="lazy">
+        <img src="product-images/product3_2.png" alt="GenAI Feature(s) in CarPlay - View 2" class="carousel-image" loading="lazy">
+        <button class="carousel-nav carousel-prev" onclick="changeCarouselImage(-1)" aria-label="Previous image">‹</button>
+        <button class="carousel-nav carousel-next" onclick="changeCarouselImage(1)" aria-label="Next image">›</button>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Problem</h3>
+        <p>Launching innovative GenAI features required early validation with real users. Traditional approach: iterate until 100% perfect before rollout - slow, expensive, risky. Needed structured method to validate features early, gather feedback, and de-risk investment before full production.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Approach</h3>
+        <p><strong>Beta Program Framework:</strong> Structured approach enabling real customers to provide direct feedback on pre-production features through time-limited rollouts. <strong>Dual goals:</strong> (1) Validate features to improve product quality before production, (2) Create communication potential through innovation. Designed UX journeys, onboarding flows, and feedback mechanisms. Leveraged Community of 300+ members actively participating in product development while gaining early access to exclusive GenAI features.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Execution</h3>
+        <p>Coordinated cross-functional teams across Business Owners, Marketing, UX, QA, Legal, and Product. Conducted competitor analysis and created user stories with UX journey maps. Collaborated with Quality and Marketing stakeholders to define success criteria: speech quality, content accuracy, and feature availability. Built comprehensive KPI framework tracking Adoption Rate, Usage Frequency, Customer Satisfaction, Session Duration, and Abandonment Rate. Established technical quality gates including Latency, Error Rate, Accuracy, and Safety Score (99% harmful content filtered). Developed cost estimation model covering API usage, infrastructure, and development resources. Implemented multi-phase rollout (internal → power users → broader audience) with structured feedback collection and weekly iteration cycles.</p>
+      </div>
+
+      <div class="modal-product-section">
+        <h3>Pilot: Voice Stories Feature</h3>
+        <p><strong>Feature:</strong> Location-aware GenAI generating audio stories about nearby sights using ChatGPT + Voice.AI integration.</p>
+        <p><strong>Community:</strong> 100 selected real customers providing direct feedback on pre-production feature across USA, DE+UK, China, Japan/South Korea. Time-limited rollout: <6 months | Budget: ~1M€</p>
+        <p><strong>Customer Benefits:</strong> Early access to exclusive location-aware AI feature + active participation in shaping production version as enthusiastic Community members.</p>
+      </div>
+
+      <div class="modal-product-outcome">
+        <strong>Outcome:</strong>To achieve dual goals - validate product quality across 4+ markets and create communication potential through innovation leadership by building a reusable framework for future Digital & GenAI features. Beta Program transformed customers into co-creators and brand advocates. Enabled early go/no-go decisions: collect feedback before full rollout or kill product when adoption rate insufficient - preventing wasted production investment.
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       JAVASCRIPT
+       All interactive functionality
+       ======================================== -->
+  <script>
+    // ========================================
+    // MOBILE MENU TOGGLE
+    // Opens/closes navigation menu on mobile
+    // ========================================
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navMenu = document.getElementById('nav-menu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      navMenu.classList.toggle('open');
+    });
+
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('open');
+      });
+    });
+
+    // ========================================
+    // LANGUAGE SWITCHER (EN/DE)
+    // Bilingual site with German as default
+    // ========================================
+    
+    const translations = {
+      de: {
+        // Navigation
+        nav_home: "Startseite",
+        nav_products: "Produkte",
+        nav_blog: "Mein Blog",
+        nav_contact: "Kontakt",
+        
+        // Hero Section
+        hero_badge: "AI Produktstrategie & Entwicklung | Evals & RAG-Systeme | SAFe® 6 PO/PM",
+        hero_subtitle: "AI Product Manager mit Ingenieurshintergrund. Ich entwickle produktionsreife AI-Produkte und definiere problem-first End-to-End-Produktstrategien, die kundenorientierte Features und Geschäftsergebnisse liefern.",
+        hero_btn_products: "Produkte ansehen",
+        hero_btn_contact: "Kontakt",
+        
+        // Products Section
+        products_title: "Ausgewählte Produkte",
+        products_subtitle: "Produktionsreife Prototypen, die End-to-End-Produktverantwortung, AI-Integration und messbare Wirkung demonstrieren",
+        
+        // Product 1 - Verifyr
+        product1_tag: "Health-Tech AI",
+        product1_title: "AI Shopping Assistant",
+        product1_desc: "Conversational AI-Berater, der Fitness- und Gesundheitsenthusiasten hilft, selbstbewusste Health-Tech-Kaufentscheidungen durch neutrale, quellenbasierte Empfehlungen zu treffen.",
+        product1_btn_learn: "Mehr erfahren",
+        product1_btn_visit: "Verifyr besuchen",
+        
+        // Product 2 - QA Bot
+        product2_tag: "Lokales RAG-System",
+        product2_title: "E-Commerce QA Bot",
+        product2_desc: "Produktionsreifes RAG-System, das präzise Antworten aus 250+ Seiten Produktdokumentation, Installationsanleitungen & kuratierten Tests/Reviews in Sekunden liefert.",
+        product2_btn_learn: "Mehr erfahren",
+        product2_btn_demo: "Demo anfordern",
+        
+        // Product 3 - CarPlay
+        product3_tag: "AI in Automotive Infotainment",
+        product3_title: "GenAI Feature(s) in CarPlay",
+        product3_desc: "Beta-Programm zur Validierung von GenAI-Features vor Produktionseinführung. Doppelziel: Produktqualität durch echtes Kundenfeedback validieren und Kommunikationspotenzial durch Innovation schaffen.",
+        product3_btn_learn: "Mehr erfahren",
+        
+        // Blog Section
+        blog_title: "Was ich auf LinkedIn teile",
+        blog_subtitle: "Einblicke in Produktstrategie, AI-Implementierung und gewonnene Erkenntnisse",
+        blog_read_more: "Auf LinkedIn lesen →",
+        blog_view_all: "Alle LinkedIn-Beiträge ansehen",
+        blog_view_all_desc: "Folgen Sie mir auf LinkedIn für weitere Einblicke in AI Product Management, Discovery-Praktiken und Erkenntnisse aus dem Produktaufbau...",
+        blog_view_all_link: "LinkedIn-Profil besuchen →",
+        
+        // Contact Section
+        contact_title: "Kontakt aufnehmen",
+        contact_subtitle: "Offen für PM-Rollen oder einfach ein Gespräch über Produkt und AI.",
+        contact_name: "Name",
+        contact_email: "E-Mail",
+        contact_message: "Nachricht",
+        contact_consent: "Ich habe die <a href='#' onclick='openModal(\"datenschutz\"); return false;' style='color: var(--color-primary); text-decoration: underline;'>Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten zu. Diese Einwilligung kann ich jederzeit widerrufen.*",
+        contact_btn_send: "Nachricht senden",
+        contact_success: "✅ Nachricht erfolgreich gesendet! Ich melde mich bald bei Ihnen.",
+        contact_error: "❌ Entschuldigung, es gab einen Fehler beim Senden Ihrer Nachricht. Bitte schreiben Sie mir direkt an prabhavmhapne@gmx.de",
+        
+        // Footer
+        footer_copyright: "© 2026 Prabhav Mhapne. Alle Rechte vorbehalten.",
+        footer_tagline: "UX-orientiertes Design. Code-basierte Umsetzung. PM-verantwortete Lieferung.",
+        footer_impressum: "Impressum",
+        footer_privacy: "Datenschutzerklärung",
+        footer_cookies: "Cookie-Einstellungen",
+        footer_rights: "Ihre Datenschutzrechte"
+      },
+      en: {
+        // Navigation
+        nav_home: "Home",
+        nav_products: "Products",
+        nav_blog: "My Blog",
+        nav_contact: "Contact",
+        
+        // Hero Section
+        hero_badge: "AI Product Strategy & Dev. | Evals & RAG Systems | SAFe® 6 PO/PM",
+        hero_subtitle: "AI Product Manager with engineering background. I build production-ready AI products and define problem-first end-to-end product strategy that delivers customer-centric features & business outcomes.",
+        hero_btn_products: "View Products",
+        hero_btn_contact: "Contact",
+        
+        // Products Section
+        products_title: "Featured Products",
+        products_subtitle: "Production-ready prototypes demonstrating end-to-end product ownership, AI integration, and measurable impact",
+        
+        // Product 1 - Verifyr
+        product1_tag: "Health-Tech AI",
+        product1_title: "AI Shopping Assistant",
+        product1_desc: "Conversational AI advisor helping fitness & health enthusiasts make confident health-tech purchase decisions through neutral, source-backed recommendations.",
+        product1_btn_learn: "Learn More",
+        product1_btn_visit: "Visit Verifyr",
+        
+        // Product 2 - QA Bot
+        product2_tag: "Local RAG System",
+        product2_title: "E-Commerce QA Bot",
+        product2_desc: "Production-ready RAG system delivering accurate answers from 250+ pages of product documentation, setup manuals & curated tests/reviews in seconds.",
+        product2_btn_learn: "Learn More",
+        product2_btn_demo: "Request Demo",
+        
+        // Product 3 - CarPlay
+        product3_tag: "AI in Automotive Infotainment",
+        product3_title: "GenAI Feature(s) in CarPlay",
+        product3_desc: "Beta Program validating GenAI features before production rollout. Dual goals: validate product quality through real customer feedback and create communication potential through innovation.",
+        product3_btn_learn: "Learn More",
+        
+        // Blog Section
+        blog_title: "Featured on LinkedIn",
+        blog_subtitle: "Insights on product strategy, AI implementation, and lessons learned",
+        blog_read_more: "Read on LinkedIn →",
+        blog_view_all: "View All LinkedIn Posts",
+        blog_view_all_desc: "Follow me on LinkedIn for more insights on AI product management, discovery practices, and lessons learned from building products...",
+        blog_view_all_link: "Visit LinkedIn Profile →",
+        
+        // Contact Section
+        contact_title: "Let's Connect",
+        contact_subtitle: "Open to PM roles & opportunities, or just a conversation about product and AI.",
+        contact_name: "Name",
+        contact_email: "Email",
+        contact_message: "Message",
+        contact_consent: "I have read the <a href='#' onclick='openModal(\"datenschutz\"); return false;' style='color: var(--color-primary); text-decoration: underline;'>Privacy Policy</a> and consent to the processing of my data. I can withdraw this consent at any time.*",
+        contact_btn_send: "Send Message",
+        contact_success: "✅ Message sent successfully! I'll get back to you soon.",
+        contact_error: "❌ Sorry, there was an error sending your message. Please email me directly at prabhavmhapne@gmx.de",
+        
+        // Footer
+        footer_copyright: "© 2026 Prabhav Mhapne. All Rights Reserved.",
+        footer_tagline: "UX-driven design. Code-backed execution. PM-owned delivery.",
+        footer_impressum: "Impressum",
+        footer_privacy: "Privacy Policy",
+        footer_cookies: "Cookie Settings",
+        footer_rights: "Your Privacy Rights"
+      }
+    };
+
+    // Get current language (default: German)
+    function getCurrentLanguage() {
+      return localStorage.getItem('site_language') || 'de';
+    }
+
+    // Switch language
+    function switchLanguage(lang) {
+      localStorage.setItem('site_language', lang);
+      applyTranslations(lang);
+      updateLanguageSwitcher(lang);
+    }
+
+    // Apply translations to all elements with data-i18n attribute
+    function applyTranslations(lang) {
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          // Special handling for HTML content (like consent checkbox with link)
+          if (key === 'contact_consent') {
+            element.innerHTML = translations[lang][key];
+          } else {
+            element.textContent = translations[lang][key];
+          }
+        }
+      });
+    }
+
+    // Update language switcher active state
+    function updateLanguageSwitcher(lang) {
+      document.getElementById('lang-de').classList.toggle('active', lang === 'de');
+      document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    }
+
+    // Initialize language on page load
+    const currentLang = getCurrentLanguage();
+    applyTranslations(currentLang);
+    updateLanguageSwitcher(currentLang);
+
+    // ========================================
+    // ACTIVE NAVIGATION HIGHLIGHTING
+    // Highlights current section in navigation
+    // ========================================
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // IntersectionObserver watches when sections enter viewport
+    const observerOptions = {
+      root: null,
+      rootMargin: '-100px 0px -66%',  // Trigger when section is ~1/3 visible
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          // Remove active class from all links
+          navLinks.forEach(link => {
+            link.classList.remove('active');
+            // Add active class to matching link
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, observerOptions);
+
+    // Start observing all sections
+    sections.forEach(section => observer.observe(section));
+
+    // ========================================
+    // SECTION REVEAL ON SCROLL
+    // Fade in sections as they enter viewport
+    // ========================================
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });  // Trigger when 10% of section is visible
+
+    sections.forEach(section => revealObserver.observe(section));
+
+    // ========================================
+    // BACK TO TOP BUTTON
+    // Shows/hides floating button based on scroll
+    // ========================================
+    const backToTop = document.getElementById('back-to-top');
+    
+    window.addEventListener('scroll', () => {
+      // Show button after scrolling one viewport height
+      if (window.scrollY > window.innerHeight) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
+    });
+
+    // Scroll to top when button is clicked
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ========================================
+    // SMOOTH SCROLL FOR ALL ANCHOR LINKS
+    // Polyfill for Safari and older browsers
+    // ========================================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offsetTop = target.offsetTop - 64; // Minus nav height
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // ========================================
+    // MODAL FUNCTIONS
+    // Open and close Impressum/Datenschutz/Product modals
+    // ========================================
+    function openModal(type) {
+      const modal = document.getElementById(`${type}-modal`);
+      modal.classList.add('active');
+      // Prevent body scrolling when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(type) {
+      const modal = document.getElementById(`${type}-modal`);
+      modal.classList.remove('active');
+      // Re-enable body scrolling
+      document.body.style.overflow = '';
+    }
+
+    // Open product modal (wrapper for consistency)
+    function openProductModal(productId) {
+      openModal(`product-${productId}`);
+      // Reset carousel to first image when opening Product 3
+      if (productId === 'carplay') {
+        currentCarouselIndex = 0;
+        const images = document.querySelectorAll('.carousel-image');
+        images.forEach((img, idx) => {
+          img.classList.toggle('active', idx === 0);
+        });
+      }
+    }
+
+    // ========================================
+    // PRODUCT 3 CAROUSEL NAVIGATION
+    // Image carousel for GenAI Feature(s) in CarPlay
+    // ========================================
+    let currentCarouselIndex = 0;
+
+    function changeCarouselImage(direction) {
+      const images = document.querySelectorAll('.carousel-image');
+      images[currentCarouselIndex].classList.remove('active');
+      
+      currentCarouselIndex += direction;
+      if (currentCarouselIndex >= images.length) currentCarouselIndex = 0;
+      if (currentCarouselIndex < 0) currentCarouselIndex = images.length - 1;
+      
+      images[currentCarouselIndex].classList.add('active');
+    }
+
+    // Close modal when clicking outside content area
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal(modal.id.replace('-modal', ''));
+        }
+      });
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.active').forEach(modal => {
+          closeModal(modal.id.replace('-modal', ''));
+        });
+      }
+    });
+
+    // ========================================
+    // SUPABASE INITIALIZATION
+    // Initialize Supabase client for contact form
+    // ========================================
+    // TODO: Replace these with your actual Supabase credentials
+    const SUPABASE_URL = 'https://aoeskfvjqlnxpwerzdxh.supabase.co'; // e.g., 'https://your-project.supabase.co'
+    const SUPABASE_ANON_KEY = 'sb_publishable_bVamMExh159h-3COxp-HPA_8vxYd2vD'; // Your anon public key
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ========================================
+    // COOKIE CONSENT MANAGEMENT (GDPR)
+    // Handles user consent for analytics tracking
+    // ========================================
+    
+    // Check if user has given analytics consent
+    function hasAnalyticsConsent() {
+      const consent = localStorage.getItem('cookie_consent');
+      return consent === 'all' || consent === 'analytics';
+    }
+
+    // Show consent banner if not already answered
+    function checkConsentStatus() {
+      const consent = localStorage.getItem('cookie_consent');
+      if (!consent) {
+        document.getElementById('cookie-consent-banner').classList.add('show');
+      }
+    }
+
+    // Accept all cookies
+    function acceptAllConsent() {
+      localStorage.setItem('cookie_consent', 'all');
+      localStorage.setItem('consent_timestamp', new Date().toISOString());
+      document.getElementById('cookie-consent-banner').classList.remove('show');
+      
+      // Track consent decision
+      trackConsentDecision('all', true);
+      
+      // Reload to enable tracking
+      location.reload();
+    }
+
+    // Reject all optional cookies
+    function rejectAllConsent() {
+      localStorage.setItem('cookie_consent', 'necessary');
+      localStorage.setItem('consent_timestamp', new Date().toISOString());
+      document.getElementById('cookie-consent-banner').classList.remove('show');
+      
+      // Track consent decision
+      trackConsentDecision('necessary', false);
+    }
+
+    // Open consent preferences modal
+    function openConsentModal() {
+      document.getElementById('consent-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Set current preferences
+      const consent = localStorage.getItem('cookie_consent');
+      document.getElementById('analytics-consent').checked = (consent === 'all' || consent === 'analytics');
+    }
+
+    // Close consent preferences modal
+    function closeConsentModal() {
+      document.getElementById('consent-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Save custom consent preferences
+    function saveConsentPreferences() {
+      const analyticsChecked = document.getElementById('analytics-consent').checked;
+      
+      if (analyticsChecked) {
+        localStorage.setItem('cookie_consent', 'analytics');
+        trackConsentDecision('analytics', true);
+      } else {
+        localStorage.setItem('cookie_consent', 'necessary');
+        trackConsentDecision('necessary', false);
+      }
+      
+      localStorage.setItem('consent_timestamp', new Date().toISOString());
+      document.getElementById('cookie-consent-banner').classList.remove('show');
+      closeConsentModal();
+      
+      // Reload if analytics was just enabled
+      if (analyticsChecked) {
+        location.reload();
+      }
+    }
+
+    // Track consent decision in Supabase (for legal compliance)
+    async function trackConsentDecision(consentType, analyticsEnabled) {
+      try {
+        await supabaseClient
+          .from('consent_records')
+          .insert([{
+            session_id: getSessionId(),
+            consent_type: consentType,
+            consent_given: analyticsEnabled
+          }]);
+      } catch (err) {
+        console.error('Error tracking consent:', err);
+      }
+    }
+
+    // Check consent status on page load
+    checkConsentStatus();
+
+    // ========================================
+    // ANALYTICS TRACKING
+    // Track page views and user interactions for portfolio
+    // ========================================
+    
+    // Generate or get session ID for tracking unique visitors
+    function getSessionId() {
+      let sessionId = sessionStorage.getItem('session_id');
+      if (!sessionId) {
+        sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        sessionStorage.setItem('session_id', sessionId);
+      }
+      return sessionId;
+    }
+
+    // Track any event to Supabase analytics (GDPR-compliant)
+    async function trackEvent(eventType, eventName = null) {
+      // Check consent before tracking
+      if (!hasAnalyticsConsent()) {
+        return; // Don't track without consent
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from('analytics_events')
+          .insert([{
+            event_type: eventType,
+            event_name: eventName,
+            source: 'portfolio',
+            page_url: window.location.href,
+            referrer: document.referrer || 'direct',
+            user_agent: navigator.userAgent,
+            session_id: getSessionId()
+          }]);
+        
+        if (error) {
+          console.error('Analytics tracking error:', error);
+        }
+        // Tracking happens silently - no console messages
+      } catch (err) {
+        console.error('Analytics error:', err);
+      }
+    }
+
+    // Track page view on load
+    window.addEventListener('load', () => {
+      trackEvent('page_view', document.title);
+    });
+
+    // Track product card clicks
+    document.querySelectorAll('.product-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const productName = card.querySelector('h3')?.textContent || 'Unknown Product';
+        trackEvent('product_click', productName);
+      });
+    });
+
+    // Track "Learn More" button clicks specifically
+    document.querySelectorAll('.product-card .btn-secondary').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.product-card');
+        const productName = card?.querySelector('h3')?.textContent || 'Unknown Product';
+        trackEvent('learn_more_click', productName);
+      });
+    });
+
+    // Track demo/visit buttons
+    document.querySelectorAll('.btn-demo').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const linkText = e.currentTarget.textContent.trim();
+        trackEvent('demo_click', linkText);
+      });
+    });
+
+    // Track contact button clicks
+    document.querySelectorAll('a[href="#contact"]').forEach(link => {
+      link.addEventListener('click', () => {
+        trackEvent('contact_click', 'Contact Button');
+      });
+    });
+
+    // Track navigation clicks
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const section = e.target.textContent.trim();
+        trackEvent('navigation_click', section);
+      });
+    });
+
+    // ========================================
+    // FORM SUBMISSION WITH SUPABASE
+    // Saves contact form submissions to Supabase database
+    // ========================================
+    const contactForm = document.getElementById('contact-form');
+    
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form submission
+      
+      // Get form data
+      const formData = new FormData(e.target);
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const message = formData.get('message');
+      
+      // Get submit button to show loading state
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+      submitBtn.disabled = true;
+      
+      try {
+        // Insert into Supabase
+        const { data, error } = await supabaseClient
+          .from('contact_submissions')
+          .insert([
+            {
+              name: name,
+              email: email,
+              message: message,
+              user_agent: navigator.userAgent,
+              source: 'portfolio',                    // Identifies this website
+              website_url: window.location.href        // Captures full URL
+            }
+          ]);
+        
+        if (error) throw error;
+        
+        // Success! Show message in current language
+        const currentLang = getCurrentLanguage();
+        alert(translations[currentLang].contact_success);
+        contactForm.reset(); // Clear form
+        
+        // Track success (optional - for analytics)
+        console.log('Contact form submitted successfully', { name, email });
+        
+      } catch (error) {
+        // Error handling
+        console.error('Error submitting form:', error);
+        const currentLang = getCurrentLanguage();
+        alert(translations[currentLang].contact_error);
+      } finally {
+        // Reset button state
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // ========================================
+    // ENHANCED CODE PROTECTION
+    // Discourages casual code copying while maintaining professional UX
+    // ======================================== 
+    (function() {
+      // 1. Disable right-click to prevent easy access to "View Source"
+      document.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        console.log('Right-click disabled. © 2026 Prabhav Mhapne');
+      });
+      
+      // 2. Disable common DevTools keyboard shortcuts
+      document.addEventListener('keydown', e => {
+        // F12 - DevTools
+        if (e.key === 'F12') {
+          e.preventDefault();
+          return false;
+        }
+        
+        // Ctrl+Shift+I - Inspect Element
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+          e.preventDefault();
+          return false;
+        }
+        
+        // Ctrl+Shift+J - Console
+        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+          e.preventDefault();
+          return false;
+        }
+        
+        // Ctrl+U - View Source
+        if (e.ctrlKey && e.key === 'u') {
+          e.preventDefault();
+          return false;
+        }
+      });
+      
+      // 3. Professional console message for curious developers
+      const styles = {
+        title: 'font-size:20px;font-weight:bold;color:#2563eb;',
+        text: 'font-size:14px;color:#1a1a1a;',
+        link: 'font-size:14px;color:#6b7280;',
+        copyright: 'font-size:12px;color:#dc2626;font-weight:600;'
+      };
+      
+      console.log('%c👋 Hi Developer!', styles.title);
+      console.log('%cThis portfolio was designed and built by Prabhav Mhapne.', styles.text);
+      console.log('%cIf you like what you see, let\'s connect: https://linkedin.com/in/prabhavmhapne', styles.link);
+      console.log('%c© 2026 All rights reserved.', styles.copyright);
+      
+      // 4. Disable text selection on code elements (preserves UX for content)
+      document.querySelectorAll('script, style').forEach(el => {
+        if (el.style) el.style.userSelect = 'none';
+      });
+    })();
+  </script>
+
+  <!-- ========================================
+       JSON-LD STRUCTURED DATA
+       Helps search engines understand the page
+       ======================================== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Prabhav Mhapne",
+    "jobTitle": "Product Manager",
+    "description": "AI Product Manager who builds end-to-end product strategy, designs, codes, and ships",
+    "url": "https://prabhavmhapne.com",
+    "sameAs": [
+      "https://linkedin.com/in/prabhavmhapne",
+      "https://github.com/prabhavmhapne-aipm"
+    ]
+  }
+  </script>
+</body>
+</html>

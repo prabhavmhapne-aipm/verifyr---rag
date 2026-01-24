@@ -1,9 +1,29 @@
 """
-Langfuse Evaluation Script for RAG System
+Langfuse RAG Evaluation Script - Master Evaluator (Phase 11 & 12)
 
-This script runs batch evaluation of the RAG system using Langfuse for observability.
-It sends all test cases from test_cases.py to the /query endpoint and tracks metrics.
-Creates a Langfuse Dataset for organizing test cases in the Langfuse dashboard.
+This script runs comprehensive RAG evaluation using Langfuse Experiment Runner.
+It combines Phase 11 (observability) and Phase 12 (comprehensive metrics) approaches.
+
+Features:
+- Uses modern Langfuse Experiment Runner pattern (@observe + dataset.run_experiment())
+- Optional evaluator support (custom metrics: citation quality, helpfulness)
+- Comprehensive metrics calculation (success rate, response time, cost, etc.)
+- Robust error handling with fallback modes
+- Interactive model selection or CLI arguments
+- Detailed results saving to JSON
+
+Usage:
+    # With evaluators (Phase 12 - quality metrics)
+    python tests/langfuse_evaluator.py --model claude-sonnet-4.5 --use-evaluators
+
+    # Without evaluators (Phase 11 - batch testing)
+    python tests/langfuse_evaluator.py --model gpt-4o-mini
+
+    # Quick test with 10 cases
+    python tests/langfuse_evaluator.py --max-tests 10
+
+    # Simple evaluators (free, no LLM cost)
+    python tests/langfuse_evaluator.py --use-evaluators --simple-evaluators
 """
 
 import os
@@ -17,27 +37,24 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
 # Set UTF-8 encoding for Windows console
 if sys.platform == "win32":
-    sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
-# Add parent directory to path for test_cases import
-sys.path.append(str(Path(__file__).parent))
+# Add parent directory to path for imports
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
-from test_cases import TEST_CASES, get_test_cases_by_category, print_test_summary
+# Import Langfuse
+from langfuse import get_client, observe, Evaluation
 
-# Try to import Langfuse (optional - script works without it)
-try:
-    from langfuse import Langfuse
-    LANGFUSE_AVAILABLE = True
-except ImportError:
-    LANGFUSE_AVAILABLE = False
-    Langfuse = None  # Set to None for type hints
-    print("⚠️  Langfuse package not installed. Dataset creation will be skipped.")
+# Initialize Langfuse client
+langfuse = get_client()
 
 # Configuration
 API_BASE_URL = "http://localhost:8000"
@@ -45,93 +62,134 @@ QUERY_ENDPOINT = f"{API_BASE_URL}/query"
 RESULTS_DIR = Path(__file__).parent.parent / "data" / "evaluation_results"
 
 
+# ============================================================================
+# TASK FUNCTION - Calls RAG backend API (@observe decorator for auto-tracing)
+# ============================================================================
+
+@observe(as_type="generation")
+def rag_task(*, item, **kwargs):
+    """
+    Task function that calls the RAG backend API
+
+    This function is automatically traced by Langfuse via @observe decorator.
+
+    Args:
+        item: Langfuse dataset item with input/expected_output/metadata
+        **kwargs: Additional config (model, language, etc.)
+
+    Returns:
+        dict: API response with answer, sources, retrieved_chunks, metrics
+    """
+    # Extract inputs
+    question = item.input.get("question")
+    category = item.input.get("category", "unknown")
+    language = item.input.get("language", "en")
+    model = kwargs.get("model", "gpt-4o-mini")
+
+    # Call backend API
+    try:
+        start_time = time.time()
+        response = requests.post(
+            QUERY_ENDPOINT,
+            json={
+                "question": question,
+                "model": model,
+                "language": language,
+                "skip_langfuse_trace": True  # Skip backend trace since @observe handles it
+            },
+            timeout=30
+        )
+        elapsed_time = time.time() - start_time
+
+        if response.status_code == 200:
+            result = response.json()
+
+            # Return output that evaluators can use
+            return {
+                "answer": result.get("answer", ""),
+                "sources": result.get("sources", []),
+                "retrieved_chunks": result.get("retrieved_chunks", []),
+                "chunks_retrieved": result.get("chunks_retrieved", 0),
+                "response_time_ms": result.get("response_time_ms", int(elapsed_time * 1000)),
+                "tokens_used": result.get("tokens_used", {}),
+                "cost_usd": result.get("cost_usd", 0),
+                "success": True,
+                "error": None
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"HTTP {response.status_code}: {response.text}",
+                "response_time_ms": int(elapsed_time * 1000)
+            }
+
+    except requests.exceptions.Timeout:
+        return {
+            "success": False,
+            "error": "API call timed out after 30 seconds",
+            "response_time_ms": 30000
+        }
+    except requests.exceptions.ConnectionError:
+        return {
+            "success": False,
+            "error": "Cannot connect to backend API - is the server running?",
+            "response_time_ms": 0
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"API call failed: {str(e)}",
+            "response_time_ms": 0
+        }
+
+
+# ============================================================================
+# EVALUATORS (Optional - for Phase 12 quality metrics)
+# ============================================================================
+
+def get_evaluators(use_simple: bool = False):
+    """
+    Get evaluator functions for quality metrics
+
+    Args:
+        use_simple: If True, use simple heuristic evaluators (free, no LLM cost)
+                   If False, use LLM-as-judge evaluators (cost: ~$0.01 each)
+
+    Returns:
+        List of evaluator functions
+    """
+    try:
+        if use_simple:
+            from tests.custom_metrics import (
+                simple_citation_quality_evaluator,
+                simple_helpfulness_evaluator
+            )
+            return [
+                simple_citation_quality_evaluator,
+                simple_helpfulness_evaluator
+            ]
+        else:
+            from tests.custom_metrics import (
+                citation_quality_evaluator,
+                helpfulness_evaluator
+            )
+            return [
+                citation_quality_evaluator,
+                helpfulness_evaluator
+            ]
+    except ImportError as e:
+        print(f"⚠️  Could not import evaluators: {e}")
+        print("   Continuing without evaluators (metrics calculation only)")
+        return []
+
+
+# ============================================================================
+# DATASET SETUP AND EXPERIMENT RUNNER
+# ============================================================================
+
 def ensure_results_directory():
     """Create results directory if it doesn't exist."""
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"✅ Results directory ready at {RESULTS_DIR}")
-
-
-def initialize_langfuse_client() -> Optional["Langfuse"]:
-    """
-    Initialize Langfuse client if API keys are available.
-    
-    Returns:
-        Langfuse client instance or None if not available
-    """
-    if not LANGFUSE_AVAILABLE:
-        return None
-    
-    try:
-        langfuse_host = os.getenv("LANGFUSE_HOST", "http://localhost:3000")
-        langfuse_public_key = os.getenv("LANGFUSE_PUBLIC_KEY")
-        langfuse_secret_key = os.getenv("LANGFUSE_SECRET_KEY")
-        
-        if langfuse_public_key and langfuse_secret_key:
-            client = Langfuse(
-                host=langfuse_host,
-                public_key=langfuse_public_key,
-                secret_key=langfuse_secret_key
-            )
-            return client
-        else:
-            return None
-    except Exception as e:
-        print(f"⚠️  Could not initialize Langfuse client: {e}")
-        return None
-
-
-def create_langfuse_dataset(langfuse_client: "Langfuse", model: str) -> Optional[str]:
-    """
-    Create a Langfuse dataset with test cases.
-    
-    Args:
-        langfuse_client: Initialized Langfuse client
-        model: Model name for dataset naming
-        
-    Returns:
-        Dataset name if successful, None otherwise
-    """
-    if not langfuse_client:
-        return None
-    
-    try:
-        # Create dataset name with timestamp and model
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        dataset_name = f"rag_evaluation_{model}_{timestamp}"
-        
-        # Create dataset
-        dataset = langfuse_client.create_dataset(
-            name=dataset_name,
-            description=f"RAG evaluation test cases - Model: {model}, {len(TEST_CASES)} test cases"
-        )
-        
-        print(f"\n📊 Creating Langfuse dataset: {dataset_name}")
-        
-        # Add test cases as dataset items
-        for i, test_case in enumerate(TEST_CASES, 1):
-            langfuse_client.create_dataset_item(
-                dataset_name=dataset_name,
-                input={
-                    "question": test_case["question"],
-                    "category": test_case["category"],
-                    "language": test_case["language"]
-                },
-                expected_output=None,  # No expected outputs defined yet
-                metadata={
-                    "category": test_case["category"],
-                    "language": test_case["language"],
-                    "expected_products": test_case.get("expected_products", []),
-                    "tags": test_case.get("tags", []),
-                    "test_case_index": i
-                }
-            )
-        
-        print(f"   ✅ Created dataset with {len(TEST_CASES)} test cases")
-        return dataset_name
-        
-    except Exception as e:
-        print(f"   ⚠️  Failed to create Langfuse dataset: {e}")
-        return None
 
 
 def test_api_connection():
@@ -157,322 +215,192 @@ def test_api_connection():
         return False
 
 
-def run_single_query(
-    question: str,
-    category: str,
-    language: str,
-    model: str = "gpt-4o-mini",
-    skip_backend_trace: bool = False
-) -> Dict[str, Any]:
+def create_or_update_dataset(dataset_name: str, test_cases: List[Dict], max_tests: int = None):
     """
-    Run a single query through the RAG endpoint.
-    
-    NOTE: This function is called within item.run() context in experiments,
-    so it should NOT receive dataset parameters (handled by the context).
+    Create or update Langfuse dataset with test cases
 
     Args:
-        question: The question to ask
-        category: Test category (factual, comparison, complex)
-        language: Language code (en, de)
-        model: LLM model to use
-        skip_backend_trace: If True, backend will skip trace creation (trace created by item.run())
-
-    Returns:
-        Dict with query results and metadata
+        dataset_name: Name of the dataset
+        test_cases: List of test case dicts
+        max_tests: Maximum number of tests to add (for quick testing)
     """
+    print(f"\n=== Setting up dataset: {dataset_name} ===")
+
+    # Limit test cases if max_tests specified
+    if max_tests:
+        test_cases = test_cases[:max_tests]
+        print(f"📊 Using {max_tests} test cases (quick test mode)")
+    else:
+        print(f"📊 Using all {len(test_cases)} test cases")
+
+    # Create dataset if it doesn't exist
     try:
-        payload = {
-            "question": question,
-            "model": model,
-            "language": language,
-            "skip_langfuse_trace": skip_backend_trace
-        }
+        dataset = langfuse.get_dataset(dataset_name)
+        print(f"✅ Dataset '{dataset_name}' found")
+    except:
+        dataset = langfuse.create_dataset(
+            name=dataset_name,
+            description=f"RAG evaluation - {len(test_cases)} test cases"
+        )
+        print(f"✅ Created new dataset '{dataset_name}'")
 
-        start_time = time.time()
-        response = requests.post(QUERY_ENDPOINT, json=payload, timeout=30)
-        elapsed_time = time.time() - start_time
+    # Add test cases to dataset
+    print(f"📝 Adding {len(test_cases)} test cases to dataset...")
+    for idx, test_case in enumerate(test_cases, 1):
+        try:
+            langfuse.create_dataset_item(
+                dataset_name=dataset_name,
+                input={
+                    "question": test_case["question"],
+                    "category": test_case.get("category", "unknown"),
+                    "language": test_case.get("language", "en")
+                },
+                expected_output=test_case.get("expected_answer"),  # Ground truth (if available)
+                metadata={
+                    "expected_products": test_case.get("expected_products", []),
+                    "tags": test_case.get("tags", [])
+                }
+            )
+            if idx % 10 == 0:
+                print(f"  Added {idx}/{len(test_cases)} test cases...")
+        except Exception as e:
+            # Item might already exist, skip
+            pass
 
-        if response.status_code == 200:
-            result = response.json()
-            return {
-                "success": True,
-                "question": question,
-                "category": category,
-                "language": language,
-                "model": model,
-                "answer": result.get("answer", ""),
-                "sources": result.get("sources", []),
-                "chunks_retrieved": result.get("chunks_retrieved", 0),
-                "response_time_ms": result.get("response_time_ms", int(elapsed_time * 1000)),
-                "tokens_used": result.get("tokens_used", {}),
-                "cost_usd": result.get("cost_usd", 0),
-                "error": None
-            }
-        else:
-            return {
-                "success": False,
-                "question": question,
-                "category": category,
-                "language": language,
-                "model": model,
-                "error": f"HTTP {response.status_code}: {response.text}",
-                "response_time_ms": int(elapsed_time * 1000)
-            }
+    print(f"✅ Dataset ready with {len(test_cases)} items")
+    langfuse.flush()
 
-    except Exception as e:
-        return {
-            "success": False,
-            "question": question,
-            "category": category,
-            "language": language,
-            "model": model,
-            "error": str(e),
-            "response_time_ms": 0
-        }
+    return dataset
 
 
-def run_experiment(
-    langfuse_client: "Langfuse",
+def run_evaluation(
     dataset_name: str,
     model: str,
-    delay_between_queries: float = 1.0
-) -> List[Dict[str, Any]]:
+    evaluators: List = None,
+    max_tests: int = None
+):
     """
-    Run evaluation using Langfuse dataset experiment API.
-    This uses item.run() to automatically create traces and link them to dataset items.
-    
+    Run evaluation using Langfuse Experiment Runner
+
     Args:
-        langfuse_client: Initialized Langfuse client
-        dataset_name: Name of the Langfuse dataset
-        model: LLM model to use for all queries
-        delay_between_queries: Delay in seconds between queries
-        
+        dataset_name: Name of the dataset to evaluate
+        model: Model to use for evaluation
+        evaluators: List of evaluator functions (None = no evaluators)
+        max_tests: Maximum number of tests to run (None = all)
+
     Returns:
-        List of evaluation results
+        Experiment result object
     """
-    results = []
-    
-    try:
-        # Get the dataset
-        dataset = langfuse_client.get_dataset(dataset_name)
-        
-        # Create run name
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        run_name = f"evaluation_run_{model}_{timestamp}"
-        
-        print(f"\n{'=' * 80}")
-        print(f"RUNNING DATASET EXPERIMENT - {len(TEST_CASES)} TEST CASES")
-        print(f"{'=' * 80}")
-        print(f"Dataset: {dataset_name}")
-        print(f"Run Name: {run_name}")
-        print(f"Model: {model}")
-        print(f"Delay between queries: {delay_between_queries}s\n")
-        
-        # Get dataset items - use dataset.items property
-        items_list = list(dataset.items) if hasattr(dataset, 'items') else []
-        total_items = len(items_list)
-        
-        if total_items == 0:
-            print("⚠️  No items found in dataset")
-            return results
-        
-        print(f"Found {total_items} items in dataset\n")
-        
-        # Create a mapping of question to test case for metadata
-        question_to_test_case = {tc["question"]: tc for tc in TEST_CASES}
-        
-        # Iterate through dataset items and run experiment
-        for i, item in enumerate(items_list, 1):
-            # Extract question from dataset item input
-            item_input = item.input if hasattr(item, 'input') else item.get('input', {}) if isinstance(item, dict) else {}
-            question = item_input.get("question", "")
-            
-            # Find matching test case
-            test_case = question_to_test_case.get(question)
-            if not test_case:
-                print(f"⚠️  Item {i}/{total_items}: Could not find test case for question")
-                continue
-            
-            category = test_case["category"]
-            language = test_case["language"]
-            
-            print(f"[{i}/{total_items}] Processing: {question[:60]}...")
-            
-            # Use item.run() context manager as per Langfuse docs:
-            # https://langfuse.com/docs/evaluation/experiments/experiments-via-sdk
-            # Note: This requires SDK version that supports item.run() (may need newer version)
-            try:
-                # Check if item.run() method exists (available in newer SDK versions)
-                if not hasattr(item, 'run'):
-                    print(f"   ⚠️  item.run() method not available in SDK version 2.60.10")
-                    print(f"   ⚠️  This feature may require a newer SDK version")
-                    print(f"   ⚠️  Falling back to regular execution (traces created but not linked to dataset)")
-                    # Fall back to regular execution
-                    result = run_single_query(
-                        question=question,
-                        category=category,
-                        language=language,
-                        model=model
-                    )
-                    results.append(result)
-                    if result.get("success"):
-                        print(f"   ✅ Success ({result.get('response_time_ms', 0)}ms)")
-                    else:
-                        print(f"   ❌ Failed: {result.get('error', 'Unknown error')}")
-                    continue
-                
-                # Use item.run() as shown in Langfuse documentation
-                with item.run(
-                    run_name=run_name,
-                    run_description=f"Evaluation run for {model}",
-                    run_metadata={"model": model, "timestamp": timestamp}
-                ) as root_span:
-                    # Execute the query within the experiment context
-                    # Skip backend trace creation since item.run() creates the trace
-                    result = run_single_query(
-                        question=question,
-                        category=category,
-                        language=language,
-                        model=model,
-                        skip_backend_trace=True  # Backend will skip trace creation
-                    )
-                    
-                    # Add result to list
-                    results.append(result)
-                    
-                    # Update the root span with output if successful
-                    # Using update_trace() as shown in documentation examples
-                    if root_span and result.get("success"):
-                        root_span.update_trace(
-                            input={"question": question, "category": category, "language": language, "model": model},
-                            output={
-                                "answer": result.get("answer", ""),
-                                "sources": result.get("sources", []),
-                                "chunks_retrieved": result.get("chunks_retrieved", 0),
-                                "response_time_ms": result.get("response_time_ms", 0)
-                            },
-                            metadata={
-                                "category": category,
-                                "language": language,
-                                "model": model,
-                                "chunks_retrieved": result.get("chunks_retrieved", 0),
-                                "tokens_used": result.get("tokens_used", {}),
-                                "cost_usd": result.get("cost_usd", 0),
-                                "response_time_ms": result.get("response_time_ms", 0)
-                            }
-                        )
-                    elif root_span and not result.get("success"):
-                        # Update trace with error
-                        root_span.update_trace(
-                            input={"question": question, "category": category, "language": language, "model": model},
-                            output={"error": result.get("error", "Unknown error")},
-                            metadata={
-                                "category": category,
-                                "language": language,
-                                "model": model
-                            }
-                        )
-                
-                if result.get("success"):
-                    print(f"   ✅ Success ({result.get('response_time_ms', 0)}ms)")
-                else:
-                    print(f"   ❌ Failed: {result.get('error', 'Unknown error')}")
-                    
-            except AttributeError as attr_error:
-                # item.run() doesn't exist in this SDK version
-                print(f"   ⚠️  item.run() not available: {attr_error}")
-                print(f"   ⚠️  Falling back to regular execution")
-                result = run_single_query(
-                    question=question,
-                    category=category,
-                    language=language,
-                    model=model
-                )
-                results.append(result)
-                if result.get("success"):
-                    print(f"   ✅ Success ({result.get('response_time_ms', 0)}ms)")
-                else:
-                    print(f"   ❌ Failed: {result.get('error', 'Unknown error')}")
-            except Exception as e:
-                print(f"   ❌ Error in experiment context: {e}")
-                import traceback
-                traceback.print_exc()
-                results.append({
-                    "success": False,
-                    "question": question,
-                    "category": category,
-                    "language": language,
-                    "model": model,
-                    "error": f"Experiment error: {str(e)}",
-                    "response_time_ms": 0
-                })
-            
-            # Delay between queries (except for last one)
-            if i < total_items:
-                time.sleep(delay_between_queries)
-        
-        # Flush to ensure all traces are sent
-        langfuse_client.flush()
-        print(f"\n✅ Experiment completed. {len(results)} results collected.")
-        
-    except Exception as e:
-        print(f"\n❌ Error running experiment: {e}")
-        import traceback
-        traceback.print_exc()
-    
-    return results
-
-
-def run_batch_evaluation(
-    model: str = "gpt-4o-mini",
-    delay_between_queries: float = 1.0,
-    langfuse_client: Optional["Langfuse"] = None,
-    dataset_name: Optional[str] = None
-) -> List[Dict[str, Any]]:
-    """
-    Run batch evaluation - uses experiment API if Langfuse is available, 
-    otherwise falls back to simple batch execution.
-    
-    Args:
-        model: LLM model to use for all queries
-        delay_between_queries: Delay in seconds between queries
-        langfuse_client: Optional Langfuse client (for experiment mode)
-        dataset_name: Optional dataset name (for experiment mode)
-        
-    Returns:
-        List of evaluation results
-    """
-    # If we have Langfuse client and dataset, use experiment API
-    if langfuse_client and dataset_name:
-        return run_experiment(langfuse_client, dataset_name, model, delay_between_queries)
-    
-    # Otherwise, fall back to simple batch execution (no Langfuse)
-    results = []
-    total_tests = len(TEST_CASES)
-
-    print(f"\n{'=' * 80}")
-    print(f"RUNNING BATCH EVALUATION - {total_tests} TEST CASES (NO LANGFUSE)")
-    print(f"{'=' * 80}")
+    print(f"\n=== Running Experiment ===")
     print(f"Model: {model}")
-    print(f"Delay between queries: {delay_between_queries}s\n")
+    print(f"Evaluators: {len(evaluators) if evaluators else 0}")
+    print(f"Dataset: {dataset_name}")
 
-    for i, test_case in enumerate(TEST_CASES, 1):
-        question = test_case["question"]
-        category = test_case["category"]
-        language = test_case["language"]
-        
-        print(f"[{i}/{total_tests}] {question[:60]}...")
-        result = run_single_query(question, category, language, model)
-        results.append(result)
-        
-        if result.get("success"):
-            print(f"   ✅ Success ({result.get('response_time_ms', 0)}ms)")
-        else:
-            print(f"   ❌ Failed: {result.get('error', 'Unknown error')}")
-        
-        if i < total_tests:
-            time.sleep(delay_between_queries)
-    
+    # Get dataset
+    dataset = langfuse.get_dataset(dataset_name)
+
+    # Create task function with model parameter
+    def task_with_model(item):
+        return rag_task(item=item, model=model)
+
+    # Run experiment using Experiment Runner
+    # This automatically handles:
+    # - Trace creation and linking to dataset items
+    # - Error isolation per test case
+    # - Concurrent execution
+    # - Evaluator execution
+    result = dataset.run_experiment(
+        name=f"RAG Evaluation - {model}",
+        task=task_with_model,
+        evaluators=evaluators or []
+    )
+
+    print(f"\n=== Experiment Results ===")
+    print(result.format())
+
+    # Flush to ensure all data is sent to Langfuse
+    langfuse.flush()
+
+    return result
+
+
+# ============================================================================
+# METRICS CALCULATION (From original langfuse_evaluator.py)
+# ============================================================================
+
+def extract_results_from_experiment(experiment_result, test_cases: List[Dict]) -> List[Dict[str, Any]]:
+    """
+    Extract individual test results from experiment result for metrics calculation
+
+    This converts the experiment result format to the legacy format for
+    compatibility with calculate_metrics() function.
+
+    Args:
+        experiment_result: Result object from dataset.run_experiment()
+        test_cases: Original test cases to match category/language
+
+    Returns:
+        List of result dicts in legacy format
+    """
+    results = []
+
+    # Try to access runs from experiment result
+    # The Langfuse SDK stores runs in experiment_result.runs
+    if not hasattr(experiment_result, 'runs') or not experiment_result.runs:
+        print("⚠️  No runs found in experiment result - cannot extract for JSON saving")
+        return []
+
+    # Create question lookup for metadata
+    question_to_test_case = {tc["question"]: tc for tc in test_cases}
+
+    for run in experiment_result.runs:
+        try:
+            # Extract input
+            input_data = run.input if hasattr(run, 'input') else {}
+            question = input_data.get("question", "")
+
+            # Get test case metadata
+            test_case = question_to_test_case.get(question, {})
+            category = test_case.get("category", input_data.get("category", "unknown"))
+            language = test_case.get("language", input_data.get("language", "en"))
+
+            # Extract output
+            output_data = run.output if hasattr(run, 'output') else {}
+
+            # Extract evaluations (scores)
+            evaluations = {}
+            if hasattr(run, 'evaluations') and run.evaluations:
+                for eval_obj in run.evaluations:
+                    eval_name = eval_obj.name if hasattr(eval_obj, 'name') else 'unknown'
+                    eval_value = eval_obj.value if hasattr(eval_obj, 'value') else 0.0
+                    eval_comment = eval_obj.comment if hasattr(eval_obj, 'comment') else ''
+                    evaluations[eval_name] = {
+                        "score": eval_value,
+                        "comment": eval_comment
+                    }
+
+            # Build result in legacy format
+            result = {
+                "success": output_data.get("success", True),
+                "question": question,
+                "category": category,
+                "language": language,
+                "answer": output_data.get("answer", ""),
+                "sources": output_data.get("sources", []),
+                "chunks_retrieved": output_data.get("chunks_retrieved", 0),
+                "response_time_ms": output_data.get("response_time_ms", 0),
+                "tokens_used": output_data.get("tokens_used", {}),
+                "cost_usd": output_data.get("cost_usd", 0.0),
+                "error": output_data.get("error"),
+                "evaluations": evaluations  # Add evaluator scores
+            }
+
+            results.append(result)
+
+        except Exception as e:
+            print(f"⚠️  Error extracting run: {e}")
+            continue
+
     return results
 
 
@@ -486,6 +414,23 @@ def calculate_metrics(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     Returns:
         Dict with calculated metrics
     """
+    if not results:
+        return {
+            "total_queries": 0,
+            "successful": 0,
+            "failed": 0,
+            "success_rate": 0.0,
+            "avg_response_time_ms": 0,
+            "min_response_time_ms": 0,
+            "max_response_time_ms": 0,
+            "avg_chunks_retrieved": 0,
+            "avg_sources_per_answer": 0,
+            "total_tokens": 0,
+            "total_cost_usd": 0,
+            "by_category": {},
+            "by_language": {}
+        }
+
     successful = [r for r in results if r.get("success", False)]
     failed = [r for r in results if not r.get("success", False)]
 
@@ -496,7 +441,11 @@ def calculate_metrics(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     chunks_retrieved = [r.get("chunks_retrieved", 0) for r in successful]
 
     # Tokens and costs
-    total_tokens = sum(r.get("tokens_used", {}).get("input", 0) + r.get("tokens_used", {}).get("output", 0) for r in successful)
+    total_tokens = sum(
+        r.get("tokens_used", {}).get("input", 0) +
+        r.get("tokens_used", {}).get("output", 0)
+        for r in successful
+    )
     total_cost = sum(r.get("cost_usd", 0) for r in successful)
 
     # Sources
@@ -505,8 +454,8 @@ def calculate_metrics(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     # By category
     by_category = {}
     for category in ["factual", "comparison", "complex"]:
-        cat_results = [r for r in results if r["category"] == category]
-        cat_successful = [r for r in cat_results if r["success"]]
+        cat_results = [r for r in results if r.get("category") == category]
+        cat_successful = [r for r in cat_results if r.get("success")]
         by_category[category] = {
             "total": len(cat_results),
             "successful": len(cat_successful),
@@ -516,13 +465,27 @@ def calculate_metrics(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     # By language
     by_language = {}
     for lang in ["en", "de"]:
-        lang_results = [r for r in results if r["language"] == lang]
-        lang_successful = [r for r in lang_results if r["success"]]
+        lang_results = [r for r in results if r.get("language") == lang]
+        lang_successful = [r for r in lang_results if r.get("success")]
         by_language[lang] = {
             "total": len(lang_results),
             "successful": len(lang_successful),
             "success_rate": len(lang_successful) / len(lang_results) if lang_results else 0
         }
+
+    # Evaluator scores (average across all results)
+    evaluator_scores = {}
+    for result in results:
+        evaluations = result.get("evaluations", {})
+        for eval_name, eval_data in evaluations.items():
+            if eval_name not in evaluator_scores:
+                evaluator_scores[eval_name] = []
+            evaluator_scores[eval_name].append(eval_data.get("score", 0.0))
+
+    # Calculate averages
+    avg_evaluator_scores = {}
+    for eval_name, scores in evaluator_scores.items():
+        avg_evaluator_scores[eval_name] = sum(scores) / len(scores) if scores else 0.0
 
     return {
         "total_queries": len(results),
@@ -537,7 +500,8 @@ def calculate_metrics(results: List[Dict[str, Any]]) -> Dict[str, Any]:
         "total_tokens": total_tokens,
         "total_cost_usd": total_cost,
         "by_category": by_category,
-        "by_language": by_language
+        "by_language": by_language,
+        "evaluator_scores": avg_evaluator_scores  # Add evaluator averages
     }
 
 
@@ -564,15 +528,24 @@ def print_evaluation_summary(metrics: Dict[str, Any], model: str):
     print(f"\nCost Metrics:")
     print(f"  Total Tokens:        {metrics['total_tokens']}")
     print(f"  Total Cost:          ${metrics['total_cost_usd']:.4f}")
-    print(f"  Avg Cost/Query:      ${metrics['total_cost_usd']/metrics['successful']:.4f}" if metrics['successful'] > 0 else "  Avg Cost/Query:      N/A")
+    if metrics['successful'] > 0:
+        print(f"  Avg Cost/Query:      ${metrics['total_cost_usd']/metrics['successful']:.4f}")
 
-    print(f"\nBy Category:")
-    for category, stats in metrics['by_category'].items():
-        print(f"  {category.capitalize():12s} {stats['successful']}/{stats['total']} ({stats['success_rate']*100:.0f}%)")
+    if metrics['by_category']:
+        print(f"\nBy Category:")
+        for category, stats in metrics['by_category'].items():
+            print(f"  {category.capitalize():12s} {stats['successful']}/{stats['total']} ({stats['success_rate']*100:.0f}%)")
 
-    print(f"\nBy Language:")
-    for lang, stats in metrics['by_language'].items():
-        print(f"  {lang.upper():12s} {stats['successful']}/{stats['total']} ({stats['success_rate']*100:.0f}%)")
+    if metrics['by_language']:
+        print(f"\nBy Language:")
+        for lang, stats in metrics['by_language'].items():
+            print(f"  {lang.upper():12s} {stats['successful']}/{stats['total']} ({stats['success_rate']*100:.0f}%)")
+
+    # Print evaluator scores if available
+    if metrics.get('evaluator_scores'):
+        print(f"\nEvaluator Scores (Average):")
+        for eval_name, score in metrics['evaluator_scores'].items():
+            print(f"  {eval_name:30s} {score:.3f} ({score*100:.1f}%)")
 
     print(f"\n{'=' * 80}\n")
 
@@ -601,40 +574,32 @@ def save_results(results: List[Dict[str, Any]], metrics: Dict[str, Any], model: 
     return filepath
 
 
+# ============================================================================
+# MAIN FUNCTION
+# ============================================================================
+
 def main():
-    """Main entry point for batch evaluation."""
-    print("\n" + "=" * 80)
-    print("LANGFUSE RAG EVALUATION SCRIPT")
-    print("=" * 80)
-
-    # Show test summary
-    print_test_summary()
-
-    # Check environment variables and initialize Langfuse client
-    print("\nChecking Langfuse configuration:")
-    langfuse_client = initialize_langfuse_client()
-    if langfuse_client:
-        print("  ✅ Langfuse client initialized")
-        print(f"  ✅ Langfuse Host: {os.getenv('LANGFUSE_HOST', 'http://localhost:3000')}")
-    else:
-        print("  ⚠️  Langfuse client not available")
-        print("     - Dataset creation will be skipped")
-        print("     - Traces will not be collected unless keys are set in backend")
-        print("     - To enable: Set LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY in .env")
-        if not LANGFUSE_AVAILABLE:
-            print("     - Install langfuse package: pip install langfuse")
-
-    # Ensure results directory exists
-    ensure_results_directory()
-
-    # Test API connection
-    print("\nTesting API connection...")
-    if not test_api_connection():
-        print("\n❌ Cannot proceed without API connection. Exiting.")
-        sys.exit(1)
+    """Main entry point for evaluation script."""
 
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Run RAG system evaluation with Langfuse")
+    parser = argparse.ArgumentParser(
+        description="Run RAG evaluation using Langfuse Experiment Runner",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Phase 12: Run with quality evaluators (LLM-as-judge)
+  python tests/langfuse_evaluator.py --model claude-sonnet-4.5 --use-evaluators
+
+  # Phase 11: Run without evaluators (batch testing only)
+  python tests/langfuse_evaluator.py --model gpt-4o-mini
+
+  # Quick test with 10 cases
+  python tests/langfuse_evaluator.py --max-tests 10
+
+  # Use simple evaluators (free, no LLM cost)
+  python tests/langfuse_evaluator.py --use-evaluators --simple-evaluators
+        """
+    )
     parser.add_argument(
         "--model",
         type=str,
@@ -642,14 +607,66 @@ def main():
         default=None,
         help="LLM model to use for evaluation (default: gpt-4o-mini)"
     )
+    parser.add_argument(
+        "--dataset-name",
+        type=str,
+        default="rag_evaluation_dataset",
+        help="Name of the Langfuse dataset (default: rag_evaluation_dataset)"
+    )
+    parser.add_argument(
+        "--max-tests",
+        type=int,
+        default=None,
+        help="Maximum number of test cases to run (default: all)"
+    )
+    parser.add_argument(
+        "--skip-dataset-creation",
+        action="store_true",
+        help="Skip dataset creation/update (use existing dataset)"
+    )
+    parser.add_argument(
+        "--use-evaluators",
+        action="store_true",
+        help="Use quality evaluators (Phase 12 - citation quality, helpfulness)"
+    )
+    parser.add_argument(
+        "--simple-evaluators",
+        action="store_true",
+        help="Use simple heuristic evaluators instead of LLM-as-judge (free, no cost)"
+    )
+
     args = parser.parse_args()
+
+    print("\n" + "="*80)
+    print("LANGFUSE RAG EVALUATION - MASTER EVALUATOR")
+    print("="*80)
+
+    # Verify Langfuse connection
+    print("\n=== Initializing Langfuse Client ===")
+    if langfuse.auth_check():
+        print("✅ Langfuse client authenticated and ready!")
+        print(f"   Host: {os.getenv('LANGFUSE_HOST', 'http://localhost:3000')}")
+    else:
+        print("❌ Authentication failed. Check your LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY in .env")
+        sys.exit(1)
+
+    # Ensure results directory exists
+    ensure_results_directory()
+
+    # Test API connection
+    print("\n=== Testing API Connection ===")
+    if not test_api_connection():
+        print("\n❌ Cannot proceed without API connection. Exiting.")
+        sys.exit(1)
 
     # Model selection: use CLI arg if provided, otherwise ask interactively
     if args.model:
         model = args.model
-        print(f"\nUsing model from command line: {model}")
+        print(f"\n=== Model Selection ===")
+        print(f"Using model from command line: {model}")
     else:
-        print("\nAvailable models:")
+        print("\n=== Model Selection ===")
+        print("Available models:")
         print("  1. gpt-4o-mini (default, cheapest)")
         print("  2. gpt-4o (higher quality)")
         print("  3. claude-sonnet-4.5 (best quality)")
@@ -659,9 +676,9 @@ def main():
             model_choice = input("\nSelect model (1-4) or press Enter for default [1]: ").strip()
         except EOFError:
             # Non-interactive mode, use default
-            print("\nNon-interactive mode detected, using default model: gpt-4o-mini")
+            print("Non-interactive mode detected, using default model: gpt-4o-mini")
             model_choice = ""
-        
+
         model_map = {
             "1": "gpt-4o-mini",
             "2": "gpt-4o",
@@ -671,54 +688,99 @@ def main():
         }
         model = model_map.get(model_choice, "gpt-4o-mini")
 
-    # Create Langfuse dataset (if client available)
-    dataset_name = None
-    if langfuse_client:
-        dataset_name = create_langfuse_dataset(langfuse_client, model)
+    # Load test cases
+    print("\n=== Loading test cases ===")
+    try:
+        # Try Phase 12 test cases first (50 cases)
+        from tests.test_cases_phase12 import TEST_CASES
+        print(f"✅ Loaded {len(TEST_CASES)} test cases from test_cases_phase12.py")
+    except ImportError:
+        try:
+            # Fall back to Phase 11 test cases (15 cases)
+            from tests.test_cases import TEST_CASES
+            print(f"✅ Loaded {len(TEST_CASES)} test cases from test_cases.py")
+        except ImportError as e:
+            print(f"❌ Error loading test cases: {e}")
+            print("Make sure either test_cases_phase12.py or test_cases.py exists")
+            sys.exit(1)
 
-    # Run evaluation (uses experiment API if Langfuse available)
-    print(f"\nStarting batch evaluation with model: {model}")
-    results = run_batch_evaluation(
+    # Create/update dataset (unless skipped)
+    if not args.skip_dataset_creation:
+        dataset = create_or_update_dataset(
+            dataset_name=args.dataset_name,
+            test_cases=TEST_CASES,
+            max_tests=args.max_tests
+        )
+
+    # Setup evaluators (optional - Phase 12)
+    evaluators = None
+    if args.use_evaluators:
+        print("\n=== Setting up evaluators ===")
+        evaluators = get_evaluators(use_simple=args.simple_evaluators)
+
+        if evaluators:
+            if args.simple_evaluators:
+                print(f"✅ Using {len(evaluators)} simple evaluators (heuristic-based, free)")
+                print("   - simple_citation_quality")
+                print("   - simple_helpfulness")
+            else:
+                print(f"✅ Using {len(evaluators)} LLM-as-judge evaluators")
+                print("   - citation_quality (GPT-4o)")
+                print("   - helpfulness (GPT-4o)")
+                est_cost = 0.02 * (args.max_tests or len(TEST_CASES))
+                print(f"\n💰 Estimated cost: ~${est_cost:.2f} (2 evals × {args.max_tests or len(TEST_CASES)} cases × $0.01)")
+        else:
+            print("⚠️  No evaluators loaded - continuing without quality metrics")
+            args.use_evaluators = False
+    else:
+        print("\n=== Evaluators: Disabled ===")
+        print("Running without evaluators (Phase 11 mode - metrics only)")
+        print("To enable: Add --use-evaluators flag")
+
+    # Run evaluation
+    print(f"\n{'='*80}")
+    print("STARTING EVALUATION")
+    print(f"{'='*80}")
+    result = run_evaluation(
+        dataset_name=args.dataset_name,
         model=model,
-        delay_between_queries=1.0,
-        langfuse_client=langfuse_client,
-        dataset_name=dataset_name
+        evaluators=evaluators,
+        max_tests=args.max_tests
     )
-    
-    # NOTE: Trace linking is handled automatically by item.run() in experiment API
 
-    # Calculate metrics
-    print("\nCalculating metrics...")
-    metrics = calculate_metrics(results)
+    # Extract results from experiment and save to JSON
+    print("\n=== Extracting Results for Local Saving ===")
+    results_list = extract_results_from_experiment(result, TEST_CASES)
 
-    # Print summary
-    print_evaluation_summary(metrics, model)
+    if results_list:
+        print(f"✅ Extracted {len(results_list)} results from experiment")
 
-    # Save results
-    filepath = save_results(results, metrics, model)
+        # Calculate aggregate metrics
+        metrics = calculate_metrics(results_list)
+
+        # Print summary to console
+        print_evaluation_summary(metrics, model)
+
+        # Save to JSON file
+        filepath = save_results(results_list, metrics, model)
+        print(f"💾 Results saved to: {filepath}")
+    else:
+        print("⚠️  Could not extract results - skipping local JSON save")
+        print("   Results are still available in Langfuse dashboard")
 
     # Final instructions
-    print("\n" + "=" * 80)
-    print("NEXT STEPS")
-    print("=" * 80)
-    print("\n1. View detailed traces in Langfuse dashboard:")
-    print("   http://localhost:3000")
-    if dataset_name:
-        print(f"\n2. View evaluation dataset and runs in Langfuse:")
-        print(f"   http://localhost:3000/datasets/{dataset_name}")
-        print("   - Go to Datasets section")
-        print("   - Click on your dataset to view test cases and runs")
-        print("   - Each run will show linked traces for all test cases")
-    print("\n3. Review evaluation results:")
-    print(f"   {filepath}")
-    print("\n4. Compare different models:")
-    print("   Run this script again with a different model")
-    print("\n5. Iterate and improve:")
-    print("   - Adjust chunk size")
-    print("   - Tune hybrid search parameters")
-    print("   - Improve prompts")
-    print("   - Test different embedding models")
-    print("\n" + "=" * 80 + "\n")
+    print("\n" + "="*80)
+    print("EVALUATION COMPLETE!")
+    print("="*80)
+    print(f"\n📊 View detailed results in Langfuse dashboard:")
+    print(f"   👉 http://localhost:3000/datasets/{args.dataset_name}")
+    print(f"\n💡 Next steps:")
+    print(f"   - Review evaluator scores in Langfuse UI")
+    print(f"   - Compare different models by re-running with --model flag")
+    print(f"   - Tune retrieval/generation based on low-scoring test cases")
+    if not args.use_evaluators:
+        print(f"\n   - Add --use-evaluators to see quality metrics (citation quality, helpfulness)")
+    print()
 
 
 if __name__ == "__main__":

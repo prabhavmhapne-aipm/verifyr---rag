@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifyr - Developer Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #666;
+        }
+
+        .status-dot.online {
+            background: #4ade80;
+            box-shadow: 0 0 10px #4ade80;
+        }
+
+        .status-dot.offline {
+            background: #f87171;
+            box-shadow: 0 0 10px #f87171;
+        }
+
+        .status-dot.checking {
+            background: #fbbf24;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .script-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .script-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .script-info h3 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .script-info p {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin-top: 12px;
+        }
+
+        .code-line {
+            color: #a5b4fc;
+            margin: 4px 0;
+        }
+
+        .code-comment {
+            color: #6b7280;
+        }
+
+        .endpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .endpoint-item {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .endpoint-item a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .endpoint-item a:hover {
+            text-decoration: underline;
+        }
+
+        .endpoint-item p {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .log-area {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+
+        .log-entry {
+            margin: 4px 0;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .log-entry.success { color: #4ade80; }
+        .log-entry.error { color: #f87171; }
+        .log-entry.info { color: #60a5fa; }
+
+        .api-test-result {
+            margin-top: 12px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-link {
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .quick-link:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verifyr Dev Tools</h1>
+        <p class="subtitle">Server Management & API Testing</p>
+
+        <!-- Server Status -->
+        <div class="card">
+            <h2>Server Status</h2>
+            <div class="status-section">
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Checking...</span>
+                </div>
+                <button class="btn btn-primary" onclick="checkStatus()">Refresh Status</button>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-success" onclick="showStartInstructions()">Start Server</button>
+                <button class="btn btn-danger" onclick="showStopInstructions()">Stop Server</button>
+            </div>
+
+            <div id="instructions" style="display: none; margin-top: 16px;">
+                <div class="code" id="instructionsCode"></div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="card">
+            <h2>Quick Links</h2>
+            <div class="quick-links">
+                <a href="http://localhost:8000/" target="_blank" class="quick-link">Landing Page</a>
+                <a href="http://localhost:8000/chat.html" target="_blank" class="quick-link">Chat Interface</a>
+                <a href="http://localhost:8000/docs" target="_blank" class="quick-link">API Docs (Swagger)</a>
+                <a href="http://localhost:3000/" target="_blank" class="quick-link">Langfuse Dashboard</a>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="card">
+            <h2>API Endpoints</h2>
+            <div class="endpoints-grid">
+                <div class="endpoint-item">
+                    <a href="http://localhost:8000/health" target="_blank">GET /health</a>
+                    <p>Check server health</p>
+                </div>
+                <div class="endpoint-item">
+                    <a href="http://localhost:8000/products" target="_blank">GET /products</a>
+                    <p>List available products</p>
+                </div>
+                <div class="endpoint-item">
+                    <a href="http://localhost:8000/conversations" target="_blank">GET /conversations</a>
+                    <p>List conversations</p>
+                </div>
+                <div class="endpoint-item">
+                    <a href="#" onclick="testQuery(); return false;">POST /query</a>
+                    <p>Test RAG query</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Test -->
+        <div class="card">
+            <h2>Quick API Test</h2>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="testQuery()">Test Query (GPT-4o Mini)</button>
+                <button class="btn btn-secondary" onclick="testHealth()">Test Health</button>
+                <button class="btn btn-secondary" onclick="testProducts()">Test Products</button>
+            </div>
+            <div class="api-test-result" id="apiResult" style="display: none;"></div>
+        </div>
+
+        <!-- PowerShell Commands -->
+        <div class="card">
+            <h2>PowerShell Commands</h2>
+            <p style="color: #888; margin-bottom: 12px;">Copy and paste these commands in PowerShell:</p>
+
+            <div class="script-list">
+                <div class="script-item">
+                    <div class="script-info">
+                        <h3>Start Server</h3>
+                        <p>Start the FastAPI backend</p>
+                    </div>
+                    <button class="btn btn-success" onclick="copyCommand('start')">Copy</button>
+                </div>
+                <div class="script-item">
+                    <div class="script-info">
+                        <h3>Stop Server</h3>
+                        <p>Kill all Python processes</p>
+                    </div>
+                    <button class="btn btn-danger" onclick="copyCommand('stop')">Copy</button>
+                </div>
+                <div class="script-item">
+                    <div class="script-info">
+                        <h3>Restart Server</h3>
+                        <p>Stop and start in one command</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="copyCommand('restart')">Copy</button>
+                </div>
+                <div class="script-item">
+                    <div class="script-info">
+                        <h3>Check Python Processes</h3>
+                        <p>See running Python processes</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="copyCommand('check')">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="card">
+            <h2>Activity Log</h2>
+            <div class="log-area" id="logArea">
+                <div class="log-entry info">Dev tools loaded...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        const COMMANDS = {
+            start: '.\\manage_server.ps1 -Action start',
+            stop: '.\\manage_server.ps1 -Action kill',
+            restart: '.\\manage_server.ps1 -Action restart',
+            check: 'Get-Process python -ErrorAction SilentlyContinue | Format-Table Id, ProcessName, CPU, WorkingSet -AutoSize'
+        };
+
+        // Check server status on load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkStatus();
+            // Auto-refresh every 10 seconds
+            setInterval(checkStatus, 10000);
+        });
+
+        async function checkStatus() {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            dot.className = 'status-dot checking';
+            text.textContent = 'Checking...';
+
+            try {
+                const response = await fetch(`${API_URL}/health`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    dot.className = 'status-dot online';
+                    text.textContent = `Online - ${data.status} (indexes: ${data.indexes_loaded ? 'loaded' : 'not loaded'})`;
+                    addLog('Server is online', 'success');
+                } else {
+                    throw new Error('Server returned error');
+                }
+            } catch (error) {
+                dot.className = 'status-dot offline';
+                text.textContent = 'Offline - Server not reachable';
+                addLog('Server is offline', 'error');
+            }
+        }
+
+        function showStartInstructions() {
+            const instructions = document.getElementById('instructions');
+            const code = document.getElementById('instructionsCode');
+            instructions.style.display = 'block';
+            code.innerHTML = `<div class="code-comment"># Run in PowerShell from project directory:</div>
+<div class="code-line">.\\manage_server.ps1 -Action start</div>
+<div class="code-comment"># Or double-click: dev-tools\\START_SERVER.bat</div>
+<div class="code-comment"># Or manually:</div>
+<div class="code-line">.\\venv\\Scripts\\python.exe -m uvicorn backend.main:app --host 0.0.0.0 --port 8000</div>`;
+            addLog('Showing start instructions', 'info');
+        }
+
+        function showStopInstructions() {
+            const instructions = document.getElementById('instructions');
+            const code = document.getElementById('instructionsCode');
+            instructions.style.display = 'block';
+            code.innerHTML = `<div class="code-comment"># Run in PowerShell:</div>
+<div class="code-line">.\\manage_server.ps1 -Action kill</div>
+<div class="code-comment"># Or double-click: dev-tools\\STOP_SERVER.bat</div>
+<div class="code-comment"># Or manually:</div>
+<div class="code-line">Get-Process python | Stop-Process -Force</div>`;
+            addLog('Showing stop instructions', 'info');
+        }
+
+        async function copyCommand(type) {
+            const command = COMMANDS[type];
+            try {
+                await navigator.clipboard.writeText(command);
+                addLog(`Copied ${type} command to clipboard`, 'success');
+            } catch (err) {
+                addLog(`Failed to copy: ${err.message}`, 'error');
+            }
+        }
+
+        async function testHealth() {
+            const result = document.getElementById('apiResult');
+            result.style.display = 'block';
+            result.textContent = 'Testing /health...';
+
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+                addLog('Health check successful', 'success');
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+                addLog('Health check failed', 'error');
+            }
+        }
+
+        async function testProducts() {
+            const result = document.getElementById('apiResult');
+            result.style.display = 'block';
+            result.textContent = 'Testing /products...';
+
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+                addLog('Products fetch successful', 'success');
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+                addLog('Products fetch failed', 'error');
+            }
+        }
+
+        async function testQuery() {
+            const result = document.getElementById('apiResult');
+            result.style.display = 'block';
+            result.textContent = 'Testing /query with GPT-4o Mini...\nThis may take a few seconds...';
+
+            try {
+                const response = await fetch(`${API_URL}/query`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question: 'What is the battery life?',
+                        model: 'gpt-4o-mini'
+                    })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    result.textContent = `Answer: ${data.answer}\n\n` +
+                        `Model: ${data.model_used}\n` +
+                        `Response Time: ${data.response_time_ms}ms\n` +
+                        `Chunks Retrieved: ${data.chunks_retrieved}\n` +
+                        `Cost: $${data.cost_usd}\n\n` +
+                        `Sources: ${data.sources.length} citations`;
+                    addLog('Query test successful', 'success');
+                } else {
+                    result.textContent = `Error: ${data.detail || JSON.stringify(data)}`;
+                    addLog('Query test failed', 'error');
+                }
+            } catch (error) {
+                result.textContent = `Error: ${error.message}\n\nMake sure the server is running!`;
+                addLog('Query test failed - server offline?', 'error');
+            }
+        }
+
+        function addLog(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${time}] ${message}`;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifyr - Admin Dashboard</title>
+
+    <!-- SEO: Prevent indexing of admin pages -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="design-system/design-system.css">
+
+    <!-- Admin-specific styles -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            font-family: var(--font-primary);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+        }
+
+        /* Header */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .admin-logo {
+            font-family: var(--font-display);
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .admin-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-base);
+        }
+
+        .admin-badge {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: var(--spacing-xs) var(--spacing-base);
+            border-radius: var(--radius-xl);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .admin-user-email {
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+        }
+
+        .logout-btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            font-family: var(--font-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--light-gray);
+            color: var(--dark);
+            border-color: var(--gray);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+        }
+
+        .stat-card-label {
+            font-size: var(--font-size-sm);
+            color: var(--gray);
+            margin-bottom: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card-value {
+            font-family: var(--font-display);
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-blue);
+        }
+
+        /* Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .admin-tab {
+            padding: var(--spacing-base) var(--spacing-xl);
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            color: var(--gray);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            font-family: var(--font-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab.active {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+
+        .admin-tab:hover:not(.active) {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        /* Data Tables */
+        .data-panel {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--dark);
+        }
+
+        .panel-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--gray);
+        }
+
+        .refresh-btn {
+            padding: var(--spacing-sm) var(--spacing-base);
+            background: var(--light-gray);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: var(--spacing-base) var(--spacing-lg);
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .data-table th {
+            background: var(--light-gray);
+            font-weight: var(--font-weight-semibold);
+            color: var(--dark);
+            font-size: var(--font-size-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table td {
+            color: var(--dark);
+            font-size: var(--font-size-sm);
+        }
+
+        .data-table tr:hover {
+            background: var(--light-gray);
+        }
+
+        .data-table .user-id {
+            font-family: monospace;
+            font-size: var(--font-size-xs);
+            color: var(--gray);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .badge-admin {
+            background: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .badge-user {
+            background: var(--light-gray);
+            color: var(--gray);
+        }
+
+        .badge-anonymous {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: var(--spacing-3xl);
+            text-align: center;
+            color: var(--gray);
+        }
+
+        /* Loading state */
+        .loading-state {
+            padding: var(--spacing-3xl);
+            text-align: center;
+            color: var(--gray);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--light-gray);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Navigation links */
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+
+        .nav-link {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: var(--spacing-base);
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: var(--spacing-lg);
+                text-align: center;
+            }
+
+            .admin-user-info {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-tabs {
+                flex-wrap: wrap;
+            }
+
+            .data-table {
+                font-size: var(--font-size-xs);
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: var(--spacing-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-title">
+                <a href="index.html" class="admin-logo">Verifyr</a>
+                <span class="admin-badge">Admin</span>
+            </div>
+            <div class="nav-links">
+                <a href="chat.html" class="nav-link">Chat</a>
+            </div>
+            <div class="admin-user-info">
+                <span class="admin-user-email" id="adminEmail"></span>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-label">Total Users</div>
+                <div class="stat-card-value" id="statUsers">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Conversations</div>
+                <div class="stat-card-value" id="statConversations">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Total Messages</div>
+                <div class="stat-card-value" id="statMessages">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Products</div>
+                <div class="stat-card-value" id="statProducts">-</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="showTab('conversations')">Conversations</button>
+            <button class="admin-tab" onclick="showTab('users')">Users</button>
+        </div>
+
+        <!-- Conversations Panel -->
+        <div id="conversationsTab" class="tab-content active">
+            <div class="data-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">All Conversations</div>
+                        <div class="panel-subtitle">View all user conversations</div>
+                    </div>
+                    <button class="refresh-btn" onclick="loadConversations()">Refresh</button>
+                </div>
+                <div id="conversationsTableContainer">
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Loading conversations...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Panel -->
+        <div id="usersTab" class="tab-content">
+            <div class="data-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Users</div>
+                        <div class="panel-subtitle">All registered users</div>
+                    </div>
+                    <button class="refresh-btn" onclick="loadUsers()">Refresh</button>
+                </div>
+                <div id="usersTableContainer">
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Loading users...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

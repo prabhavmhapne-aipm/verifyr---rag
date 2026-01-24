@@ -3,13 +3,33 @@
  *
  * Handles user interactions, API calls, and message display
  * Integrated with Verifyr design system
+ * Includes Supabase authentication
  */
 
 // Configuration
 const API_BASE_URL = 'http://localhost:8000';
 
+// Authentication state
+let supabaseClient = null;
+let currentSession = null;
+let SUPABASE_URL = '';
+let SUPABASE_ANON_KEY = '';
+
 // Translations
 const TRANSLATIONS = {
+    de: {
+        heroBadge: "Dein intelligenter Health-Tech Shopping-Berater",
+        welcomeMessage: "Hallo! Wie kann ich dir helfen? Ich helfe dir gerne bei allen Fragen zu den Produkten. Was möchtest du wissen?",
+        subtitle: "Frag mich alles über Apple Watch Series 11 vs Garmin Forerunner 970",
+        placeholder: "Frag nach Produkteigenschaften...",
+        quickReplies: [
+            { text: "Akkulaufzeit", query: "Wie ist der Akku-Vergleich?" },
+            { text: "Beste zum Laufen", query: "Welche Uhr ist besser zum Laufen?" },
+            { text: "Wasserdichtigkeit", query: "Vergleiche die Wasserdichtigkeit" },
+            { text: "Hauptunterschiede", query: "Was sind die wichtigsten Unterschiede?" }
+        ],
+        inputNote: "Enter zum Senden"
+    },
     en: {
         heroBadge: "Your intelligent Health-Tech shopping advisor",
         welcomeMessage: "Hello! How can I help you? I'm happy to help with all questions about products. What would you like to know?",
@@ -22,19 +42,6 @@ const TRANSLATIONS = {
             { text: "Key Differences", query: "What are the key differences?" }
         ],
         inputNote: "Press Enter to send"
-    },
-    de: {
-        heroBadge: "Dein intelligenter Health-Tech Kaufberater",
-        welcomeMessage: "Hallo! Wie kann ich dir helfen? Ich helfe dir gerne bei allen Fragen zu den Produkten. Was möchtest du wissen?",
-        subtitle: "Frag mich alles über Apple Watch Series 11 vs Garmin Forerunner 970",
-        placeholder: "Frage nach Produktfunktionen...",
-        quickReplies: [
-            { text: "Akkulaufzeit", query: "Welche Uhr hat eine längere Akkulaufzeit?" },
-            { text: "Beste fürs Laufen", query: "Welche Uhr ist besser zum Laufen?" },
-            { text: "Wasserdichtigkeit", query: "Vergleiche die Wasserdichtigkeit" },
-            { text: "Hauptunterschiede", query: "Was sind die Hauptunterschiede?" }
-        ],
-        inputNote: "Drücke Enter zum Senden"
     }
 };
 
@@ -50,7 +57,7 @@ let conversationsList;
 
 // State
 let isLoading = false;
-let currentLanguage = 'en';
+let currentLanguage = localStorage.getItem('verifyr-lang') || 'de'; // Sync with global language
 let selectedModel = 'gpt-4o-mini'; // Default matches HTML, will be synced in init()
 
 // Conversation Management State
@@ -61,7 +68,16 @@ let conversationHistory = []; // Array of {role, content} for current conversati
 /**
  * Initialize the chat interface
  */
-function init() {
+async function init() {
+    // First, check authentication
+    const isAuthenticated = await checkAuth();
+    if (!isAuthenticated) {
+        return; // Redirect will happen in checkAuth
+    }
+
+    // Auth passed - show the page content
+    document.body.classList.remove('auth-checking');
+
     // Get DOM elements
     chatInput = document.getElementById('chatInput');
     sendButton = document.getElementById('sendButton');
@@ -71,6 +87,13 @@ function init() {
     inputNote = document.getElementById('inputNote');
     conversationSidebar = document.getElementById('conversationSidebar');
     conversationsList = document.getElementById('conversationsList');
+
+    // Display user email
+    const userEmailEl = document.getElementById('userEmail');
+    const userEmail = localStorage.getItem('verifyr_user_email');
+    if (userEmailEl && userEmail) {
+        userEmailEl.textContent = userEmail;
+    }
 
     // Sync selectedModel with actual dropdown value
     updateModelNote();
@@ -100,6 +123,133 @@ function init() {
 
     // Focus input
     chatInput.focus();
+}
+
+/**
+ * Clear all authentication data from localStorage
+ * Used when token is invalid or user logs out
+ */
+function clearAuthData() {
+    localStorage.removeItem('verifyr_access_token');
+    localStorage.removeItem('verifyr_user_id');
+    localStorage.removeItem('verifyr_user_email');
+    localStorage.removeItem('verifyr_is_admin');
+}
+
+/**
+ * Check authentication status
+ * Shows auth overlay if not authenticated
+ */
+async function checkAuth() {
+    try {
+        // Load config from backend
+        const configResponse = await fetch(`${API_BASE_URL}/config`);
+        if (configResponse.ok) {
+            const config = await configResponse.json();
+            SUPABASE_URL = config.supabase_url;
+            SUPABASE_ANON_KEY = config.supabase_anon_key;
+        }
+
+        // Initialize Supabase client if available
+        if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Get current session
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (session) {
+                currentSession = session;
+                // Update localStorage with current token
+                localStorage.setItem('verifyr_access_token', session.access_token);
+                localStorage.setItem('verifyr_user_id', session.user.id);
+                localStorage.setItem('verifyr_user_email', session.user.email);
+                return true;
+            }
+        }
+
+        // Check if we have a stored token (fallback)
+        // SECURITY: Always verify token with server, never trust client-side storage alone
+        const storedToken = localStorage.getItem('verifyr_access_token');
+        if (storedToken) {
+            // Basic token format validation (JWT has 3 parts separated by dots)
+            const tokenParts = storedToken.split('.');
+            if (tokenParts.length !== 3) {
+                console.warn('Invalid token format in localStorage');
+                clearAuthData();
+                window.location.href = '/auth.html';
+                return false;
+            }
+
+            // Verify token by making an authenticated API call
+            // This ensures the token is valid on the server side
+            try {
+                const testResponse = await fetch(`${API_BASE_URL}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${storedToken}`
+                    }
+                });
+                if (testResponse.ok) {
+                    return true;
+                } else if (testResponse.status === 401) {
+                    // Token expired or invalid - clear and redirect
+                    console.log('Token invalid or expired');
+                    clearAuthData();
+                }
+            } catch (err) {
+                console.error('Token verification failed:', err);
+            }
+        }
+
+        // Not authenticated, redirect to login
+        console.log('Not authenticated, redirecting to login...');
+        window.location.href = '/auth.html';
+        return false;
+
+    } catch (error) {
+        console.error('Auth check error:', error);
+        // On error, redirect to login
+        window.location.href = '/auth.html';
+        return false;
+    }
+}
+
+/**
+ * Get the current access token for API calls
+ */
+function getAccessToken() {
+    if (currentSession) {
+        return currentSession.access_token;
+    }
+    return localStorage.getItem('verifyr_access_token');
+}
+
+/**
+ * Handle logout
+ */
+async function handleLogout() {
+    try {
+        // Sign out from Supabase
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
+
+        // Clear localStorage
+        localStorage.removeItem('verifyr_access_token');
+        localStorage.removeItem('verifyr_user_id');
+        localStorage.removeItem('verifyr_user_email');
+        localStorage.removeItem('verifyr_is_admin');
+        localStorage.removeItem('verifyr_active_conversation_id');
+        localStorage.removeItem('verifyr_conversations');
+
+        // Replace history and redirect to prevent back button
+        window.history.replaceState(null, '', '/auth.html');
+        window.location.replace('/auth.html');
+    } catch (error) {
+        console.error('Logout error:', error);
+        // Force redirect anyway
+        window.history.replaceState(null, '', '/auth.html');
+        window.location.replace('/auth.html');
+    }
 }
 
 /**
@@ -137,7 +287,8 @@ function switchLanguage(lang) {
  * Update quick reply buttons based on language
  */
 function updateQuickReplies() {
-    const t = TRANSLATIONS[currentLanguage];
+    const lang = window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de';
+    const t = TRANSLATIONS[lang];
     quickReplies.innerHTML = '';
 
     t.quickReplies.forEach(reply => {
@@ -156,8 +307,19 @@ function updateQuickReplies() {
  * Update model note in input area
  */
 function updateModelNote() {
+    if (!modelSelector || !inputNote) return;
     selectedModel = modelSelector.value;
-    const t = TRANSLATIONS[currentLanguage];
+
+    // Track model selection to Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'model_selected', {
+            'event_category': 'user_preference',
+            'model': selectedModel
+        });
+    }
+
+    const lang = window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de';
+    const t = TRANSLATIONS[lang];
     const modelNames = {
         'claude-sonnet-4.5': 'Claude Sonnet 4.5',
         'claude-3.5-haiku': 'Claude Haiku',
@@ -233,6 +395,13 @@ function createNewConversation() {
     currentConversationId = null;
     conversationHistory = [];
     chatMessages.innerHTML = '';
+
+    // Track new conversation to Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'new_conversation', {
+            'event_category': 'chat_engagement'
+        });
+    }
 
     // Show welcome message
     displayWelcomeMessage();
@@ -362,7 +531,8 @@ function formatTimestamp(isoString) {
  * Display welcome message based on current language
  */
 function displayWelcomeMessage() {
-    const t = TRANSLATIONS[currentLanguage];
+    const lang = window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de';
+    const t = TRANSLATIONS[lang];
     const welcomeDiv = document.createElement('div');
     welcomeDiv.className = 'message assistant-message welcome-message';
     welcomeDiv.innerHTML = `
@@ -416,6 +586,15 @@ async function handleSend() {
     // Display user message
     displayUserMessage(question);
 
+    // Track message sent to Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'chat_message_sent', {
+            'event_category': 'chat_engagement',
+            'model': selectedModel,
+            'language': window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de'
+        });
+    }
+
     // Add user message to conversation history
     conversationHistory.push({
         role: 'user',
@@ -433,11 +612,15 @@ async function handleSend() {
     const loadingId = displayLoadingIndicator();
 
     try {
+        // Get access token for authenticated API call
+        const accessToken = getAccessToken();
+
         // Call API with selected model and conversation history
         const response = await fetch(`${API_BASE_URL}/query`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify({
                 question,
@@ -452,6 +635,12 @@ async function handleSend() {
         removeLoadingIndicator(loadingId);
 
         if (!response.ok) {
+            // Handle authentication errors
+            if (response.status === 401) {
+                console.log('Session expired, redirecting to login...');
+                window.location.href = '/auth.html';
+                return;
+            }
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
         }
@@ -648,3 +837,15 @@ function escapeHtml(text) {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', init);
+
+// Handle back button / page loaded from cache (bfcache)
+window.addEventListener('pageshow', function(event) {
+    // If page is loaded from cache (persisted), re-check auth
+    if (event.persisted) {
+        const token = localStorage.getItem('verifyr_access_token');
+        if (!token) {
+            // No token, redirect immediately
+            window.location.replace('/auth.html');
+        }
+    }
+});
