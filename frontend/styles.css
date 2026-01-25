@@ -245,8 +245,9 @@ body {
 /* User Menu */
 .user-menu {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
 }
 
 .user-email {

@@ -15,33 +15,59 @@ let currentSession = null;
 let SUPABASE_URL = '';
 let SUPABASE_ANON_KEY = '';
 
-// Translations
+// Unified Translations - Single source of truth for all UI text
 const TRANSLATIONS = {
     de: {
+        // Header
         heroBadge: "Dein intelligenter Health-Tech Shopping-Berater",
+        logout: "Abmelden",
+
+        // Sidebar
+        conversations: "Konversationen",
+        newConversation: "+ Neue Konversation",
+
+        // Chat
         welcomeMessage: "Hallo! Wie kann ich dir helfen? Ich helfe dir gerne bei allen Fragen zu den Produkten. Was möchtest du wissen?",
-        subtitle: "Frag mich alles über Apple Watch Series 11 vs Garmin Forerunner 970",
         placeholder: "Frag nach Produkteigenschaften...",
+        sendButton: "Senden",
+
+        // Quick Replies
         quickReplies: [
             { text: "Akkulaufzeit", query: "Wie ist der Akku-Vergleich?" },
             { text: "Beste zum Laufen", query: "Welche Uhr ist besser zum Laufen?" },
             { text: "Wasserdichtigkeit", query: "Vergleiche die Wasserdichtigkeit" },
             { text: "Hauptunterschiede", query: "Was sind die wichtigsten Unterschiede?" }
         ],
-        inputNote: "Enter zum Senden"
+
+        // Footer
+        inputNote: "Enter zum Senden",
+        beta: "BETA - Die KI kann Fehler machen, überprüfe wichtige Informationen"
     },
     en: {
+        // Header
         heroBadge: "Your intelligent Health-Tech shopping advisor",
+        logout: "Logout",
+
+        // Sidebar
+        conversations: "Conversations",
+        newConversation: "+ New Conversation",
+
+        // Chat
         welcomeMessage: "Hello! How can I help you? I'm happy to help with all questions about products. What would you like to know?",
-        subtitle: "Ask me anything about Apple Watch Series 11 vs Garmin Forerunner 970",
         placeholder: "Ask about product features...",
+        sendButton: "Send",
+
+        // Quick Replies
         quickReplies: [
             { text: "Battery Life", query: "What is the battery life comparison?" },
             { text: "Best for Running", query: "Which watch is better for running?" },
             { text: "Waterproof Ratings", query: "Compare the waterproof ratings" },
             { text: "Key Differences", query: "What are the key differences?" }
         ],
-        inputNote: "Press Enter to send"
+
+        // Footer
+        inputNote: "Press Enter to send",
+        beta: "BETA - AI can make mistakes, verify important information"
     }
 };
 
@@ -115,6 +141,9 @@ async function init() {
 
     // Render conversation list in sidebar
     renderConversationsList();
+
+    // Apply translations based on current language
+    switchLanguage(currentLanguage);
 
     // Event listeners
     sendButton.addEventListener('click', handleSend);
@@ -253,10 +282,12 @@ async function handleLogout() {
 }
 
 /**
- * Switch language
+ * Switch language - Uses unified TRANSLATIONS object
  */
 function switchLanguage(lang) {
     currentLanguage = lang;
+    window.currentLanguage = lang; // Also set global variable for consistency
+    localStorage.setItem('verifyr-lang', lang);
 
     // Update active state on language buttons
     document.querySelectorAll('.lang-option').forEach(option => {
@@ -267,19 +298,55 @@ function switchLanguage(lang) {
         }
     });
 
-    // Update UI text
+    // Get translations for selected language
     const t = TRANSLATIONS[lang];
-    chatInput.placeholder = t.placeholder;
-    document.getElementById('heroBadge').textContent = t.heroBadge;
+
+    // Update header
+    const heroBadge = document.getElementById('heroBadge');
+    if (heroBadge) heroBadge.textContent = t.heroBadge;
+
+    // Update logout button
+    const logoutBtns = document.querySelectorAll('.logout-btn');
+    logoutBtns.forEach(btn => btn.textContent = t.logout);
+
+    // Update sidebar
+    const sidebarTitle = document.querySelector('.sidebar-header h2');
+    if (sidebarTitle) sidebarTitle.textContent = t.conversations;
+
+    const newConvBtn = document.getElementById('newConversationBtn');
+    if (newConvBtn) newConvBtn.textContent = t.newConversation;
+
+    // Update chat input
+    if (chatInput) chatInput.placeholder = t.placeholder;
+
+    // Update send button
+    const sendText = document.querySelector('.send-text');
+    if (sendText) sendText.textContent = t.sendButton;
+
+    // Update footer
+    const footerText = document.querySelector('.chat-footer p');
+    if (footerText) footerText.textContent = t.beta;
+
+    // Update model note
     updateModelNote();
 
     // Update quick replies
     updateQuickReplies();
 
-    // Clear and re-show welcome message if it's the first message
-    if (chatMessages.children.length === 1) {
-        chatMessages.innerHTML = '';
-        displayWelcomeMessage();
+    // Clear and re-show welcome message if only the welcome message is present
+    if (chatMessages && chatMessages.children.length > 0) {
+        // Check if the only message is the welcome message (has class 'welcome-message')
+        const firstMessage = chatMessages.children[0];
+        if (firstMessage.classList.contains('welcome-message')) {
+            // Check if there are no other messages (only welcome message)
+            const hasUserMessages = Array.from(chatMessages.children).some(
+                child => child.classList.contains('user-message')
+            );
+            if (!hasUserMessages) {
+                chatMessages.innerHTML = '';
+                displayWelcomeMessage();
+            }
+        }
     }
 }
 
@@ -287,7 +354,9 @@ function switchLanguage(lang) {
  * Update quick reply buttons based on language
  */
 function updateQuickReplies() {
-    const lang = window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de';
+    if (!quickReplies) return; // Make sure element exists
+
+    const lang = currentLanguage; // Use module variable directly
     const t = TRANSLATIONS[lang];
     quickReplies.innerHTML = '';
 
@@ -318,7 +387,7 @@ function updateModelNote() {
         });
     }
 
-    const lang = window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de';
+    const lang = currentLanguage; // Use module variable directly
     const t = TRANSLATIONS[lang];
     const modelNames = {
         'claude-sonnet-4.5': 'Claude Sonnet 4.5',
@@ -531,7 +600,7 @@ function formatTimestamp(isoString) {
  * Display welcome message based on current language
  */
 function displayWelcomeMessage() {
-    const lang = window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de';
+    const lang = currentLanguage; // Use module variable directly
     const t = TRANSLATIONS[lang];
     const welcomeDiv = document.createElement('div');
     welcomeDiv.className = 'message assistant-message welcome-message';
