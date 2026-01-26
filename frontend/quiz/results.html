@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deine Ergebnisse - Verifyr Quiz</title>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="/design-system/design-system.css">
+    <link rel="stylesheet" href="/quiz/quiz.css">
+    <link rel="stylesheet" href="/quiz/results.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+    <div class="results-container">
+        <!-- Header -->
+        <div class="results-header">
+            <button class="back-link" onclick="history.back()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <div class="results-header-content">
+                <h1 id="pageHeading">Deine Ergebnisse</h1>
+                <p class="results-count" id="resultsCount">
+                    <span class="loading-pulse">Analysiere deine Antworten...</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Quiz Summary -->
+        <div class="quiz-summary-card" id="quizSummary" style="display: none;">
+            <h2>Deine Präferenzen</h2>
+            <div class="summary-tags" id="summaryTags">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Matched Products -->
+        <div class="matched-products" id="matchedProducts">
+            <!-- Dynamically populated product cards -->
+        </div>
+
+        <!-- CTA to Chat -->
+        <div class="results-cta">
+            <div class="cta-content">
+                <h2 id="ctaHeading">Noch Fragen?</h2>
+                <p id="ctaSubheading">Chatte mit Verifyr, um mehr über diese Produkte zu erfahren</p>
+                <a href="/chat.html" class="btn btn-primary btn-large" id="ctaButton">
+                    Mit Verifyr chatten
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/quiz/results.js"></script>
+</body>
+</html>

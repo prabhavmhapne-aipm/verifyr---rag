@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wofür Hauptsächlich? - Verifyr Quiz</title>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="/design-system/design-system.css">
+    <link rel="stylesheet" href="/quiz/quiz.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Progress Indicator -->
+        <div class="quiz-progress">
+            <div class="progress-step completed"></div>
+            <div class="progress-step active"></div>
+            <div class="progress-step"></div>
+        </div>
+
+        <!-- Quiz Content -->
+        <div class="quiz-content">
+            <!-- Header -->
+            <div class="quiz-header">
+                <h1 id="pageHeading">Wofür Hauptsächlich?</h1>
+                <p class="quiz-subtitle" id="pageSubheading">Wähle alle Zutreffend aus</p>
+            </div>
+
+            <!-- Selection Grid (dynamically populated) -->
+            <div class="quiz-grid" id="useCaseGrid">
+                <!-- Use cases will be loaded from use-cases.json -->
+            </div>
+
+            <!-- Navigation -->
+            <div class="quiz-navigation">
+                <a href="/quiz/category.html" class="btn btn-secondary">
+                    <span id="backBtnText">Zurück</span>
+                </a>
+                <button class="btn btn-primary" id="nextBtn" disabled>
+                    <span id="nextBtnText">Weiter</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/quiz/use-case.js"></script>
+</body>
+</html>

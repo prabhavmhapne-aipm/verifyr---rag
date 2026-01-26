@@ -1,0 +1,263 @@
+{
+  "features": [
+    {
+      "id": "light_comfortable",
+      "title": {
+        "de": "Leicht & Komfortabel",
+        "en": "Light & Comfortable"
+      },
+      "description": {
+        "de": "Geringes Gewicht für hohen Tragekomfort",
+        "en": "Low weight for high wearing comfort"
+      },
+      "image": "/images/quiz/light_comfortable.jpg",
+      "priority": 1,
+      "position": {
+        "row": 1,
+        "col": 1
+      }
+    },
+    {
+      "id": "long_battery",
+      "title": {
+        "de": "Lange Akkulaufzeit",
+        "en": "Long Battery Life"
+      },
+      "description": {
+        "de": "Mehrere Tage ohne Aufladen",
+        "en": "Multiple days without charging"
+      },
+      "image": "/images/quiz/long_battery.jpg",
+      "priority": 2,
+      "position": {
+        "row": 1,
+        "col": 2
+      }
+    },
+    {
+      "id": "water_resistance",
+      "title": {
+        "de": "Wasserdicht & Robust",
+        "en": "Waterproof & Robust"
+      },
+      "description": {
+        "de": "Schwimmen, Tauchen und extreme Bedingungen",
+        "en": "Swimming, diving, and extreme conditions"
+      },
+      "image": "/images/quiz/water_resistance.jpg",
+      "priority": 3,
+      "position": {
+        "row": 2,
+        "col": 1
+      }
+    },
+    {
+      "id": "gps_accuracy",
+      "title": {
+        "de": "Präzise GPS & Sensoren",
+        "en": "Precise GPS & Sensors"
+      },
+      "description": {
+        "de": "Multi-Band GNSS für beste Genauigkeit",
+        "en": "Multi-band GNSS for best accuracy"
+      },
+      "image": "/images/quiz/gps_accuracy.jpg",
+      "priority": 4,
+      "position": {
+        "row": 2,
+        "col": 2
+      }
+    },
+    {
+      "id": "smartphone_independent",
+      "title": {
+        "de": "Smartphone unabhängig",
+        "en": "Smartphone Independent"
+      },
+      "description": {
+        "de": "Musik, Anrufe und Nachrichten ohne Handy",
+        "en": "Music, calls, and messages without phone"
+      },
+      "image": "/images/quiz/smartphone_independent.jpg",
+      "priority": 5,
+      "position": {
+        "row": 3,
+        "col": 1
+      }
+    },
+    {
+      "id": "app_ecosystem",
+      "title": {
+        "de": "App Integration & Ecosystem",
+        "en": "App Integration & Ecosystem"
+      },
+      "description": {
+        "de": "Breite App-Auswahl und Drittanbieter-Integration",
+        "en": "Wide app selection and third-party integration"
+      },
+      "image": "/images/quiz/app_ecosystem.jpg",
+      "priority": 6,
+      "position": {
+        "row": 3,
+        "col": 2
+      }
+    },
+    {
+      "id": "design_modern",
+      "title": {
+        "de": "Digital, Smart & Modern",
+        "en": "Digital, Smart & Modern"
+      },
+      "description": {
+        "de": "Modernes digitales Design mit Touchscreen",
+        "en": "Modern digital design with touchscreen"
+      },
+      "image": "/images/quiz/design_modern.jpg",
+      "priority": 7,
+      "position": {
+        "row": 4,
+        "col": 1
+      }
+    },
+    {
+      "id": "design_classic",
+      "title": {
+        "de": "Analog, Smart & Klassich",
+        "en": "Analog, Smart & Classic"
+      },
+      "description": {
+        "de": "Klassisches analoges Design mit Smart-Features",
+        "en": "Classic analog design with smart features"
+      },
+      "image": "/images/quiz/design_classic.jpg",
+      "priority": 8,
+      "position": {
+        "row": 4,
+        "col": 2
+      }
+    },
+    {
+      "id": "with_display",
+      "title": {
+        "de": "Mit Display",
+        "en": "With Display"
+      },
+      "description": {
+        "de": "Farbdisplay mit Touchscreen",
+        "en": "Color display with touchscreen"
+      },
+      "image": "/images/quiz/with_display.jpg",
+      "priority": 9,
+      "position": {
+        "row": 5,
+        "col": 1
+      }
+    },
+    {
+      "id": "no_display",
+      "title": {
+        "de": "Ohne Display / Diskret",
+        "en": "Without Display / Discreet"
+      },
+      "description": {
+        "de": "Diskret ohne Display, LED-Benachrichtigungen",
+        "en": "Discreet without display, LED notifications"
+      },
+      "image": "/images/quiz/no_display.jpg",
+      "priority": 10,
+      "position": {
+        "row": 5,
+        "col": 2
+      }
+    },
+    {
+      "id": "sleep_monitor",
+      "title": {
+        "de": "Sleep Monitor",
+        "en": "Sleep Monitor"
+      },
+      "description": {
+        "de": "Schlafphasen, Schlafqualität und Schlaf-Score",
+        "en": "Sleep stages, quality, and sleep score"
+      },
+      "image": "/images/quiz/sleep_monitor.jpg",
+      "priority": 11,
+      "position": {
+        "row": 6,
+        "col": 1
+      }
+    },
+    {
+      "id": "stress_monitor",
+      "title": {
+        "de": "Body / Stress Monitor",
+        "en": "Body / Stress Monitor"
+      },
+      "description": {
+        "de": "Stresslevel, Body Battery und Erholung",
+        "en": "Stress levels, body battery, and recovery"
+      },
+      "image": "/images/quiz/stress_monitor.jpg",
+      "priority": 12,
+      "position": {
+        "row": 6,
+        "col": 2
+      }
+    },
+    {
+      "id": "ecg_hrv",
+      "title": {
+        "de": "EKG / HRV Monitor",
+        "en": "ECG / HRV Monitor"
+      },
+      "description": {
+        "de": "EKG-Messungen und Herzfrequenzvariabilität",
+        "en": "ECG measurements and heart rate variability"
+      },
+      "image": "/images/quiz/ecg_hrv.jpg",
+      "priority": 13,
+      "position": {
+        "row": 7,
+        "col": 1
+      }
+    },
+    {
+      "id": "vo2_max",
+      "title": {
+        "de": "VO2 Max Tracker",
+        "en": "VO2 Max Tracker"
+      },
+      "description": {
+        "de": "VO2 Max, Trainingsbereitschaft und Leistungsmetriken",
+        "en": "VO2 Max, training readiness, and performance metrics"
+      },
+      "image": "/images/quiz/vo2_max.jpg",
+      "priority": 14,
+      "position": {
+        "row": 7,
+        "col": 2
+      }
+    }
+  ],
+  "metadata": {
+    "total_features": 14,
+    "selection_type": "multi",
+    "max_selections": 5,
+    "min_selections": 1,
+    "grid_layout": "2x7",
+    "card_dimensions": {
+      "width": "150px",
+      "height": "168px"
+    },
+    "card_style": "photographic",
+    "screen_info": {
+      "screen_number": 4,
+      "figma_node_id": "81-7268",
+      "heading_de": "Was is dir am wichtigsten?",
+      "heading_en": "What is most important to you?",
+      "subheading_de": "Wähle bis zu 5 Prioritäten",
+      "subheading_en": "Choose up to 5 priorities"
+    },
+    "note": "Feature cards use photographic images with semi-transparent label overlays, unlike category and use-case cards which use illustrations/icons"
+  }
+}

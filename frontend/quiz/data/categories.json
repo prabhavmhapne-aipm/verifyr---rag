@@ -1,0 +1,147 @@
+{
+  "categories": [
+    {
+      "id": "smartwatch_fitness",
+      "title": {
+        "de": "Smartwatch & Fitnesstrackers",
+        "en": "Smartwatch & Fitness Trackers"
+      },
+      "subtitle": {
+        "de": "Für Training & Alltag",
+        "en": "For Training & Daily Use"
+      },
+      "description": {
+        "de": "Vielseitige Allrounder mit Smart-Features, Fitness-Tracking und Benachrichtigungen",
+        "en": "Versatile all-rounders with smart features, fitness tracking, and notifications"
+      },
+      "icon": "/images/quiz/smartwatch.svg",
+      "icon_emoji": "⌚",
+      "position": {
+        "row": 1,
+        "col": 1
+      }
+    },
+    {
+      "id": "recovery_sleep",
+      "title": {
+        "de": "Recovery & Sleep",
+        "en": "Recovery & Sleep"
+      },
+      "subtitle": {
+        "de": "Für bessere Regeneration",
+        "en": "For Better Recovery"
+      },
+      "description": {
+        "de": "Geräte mit Fokus auf Schlaf-Tracking und Erholung",
+        "en": "Devices focused on sleep tracking and recovery"
+      },
+      "icon": "/images/quiz/sleep.svg",
+      "icon_emoji": "🌙",
+      "position": {
+        "row": 1,
+        "col": 2
+      }
+    },
+    {
+      "id": "heart_rate_monitors",
+      "title": {
+        "de": "Herzfrequenzmesser",
+        "en": "Heart Rate Monitors"
+      },
+      "subtitle": {
+        "de": "Präzise Herzfrequenz",
+        "en": "Precise Heart Rate"
+      },
+      "description": {
+        "de": "Brustgurte und Armbänder für präzise Herzfrequenzmessung",
+        "en": "Chest straps and armbands for precise heart rate measurement"
+      },
+      "icon": "/images/quiz/heart.svg",
+      "icon_emoji": "❤️",
+      "position": {
+        "row": 2,
+        "col": 1
+      }
+    },
+    {
+      "id": "sport_earbuds",
+      "title": {
+        "de": "Sport Earbuds",
+        "en": "Sport Earbuds"
+      },
+      "subtitle": {
+        "de": "Für dein Workout",
+        "en": "For Your Workout"
+      },
+      "description": {
+        "de": "Wasserdichte Kopfhörer für Sport und Training",
+        "en": "Waterproof earbuds for sports and training"
+      },
+      "icon": "/images/quiz/earbuds.svg",
+      "icon_emoji": "🎧",
+      "position": {
+        "row": 2,
+        "col": 2
+      }
+    },
+    {
+      "id": "metabolic_monitors",
+      "title": {
+        "de": "Metabolische Monitore",
+        "en": "Metabolic Monitors"
+      },
+      "subtitle": {
+        "de": "Verstehe deinen Stoffwechsel",
+        "en": "Understand Your Metabolism"
+      },
+      "description": {
+        "de": "Geräte zur Überwachung von Blutzucker und Stoffwechsel",
+        "en": "Devices for monitoring blood sugar and metabolism"
+      },
+      "icon": "/images/quiz/metabolic.svg",
+      "icon_emoji": "🩸",
+      "position": {
+        "row": 3,
+        "col": 1
+      }
+    },
+    {
+      "id": "womens_health",
+      "title": {
+        "de": "Frauen Health Tech",
+        "en": "Women's Health Tech"
+      },
+      "subtitle": {
+        "de": "Zyklus & Fruchtbarkeit",
+        "en": "Cycle & Fertility"
+      },
+      "description": {
+        "de": "Geräte für Zyklus-Tracking und Fruchtbarkeitsüberwachung",
+        "en": "Devices for cycle tracking and fertility monitoring"
+      },
+      "icon": "/images/quiz/womens_health.svg",
+      "icon_emoji": "♀️",
+      "position": {
+        "row": 3,
+        "col": 2
+      }
+    }
+  ],
+  "metadata": {
+    "total_categories": 6,
+    "selection_type": "single",
+    "grid_layout": "2x3",
+    "card_dimensions": {
+      "width": "150px",
+      "height": "168px"
+    },
+    "screen_info": {
+      "screen_number": 1,
+      "figma_node_id": "3-1056",
+      "heading_de": "Was suchst du?",
+      "heading_en": "What are you looking for?",
+      "subheading_de": "Wähle eine Kategorie aus",
+      "subheading_en": "Choose a category"
+    }
+  }
+}

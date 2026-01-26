@@ -1,0 +1,347 @@
+/**
+ * Quiz Shared Styles
+ * Verifyr Design System - Quiz Component Styles
+ *
+ * Shared styles for all quiz pages (category, use-case, features)
+ */
+
+/* Quiz Container */
+.quiz-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.quiz-content {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+}
+
+/* Quiz Header */
+.quiz-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.quiz-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.quiz-subtitle {
+    font-size: 1.125rem;
+    color: var(--gray);
+    font-weight: 400;
+}
+
+/* Progress Indicator */
+.quiz-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-base);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.progress-step {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background: var(--light-gray);
+    transition: all 0.3s ease;
+}
+
+.progress-step.active {
+    background: var(--primary-blue);
+    width: 32px;
+}
+
+.progress-step.completed {
+    background: var(--primary-blue);
+}
+
+/* Selection Cards Grid */
+.quiz-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+/* Selection Card */
+.selection-card {
+    background: var(--white);
+    border: 2px solid var(--light-gray);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    min-height: 168px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px var(--shadow-dark-light);
+}
+
+.selection-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--shadow-dark-medium);
+    border-color: var(--accent);
+}
+
+.selection-card.selected {
+    background: linear-gradient(135deg, var(--bg-gradient-blue-start) 0%, var(--bg-gradient-blue-end) 100%);
+    border-color: var(--primary-blue);
+    border-width: 3px;
+    box-shadow: 0 8px 24px var(--shadow-blue-medium);
+}
+
+.selection-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background: var(--primary-blue);
+    color: var(--white);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px var(--shadow-blue-medium);
+}
+
+/* Card Icon */
+.card-icon {
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: var(--spacing-base);
+}
+
+.card-icon img,
+.card-icon svg {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+/* Card Content */
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.4;
+}
+
+.card-subtitle {
+    font-size: 0.875rem;
+    color: var(--gray);
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.card-description {
+    font-size: 0.875rem;
+    color: var(--gray);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Feature Cards (photographic style) */
+.selection-card.feature-card {
+    padding: 0;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.feature-card .card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+    padding: var(--spacing-base);
+    color: var(--white);
+}
+
+.feature-card .card-title {
+    color: var(--white);
+    margin-bottom: var(--spacing-xs);
+}
+
+.feature-card .card-description {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Navigation Buttons */
+.quiz-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-base);
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--light-gray);
+}
+
+.btn {
+    padding: var(--button-padding);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    color: var(--white);
+    box-shadow: 0 4px 12px var(--shadow-blue-light);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--dark-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-blue-medium);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--dark);
+    border: 2px solid var(--light-gray);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--light-gray);
+    border-color: var(--gray);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-text {
+    background: transparent;
+    color: var(--gray);
+    padding: var(--spacing-sm) var(--spacing-base);
+}
+
+.btn-text:hover {
+    color: var(--primary-blue);
+}
+
+/* Loading State */
+.loading {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.loading::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--white);
+    border-top-color: transparent;
+    border-radius: var(--radius-full);
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Skip Link */
+.skip-link {
+    color: var(--gray);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.skip-link:hover {
+    color: var(--primary-blue);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .quiz-container {
+        padding: var(--spacing-xl) var(--spacing-base);
+    }
+
+    .quiz-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .quiz-subtitle {
+        font-size: 1rem;
+    }
+
+    .quiz-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-base);
+    }
+
+    .selection-card {
+        min-height: 140px;
+        padding: var(--spacing-base);
+    }
+
+    .card-icon {
+        font-size: 2.5rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .quiz-navigation {
+        flex-direction: column;
+        gap: var(--spacing-base);
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .quiz-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .selection-card {
+        min-height: 120px;
+    }
+}

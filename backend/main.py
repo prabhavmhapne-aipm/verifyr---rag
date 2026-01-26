@@ -122,6 +122,39 @@ class ConversationsListResponse(BaseModel):
     conversations: List[Dict[str, Any]]
 
 
+class QuizAnswers(BaseModel):
+    """Request model for quiz scoring endpoint."""
+    category: str = Field(..., description="Selected category ID")
+    useCases: List[str] = Field(..., description="Selected use case IDs")
+    features: List[str] = Field(..., description="Selected feature IDs (max 5)")
+
+
+class MatchedProduct(BaseModel):
+    """Model for a matched product with score and reasons."""
+    product_id: str
+    match_score: float = Field(..., ge=0, le=1, description="Match score between 0 and 1")
+    match_reasons: List[str]
+
+
+class QuizResultsResponse(BaseModel):
+    """Response model for quiz scoring endpoint."""
+    matched_products: List[MatchedProduct]
+    quiz_summary: Dict[str, Any]
+
+
+class ProductsMetadataResponse(BaseModel):
+    """Response model for products metadata endpoint."""
+    products: List[Dict[str, Any]]
+    categories: Optional[Dict[str, Any]] = None
+    use_cases_metadata: Optional[Dict[str, Any]] = None
+    features_metadata: Optional[Dict[str, Any]] = None
+
+
+class ProductRecommendationResponse(BaseModel):
+    """Response model for product recommendation endpoint."""
+    product: Dict[str, Any]
+
+
 # ============================================================================
 # FastAPI Application
 # ============================================================================
@@ -158,6 +191,7 @@ hybrid_searcher: Optional[HybridSearcher] = None
 rag_generator: Optional[RAGGenerator] = None
 products_list: List[str] = []
 langfuse_client: Optional[Langfuse] = None
+products_metadata: Optional[Dict[str, Any]] = None
 
 
 # ============================================================================
@@ -167,7 +201,7 @@ langfuse_client: Optional[Langfuse] = None
 @app.on_event("startup")
 async def startup_event():
     """Initialize indexes and models on startup."""
-    global hybrid_searcher, rag_generator, products_list, langfuse_client
+    global hybrid_searcher, rag_generator, products_list, langfuse_client, products_metadata
 
     print("\n" + "=" * 60)
     print("🚀 STARTING VERIFYR RAG API")
@@ -235,6 +269,26 @@ async def startup_event():
             print(f"\n⚠️  Warning: Could not create conversations directory: {e}")
             print("   Conversation storage will be disabled")
 
+        # Load products metadata for quiz functionality
+        products_metadata_path = project_root / "data" / "products_metadata.json"
+        try:
+            if products_metadata_path.exists():
+                with open(products_metadata_path, 'r', encoding='utf-8') as f:
+                    products_metadata = json.load(f)
+                print(f"\n✅ Products metadata loaded!")
+                print(f"   Products: {len(products_metadata.get('products', []))}")
+                print(f"   Categories: {len(products_metadata.get('categories', {}))}")
+                print(f"   Use cases: {len(products_metadata.get('use_cases_metadata', {}))}")
+                print(f"   Features: {len(products_metadata.get('features_metadata', {}))}")
+            else:
+                print(f"\n⚠️  Products metadata file not found at {products_metadata_path}")
+                print("   Quiz endpoints will not be available")
+                products_metadata = None
+        except Exception as e:
+            print(f"\n⚠️  Error loading products metadata: {e}")
+            print("   Quiz endpoints will not be available")
+            products_metadata = None
+
         print(f"\n✅ Indexes loaded successfully!")
         print(f"   Products available: {len(products_list)}")
         print(f"   Total chunks: {len(hybrid_searcher.bm25_index.chunks)}")
@@ -286,6 +340,9 @@ async def api_info():
             "config": "/config",
             "query": "/query",
             "products": "/products",
+            "products_metadata": "/products/metadata",
+            "quiz_score": "/quiz/score",
+            "product_recommendation": "/products/recommendations/{product_id}",
             "conversations": "/conversations",
             "admin": "/admin/*",
             "docs": "/docs"
@@ -589,6 +646,238 @@ async def get_products():
         )
 
     return ProductsResponse(products=products_list)
+
+
+@app.get("/products/metadata", response_model=ProductsMetadataResponse, tags=["Products"])
+async def get_products_metadata(
+    category: Optional[str] = None,
+    user: AuthUser = Depends(get_optional_user)
+):
+    """
+    Get structured product metadata for quiz and comparison.
+
+    Requires authentication (optional - returns limited data for anonymous users).
+
+    Returns:
+    - Full product specifications
+    - Use case ratings
+    - Feature priority ratings
+    - Categories, use cases, and features metadata
+
+    Optional query parameter:
+    - category: Filter products by category ID
+    """
+    if products_metadata is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Service unavailable: Products metadata not loaded"
+        )
+
+    # Filter products by category if specified
+    if category:
+        filtered_products = [
+            p for p in products_metadata["products"]
+            if p["category"] == category
+        ]
+    else:
+        filtered_products = products_metadata["products"]
+
+    return ProductsMetadataResponse(
+        products=filtered_products,
+        categories=products_metadata.get("categories"),
+        use_cases_metadata=products_metadata.get("use_cases_metadata"),
+        features_metadata=products_metadata.get("features_metadata")
+    )
+
+
+@app.post("/quiz/score", response_model=QuizResultsResponse, tags=["Quiz"])
+async def score_quiz(
+    quiz_answers: QuizAnswers,
+    user: AuthUser = Depends(get_current_user)
+):
+    """
+    Score user's quiz answers and return ranked product matches.
+
+    Requires authentication.
+
+    Scoring algorithm:
+    - Category match: 40% weight (binary: matches or doesn't)
+    - Use cases: 35% weight (average rating of selected use cases)
+    - Features: 25% weight (average rating of selected features)
+
+    Input:
+    - category: Single category ID (e.g., "smartwatch", "running_watch")
+    - useCases: Array of use case IDs (e.g., ["running", "swimming", "health_tracking"])
+    - features: Array of feature IDs, max 5 (e.g., ["long_battery", "health_sensors", "gps_accuracy"])
+
+    Returns:
+    - Ranked list of products with match scores (0-1)
+    - Match reasons for each product
+    - Quiz summary
+    """
+    if products_metadata is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Service unavailable: Products metadata not loaded"
+        )
+
+    # Validate inputs
+    if not quiz_answers.category:
+        raise HTTPException(status_code=400, detail="Category is required")
+
+    if not quiz_answers.useCases or len(quiz_answers.useCases) == 0:
+        raise HTTPException(status_code=400, detail="At least one use case is required")
+
+    if not quiz_answers.features or len(quiz_answers.features) == 0:
+        raise HTTPException(status_code=400, detail="At least one feature is required")
+
+    if len(quiz_answers.features) > 5:
+        raise HTTPException(status_code=400, detail="Maximum 5 features allowed")
+
+    # Get scoring weights
+    weights = products_metadata.get("scoring_weights", {
+        "category": 0.40,
+        "use_cases": 0.35,
+        "features": 0.25
+    })
+
+    matched_products = []
+
+    # Score each product
+    for product in products_metadata["products"]:
+        product_id = product["id"]
+        scores = {"category": 0, "use_cases": 0, "features": 0}
+        reasons = []
+
+        # 1. Category Match (40% weight)
+        product_category = product["category"]
+        # Check if product's category matches OR if product is in the selected category's products list
+        category_data = products_metadata.get("categories", {}).get(quiz_answers.category, {})
+        category_products = category_data.get("products", [])
+
+        if product_category == quiz_answers.category or product_id in category_products:
+            scores["category"] = 1.0
+            reasons.append(f"Matches your selected category: {category_data.get('name', {}).get('en', quiz_answers.category)}")
+        else:
+            scores["category"] = 0.0
+
+        # 2. Use Cases Match (35% weight)
+        use_case_ratings = []
+        use_case_details = []
+        for use_case_id in quiz_answers.useCases:
+            if use_case_id in product.get("use_cases", {}):
+                use_case_data = product["use_cases"][use_case_id]
+                rating = use_case_data.get("rating", 0)
+                use_case_ratings.append(rating / 5.0)  # Normalize to 0-1
+
+                # Add reason if rating is high (4 or 5)
+                if rating >= 4:
+                    use_case_name = products_metadata.get("use_cases_metadata", {}).get(use_case_id, {}).get("name", {}).get("en", use_case_id)
+                    use_case_details.append(f"{use_case_name} ({rating}/5 rating)")
+
+        if use_case_ratings:
+            scores["use_cases"] = sum(use_case_ratings) / len(use_case_ratings)
+            if scores["use_cases"] >= 0.8:  # 4+ average rating
+                reasons.append(f"Excellent for: {', '.join(use_case_details)}")
+            elif scores["use_cases"] >= 0.6:  # 3+ average rating
+                reasons.append(f"Good for: {', '.join(use_case_details)}")
+
+        # 3. Features Match (25% weight)
+        feature_ratings = []
+        feature_details = []
+        for feature_id in quiz_answers.features:
+            if feature_id in product.get("feature_priorities", {}):
+                feature_data = product["feature_priorities"][feature_id]
+                rating = feature_data.get("rating", 0)
+                feature_ratings.append(rating / 5.0)  # Normalize to 0-1
+
+                # Add reason if rating is high (4 or 5)
+                if rating >= 4:
+                    feature_name = products_metadata.get("features_metadata", {}).get(feature_id, {}).get("name", {}).get("en", feature_id)
+                    feature_value = feature_data.get("value", "")
+                    feature_details.append(f"{feature_name}: {feature_value}")
+                elif rating <= 2:  # Low rating - mention as weakness
+                    feature_name = products_metadata.get("features_metadata", {}).get(feature_id, {}).get("name", {}).get("en", feature_id)
+                    feature_value = feature_data.get("value", "")
+                    feature_details.append(f"⚠️ {feature_name}: {feature_value}")
+
+        if feature_ratings:
+            scores["features"] = sum(feature_ratings) / len(feature_ratings)
+            if feature_details:
+                reasons.append(f"Key features: {', '.join(feature_details)}")
+
+        # Calculate weighted final score
+        final_score = (
+            scores["category"] * weights["category"] +
+            scores["use_cases"] * weights["use_cases"] +
+            scores["features"] * weights["features"]
+        )
+
+        # Add product to results if category matches (don't show products from wrong categories)
+        if scores["category"] > 0:
+            matched_products.append({
+                "product_id": product_id,
+                "match_score": round(final_score, 3),
+                "match_reasons": reasons if reasons else ["Partially matches your requirements"]
+            })
+
+    # Sort by match score (highest first)
+    matched_products.sort(key=lambda x: x["match_score"], reverse=True)
+
+    # Create quiz summary
+    quiz_summary = {
+        "category": quiz_answers.category,
+        "use_cases": quiz_answers.useCases,
+        "features": quiz_answers.features,
+        "primary_use_case": quiz_answers.useCases[0] if quiz_answers.useCases else None,
+        "priorities": quiz_answers.features[:3]  # Top 3 feature priorities
+    }
+
+    return QuizResultsResponse(
+        matched_products=[MatchedProduct(**p) for p in matched_products],
+        quiz_summary=quiz_summary
+    )
+
+
+@app.get("/products/recommendations/{product_id}", response_model=ProductRecommendationResponse, tags=["Products"])
+async def get_product_recommendation(
+    product_id: str,
+    user: AuthUser = Depends(get_optional_user)
+):
+    """
+    Get detailed product recommendation including full specs, pros, cons, and best-for.
+
+    Requires authentication (optional - returns limited data for anonymous users).
+
+    Returns:
+    - Full product details
+    - Key specifications with citations
+    - Use case ratings
+    - Feature priority ratings
+    - Pros and cons
+    - Best-for descriptions
+    - Ecosystem and compatibility info
+    """
+    if products_metadata is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Service unavailable: Products metadata not loaded"
+        )
+
+    # Find product by ID
+    product = None
+    for p in products_metadata["products"]:
+        if p["id"] == product_id:
+            product = p
+            break
+
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Product {product_id} not found"
+        )
+
+    return ProductRecommendationResponse(product=product)
 
 
 @app.get("/conversations", response_model=ConversationsListResponse, tags=["Conversations"])

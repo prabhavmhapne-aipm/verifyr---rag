@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Was ist dir am wichtigsten? - Verifyr Quiz</title>
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="/design-system/design-system.css">
+    <link rel="stylesheet" href="/quiz/quiz.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Progress Indicator -->
+        <div class="quiz-progress">
+            <div class="progress-step completed"></div>
+            <div class="progress-step completed"></div>
+            <div class="progress-step active"></div>
+        </div>
+
+        <!-- Quiz Content -->
+        <div class="quiz-content">
+            <!-- Header -->
+            <div class="quiz-header">
+                <h1 id="pageHeading">Was ist dir am wichtigsten?</h1>
+                <p class="quiz-subtitle" id="pageSubheading">Wähle bis zu 5 Prioritäten</p>
+            </div>
+
+            <!-- Selection Counter -->
+            <div style="text-align: center; margin-bottom: var(--spacing-base);">
+                <p style="color: var(--gray); font-size: 0.875rem;">
+                    <span id="selectionCount">0</span> / 5 <span id="selectedText">ausgewählt</span>
+                </p>
+            </div>
+
+            <!-- Selection Grid (dynamically populated) -->
+            <div class="quiz-grid" id="featuresGrid">
+                <!-- Features will be loaded from features.json -->
+            </div>
+
+            <!-- Navigation -->
+            <div class="quiz-navigation">
+                <a href="/quiz/use-case.html" class="btn btn-secondary">
+                    <span id="backBtnText">Zurück</span>
+                </a>
+                <button class="btn btn-primary" id="nextBtn" disabled>
+                    <span id="nextBtnText">Quiz abschließen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/quiz/features.js"></script>
+</body>
+</html>

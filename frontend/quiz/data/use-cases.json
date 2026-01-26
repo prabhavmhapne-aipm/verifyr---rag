@@ -1,0 +1,125 @@
+{
+  "useCases": [
+    {
+      "id": "lifestyle_fitness",
+      "title": {
+        "de": "Lifestyle & Fitness",
+        "en": "Lifestyle & Fitness"
+      },
+      "description": {
+        "de": "Alltägliche Aktivitäten, Fitness und gesunder Lebensstil",
+        "en": "Daily activities, fitness, and healthy lifestyle"
+      },
+      "icon": "/images/quiz/lifestyle_fitness.svg",
+      "icon_emoji": "🏃‍♀️",
+      "position": {
+        "row": 1,
+        "col": 1
+      }
+    },
+    {
+      "id": "running_cycling",
+      "title": {
+        "de": "Laufen & Fahrradfahren",
+        "en": "Running & Cycling"
+      },
+      "description": {
+        "de": "Ausdauersport mit Fokus auf Laufen und Radfahren",
+        "en": "Endurance sports focused on running and cycling"
+      },
+      "icon": "/images/quiz/running_cycling.svg",
+      "icon_emoji": "🏃🚴",
+      "position": {
+        "row": 1,
+        "col": 2
+      }
+    },
+    {
+      "id": "hiking",
+      "title": {
+        "de": "Wandern",
+        "en": "Hiking"
+      },
+      "description": {
+        "de": "Outdoor-Aktivitäten und Bergwandern",
+        "en": "Outdoor activities and mountain hiking"
+      },
+      "icon": "/images/quiz/hiking.svg",
+      "icon_emoji": "🥾",
+      "position": {
+        "row": 2,
+        "col": 1
+      }
+    },
+    {
+      "id": "swimming",
+      "title": {
+        "de": "Schwimmen",
+        "en": "Swimming"
+      },
+      "description": {
+        "de": "Pool- und Freiwasserschwimmen",
+        "en": "Pool and open water swimming"
+      },
+      "icon": "/images/quiz/swimming.svg",
+      "icon_emoji": "🏊",
+      "position": {
+        "row": 2,
+        "col": 2
+      }
+    },
+    {
+      "id": "health_wellbeing",
+      "title": {
+        "de": "Health & Wellbeing",
+        "en": "Health & Wellbeing"
+      },
+      "description": {
+        "de": "Gesundheitsüberwachung, Meditation und Wohlbefinden",
+        "en": "Health monitoring, meditation, and wellbeing"
+      },
+      "icon": "/images/quiz/health_wellbeing.svg",
+      "icon_emoji": "❤️",
+      "position": {
+        "row": 3,
+        "col": 1
+      }
+    },
+    {
+      "id": "competition_performance",
+      "title": {
+        "de": "Wettkampf & Leistung",
+        "en": "Competition & Performance"
+      },
+      "description": {
+        "de": "Leistungsorientiertes Training und Wettkämpfe",
+        "en": "Performance-oriented training and competitions"
+      },
+      "icon": "/images/quiz/competition_performance.svg",
+      "icon_emoji": "🏆",
+      "position": {
+        "row": 3,
+        "col": 2
+      }
+    }
+  ],
+  "metadata": {
+    "total_use_cases": 6,
+    "selection_type": "multi",
+    "max_selections": null,
+    "min_selections": 1,
+    "grid_layout": "2x3",
+    "card_dimensions": {
+      "width": "150px",
+      "height": "168px"
+    },
+    "screen_info": {
+      "screen_number": 3,
+      "figma_node_id": "63-6051",
+      "heading_de": "Wofür Hauptsächlich?",
+      "heading_en": "What mainly for?",
+      "subheading_de": "Wähle alle Zutreffend aus",
+      "subheading_en": "Choose all that apply"
+    }
+  }
+}

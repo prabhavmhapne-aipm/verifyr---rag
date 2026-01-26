@@ -1,0 +1,827 @@
+{
+  "products": [
+    {
+      "id": "apple_watch_series11_2025",
+      "display_name": {
+        "de": "Apple Watch Series 11",
+        "en": "Apple Watch Series 11"
+      },
+      "brand": "Apple",
+      "category": "smartwatch_fitness",
+      "price_range": {
+        "de": "€449-€899",
+        "en": "€449-€899"
+      },
+      "release_year": 2025,
+      "image_url": "/images/products/apple_watch_s11.jpg",
+      "key_specs": {
+        "battery_life": {
+          "de": "Bis zu 24 Std. (38 Std. im Stromsparmodus)",
+          "en": "Up to 24 hours (38 hours in power-saving mode)",
+          "smartwatch_mode_days": 1,
+          "gps_mode_hours": 18,
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 3"
+        },
+        "water_resistance": {
+          "de": "50m (5 ATM), schwimmfest",
+          "en": "50m (5 ATM), swim-proof",
+          "meters": 50,
+          "atm": 5,
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 6"
+        },
+        "display": {
+          "de": "Always-On Retina LTPO3 OLED, bis zu 2.000 Nits",
+          "en": "Always-On Retina LTPO3 OLED, up to 2,000 nits",
+          "type": "AMOLED",
+          "always_on": true,
+          "touchscreen": true,
+          "brightness_nits": 2000,
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 3"
+        },
+        "sensors": {
+          "de": "EKG, Blutsauerstoff, Temperatursensor, Unfallerkennung, optischer Herzsensor 3. Gen",
+          "en": "ECG, Blood Oxygen, Temperature sensor, Crash Detection, 3rd gen optical heart rate",
+          "list": ["ecg", "blood_oxygen", "temperature", "crash_detection", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 2"
+        },
+        "connectivity": {
+          "de": "5G, LTE, GPS (L1 + GLONASS + Galileo), Wi-Fi 4, Bluetooth 5.3",
+          "en": "5G, LTE, GPS (L1 + GLONASS + Galileo), Wi-Fi 4, Bluetooth 5.3",
+          "gps": true,
+          "cellular": true,
+          "wifi": true,
+          "bluetooth": "5.3",
+          "nfc": true,
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 6"
+        },
+        "storage": {
+          "de": "64 GB",
+          "en": "64 GB",
+          "gb": 64,
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 2"
+        },
+        "weight": {
+          "de": "30,3-43,1 g (je nach Modell)",
+          "en": "30.3-43.1 g (depending on model)",
+          "grams": 37,
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 1"
+        },
+        "materials": {
+          "de": "Aluminium oder Titan, Saphirglas (Titan) / Ion-X Glas (Aluminium)",
+          "en": "Aluminum or Titanium, Sapphire glass (Titanium) / Ion-X glass (Aluminum)",
+          "case_options": ["aluminum", "titanium"],
+          "glass_type": ["ion-x", "sapphire"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 1"
+        }
+      },
+      "use_cases": {
+        "running": {
+          "supported": true,
+          "rating": 4,
+          "features": ["pace_tracking", "route_tracking", "stride_length", "auto_track_detection", "heart_rate_zones"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 4"
+        },
+        "swimming": {
+          "supported": true,
+          "rating": 4,
+          "features": ["pool_swimming", "open_water", "auto_lap", "swolf", "stroke_detection"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 4-5"
+        },
+        "cycling": {
+          "supported": true,
+          "rating": 3,
+          "features": ["speed_tracking", "elevation", "bluetooth_accessories", "power_zones"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 4"
+        },
+        "hiking": {
+          "supported": true,
+          "rating": 4,
+          "features": ["compass", "elevation", "backtrack_gps", "offline_maps", "topographic_maps", "waypoints"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 4"
+        },
+        "health_tracking": {
+          "supported": true,
+          "rating": 5,
+          "features": ["ecg", "blood_oxygen", "temperature", "sleep_tracking", "sleep_apnea", "blood_pressure_notifications", "cycle_tracking", "heart_rate_monitoring"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 2-3"
+        },
+        "daily_wear": {
+          "supported": true,
+          "rating": 5,
+          "features": ["notifications", "calls", "messaging", "apple_pay", "music_playback", "siri", "app_ecosystem"],
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 6"
+        }
+      },
+      "feature_priorities": {
+        "long_battery": {
+          "rating": 2,
+          "value": "24 hours",
+          "notes": "Requires daily charging"
+        },
+        "water_resistance": {
+          "rating": 4,
+          "value": "50m / 5 ATM",
+          "notes": "Swim-proof, suitable for pool and open water"
+        },
+        "gps_accuracy": {
+          "rating": 4,
+          "value": "Multi-GNSS (GPS, GLONASS, Galileo, QZSS, BeiDou)",
+          "notes": "Excellent accuracy for outdoor activities"
+        },
+        "health_sensors": {
+          "rating": 5,
+          "value": "ECG, Blood Oxygen, Temperature, Sleep Apnea, Blood Pressure",
+          "notes": "Industry-leading health monitoring"
+        },
+        "music_storage": {
+          "rating": 5,
+          "value": "64 GB storage",
+          "notes": "Extensive music storage, Apple Music integration"
+        },
+        "touchscreen": {
+          "rating": 5,
+          "value": "Always-On Retina OLED touchscreen",
+          "notes": "Premium display with 2,000 nits brightness"
+        },
+        "durability": {
+          "rating": 4,
+          "value": "IP6X dust-proof, 50m water resistance",
+          "notes": "Durable for daily use, not rugged"
+        },
+        "smart_features": {
+          "rating": 5,
+          "value": "Full iOS integration, App Store, Apple Pay, Siri",
+          "notes": "Best-in-class smart features for iPhone users"
+        },
+        "design": {
+          "rating": 5,
+          "value": "Premium aluminum/titanium, multiple colors",
+          "notes": "Elegant, fashion-forward design"
+        },
+        "notifications": {
+          "rating": 5,
+          "value": "Full iOS notification support, calls, messages",
+          "notes": "Seamless iPhone integration"
+        },
+        "training_metrics": {
+          "rating": 3,
+          "value": "Basic training metrics, heart rate zones",
+          "notes": "Good for casual athletes, limited advanced metrics"
+        },
+        "sleep_tracking": {
+          "rating": 4,
+          "value": "Sleep stages, Sleep Score, Sleep Apnea detection",
+          "notes": "Comprehensive sleep tracking"
+        },
+        "price_value": {
+          "rating": 3,
+          "value": "€449-€899",
+          "notes": "Premium pricing"
+        },
+        "offline_maps": {
+          "rating": 4,
+          "value": "Offline maps, topographic maps (US parks)",
+          "notes": "Good for hiking, US-focused"
+        }
+      },
+      "ecosystem": "apple",
+      "compatibility": {
+        "de": "iPhone 11 oder neuer mit iOS 26 oder neuer",
+        "en": "iPhone 11 or newer with iOS 26 or newer",
+        "platforms": ["iOS"]
+      },
+      "pros": {
+        "de": [
+          "Hervorragende Gesundheitssensoren (EKG, Blutsauerstoff, Temperatur, Bluthochdruck-Erkennung)",
+          "Nahtlose Integration ins Apple-Ökosystem",
+          "Premium Display mit 2.000 Nits Helligkeit",
+          "Umfangreiche App-Auswahl über den App Store",
+          "Elegantes, modernes Design"
+        ],
+        "en": [
+          "Excellent health sensors (ECG, Blood Oxygen, Temperature, Blood Pressure detection)",
+          "Seamless Apple ecosystem integration",
+          "Premium display with 2,000 nits brightness",
+          "Extensive app selection via App Store",
+          "Elegant, modern design"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Begrenzte Akkulaufzeit (tägliches Laden erforderlich)",
+          "Nur mit iPhone kompatibel",
+          "Höherer Preis im Vergleich zu Konkurrenten",
+          "Weniger fortgeschrittene Trainingsmetriken für Profi-Sportler"
+        ],
+        "en": [
+          "Limited battery life (daily charging required)",
+          "Only compatible with iPhone",
+          "Higher price compared to competitors",
+          "Fewer advanced training metrics for pro athletes"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "iPhone-Nutzer im Apple-Ökosystem",
+          "Gesundheitsbewusste Nutzer",
+          "Nutzer, die Wert auf Design und Smart-Features legen",
+          "Casual bis fortgeschrittene Sportler"
+        ],
+        "en": [
+          "iPhone users in the Apple ecosystem",
+          "Health-conscious users",
+          "Users who value design and smart features",
+          "Casual to advanced athletes"
+        ]
+      }
+    },
+    {
+      "id": "garmin_forerunner_970_2025",
+      "display_name": {
+        "de": "Garmin Forerunner 970",
+        "en": "Garmin Forerunner 970"
+      },
+      "brand": "Garmin",
+      "category": "smartwatch_fitness",
+      "price_range": {
+        "de": "€599-€649",
+        "en": "€599-€649"
+      },
+      "release_year": 2025,
+      "image_url": "/images/products/garmin_forerunner_970.jpg",
+      "key_specs": {
+        "battery_life": {
+          "de": "Bis zu 15 Tage (Smartwatch), 26 Std. (GPS), 21 Std. (Multiband GPS)",
+          "en": "Up to 15 days (smartwatch), 26 hours (GPS), 21 hours (multiband GPS)",
+          "smartwatch_mode_days": 15,
+          "gps_mode_hours": 26,
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1-2"
+        },
+        "water_resistance": {
+          "de": "50m (5 ATM), schwimmfest",
+          "en": "50m (5 ATM), swim-proof",
+          "meters": 50,
+          "atm": 5,
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "display": {
+          "de": "1,4\" AMOLED (454x454 Pixel), optional Always-On, Touchscreen, Saphirglas",
+          "en": "1.4\" AMOLED (454x454 pixels), optional Always-On, Touchscreen, Sapphire glass",
+          "type": "AMOLED",
+          "always_on": true,
+          "touchscreen": true,
+          "brightness_nits": null,
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "sensors": {
+          "de": "EKG, Pulse Ox, Hauttemperatur, LED-Taschenlampe, optischer Herzsensor, Höhenmesser",
+          "en": "ECG, Pulse Ox, Skin Temperature, LED Flashlight, Optical heart rate, Altimeter",
+          "list": ["ecg", "pulse_ox", "skin_temperature", "led_flashlight", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1-2"
+        },
+        "connectivity": {
+          "de": "Multi-Frequenz GNSS (GPS, GLONASS, Galileo), Wi-Fi, Bluetooth, ANT+",
+          "en": "Multi-frequency GNSS (GPS, GLONASS, Galileo), Wi-Fi, Bluetooth, ANT+",
+          "gps": true,
+          "cellular": false,
+          "wifi": true,
+          "bluetooth": true,
+          "nfc": true,
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "storage": {
+          "de": "32 GB",
+          "en": "32 GB",
+          "gb": 32,
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 2"
+        },
+        "weight": {
+          "de": "56 g",
+          "en": "56 g",
+          "grams": 56,
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "materials": {
+          "de": "Titanium DLC Lünette, Saphirglas, Silikon-Armband",
+          "en": "Titanium DLC bezel, Sapphire glass, Silicone strap",
+          "case_options": ["titanium"],
+          "glass_type": ["sapphire"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        }
+      },
+      "use_cases": {
+        "running": {
+          "supported": true,
+          "rating": 5,
+          "features": ["advanced_running_metrics", "training_readiness", "vo2_max", "race_predictor", "running_power", "running_dynamics"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "swimming": {
+          "supported": true,
+          "rating": 4,
+          "features": ["pool_swimming", "open_water", "stroke_detection", "swolf"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "cycling": {
+          "supported": true,
+          "rating": 4,
+          "features": ["power_meter_support", "cycling_dynamics", "vo2_max_cycling", "ftp"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "hiking": {
+          "supported": true,
+          "rating": 5,
+          "features": ["preloaded_maps", "compass", "altimeter", "led_flashlight", "multi_gnss"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "health_tracking": {
+          "supported": true,
+          "rating": 4,
+          "features": ["ecg", "pulse_ox", "skin_temperature", "sleep_score", "body_battery", "stress_tracking", "respiration_rate"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 2-3"
+        },
+        "daily_wear": {
+          "supported": true,
+          "rating": 3,
+          "features": ["notifications", "music_storage", "garmin_pay", "calls_via_bluetooth"],
+          "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        }
+      },
+      "feature_priorities": {
+        "long_battery": {
+          "rating": 5,
+          "value": "15 days smartwatch mode",
+          "notes": "Exceptional battery life for multi-day activities"
+        },
+        "water_resistance": {
+          "rating": 4,
+          "value": "50m / 5 ATM",
+          "notes": "Swim-proof, suitable for pool and open water"
+        },
+        "gps_accuracy": {
+          "rating": 5,
+          "value": "Multi-band GNSS (GPS, GLONASS, Galileo)",
+          "notes": "Best-in-class GPS accuracy with multi-frequency support"
+        },
+        "health_sensors": {
+          "rating": 4,
+          "value": "ECG, Pulse Ox, Skin Temperature, Body Battery",
+          "notes": "Comprehensive health tracking, slightly behind Apple"
+        },
+        "music_storage": {
+          "rating": 4,
+          "value": "32 GB storage",
+          "notes": "Ample music storage"
+        },
+        "touchscreen": {
+          "rating": 4,
+          "value": "1.4\" AMOLED touchscreen with buttons",
+          "notes": "Hybrid touch + button interface"
+        },
+        "durability": {
+          "rating": 5,
+          "value": "Titanium DLC, Sapphire glass, 50m water resistance",
+          "notes": "Extremely durable, built for outdoor use"
+        },
+        "smart_features": {
+          "rating": 3,
+          "value": "Notifications, Garmin Pay, limited app ecosystem",
+          "notes": "Basic smart features, not a full smartwatch"
+        },
+        "design": {
+          "rating": 3,
+          "value": "Sporty, functional design",
+          "notes": "Less fashion-forward, more technical"
+        },
+        "notifications": {
+          "rating": 3,
+          "value": "Basic notifications, calls via Bluetooth",
+          "notes": "Limited compared to full smartwatches"
+        },
+        "training_metrics": {
+          "rating": 5,
+          "value": "Advanced running dynamics, VO2 Max, Training Readiness, Race Predictor, Power Metrics",
+          "notes": "Best-in-class for serious athletes"
+        },
+        "sleep_tracking": {
+          "rating": 4,
+          "value": "Sleep Score, Sleep Coach, advanced sleep stages",
+          "notes": "Comprehensive sleep analysis"
+        },
+        "price_value": {
+          "rating": 4,
+          "value": "€599-€649",
+          "notes": "Good value for serious athletes"
+        },
+        "offline_maps": {
+          "rating": 5,
+          "value": "Preloaded topographic maps",
+          "notes": "Excellent for hiking and outdoor navigation"
+        }
+      },
+      "ecosystem": "garmin",
+      "compatibility": {
+        "de": "iOS und Android",
+        "en": "iOS and Android",
+        "platforms": ["iOS", "Android"]
+      },
+      "pros": {
+        "de": [
+          "Herausragende Akkulaufzeit (bis zu 15 Tage)",
+          "Fortgeschrittene Trainingsmetriken für ernsthafte Sportler",
+          "Multi-Band GNSS für präzise GPS-Genauigkeit",
+          "Vorinstallierte Karten und LED-Taschenlampe",
+          "Robustes Titanium-Design mit Saphirglas",
+          "Plattformübergreifend (iOS & Android)"
+        ],
+        "en": [
+          "Outstanding battery life (up to 15 days)",
+          "Advanced training metrics for serious athletes",
+          "Multi-band GNSS for precise GPS accuracy",
+          "Preloaded maps and LED flashlight",
+          "Rugged titanium design with sapphire glass",
+          "Cross-platform (iOS & Android)"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Begrenztes Smart-Feature-Ökosystem im Vergleich zu Apple Watch",
+          "Weniger modisches Design",
+          "Keine Mobilfunkverbindung",
+          "Komplexere Benutzeroberfläche für Anfänger"
+        ],
+        "en": [
+          "Limited smart feature ecosystem compared to Apple Watch",
+          "Less fashionable design",
+          "No cellular connectivity",
+          "More complex user interface for beginners"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "Ernsthafte Läufer und Triathleten",
+          "Outdoor-Enthusiasten und Wanderer",
+          "Nutzer, die Akkulaufzeit und GPS-Genauigkeit priorisieren",
+          "Android-Nutzer",
+          "Athleten, die fortgeschrittene Trainingsmetriken benötigen"
+        ],
+        "en": [
+          "Serious runners and triathletes",
+          "Outdoor enthusiasts and hikers",
+          "Users prioritizing battery life and GPS accuracy",
+          "Android users",
+          "Athletes requiring advanced training metrics"
+        ]
+      }
+    }
+  ],
+  "categories": {
+    "smartwatch": {
+      "id": "smartwatch",
+      "name": {
+        "de": "Smartwatch & Fitnesstrackers",
+        "en": "Smartwatch & Fitness Trackers"
+      },
+      "subtitle": {
+        "de": "Für Training & Alltag",
+        "en": "For Training & Daily Use"
+      },
+      "description": {
+        "de": "Vielseitige Allrounder mit Smart-Features, Fitness-Tracking und Benachrichtigungen",
+        "en": "Versatile all-rounders with smart features, fitness tracking, and notifications"
+      },
+      "icon": "/images/quiz/smartwatch.svg",
+      "products": ["apple_watch_series11_2025", "garmin_forerunner_970_2025"]
+    },
+    "running_watch": {
+      "id": "running_watch",
+      "name": {
+        "de": "Laufuhr",
+        "en": "Running Watch"
+      },
+      "subtitle": {
+        "de": "Für ernsthafte Läufer",
+        "en": "For Serious Runners"
+      },
+      "description": {
+        "de": "Spezialisierte Uhren für Läufer mit fortgeschrittenen Laufmetriken",
+        "en": "Specialized watches for runners with advanced running metrics"
+      },
+      "icon": "/images/quiz/running.svg",
+      "products": ["garmin_forerunner_970_2025"]
+    },
+    "recovery_sleep": {
+      "id": "recovery_sleep",
+      "name": {
+        "de": "Recovery & Sleep",
+        "en": "Recovery & Sleep"
+      },
+      "subtitle": {
+        "de": "Für bessere Regeneration",
+        "en": "For Better Recovery"
+      },
+      "description": {
+        "de": "Geräte mit Fokus auf Schlaf-Tracking und Erholung",
+        "en": "Devices focused on sleep tracking and recovery"
+      },
+      "icon": "/images/quiz/sleep.svg",
+      "products": []
+    },
+    "heart_rate_monitors": {
+      "id": "heart_rate_monitors",
+      "name": {
+        "de": "Herzfrequenzmesser",
+        "en": "Heart Rate Monitors"
+      },
+      "subtitle": {
+        "de": "Präzise Herzfrequenz",
+        "en": "Precise Heart Rate"
+      },
+      "description": {
+        "de": "Brustgurte und Armbänder für präzise Herzfrequenzmessung",
+        "en": "Chest straps and armbands for precise heart rate measurement"
+      },
+      "icon": "/images/quiz/heart.svg",
+      "products": []
+    },
+    "sport_earbuds": {
+      "id": "sport_earbuds",
+      "name": {
+        "de": "Sport Earbuds",
+        "en": "Sport Earbuds"
+      },
+      "subtitle": {
+        "de": "Für dein Workout",
+        "en": "For Your Workout"
+      },
+      "description": {
+        "de": "Wasserdichte Kopfhörer für Sport und Training",
+        "en": "Waterproof earbuds for sports and training"
+      },
+      "icon": "/images/quiz/earbuds.svg",
+      "products": []
+    },
+    "womens_health": {
+      "id": "womens_health",
+      "name": {
+        "de": "Frauen Health Tech",
+        "en": "Women's Health Tech"
+      },
+      "subtitle": {
+        "de": "Zyklus & Fruchtbarkeit",
+        "en": "Cycle & Fertility"
+      },
+      "description": {
+        "de": "Geräte für Zyklus-Tracking und Fruchtbarkeitsüberwachung",
+        "en": "Devices for cycle tracking and fertility monitoring"
+      },
+      "icon": "/images/quiz/womens_health.svg",
+      "products": []
+    }
+  },
+  "use_cases_metadata": {
+    "running": {
+      "id": "running",
+      "name": {
+        "de": "Laufen & Joggen",
+        "en": "Running & Jogging"
+      },
+      "icon": "🏃",
+      "weight": 5
+    },
+    "swimming": {
+      "id": "swimming",
+      "name": {
+        "de": "Schwimmen",
+        "en": "Swimming"
+      },
+      "icon": "🏊",
+      "weight": 4
+    },
+    "cycling": {
+      "id": "cycling",
+      "name": {
+        "de": "Radfahren",
+        "en": "Cycling"
+      },
+      "icon": "🚴",
+      "weight": 4
+    },
+    "hiking": {
+      "id": "hiking",
+      "name": {
+        "de": "Wandern",
+        "en": "Hiking"
+      },
+      "icon": "🥾",
+      "weight": 4
+    },
+    "health_tracking": {
+      "id": "health_tracking",
+      "name": {
+        "de": "Gesundheits-Tracking",
+        "en": "Health Tracking"
+      },
+      "icon": "❤️",
+      "weight": 5
+    },
+    "daily_wear": {
+      "id": "daily_wear",
+      "name": {
+        "de": "Alltag & Smart-Features",
+        "en": "Daily Wear & Smart Features"
+      },
+      "icon": "📱",
+      "weight": 3
+    }
+  },
+  "features_metadata": {
+    "long_battery": {
+      "id": "long_battery",
+      "name": {
+        "de": "Lange Akkulaufzeit",
+        "en": "Long Battery Life"
+      },
+      "description": {
+        "de": "Mehrere Tage ohne Aufladen",
+        "en": "Multiple days without charging"
+      },
+      "image": "/images/quiz/long_battery.jpg",
+      "weight": 4
+    },
+    "water_resistance": {
+      "id": "water_resistance",
+      "name": {
+        "de": "Wasserdicht & Robust",
+        "en": "Waterproof & Robust"
+      },
+      "description": {
+        "de": "Schwimmen und Tauchen",
+        "en": "Swimming and diving"
+      },
+      "image": "/images/quiz/water_resistance.jpg",
+      "weight": 3
+    },
+    "gps_accuracy": {
+      "id": "gps_accuracy",
+      "name": {
+        "de": "Präzise GPS & Sensoren",
+        "en": "Precise GPS & Sensors"
+      },
+      "description": {
+        "de": "Präzise Streckenaufzeichnung",
+        "en": "Precise route tracking"
+      },
+      "image": "/images/quiz/gps_accuracy.jpg",
+      "weight": 4
+    },
+    "health_sensors": {
+      "id": "health_sensors",
+      "name": {
+        "de": "EKG / HRV Monitor",
+        "en": "ECG / HRV Monitor"
+      },
+      "description": {
+        "de": "EKG, Blutsauerstoff, Temperatur",
+        "en": "ECG, Blood Oxygen, Temperature"
+      },
+      "image": "/images/quiz/health_sensors.jpg",
+      "weight": 5
+    },
+    "music_storage": {
+      "id": "music_storage",
+      "name": {
+        "de": "Smartphone unabhängig",
+        "en": "Smartphone Independent"
+      },
+      "description": {
+        "de": "Musik ohne Smartphone",
+        "en": "Music without smartphone"
+      },
+      "image": "/images/quiz/music_storage.jpg",
+      "weight": 2
+    },
+    "touchscreen": {
+      "id": "touchscreen",
+      "name": {
+        "de": "Mit Display",
+        "en": "With Display"
+      },
+      "description": {
+        "de": "Intuitive Touch-Bedienung",
+        "en": "Intuitive touch control"
+      },
+      "image": "/images/quiz/touchscreen.jpg",
+      "weight": 3
+    },
+    "durability": {
+      "id": "durability",
+      "name": {
+        "de": "Leicht & Komfortabel",
+        "en": "Light & Comfortable"
+      },
+      "description": {
+        "de": "Geringes Gewicht für hohen Tragekomfort",
+        "en": "Low weight for high wearing comfort"
+      },
+      "image": "/images/quiz/durability.jpg",
+      "weight": 3
+    },
+    "smart_features": {
+      "id": "smart_features",
+      "name": {
+        "de": "App Integration & Ecosystem",
+        "en": "App Integration & Ecosystem"
+      },
+      "description": {
+        "de": "Apps, Bezahlen, Anrufe",
+        "en": "Apps, payments, calls"
+      },
+      "image": "/images/quiz/smart_features.jpg",
+      "weight": 4
+    },
+    "design": {
+      "id": "design",
+      "name": {
+        "de": "Digital, Smart & Modern",
+        "en": "Digital, Smart & Modern"
+      },
+      "description": {
+        "de": "Modernes digitales Design",
+        "en": "Modern digital design"
+      },
+      "image": "/images/quiz/design_modern.jpg",
+      "weight": 2
+    },
+    "design_classic": {
+      "id": "design_classic",
+      "name": {
+        "de": "Analog, Smart & Klassich",
+        "en": "Analog, Smart & Classic"
+      },
+      "description": {
+        "de": "Klassisches analoges Design",
+        "en": "Classic analog design"
+      },
+      "image": "/images/quiz/design_classic.jpg",
+      "weight": 2
+    },
+    "no_display": {
+      "id": "no_display",
+      "name": {
+        "de": "Ohne Display / Diskret",
+        "en": "Without Display / Discreet"
+      },
+      "description": {
+        "de": "Diskret ohne Display",
+        "en": "Discreet without display"
+      },
+      "image": "/images/quiz/no_display.jpg",
+      "weight": 2
+    },
+    "sleep_tracking": {
+      "id": "sleep_tracking",
+      "name": {
+        "de": "Sleep Monitor",
+        "en": "Sleep Monitor"
+      },
+      "description": {
+        "de": "Schlafphasen und -qualität",
+        "en": "Sleep stages and quality"
+      },
+      "image": "/images/quiz/sleep_monitor.jpg",
+      "weight": 4
+    },
+    "stress_tracking": {
+      "id": "stress_tracking",
+      "name": {
+        "de": "Body / Stress Monitor",
+        "en": "Body / Stress Monitor"
+      },
+      "description": {
+        "de": "Stresslevel und Erholung",
+        "en": "Stress levels and recovery"
+      },
+      "image": "/images/quiz/stress_monitor.jpg",
+      "weight": 3
+    },
+    "training_metrics": {
+      "id": "training_metrics",
+      "name": {
+        "de": "VO2 Max Tracker",
+        "en": "VO2 Max Tracker"
+      },
+      "description": {
+        "de": "VO2 Max und Trainingsmetriken",
+        "en": "VO2 Max and training metrics"
+      },
+      "image": "/images/quiz/vo2_max.jpg",
+      "weight": 5
+    }
+  },
+  "scoring_weights": {
+    "category": 0.40,
+    "use_cases": 0.35,
+    "features": 0.25
+  }
+}

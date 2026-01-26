@@ -321,7 +321,8 @@ function redirectAfterLogin(session) {
     if (isAdmin) {
         window.location.href = '/admin.html';
     } else {
-        window.location.href = '/chat.html';
+        // Redirect to quiz first (new user flow)
+        window.location.href = '/quiz/category.html';
     }
 }
 
