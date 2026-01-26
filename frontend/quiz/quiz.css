@@ -15,6 +15,12 @@
     align-items: center;
 }
 
+/* Logo at top of quiz (matching chat.html) */
+.quiz-container .logo {
+    text-decoration: none;
+    margin-bottom: var(--spacing-xl);
+}
+
 .quiz-content {
     max-width: 800px;
     width: 100%;
