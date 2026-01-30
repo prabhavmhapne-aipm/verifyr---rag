@@ -10,7 +10,7 @@
         "de": "Geringes Gewicht für hohen Tragekomfort",
         "en": "Low weight for high wearing comfort"
       },
-      "image": "/images/quiz/light_comfortable.jpg",
+      "image": "/images/quiz/light_comfortable.png",
       "priority": 1,
       "position": {
         "row": 1,
@@ -27,7 +27,7 @@
         "de": "Mehrere Tage ohne Aufladen",
         "en": "Multiple days without charging"
       },
-      "image": "/images/quiz/long_battery.jpg",
+      "image": "/images/quiz/long_battery.png",
       "priority": 2,
       "position": {
         "row": 1,
@@ -44,7 +44,7 @@
         "de": "Schwimmen, Tauchen und extreme Bedingungen",
         "en": "Swimming, diving, and extreme conditions"
       },
-      "image": "/images/quiz/water_resistance.jpg",
+      "image": "/images/quiz/water_resistance.png",
       "priority": 3,
       "position": {
         "row": 2,
@@ -61,7 +61,7 @@
         "de": "Multi-Band GNSS für beste Genauigkeit",
         "en": "Multi-band GNSS for best accuracy"
       },
-      "image": "/images/quiz/gps_accuracy.jpg",
+      "image": "/images/quiz/gps_accuracy.png",
       "priority": 4,
       "position": {
         "row": 2,
@@ -78,7 +78,7 @@
         "de": "Musik, Anrufe und Nachrichten ohne Handy",
         "en": "Music, calls, and messages without phone"
       },
-      "image": "/images/quiz/smartphone_independent.jpg",
+      "image": "/images/quiz/smartphone_independent.png",
       "priority": 5,
       "position": {
         "row": 3,
@@ -95,7 +95,7 @@
         "de": "Breite App-Auswahl und Drittanbieter-Integration",
         "en": "Wide app selection and third-party integration"
       },
-      "image": "/images/quiz/app_ecosystem.jpg",
+      "image": "/images/quiz/app_ecosystem.png",
       "priority": 6,
       "position": {
         "row": 3,
@@ -112,7 +112,7 @@
         "de": "Modernes digitales Design mit Touchscreen",
         "en": "Modern digital design with touchscreen"
       },
-      "image": "/images/quiz/design_modern.jpg",
+      "image": "/images/quiz/design_modern.png",
       "priority": 7,
       "position": {
         "row": 4,
@@ -129,7 +129,7 @@
         "de": "Klassisches analoges Design mit Smart-Features",
         "en": "Classic analog design with smart features"
       },
-      "image": "/images/quiz/design_classic.jpg",
+      "image": "/images/quiz/design_classic.png",
       "priority": 8,
       "position": {
         "row": 4,
@@ -146,7 +146,7 @@
         "de": "Farbdisplay mit Touchscreen",
         "en": "Color display with touchscreen"
       },
-      "image": "/images/quiz/with_display.jpg",
+      "image": "/images/quiz/with_display.png",
       "priority": 9,
       "position": {
         "row": 5,
@@ -163,7 +163,7 @@
         "de": "Diskret ohne Display, LED-Benachrichtigungen",
         "en": "Discreet without display, LED notifications"
       },
-      "image": "/images/quiz/no_display.jpg",
+      "image": "/images/quiz/no_display.png",
       "priority": 10,
       "position": {
         "row": 5,
@@ -180,7 +180,7 @@
         "de": "Schlafphasen, Schlafqualität und Schlaf-Score",
         "en": "Sleep stages, quality, and sleep score"
       },
-      "image": "/images/quiz/sleep_monitor.jpg",
+      "image": "/images/quiz/sleep_monitor.png",
       "priority": 11,
       "position": {
         "row": 6,
@@ -197,7 +197,7 @@
         "de": "Stresslevel, Body Battery und Erholung",
         "en": "Stress levels, body battery, and recovery"
       },
-      "image": "/images/quiz/stress_monitor.jpg",
+      "image": "/images/quiz/stress_monitor.png",
       "priority": 12,
       "position": {
         "row": 6,
@@ -214,7 +214,7 @@
         "de": "EKG-Messungen und Herzfrequenzvariabilität",
         "en": "ECG measurements and heart rate variability"
       },
-      "image": "/images/quiz/ecg_hrv.jpg",
+      "image": "/images/quiz/ecg_hrv.png",
       "priority": 13,
       "position": {
         "row": 7,
@@ -231,7 +231,7 @@
         "de": "VO2 Max, Trainingsbereitschaft und Leistungsmetriken",
         "en": "VO2 Max, training readiness, and performance metrics"
       },
-      "image": "/images/quiz/vo2_max.jpg",
+      "image": "/images/quiz/vo2_max.png",
       "priority": 14,
       "position": {
         "row": 7,

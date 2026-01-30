@@ -75,8 +75,10 @@ class CategoryController {
         card.className = 'selection-card';
         card.dataset.categoryId = category.id;
 
-        // Use emoji icon
-        const icon = category.icon_emoji || '⌚';
+        // Use image if available, fallback to emoji icon
+        const iconHtml = category.icon
+            ? `<img src="${category.icon}" alt="${category.id}" class="card-image">`
+            : `<div class="card-icon">${category.icon_emoji || '⌚'}</div>`;
 
         // Get localized text
         const title = category.title[this.currentLanguage] || category.title.de;
@@ -84,10 +86,11 @@ class CategoryController {
         const description = category.description?.[this.currentLanguage] || category.description?.de || '';
 
         card.innerHTML = `
-            <div class="card-icon">${icon}</div>
-            <h3 class="card-title">${title}</h3>
-            ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ''}
-            ${description ? `<p class="card-description">${description}</p>` : ''}
+            ${iconHtml}
+            <div class="card-text">
+                <h3 class="card-title">${title}</h3>
+                ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ''}
+            </div>
         `;
 
         return card;
@@ -106,6 +109,11 @@ class CategoryController {
         document.getElementById('nextBtn').addEventListener('click', () => {
             this.handleNext();
         });
+
+        // Next arrow button (desktop)
+        document.getElementById('nextBtnArrow').addEventListener('click', () => {
+            this.handleNext();
+        });
     }
 
     handleCardClick(card) {
@@ -120,8 +128,9 @@ class CategoryController {
         card.classList.add('selected');
         this.selectedCategory = categoryId;
 
-        // Enable next button
+        // Enable next button and arrow
         document.getElementById('nextBtn').disabled = false;
+        document.getElementById('nextBtnArrow').disabled = false;
 
         console.log('Selected category:', categoryId);
     }
@@ -153,6 +162,7 @@ class CategoryController {
                 if (card) {
                     card.classList.add('selected');
                     document.getElementById('nextBtn').disabled = false;
+                    document.getElementById('nextBtnArrow').disabled = false;
                 }
 
                 console.log('Restored previous selection:', this.selectedCategory);
@@ -190,4 +200,36 @@ class CategoryController {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     new CategoryController();
+});
+
+// Language switcher functionality
+function switchLanguage(lang) {
+    // Store preference
+    localStorage.setItem('preferredLanguage', lang);
+
+    // Update active state
+    document.querySelectorAll('.lang-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-lang') === lang) {
+            option.classList.add('active');
+        }
+    });
+
+    // TODO: Implement actual translation logic
+    // For now, just store preference for future use
+    console.log(`Language switched to: ${lang}`);
+}
+
+// Initialize language on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('preferredLanguage') || 'de';
+    const langOption = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
+    if (langOption) {
+        langOption.classList.add('active');
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            if (opt !== langOption) {
+                opt.classList.remove('active');
+            }
+        });
+    }
 });

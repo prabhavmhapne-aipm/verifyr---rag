@@ -91,17 +91,20 @@ class UseCaseController {
         card.className = 'selection-card';
         card.dataset.useCaseId = useCase.id;
 
-        // Use emoji icon
-        const icon = useCase.icon_emoji || '🏃';
+        // Use image if available, fallback to emoji icon
+        const iconHtml = useCase.icon
+            ? `<img src="${useCase.icon}" alt="${useCase.id}" class="card-image">`
+            : `<div class="card-icon">${useCase.icon_emoji || '🏃'}</div>`;
 
         // Get localized text
         const title = useCase.title[this.currentLanguage] || useCase.title.de;
         const description = useCase.description?.[this.currentLanguage] || useCase.description?.de || '';
 
         card.innerHTML = `
-            <div class="card-icon">${icon}</div>
-            <h3 class="card-title">${title}</h3>
-            ${description ? `<p class="card-description">${description}</p>` : ''}
+            ${iconHtml}
+            <div class="card-text">
+                <h3 class="card-title">${title}</h3>
+            </div>
         `;
 
         return card;
@@ -118,6 +121,11 @@ class UseCaseController {
 
         // Next button
         document.getElementById('nextBtn').addEventListener('click', () => {
+            this.handleNext();
+        });
+
+        // Next arrow button (desktop)
+        document.getElementById('nextBtnArrow').addEventListener('click', () => {
             this.handleNext();
         });
     }
@@ -148,6 +156,7 @@ class UseCaseController {
     updateNextButton() {
         const hasSelection = this.selectedUseCases.length > 0;
         document.getElementById('nextBtn').disabled = !hasSelection;
+        document.getElementById('nextBtnArrow').disabled = !hasSelection;
     }
 
     handleNext() {
@@ -215,4 +224,36 @@ class UseCaseController {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     new UseCaseController();
+});
+
+// Language switcher functionality
+function switchLanguage(lang) {
+    // Store preference
+    localStorage.setItem('preferredLanguage', lang);
+
+    // Update active state
+    document.querySelectorAll('.lang-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-lang') === lang) {
+            option.classList.add('active');
+        }
+    });
+
+    // TODO: Implement actual translation logic
+    // For now, just store preference for future use
+    console.log(`Language switched to: ${lang}`);
+}
+
+// Initialize language on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('preferredLanguage') || 'de';
+    const langOption = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
+    if (langOption) {
+        langOption.classList.add('active');
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            if (opt !== langOption) {
+                opt.classList.remove('active');
+            }
+        });
+    }
 });

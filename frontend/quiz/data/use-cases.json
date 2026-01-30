@@ -10,7 +10,7 @@
         "de": "Alltägliche Aktivitäten, Fitness und gesunder Lebensstil",
         "en": "Daily activities, fitness, and healthy lifestyle"
       },
-      "icon": "/images/quiz/lifestyle_fitness.svg",
+      "icon": "/images/quiz/lifestyle_fitness.png",
       "icon_emoji": "🏃‍♀️",
       "position": {
         "row": 1,
@@ -27,7 +27,7 @@
         "de": "Ausdauersport mit Fokus auf Laufen und Radfahren",
         "en": "Endurance sports focused on running and cycling"
       },
-      "icon": "/images/quiz/running_cycling.svg",
+      "icon": "/images/quiz/running_cycling.png",
       "icon_emoji": "🏃🚴",
       "position": {
         "row": 1,
@@ -44,7 +44,7 @@
         "de": "Outdoor-Aktivitäten und Bergwandern",
         "en": "Outdoor activities and mountain hiking"
       },
-      "icon": "/images/quiz/hiking.svg",
+      "icon": "/images/quiz/hiking.png",
       "icon_emoji": "🥾",
       "position": {
         "row": 2,
@@ -61,7 +61,7 @@
         "de": "Pool- und Freiwasserschwimmen",
         "en": "Pool and open water swimming"
       },
-      "icon": "/images/quiz/swimming.svg",
+      "icon": "/images/quiz/swimming.png",
       "icon_emoji": "🏊",
       "position": {
         "row": 2,
@@ -78,7 +78,7 @@
         "de": "Gesundheitsüberwachung, Meditation und Wohlbefinden",
         "en": "Health monitoring, meditation, and wellbeing"
       },
-      "icon": "/images/quiz/health_wellbeing.svg",
+      "icon": "/images/quiz/health_wellbeing.png",
       "icon_emoji": "❤️",
       "position": {
         "row": 3,
@@ -95,7 +95,7 @@
         "de": "Leistungsorientiertes Training und Wettkämpfe",
         "en": "Performance-oriented training and competitions"
       },
-      "icon": "/images/quiz/competition_performance.svg",
+      "icon": "/images/quiz/competition_performance.png",
       "icon_emoji": "🏆",
       "position": {
         "row": 3,

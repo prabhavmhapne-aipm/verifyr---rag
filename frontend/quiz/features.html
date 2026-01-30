@@ -14,22 +14,49 @@
 </head>
 <body>
     <div class="quiz-container">
-        <!-- Logo -->
-        <a href="/" class="logo">Verifyr</a>
-
-        <!-- Progress Indicator -->
-        <div class="quiz-progress">
-            <div class="progress-step completed"></div>
-            <div class="progress-step completed"></div>
-            <div class="progress-step active"></div>
-        </div>
+        <!-- Navigation Bar (matching index.html) -->
+        <nav>
+            <div class="nav-left">
+                <a href="/" class="logo">Verifyr</a>
+                <div class="lang-switch">
+                    <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                    <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/" class="nav-btn">Home</a>
+                <a href="/quiz/category.html" class="nav-btn active">Quiz</a>
+                <a href="/chat.html" class="nav-btn">Chat</a>
+            </div>
+        </nav>
 
         <!-- Quiz Content -->
         <div class="quiz-content">
-            <!-- Header -->
-            <div class="quiz-header">
-                <h1 id="pageHeading">Was ist dir am wichtigsten?</h1>
-                <p class="quiz-subtitle" id="pageSubheading">Wähle bis zu 5 Prioritäten</p>
+            <!-- Header with Navigation Arrows -->
+            <div class="quiz-header-wrapper">
+                <a href="/quiz/use-case.html" class="quiz-nav-arrow quiz-nav-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </a>
+
+                <div class="quiz-header">
+                    <h1 id="pageHeading">Was ist dir am wichtigsten?</h1>
+                    <p class="quiz-subtitle" id="pageSubheading">Wähle bis zu 5 Prioritäten</p>
+                </div>
+
+                <button class="quiz-nav-arrow quiz-nav-next" id="nextBtnArrow" disabled>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="quiz-progress">
+                <div class="progress-step completed"></div>
+                <div class="progress-step completed"></div>
+                <div class="progress-step active"></div>
             </div>
 
             <!-- Selection Counter -->

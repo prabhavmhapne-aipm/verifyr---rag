@@ -37,6 +37,10 @@ body {
     gap: 12px;
 }
 
+.results-header .logo {
+    text-decoration: none;
+}
+
 .header-inner {
     display: flex;
     align-items: center;

@@ -8,17 +8,81 @@
 /* Quiz Container */
 .quiz-container {
     min-height: 100vh;
+    width: 100%;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-    padding: var(--spacing-2xl) var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-xl);
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-sizing: border-box;
 }
 
-/* Logo at top of quiz (matching chat.html) */
+/* Navigation inside quiz container */
+.quiz-container nav {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto var(--spacing-base) auto;
+}
+
 .quiz-container .logo {
     text-decoration: none;
-    margin-bottom: var(--spacing-xl);
+}
+
+/* Nav right section for quiz pages */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-base);
+}
+
+/* Nav buttons styling */
+.nav-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--white);
+    color: var(--dark);
+    border: 2px solid var(--light-gray);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-btn:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+}
+
+.nav-btn:active {
+    transform: translateY(0);
+}
+
+.nav-btn.active {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+}
+
+/* Mobile responsive nav buttons */
+@media (max-width: 768px) {
+    .nav-right {
+        gap: var(--spacing-xs);
+    }
+
+    .nav-btn {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.8125rem;
+    }
+}
+
+/* Desktop: Better padding and centering */
+@media (min-width: 1024px) {
+    .quiz-container {
+        padding: 1rem 2rem 2rem 2rem;
+    }
 }
 
 .quiz-content {
@@ -27,26 +91,71 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-base);
+}
+
+/* Header Wrapper with Navigation Arrows */
+.quiz-header-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    width: 100%;
+}
+
+/* Navigation Arrows (Desktop only) */
+.quiz-nav-arrow {
+    display: none;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: var(--white);
+    border: 2px solid var(--light-gray);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    color: var(--dark);
+}
+
+.quiz-nav-arrow:hover:not(:disabled) {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+    transform: scale(1.1);
+}
+
+.quiz-nav-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.quiz-nav-arrow svg {
+    width: 24px;
+    height: 24px;
 }
 
 /* Quiz Header */
 .quiz-header {
     text-align: center;
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 0;
+    flex: 1;
 }
 
 .quiz-header h1 {
     font-size: 2rem;
     font-weight: 700;
     color: var(--dark);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    margin-top: 0;
 }
 
 .quiz-subtitle {
     font-size: 1.125rem;
     color: var(--gray);
     font-weight: 400;
+    margin: 0;
 }
 
 /* Progress Indicator */
@@ -54,13 +163,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-base);
-    margin-bottom: var(--spacing-2xl);
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
 }
 
 .progress-step {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: var(--radius-full);
     background: var(--light-gray);
     transition: all 0.3s ease;
@@ -68,7 +178,7 @@
 
 .progress-step.active {
     background: var(--primary-blue);
-    width: 32px;
+    width: 24px;
 }
 
 .progress-step.completed {
@@ -79,26 +189,36 @@
 .quiz-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-2xl);
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-base);
+    grid-auto-rows: minmax(240px, auto);
+    width: 100%;
 }
 
 /* Selection Card */
 .selection-card {
-    background: var(--white);
     border: 2px solid var(--light-gray);
     border-radius: 12px;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl);
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
     position: relative;
     min-height: 168px;
+    min-width: 150px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: var(--spacing-base);
     box-shadow: 0 2px 8px var(--shadow-dark-light);
+}
+
+/* Category and Use-Case cards need white background and more height */
+.selection-card:not(.feature-card) {
+    background: var(--white);
+    min-height: 240px;
 }
 
 .selection-card:hover {
@@ -107,7 +227,7 @@
     border-color: var(--accent);
 }
 
-.selection-card.selected {
+.selection-card.selected:not(.feature-card) {
     background: linear-gradient(135deg, var(--bg-gradient-blue-start) 0%, var(--bg-gradient-blue-end) 100%);
     border-color: var(--primary-blue);
     border-width: 3px;
@@ -134,48 +254,76 @@
 
 /* Card Icon */
 .card-icon {
-    font-size: 3rem;
+    font-size: 8rem;
     line-height: 1;
-    margin-bottom: var(--spacing-base);
+    margin-bottom: var(--spacing-sm);
+    flex-shrink: 0;
 }
 
 .card-icon img,
 .card-icon svg {
-    width: 48px;
-    height: 48px;
+    width: 256px;
+    height: 256px;
     object-fit: contain;
+}
+
+/* Card Image (for category and use-case icons) */
+.card-image {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    margin-bottom: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+/* Card Text Wrapper */
+.card-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
 }
 
 /* Card Content */
 .card-title {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--dark);
-    margin-bottom: var(--spacing-xs);
-    line-height: 1.4;
+    margin: 0;
+    line-height: 1.3;
+    text-align: center;
 }
 
 .card-subtitle {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--gray);
     font-weight: 500;
-    margin-bottom: var(--spacing-xs);
+    margin: 0;
+    line-height: 1.3;
+    text-align: center;
 }
 
 .card-description {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--gray);
-    line-height: 1.5;
+    line-height: 1.4;
     margin: 0;
+    text-align: center;
 }
 
 /* Feature Cards (photographic style) */
 .selection-card.feature-card {
-    padding: 0;
+    padding: 0 !important;
     overflow: hidden;
-    background-size: cover;
-    background-position: center;
+    background-size: cover !important;
+    background-position: center !important;
     position: relative;
+    min-height: 240px;
+    height: 240px;
+    min-width: 150px;
+    width: 100%;
+    display: block !important; /* Override flexbox */
 }
 
 .feature-card .card-overlay {
@@ -183,18 +331,36 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
-    padding: var(--spacing-base);
+    width: 100%;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
+    padding: var(--spacing-lg);
     color: var(--white);
+    box-sizing: border-box;
 }
 
 .feature-card .card-title {
     color: var(--white);
     margin-bottom: var(--spacing-xs);
+    font-size: 1rem;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .feature-card .card-description {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.8125rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Feature card selected state */
+.selection-card.feature-card.selected {
+    border-color: var(--primary-blue);
+    border-width: 4px;
+    box-shadow: 0 8px 24px var(--shadow-blue-medium), 0 0 0 2px var(--primary-blue);
+}
+
+.selection-card.feature-card.selected .card-overlay {
+    background: linear-gradient(180deg, rgba(62, 142, 244, 0.3) 0%, rgba(0, 0, 0, 0.85) 100%);
 }
 
 /* Navigation Buttons */
@@ -203,6 +369,7 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--spacing-base);
+    width: 100%;
     margin-top: var(--spacing-2xl);
     padding-top: var(--spacing-xl);
     border-top: 1px solid var(--light-gray);
@@ -219,8 +386,10 @@
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-sm);
     white-space: nowrap;
+    text-align: center;
 }
 
 .btn-primary {
@@ -342,12 +511,111 @@
     }
 }
 
-@media (max-width: 480px) {
+
+/* =================================================================
+   RESPONSIVE STYLES - TABLET & DESKTOP
+   These MUST come after all base styles to properly override them
+   ================================================================= */
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    .quiz-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        max-width: 1400px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        grid-auto-rows: minmax(240px, auto);
+    }
+
+    .quiz-content {
+        max-width: 1400px;
+    }
+
     .quiz-header h1 {
-        font-size: 1.25rem;
+        font-size: 1.75rem;
+    }
+
+    .quiz-subtitle {
+        font-size: 1rem;
+    }
+
+    .progress-step {
+        width: 10px;
+        height: 10px;
+    }
+
+    .progress-step.active {
+        width: 32px;
+    }
+
+    /* Show navigation arrows on desktop */
+    .quiz-nav-arrow {
+        display: flex;
+    }
+
+    .quiz-navigation {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .btn {
+        min-width: 180px;
+        font-size: 1.125rem;
+        padding: 1rem 2rem;
+    }
+
+    .selection-card:not(.feature-card) {
+        min-height: 220px !important;
+        min-width: 200px !important;
+        padding: 1.25rem;
     }
 
     .selection-card {
-        min-height: 120px;
+        min-width: 200px !important;
+    }
+
+    .card-image {
+        width: 100px;
+        height: 100px;
+    }
+
+    .card-icon {
+        font-size: 4rem;
+    }
+
+    .card-icon img,
+    .card-icon svg {
+        width: 100px;
+        height: 100px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-subtitle {
+        font-size: 0.8125rem;
+    }
+
+    /* Feature cards maintain photographic style */
+    .selection-card.feature-card {
+        min-height: 220px !important;
+        height: 220px !important;
+        min-width: 200px !important;
+        width: 100% !important;
+        display: block !important;
+        padding: 0 !important;
+    }
+
+    .feature-card .card-overlay {
+        padding: var(--spacing-base);
+    }
+
+    .feature-card .card-title {
+        font-size: 1rem;
     }
 }
+

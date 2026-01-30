@@ -127,6 +127,11 @@ class FeaturesController {
         document.getElementById('nextBtn').addEventListener('click', () => {
             this.handleSubmit();
         });
+
+        // Next arrow button (submit quiz - desktop)
+        document.getElementById('nextBtnArrow').addEventListener('click', () => {
+            this.handleSubmit();
+        });
     }
 
     handleCardClick(card) {
@@ -181,6 +186,7 @@ class FeaturesController {
     updateNextButton() {
         const hasSelection = this.selectedFeatures.length > 0;
         document.getElementById('nextBtn').disabled = !hasSelection;
+        document.getElementById('nextBtnArrow').disabled = !hasSelection;
     }
 
     async handleSubmit() {
@@ -198,7 +204,9 @@ class FeaturesController {
 
         // Show loading state
         const nextBtn = document.getElementById('nextBtn');
+        const nextBtnArrow = document.getElementById('nextBtnArrow');
         nextBtn.disabled = true;
+        nextBtnArrow.disabled = true;
         nextBtn.innerHTML = '<span class="loading">Ergebnisse werden analysiert...</span>';
 
         try {
@@ -207,6 +215,7 @@ class FeaturesController {
         } catch (error) {
             console.error('Error submitting quiz:', error);
             nextBtn.disabled = false;
+            nextBtnArrow.disabled = false;
             nextBtn.innerHTML = '<span id="nextBtnText">Quiz abschließen</span>';
             alert('Fehler beim Absenden des Quiz. Bitte versuche es erneut.');
         }
@@ -297,4 +306,36 @@ class FeaturesController {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     new FeaturesController();
+});
+
+// Language switcher functionality
+function switchLanguage(lang) {
+    // Store preference
+    localStorage.setItem('preferredLanguage', lang);
+
+    // Update active state
+    document.querySelectorAll('.lang-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-lang') === lang) {
+            option.classList.add('active');
+        }
+    });
+
+    // TODO: Implement actual translation logic
+    // For now, just store preference for future use
+    console.log(`Language switched to: ${lang}`);
+}
+
+// Initialize language on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('preferredLanguage') || 'de';
+    const langOption = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
+    if (langOption) {
+        langOption.classList.add('active');
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            if (opt !== langOption) {
+                opt.classList.remove('active');
+            }
+        });
+    }
 });
