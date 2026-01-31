@@ -7,39 +7,69 @@
 
     <!-- Design System -->
     <link rel="stylesheet" href="/design-system/design-system.css">
+    <link rel="stylesheet" href="/quiz/quiz.css">
     <link rel="stylesheet" href="/quiz/results.css">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/favicon-192x192.png">
 </head>
 <body>
-    <!-- Sticky Header -->
-    <header class="results-header">
-        <div class="header-inner">
-            <div class="header-left">
+    <div class="quiz-container">
+        <!-- Navigation Bar (matching other quiz pages) -->
+        <nav>
+            <div class="nav-left">
                 <a href="/" class="logo">Verifyr</a>
-                <button class="back-button" onclick="history.back()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <div class="lang-switch">
+                    <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                    <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/" class="nav-btn">Home</a>
+                <a href="/quiz/category.html" class="nav-btn">Quiz</a>
+                <a href="/chat.html" class="nav-btn" title="Chat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </a>
+                <a href="/admin.html" class="nav-btn admin-only" style="display: none;" title="Admin">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Results Content -->
+        <div class="quiz-content">
+            <!-- Header with Navigation Arrows -->
+            <div class="quiz-header-wrapper">
+                <button class="quiz-nav-arrow quiz-nav-back" onclick="history.back()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
                     </svg>
                 </button>
-            </div>
-            <div class="header-content">
-                <h1 id="headerTitle">Ergebnisse</h1>
-                <p id="headerSubtitle" class="loading">Analysiere deine Antworten...</p>
-            </div>
-            <a href="/chat.html" class="desktop-chat-button" title="Chat">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                </svg>
-            </a>
-        </div>
-    </header>
 
-    <!-- Horizontal Scroll Carousel -->
-    <div class="carousel-container" id="carouselContainer">
-        <div class="carousel-track" id="carouselTrack">
-            <!-- Product cards will be dynamically inserted here -->
+                <div class="quiz-header">
+                    <h1 id="headerTitle">Ergebnisse</h1>
+                    <p class="quiz-subtitle loading" id="headerSubtitle">Analysiere deine Antworten...</p>
+                </div>
+
+                <!-- Empty space for symmetry -->
+                <div class="quiz-nav-arrow" style="visibility: hidden;"></div>
+            </div>
+
+            <!-- Horizontal Scroll Carousel -->
+            <div class="carousel-container" id="carouselContainer">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- Product cards will be dynamically inserted here -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -80,5 +110,64 @@
     <script src="/components/auth-modal.js"></script>
 
     <script src="/quiz/results.js"></script>
+
+    <!-- ========================================
+         CODE PROTECTION
+         Discourages casual code copying while maintaining professional UX
+         ======================================== -->
+    <script>
+        (function() {
+            // 1. Disable right-click to prevent easy access to "View Source"
+            document.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                console.log('Right-click disabled. © 2026 Verifyr');
+            });
+
+            // 2. Disable common DevTools keyboard shortcuts
+            document.addEventListener('keydown', e => {
+                // F12 - DevTools
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+I - Inspect Element
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+J - Console
+                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+U - View Source
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // 3. Professional console message for curious developers
+            const styles = {
+                title: 'font-size:20px;font-weight:bold;color:#3B82F6;',
+                text: 'font-size:14px;color:#0F172A;',
+                link: 'font-size:14px;color:#64748B;',
+                copyright: 'font-size:12px;color:#2563eb;font-weight:600;'
+            };
+
+            console.log('%cVerifyr - AI Shopping Assistant', styles.title);
+            console.log('%cBuilt with FastAPI, Claude Code in Cursor, and Qdrant Vector DB for RAG', styles.text);
+            console.log('%cBy Prabhav Mhapne | https://linkedin.com/in/prabhavmhapne', styles.link);
+            console.log('%c© 2026 All rights reserved.', styles.copyright);
+
+            // 4. Disable text selection on code elements (preserves UX for content)
+            document.querySelectorAll('script, style').forEach(el => {
+                if (el.style) el.style.userSelect = 'none';
+            });
+        })();
+    </script>
 </body>
 </html>

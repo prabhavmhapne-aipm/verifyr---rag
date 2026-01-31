@@ -3,7 +3,8 @@
     "allow": [
       "Bash(dir \"C:\\\\Users\\\\prabh\\\\OneDrive\\\\Git_PM\\\\verifyr - rag\\\\frontend\" /s)",
       "Bash(Move-Item \"Verifyr/design-system\" \"frontend/design-system\")",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(git mv:*)"
     ]
   }
 }

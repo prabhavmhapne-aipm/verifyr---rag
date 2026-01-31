@@ -13,13 +13,19 @@
         "en": "€449-€899"
       },
       "release_year": 2025,
-      "image_url": "/images/products/apple_watch_s11.jpg",
+      "image_url": "/images/products/apple_watch_series 11_1.png",
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://www.apple.com/de/apple-watch-series-11/"
+      },
       "key_specs": {
         "battery_life": {
           "de": "Bis zu 24 Std. (38 Std. im Stromsparmodus)",
           "en": "Up to 24 hours (38 hours in power-saving mode)",
           "smartwatch_mode_days": 1,
           "gps_mode_hours": 18,
+          "typical_hours": 24,
           "citation": "Apple Watch Series 11, Technische Daten, Seite 3"
         },
         "water_resistance": {
@@ -33,16 +39,70 @@
           "de": "Always-On Retina LTPO3 OLED, bis zu 2.000 Nits",
           "en": "Always-On Retina LTPO3 OLED, up to 2,000 nits",
           "type": "AMOLED",
+          "resolution": "446×374 Pixel",
+          "shape": "rechteckig",
+          "color_display": true,
           "always_on": true,
           "touchscreen": true,
           "brightness_nits": 2000,
           "citation": "Apple Watch Series 11, Technische Daten, Seite 3"
         },
+        "os": {
+          "de": "watchOS (iOS), Apple S10",
+          "en": "watchOS (iOS), Apple S10",
+          "name": "watchOS",
+          "chip": "Apple S10",
+          "compatibility": ["iOS"]
+        },
         "sensors": {
-          "de": "EKG, Blutsauerstoff, Temperatursensor, Unfallerkennung, optischer Herzsensor 3. Gen",
-          "en": "ECG, Blood Oxygen, Temperature sensor, Crash Detection, 3rd gen optical heart rate",
-          "list": ["ecg", "blood_oxygen", "temperature", "crash_detection", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter"],
+          "de": "Beschleunigungssensor, Gyroskop, Lichtsensor, Barometer, Thermometer",
+          "en": "Accelerometer, Gyroscope, Light sensor, Barometer, Thermometer",
+          "list": ["ecg", "blood_oxygen", "temperature", "crash_detection", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter", "light_sensor", "barometer"],
+          "detailed": {
+            "de": "EKG, Blutsauerstoff, Temperatursensor, Unfallerkennung, optischer Herzsensor 3. Gen",
+            "en": "ECG, Blood Oxygen, Temperature sensor, Crash Detection, 3rd gen optical heart rate"
+          },
           "citation": "Apple Watch Series 11, Technische Daten, Seite 2"
+        },
+        "pulse_measurement": {
+          "de": "Integriert (optisch), EKG, per Brustgurt (Nicht enthalten)",
+          "en": "Integrated (optical), ECG, via chest strap (Not included)",
+          "optical": true,
+          "ecg": true,
+          "chest_strap_compatible": false
+        },
+        "measurement_functions": {
+          "de": "Zeit, Stoppuhr, Countdown, Schrittzähler, Schwimmzüge, Geschwindigkeit, Distanz, Rundenzeiten, Kalorienverbrauch, Zyklusüberwachung, Herzfrequenz, Blutsauerstoff, Blutdruck (teilweise), Ruhepuls, Höhenmesser, Bewegungstrends, Temperatur (bis 5m), Luftdruck",
+          "en": "Time, Stopwatch, Countdown, Step counter, Swim strokes, Speed, Distance, Lap times, Calorie burn, Cycle tracking, Heart rate, Blood oxygen, Blood pressure (partial), Resting heart rate, Altimeter, Activity trends, Temperature (up to 5m), Air pressure",
+          "list": ["time", "stopwatch", "countdown", "step_counter", "swim_strokes", "speed", "distance", "lap_times", "calories", "cycle_tracking", "heart_rate", "blood_oxygen", "blood_pressure_partial", "resting_heart_rate", "altimeter", "activity_trends", "temperature", "air_pressure"]
+        },
+        "health_status": {
+          "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Blutsauerstoff App, Frauengesundheit, Schlafcoach",
+          "en": "Yes, HRV, Sleep Coach, Skin temperature, ECG App, Blood oxygen App, Women's health, Sleep coach",
+          "hrv": true,
+          "sleep_coach": true,
+          "skin_temperature": true,
+          "ecg_app": true,
+          "blood_oxygen_app": true,
+          "womens_health": true
+        },
+        "training": {
+          "de": "Ja, Workouts, Multisport Trainings, Mitteilungen bei niedriger Cardiofitnss",
+          "en": "Yes, Workouts, Multisport training, Low cardio fitness notifications",
+          "workouts": true,
+          "multisport": true,
+          "cardio_fitness_alerts": true
+        },
+        "live_tracking": {
+          "de": "Ja",
+          "en": "Yes",
+          "enabled": true
+        },
+        "contactless_payment": {
+          "de": "Ja, Apple Pay",
+          "en": "Yes, Apple Pay",
+          "enabled": true,
+          "provider": "Apple Pay"
         },
         "connectivity": {
           "de": "5G, LTE, GPS (L1 + GLONASS + Galileo), Wi-Fi 4, Bluetooth 5.3",
@@ -71,7 +131,17 @@
           "en": "Aluminum or Titanium, Sapphire glass (Titanium) / Ion-X glass (Aluminum)",
           "case_options": ["aluminum", "titanium"],
           "glass_type": ["ion-x", "sapphire"],
+          "glass_description": {
+            "de": "Ultrastarkes (Ion-X)",
+            "en": "Ultra-strong (Ion-X)"
+          },
           "citation": "Apple Watch Series 11, Technische Daten, Seite 1"
+        },
+        "strap": {
+          "de": "M/L 13-18cm, Kautschuk",
+          "en": "M/L 13-18cm, Rubber",
+          "size": "M/L 13-18cm",
+          "material": "Kautschuk"
         }
       },
       "use_cases": {
@@ -247,14 +317,25 @@
         "de": "€599-€649",
         "en": "€599-€649"
       },
+      "typical_price": {
+        "de": "~650€",
+        "en": "~650€"
+      },
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://www.garmin.com/de-DE/p/forerunner-970/"
+      },
       "release_year": 2025,
-      "image_url": "/images/products/garmin_forerunner_970.jpg",
+      "image_url": "/images/products/garmin_forerunner_970_1.png",
       "key_specs": {
         "battery_life": {
           "de": "Bis zu 15 Tage (Smartwatch), 26 Std. (GPS), 21 Std. (Multiband GPS)",
           "en": "Up to 15 days (smartwatch), 26 hours (GPS), 21 hours (multiband GPS)",
           "smartwatch_mode_days": 15,
           "gps_mode_hours": 26,
+          "typical_days": 2,
+          "typical_gps_hours": 28,
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1-2"
         },
         "water_resistance": {
@@ -265,19 +346,89 @@
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "display": {
-          "de": "1,4\" AMOLED (454x454 Pixel), optional Always-On, Touchscreen, Saphirglas",
-          "en": "1.4\" AMOLED (454x454 pixels), optional Always-On, Touchscreen, Sapphire glass",
+          "de": "1,4\", 454×454 Pixel, Farbdisplay, AMOLED, Touchscreen",
+          "en": "1.4\", 454×454 pixels, Color display, AMOLED, Touchscreen",
+          "size": "1.4\"",
+          "resolution": "454×454 Pixel",
           "type": "AMOLED",
+          "color_display": true,
           "always_on": true,
           "touchscreen": true,
           "brightness_nits": null,
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
+        "os": {
+          "de": "Android, iOS",
+          "en": "Android, iOS",
+          "compatibility": ["Android", "iOS"]
+        },
         "sensors": {
-          "de": "EKG, Pulse Ox, Hauttemperatur, LED-Taschenlampe, optischer Herzsensor, Höhenmesser",
-          "en": "ECG, Pulse Ox, Skin Temperature, LED Flashlight, Optical heart rate, Altimeter",
-          "list": ["ecg", "pulse_ox", "skin_temperature", "led_flashlight", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter"],
+          "de": "Beschleunigungssensor, Gyroskop, Lichtsensor, Barometer, Thermometer",
+          "en": "Accelerometer, Gyroscope, Light sensor, Barometer, Thermometer",
+          "list": ["ecg", "pulse_ox", "skin_temperature", "led_flashlight", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter", "light_sensor", "barometer"],
+          "detailed": {
+            "de": "EKG, Pulse Ox, Hauttemperatur, LED-Taschenlampe, optischer Herzsensor, Höhenmesser",
+            "en": "ECG, Pulse Ox, Skin Temperature, LED Flashlight, Optical heart rate, Altimeter"
+          },
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1-2"
+        },
+        "pulse_measurement": {
+          "de": "Integriert (optisch), EKG, per Brustgurt (nicht enthalten)",
+          "en": "Integrated (optical), ECG, via chest strap (not included)",
+          "optical": true,
+          "ecg": true,
+          "chest_strap_compatible": true,
+          "chest_strap_included": false
+        },
+        "measurement_functions": {
+          "de": "Zeit, Stoppuhr, Countdown, Schrittzähler, Treppenzähler, Inaktivitätszeit, Schwimmzüge, Geschwindigkeit, Distanz, Rundenzeiten, Herzfrequenz/durchschnitt, Kalorienverbrauch, Temperatur, Höhenmesser, Blutsauerstoff",
+          "en": "Time, Stopwatch, Countdown, Step counter, Stairs climbed, Inactivity time, Swim strokes, Speed, Distance, Lap times, Heart rate/average, Calorie burn, Temperature, Altimeter, Blood oxygen",
+          "list": ["time", "stopwatch", "countdown", "step_counter", "stairs_climbed", "inactivity_time", "swim_strokes", "speed", "distance", "lap_times", "heart_rate_avg", "calories", "temperature", "altimeter", "blood_oxygen"]
+        },
+        "navigation": {
+          "de": "Ja, Kompass, Multiband GNSS, GPS, GLONASS, BeiDou, Galileo, QZSS",
+          "en": "Yes, Compass, Multiband GNSS, GPS, GLONASS, BeiDou, Galileo, QZSS",
+          "enabled": true,
+          "compass": true,
+          "multiband_gnss": true,
+          "systems": ["GPS", "GLONASS", "BeiDou", "Galileo", "QZSS"]
+        },
+        "health_status": {
+          "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Atemfrequenzen, Verständnis des Atemmusters",
+          "en": "Yes, HRV, Sleep Coach, Skin temperature, ECG App, Respiration rate, Breathing pattern understanding",
+          "hrv": true,
+          "sleep_coach": true,
+          "skin_temperature": true,
+          "ecg_app": true,
+          "respiration_rate": true,
+          "breathing_patterns": true
+        },
+        "training": {
+          "de": "Ja, Workouts, Multisport Trainings-Einheiten, Erholungszeit, Laufzeit Prognose, Wettkampfvorbereitung, Ausdauerzustand, VO2 Max, Leistungszustand, VO2max, Stresslevelemessung, Pulse Ox Sensor",
+          "en": "Yes, Workouts, Multisport training sessions, Recovery time, Running time forecast, Race preparation, Endurance condition, VO2 Max, Performance condition, Stress level measurement, Pulse Ox sensor",
+          "workouts": true,
+          "multisport": true,
+          "recovery_time": true,
+          "race_predictor": true,
+          "race_preparation": true,
+          "endurance_score": true,
+          "vo2_max": true,
+          "performance_condition": true,
+          "stress_measurement": true,
+          "pulse_ox": true
+        },
+        "live_tracking": {
+          "de": "Ja, Freunde/innen und Familie können deiner Echtezeitposition folgen und zuvor geplante Strecken ansehen",
+          "en": "Yes, Friends and family can follow your real-time position and view pre-planned routes",
+          "enabled": true,
+          "share_location": true,
+          "share_routes": true
+        },
+        "contactless_payment": {
+          "de": "Ja, Garmin Pay",
+          "en": "Yes, Garmin Pay",
+          "enabled": true,
+          "provider": "Garmin Pay"
         },
         "connectivity": {
           "de": "Multi-Frequenz GNSS (GPS, GLONASS, Galileo), Wi-Fi, Bluetooth, ANT+",
@@ -302,11 +453,25 @@
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "materials": {
-          "de": "Titanium DLC Lünette, Saphirglas, Silikon-Armband",
-          "en": "Titanium DLC bezel, Sapphire glass, Silicone strap",
-          "case_options": ["titanium"],
+          "de": "Kunststoff, Titan",
+          "en": "Plastic, Titanium",
+          "case_options": ["plastic", "titanium"],
           "glass_type": ["sapphire"],
+          "glass_description": {
+            "de": "Saphirglas",
+            "en": "Sapphire glass"
+          },
+          "detailed": {
+            "de": "Titanium DLC Lünette, Saphirglas, Silikon-Armband",
+            "en": "Titanium DLC bezel, Sapphire glass, Silicone strap"
+          },
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
+        },
+        "strap": {
+          "de": "22mm Silikon",
+          "en": "22mm Silicone",
+          "width": "22mm",
+          "material": "Silikon"
         }
       },
       "use_cases": {

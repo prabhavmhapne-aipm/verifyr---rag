@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="/quiz/quiz.css">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/favicon-192x192.png">
 </head>
 <body>
     <div class="quiz-container">
@@ -87,5 +91,64 @@
     </div>
 
     <script src="/quiz/use-case.js"></script>
+
+    <!-- ========================================
+         CODE PROTECTION
+         Discourages casual code copying while maintaining professional UX
+         ======================================== -->
+    <script>
+        (function() {
+            // 1. Disable right-click to prevent easy access to "View Source"
+            document.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                console.log('Right-click disabled. © 2026 Verifyr');
+            });
+
+            // 2. Disable common DevTools keyboard shortcuts
+            document.addEventListener('keydown', e => {
+                // F12 - DevTools
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+I - Inspect Element
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+J - Console
+                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+U - View Source
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // 3. Professional console message for curious developers
+            const styles = {
+                title: 'font-size:20px;font-weight:bold;color:#3B82F6;',
+                text: 'font-size:14px;color:#0F172A;',
+                link: 'font-size:14px;color:#64748B;',
+                copyright: 'font-size:12px;color:#2563eb;font-weight:600;'
+            };
+
+            console.log('%cVerifyr - AI Shopping Assistant', styles.title);
+            console.log('%cBuilt with FastAPI, Claude Code in Cursor, and Qdrant Vector DB for RAG', styles.text);
+            console.log('%cBy Prabhav Mhapne | https://linkedin.com/in/prabhavmhapne', styles.link);
+            console.log('%c© 2026 All rights reserved.', styles.copyright);
+
+            // 4. Disable text selection on code elements (preserves UX for content)
+            document.querySelectorAll('script, style').forEach(el => {
+                if (el.style) el.style.userSelect = 'none';
+            });
+        })();
+    </script>
 </body>
 </html>

@@ -80,12 +80,23 @@ git push origin main
 
 #### Pull Latest Code
 
+**IMPORTANT:** Always switch to verifyr user before running git commands to avoid permission issues.
+
 ```bash
+# Switch to verifyr user (if logged in as root)
+su - verifyr
+
 # Navigate to project
 cd /var/www/verifyr
 
 # Pull latest changes
 git pull origin main
+
+# Verify update
+git log --oneline -1
+
+# Exit back to root
+exit
 ```
 
 ---
@@ -220,7 +231,12 @@ tail -f /var/log/nginx/error.log              # Error log
 
 ### Git Operations
 
+**IMPORTANT:** Always run git commands as verifyr user to avoid permission errors.
+
 ```bash
+# Switch to verifyr user first
+su - verifyr
+
 # Update from GitHub
 cd /var/www/verifyr
 git pull origin main
@@ -238,6 +254,9 @@ git checkout .
 git stash          # Save local changes
 git pull           # Pull from GitHub
 git stash pop      # Reapply local changes
+
+# Exit back to root when done
+exit
 ```
 
 ---
@@ -465,6 +484,132 @@ exit
 
 # Restart service
 systemctl start verifyr-backend
+```
+
+---
+
+### Authentication Issues (Chat/Admin Login Problems)
+
+**Symptom:** Login redirects but immediately logs out, or page flickers between auth.html and chat/admin page.
+
+**Cause:** Frontend JavaScript trying to call `localhost:8000` instead of production domain.
+
+**Check browser console (F12):**
+```
+Access to fetch at 'http://localhost:8000/config' from origin 'https://verifyr.de'
+has been blocked by CORS policy
+```
+
+**Solution:**
+
+1. **Verify VPS has latest code:**
+```bash
+# Switch to verifyr user
+su - verifyr
+
+cd /var/www/verifyr
+git log --oneline -1
+# Should show: "Fix: Dynamic API_BASE_URL..."
+
+# If not, pull latest
+git pull origin main
+
+# Verify fix is present
+grep -A 3 "const API_BASE_URL" frontend/app.js
+# Should show dynamic URL code, NOT hardcoded localhost:8000
+
+exit  # Back to root
+```
+
+2. **Clear browser cache:**
+   - Press **Ctrl + Shift + R** (hard refresh)
+   - Or **F12** → Right-click refresh → "Empty Cache and Hard Reload"
+   - Or **Ctrl + Shift + Delete** → Clear cached files
+
+3. **Verify fix in browser console:**
+```javascript
+// Should show current domain, NOT localhost
+console.log(window.location.origin);
+fetch('/config').then(r => r.json()).then(console.log);
+```
+
+**Expected:** Config endpoint returns Supabase credentials without CORS errors.
+
+---
+
+### Git Permission Errors on VPS
+
+**Symptom:**
+```
+fatal: detected dubious ownership in repository at '/var/www/verifyr'
+```
+
+**Cause:** Running git commands as root user, but directory is owned by verifyr user.
+
+**Solution - Switch to verifyr user (Recommended):**
+
+```bash
+# As root, switch to verifyr user
+su - verifyr
+
+# Navigate to project
+cd /var/www/verifyr
+
+# Now run git commands
+git pull origin main
+git log --oneline -5
+
+# Exit back to root
+exit
+```
+
+**Alternative - Add safe directory:**
+```bash
+# As root
+git config --global --add safe.directory /var/www/verifyr
+
+# Then run git commands
+cd /var/www/verifyr
+git pull origin main
+```
+
+**Best Practice:** Always use `su - verifyr` before git operations to maintain proper file ownership.
+
+---
+
+### Browser Cache Issues
+
+**Symptom:** Code updated on VPS, but browser still shows old version or old JavaScript behavior.
+
+**Solutions:**
+
+**Method 1: Hard Refresh**
+- **Ctrl + Shift + R** (Windows/Linux)
+- **Ctrl + F5** (Windows)
+- **Cmd + Shift + R** (Mac)
+
+**Method 2: DevTools Cache Clear**
+1. Press **F12** (open DevTools)
+2. Right-click the **refresh button**
+3. Select **"Empty Cache and Hard Reload"**
+
+**Method 3: Clear Browser Data**
+1. **Ctrl + Shift + Delete**
+2. Select "Cached images and files"
+3. Time range: "Last hour"
+4. Click "Clear data"
+
+**Method 4: Disable Cache (for testing)**
+1. **F12** → **Network** tab
+2. Check **"Disable cache"**
+3. Keep DevTools open while testing
+
+**Verify cache is cleared:**
+```javascript
+// Open console (F12) and check file versions
+performance.getEntriesByType("resource")
+  .filter(e => e.name.includes('.js'))
+  .forEach(e => console.log(e.name, new Date(e.fetchStart)));
 ```
 
 ---

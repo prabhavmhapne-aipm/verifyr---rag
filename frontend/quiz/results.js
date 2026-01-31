@@ -259,20 +259,165 @@ class ResultsController {
 
     renderProduktdatenTab(product) {
         const specs = product.key_specs || {};
+        const lang = this.currentLanguage;
+
+        // Helper function to get translated value
+        const getValue = (obj, fallback = '') => {
+            if (!obj) return fallback;
+            if (typeof obj === 'string') return obj;
+            if (typeof obj === 'number') return obj.toString();
+            if (obj[lang]) return obj[lang];
+            if (obj.de) return obj.de;
+            return fallback;
+        };
+
+        // Helper to render a spec row
+        const renderRow = (label, value) => {
+            if (!value || value === 'null' || value === 'undefined') return '';
+            return `
+                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F1F5F9;">
+                    <div style="font-size: 13px; color: #64748B; font-weight: 500;">${label}</div>
+                    <div style="font-size: 13px; color: #0F172A; font-weight: 600; text-align: right; max-width: 60%;">${value}</div>
+                </div>
+            `;
+        };
 
         return `
-            <div style="padding: 16px;">
-                <h3 style="font-size: 14px; font-weight: 600; margin: 0 0 16px 0; color: #090814;">Technische Daten</h3>
-                ${Object.entries(specs).map(([key, value]) => {
-                    const label = this.formatLabel(key);
-                    const displayValue = typeof value === 'object' ? (value[this.currentLanguage] || value.de || JSON.stringify(value)) : value;
-                    return `
-                        <div style="margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px;">
-                            <div style="font-size: 10px; color: #6A7282; margin-bottom: 4px;">${label}</div>
-                            <div style="font-size: 12px; color: #011928; font-weight: 500;">${displayValue}</div>
+            <div style="padding: 16px; background: white;">
+                <!-- Header with manufacturer link -->
+                ${product.manufacturer_link ? `
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                            <div style="font-size: 13px; color: #64748B; font-weight: 500;">${lang === 'de' ? 'Hersteller' : 'Manufacturer'}</div>
+                            <a href="${product.manufacturer_link.url || '#'}" target="_blank" style="font-size: 13px; color: #3B82F6; font-weight: 600; text-decoration: none;">
+                                ${product.brand} (${getValue(product.manufacturer_link, 'Mehr Info')})
+                            </a>
                         </div>
-                    `;
-                }).join('')}
+                    </div>
+                ` : ''}
+
+                <!-- Price -->
+                ${renderRow(
+                    lang === 'de' ? 'Preis' : 'Price',
+                    product.typical_price ? getValue(product.typical_price) : getValue(product.price_range)
+                )}
+
+                <!-- Display -->
+                ${renderRow(
+                    'Display',
+                    [
+                        specs.display?.resolution,
+                        getValue(specs.display?.type),
+                        getValue(specs.display?.shape),
+                        specs.display?.color_display ? (lang === 'de' ? 'Farbdisplay' : 'Color display') : '',
+                        specs.display?.touchscreen ? 'Touchscreen' : '',
+                        specs.display?.always_on ? (lang === 'de' ? 'immer an' : 'always on') : ''
+                    ].filter(x => x).join(', ')
+                )}
+
+                <!-- OS -->
+                ${specs.os ? renderRow(
+                    'OS',
+                    getValue(specs.os) || (specs.os.compatibility ? specs.os.compatibility.join(', ') : '')
+                ) : ''}
+
+                <!-- Storage -->
+                ${renderRow(
+                    lang === 'de' ? 'Speicher' : 'Storage',
+                    getValue(specs.storage)
+                )}
+
+                <!-- Glass Type -->
+                ${specs.materials?.glass_description ? renderRow(
+                    lang === 'de' ? 'Glastype' : 'Glass type',
+                    getValue(specs.materials.glass_description)
+                ) : ''}
+
+                <!-- Case Material -->
+                ${specs.materials ? renderRow(
+                    lang === 'de' ? 'Gehäuse' : 'Case',
+                    specs.materials.case_options ? specs.materials.case_options.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ') : getValue(specs.materials)
+                ) : ''}
+
+                <!-- Strap -->
+                ${specs.strap ? renderRow(
+                    lang === 'de' ? 'Armband' : 'Strap',
+                    getValue(specs.strap)
+                ) : ''}
+
+                <!-- Weight -->
+                ${renderRow(
+                    lang === 'de' ? 'Gewicht' : 'Weight',
+                    getValue(specs.weight)
+                )}
+
+                <!-- Battery -->
+                ${renderRow(
+                    lang === 'de' ? 'Akku' : 'Battery',
+                    specs.battery_life?.typical_hours ? `${specs.battery_life.typical_hours}h (${lang === 'de' ? 'typisch' : 'typical'})` :
+                    specs.battery_life?.typical_days ? `${specs.battery_life.typical_days} ${lang === 'de' ? 'Tage (typisch)' : 'days (typical)'}` :
+                    getValue(specs.battery_life)
+                )}
+
+                <!-- Pulse Measurement -->
+                ${specs.pulse_measurement ? renderRow(
+                    lang === 'de' ? 'Pulsmessung' : 'Pulse measurement',
+                    getValue(specs.pulse_measurement)
+                ) : ''}
+
+                <!-- Sensors -->
+                ${specs.sensors ? renderRow(
+                    lang === 'de' ? 'Sensoren' : 'Sensors',
+                    getValue(specs.sensors)
+                ) : ''}
+
+                <!-- Measurement Functions -->
+                ${specs.measurement_functions ? renderRow(
+                    lang === 'de' ? 'Messfunk.' : 'Measurement func.',
+                    getValue(specs.measurement_functions)
+                ) : ''}
+
+                <!-- Navigation -->
+                ${specs.navigation ? renderRow(
+                    'Navigation',
+                    getValue(specs.navigation)
+                ) : ''}
+
+                <!-- Health Status -->
+                ${specs.health_status ? renderRow(
+                    lang === 'de' ? 'Health Status' : 'Health Status',
+                    getValue(specs.health_status)
+                ) : ''}
+
+                <!-- Training -->
+                ${specs.training ? renderRow(
+                    'Training',
+                    getValue(specs.training)
+                ) : ''}
+
+                <!-- Live Tracking -->
+                ${specs.live_tracking ? renderRow(
+                    'Live Tracking',
+                    getValue(specs.live_tracking)
+                ) : ''}
+
+                <!-- Contactless Payment -->
+                ${specs.contactless_payment ? renderRow(
+                    lang === 'de' ? 'Bargeldlos' : 'Contactless',
+                    getValue(specs.contactless_payment)
+                ) : ''}
+
+                <!-- Water Resistance -->
+                ${renderRow(
+                    lang === 'de' ? 'Wasserdicht' : 'Water resistance',
+                    getValue(specs.water_resistance)
+                )}
+
+                <!-- Connectivity -->
+                ${renderRow(
+                    lang === 'de' ? 'Konnektivität' : 'Connectivity',
+                    getValue(specs.connectivity)
+                )}
             </div>
         `;
     }
@@ -372,7 +517,33 @@ class ResultsController {
     }
 }
 
+// Language switching function
+function switchLanguage(lang) {
+    // Store preference
+    localStorage.setItem('verifyr-lang', lang);
+
+    // Update active state
+    document.querySelectorAll('.lang-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-lang') === lang) {
+            option.classList.add('active');
+        }
+    });
+
+    // Reload page to apply new language
+    window.location.reload();
+}
+
 // Initialize when DOM ready
 document.addEventListener('DOMContentLoaded', () => {
     new ResultsController();
+
+    // Show admin button if user is admin
+    const isAdmin = localStorage.getItem('verifyr_is_admin') === 'true';
+    if (isAdmin) {
+        const adminBtn = document.querySelector('.admin-only');
+        if (adminBtn) {
+            adminBtn.style.display = 'flex';
+        }
+    }
 });

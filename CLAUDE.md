@@ -146,7 +146,7 @@ Each chunk includes: `chunk_id`, `product_name`, `doc_type`, `page_num`, `source
 
 **Test Dataset:** 60% German, 40% English
 
-See `Product-strategy/dev_phases.md` for full 13-phase roadmap.
+See `docs/03-development/dev-phases.md` for full 13-phase roadmap.
 
 ## File Structure Reference
 
@@ -164,9 +164,14 @@ verifyr - rag/
 │   ├── app.js              # Chat JavaScript
 │   ├── styles.css          # Chat styles
 │   └── design-system/      # Design tokens & components
+├── docs/                   # Centralized documentation (see docs/README.md)
+│   ├── 01-product/         # Product vision, competitors, KPIs
+│   ├── 02-architecture/    # System design, pipelines
+│   ├── 03-development/     # Dev phases, sprints, testing
+│   ├── 04-operations/      # Server management, VPS guides
+│   └── 05-features/        # Feature plans & specs
 ├── data/                   # PDFs, chunks, indices
 ├── tests/                  # Evaluation framework
-├── Product-strategy/       # Architecture docs
 └── manage_server.ps1       # Server helper script
 ```
 
@@ -184,10 +189,12 @@ verifyr - rag/
 ## Detailed Documentation
 
 **For comprehensive guides, see:**
-- Server management, venv setup, Python paths: `SERVER_MANAGEMENT.md`
-- Full architecture, layer structure: `Product-strategy/tech-architecture.md`
-- 13-phase development guide: `Product-strategy/dev_phases.md`
+- Documentation hub & navigation: `docs/README.md`
+- Server management, venv setup, Python paths: `docs/04-operations/server-management.md`
+- Full architecture, layer structure: `docs/02-architecture/tech-architecture.md`
+- 13-phase development guide: `docs/03-development/dev-phases.md`
+- Pipeline architecture (9 stages): `docs/02-architecture/pipelines/README.md`
 - Design system (colors, tokens, components): `frontend/design-system/README.md`
-- Product vision, USPs, target audience: `Product.md`
-- Competitive analysis: `Competitors.md`
-- QA chatbot user stories: `QA-Chatbot-Backlog.md`
+- Product vision, USPs, target audience: `docs/01-product/product-vision.md`
+- Competitive analysis: `docs/01-product/competitors-analysis.md`
+- QA chatbot user stories: `docs/01-product/qa-chatbot-backlog.md`
