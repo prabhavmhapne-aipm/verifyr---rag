@@ -93,6 +93,14 @@ class ResultsController {
     }
 
     updateHeader() {
+        // Translate title
+        const titles = {
+            de: 'Ergebnisse',
+            en: 'Results'
+        };
+        document.getElementById('headerTitle').textContent = titles[this.currentLanguage];
+
+        // Translate subtitle
         const count = this.quizResults?.matched_products?.length || 0;
         const texts = {
             de: `${count} passende ${count === 1 ? 'Produkt' : 'Produkte'} gefunden`,
@@ -105,7 +113,11 @@ class ResultsController {
     renderCarousel() {
         const track = document.getElementById('carouselTrack');
         if (!this.quizResults?.matched_products || this.quizResults.matched_products.length === 0) {
-            track.innerHTML = '<div style="padding: 40px; text-align: center; color: #6A7282;">Keine Produkte gefunden</div>';
+            const noProductsText = {
+                de: 'Keine Produkte gefunden',
+                en: 'No products found'
+            };
+            track.innerHTML = `<div style="padding: 40px; text-align: center; color: #6A7282;">${noProductsText[this.currentLanguage]}</div>`;
             return;
         }
 
@@ -135,6 +147,19 @@ class ResultsController {
         const imageUrl = product.image_url || '/images/products/placeholder.jpg';
         const matchScore = Math.round(match.match_score * 100);
 
+        // Translation strings
+        const t = {
+            reviews: { de: 'Bewertungen', en: 'Reviews' },
+            recommendation: { de: 'Empfehlung', en: 'Recommendation' },
+            specs: { de: 'Produktdaten', en: 'Product Data' },
+            ourRecommendation: { de: 'Unsere Empfehlung', en: 'Our Recommendation' },
+            strengths: { de: 'Stärken', en: 'Strengths' },
+            weaknesses: { de: 'Schwächen', en: 'Weaknesses' },
+            verifiedTests: { de: 'Neutral Verifizierte Tests zusammengefasst', en: 'Neutral verified tests summarized' },
+            forumDiscussion: { de: 'Forum Diskussion und Review', en: 'Forum discussion and review' },
+            orderAt: { de: 'Bestellen für', en: 'Order for' }
+        };
+
         card.innerHTML = `
             <!-- 1. Product Image -->
             <div class="product-image-container">
@@ -153,19 +178,19 @@ class ResultsController {
                 <div class="product-rating">
                     <span class="star-icon">⭐</span>
                     <span class="rating-number">4.5</span>
-                    <span class="review-count">(193 Bewertungen)</span>
+                    <span class="review-count">(193 ${t.reviews[this.currentLanguage]})</span>
                 </div>
             </div>
 
             <!-- 3. Tab Switcher -->
             <div class="tab-container">
-                <button class="tab-button active" data-tab="empfehlung" data-card-index="${index}">Empfehlung</button>
-                <button class="tab-button" data-tab="produktdaten" data-card-index="${index}">Produktdaten</button>
+                <button class="tab-button active" data-tab="empfehlung" data-card-index="${index}">${t.recommendation[this.currentLanguage]}</button>
+                <button class="tab-button" data-tab="produktdaten" data-card-index="${index}">${t.specs[this.currentLanguage]}</button>
             </div>
 
             <!-- Tab Content: Empfehlung -->
             <div class="tab-content active" data-content="empfehlung" data-card-index="${index}">
-                ${this.renderEmpfehlungTab(match, product)}
+                ${this.renderEmpfehlungTab(match, product, t)}
             </div>
 
             <!-- Tab Content: Produktdaten -->
@@ -180,19 +205,21 @@ class ResultsController {
         return card;
     }
 
-    renderEmpfehlungTab(match, product) {
+    renderEmpfehlungTab(match, product, t) {
+        const displayName = product.display_name?.[this.currentLanguage] || product.display_name?.de || product.id;
+
         return `
             <!-- 4. Purchase Buttons -->
             <div class="purchase-section">
                 <div class="purchase-buttons">
                     <a href="https://amazon.de" target="_blank" class="purchase-button purchase-button-1">
-                        Bei Amazon.de<br>Bestellen für 778€
+                        Bei Amazon.de<br>${t.orderAt[this.currentLanguage]} 778€
                     </a>
                     <a href="https://ebay.de" target="_blank" class="purchase-button purchase-button-2">
-                        Bei eBay.de<br>Bestellen für 799€
+                        Bei eBay.de<br>${t.orderAt[this.currentLanguage]} 799€
                     </a>
                     <a href="#" class="purchase-button purchase-button-3">
-                        Bei Media Markt<br>Bestellen für 849€
+                        Bei Media Markt<br>${t.orderAt[this.currentLanguage]} 849€
                     </a>
                 </div>
             </div>
@@ -200,7 +227,7 @@ class ResultsController {
             <!-- 5. Recommendation Box -->
             <div class="recommendation-box">
                 <div class="recommendation-header">
-                    <h3 class="recommendation-title">Unsere Empfehlung</h3>
+                    <h3 class="recommendation-title">${t.ourRecommendation[this.currentLanguage]}</h3>
                     <span class="average-score">${Math.round(match.match_score * 100)}% Match</span>
                 </div>
 
@@ -209,14 +236,14 @@ class ResultsController {
                 </div>
 
                 <div class="strengths-section">
-                    <h4 class="section-title">Stärken</h4>
+                    <h4 class="section-title">${t.strengths[this.currentLanguage]}</h4>
                     <ul class="section-list">
                         ${this.generateStrengths(product).map(s => `<li>+ ${s}</li>`).join('')}
                     </ul>
                 </div>
 
                 <div class="weaknesses-section">
-                    <h4 class="section-title">Schwächen</h4>
+                    <h4 class="section-title">${t.weaknesses[this.currentLanguage]}</h4>
                     <ul class="section-list">
                         ${this.generateWeaknesses(product).map(w => `<li>- ${w}</li>`).join('')}
                     </ul>
@@ -225,7 +252,7 @@ class ResultsController {
 
             <!-- 6. Reviews Header -->
             <div class="reviews-header">
-                <p class="reviews-header-text">Neutral Verifizierte Tests zusammengefasst</p>
+                <p class="reviews-header-text">${t.verifiedTests[this.currentLanguage]}</p>
             </div>
 
             <!-- 7. Review Boxes -->
@@ -235,7 +262,7 @@ class ResultsController {
             <div class="reddit-box">
                 <div class="reddit-logo">📱</div>
                 <a href="https://reddit.com/r/Garmin" target="_blank" class="reddit-text">
-                    ${product.display_name?.de || product.id} Forum Diskussion und Review
+                    ${displayName} ${t.forumDiscussion[this.currentLanguage]}
                 </a>
             </div>
 
@@ -434,36 +461,53 @@ class ResultsController {
         const strengths = [];
         const specs = product.key_specs || {};
 
+        const texts = {
+            battery: { de: 'Sehr gute Akkulaufzeit', en: 'Excellent battery life' },
+            water: { de: 'Wasserdicht und robust', en: 'Waterproof and durable' },
+            display: { de: 'Helles, gut ablesbares Display', en: 'Bright, easy-to-read display' },
+            sensors: { de: 'Umfangreiche Sensoren für Health-Tracking', en: 'Comprehensive health tracking sensors' },
+            default1: { de: 'Gute Gesamtleistung', en: 'Good overall performance' },
+            default2: { de: 'Zuverlässige Qualität', en: 'Reliable quality' }
+        };
+
         if (specs.battery_life) {
-            strengths.push('Sehr gute Akkulaufzeit');
+            strengths.push(texts.battery[this.currentLanguage]);
         }
         if (specs.water_resistance) {
-            strengths.push('Wasserdicht und robust');
+            strengths.push(texts.water[this.currentLanguage]);
         }
         if (specs.display) {
-            strengths.push('Helles, gut ablesbares Display');
+            strengths.push(texts.display[this.currentLanguage]);
         }
         if (specs.sensors) {
-            strengths.push('Umfangreiche Sensoren für Health-Tracking');
+            strengths.push(texts.sensors[this.currentLanguage]);
         }
 
-        return strengths.length > 0 ? strengths : ['Gute Gesamtleistung', 'Zuverlässige Qualität'];
+        return strengths.length > 0 ? strengths : [texts.default1[this.currentLanguage], texts.default2[this.currentLanguage]];
     }
 
     generateWeaknesses(product) {
         const weaknesses = [];
         const specs = product.key_specs || {};
 
+        const texts = {
+            applePrice: { de: 'Hoher Preis im Vergleich zur Konkurrenz', en: 'High price compared to competitors' },
+            appleBattery: { de: 'Kurze Akkulaufzeit', en: 'Short battery life' },
+            garminComplex: { de: 'Komplexe Bedienung für Einsteiger', en: 'Complex interface for beginners' },
+            garminSize: { de: 'Große Bauform', en: 'Large form factor' },
+            default: { de: 'Keine wesentlichen Schwächen', en: 'No significant weaknesses' }
+        };
+
         // Generic weaknesses (would be customized per product in real app)
         if (product.brand === 'Apple') {
-            weaknesses.push('Hoher Preis im Vergleich zur Konkurrenz');
-            weaknesses.push('Kurze Akkulaufzeit');
+            weaknesses.push(texts.applePrice[this.currentLanguage]);
+            weaknesses.push(texts.appleBattery[this.currentLanguage]);
         } else if (product.brand === 'Garmin') {
-            weaknesses.push('Komplexe Bedienung für Einsteiger');
-            weaknesses.push('Große Bauform');
+            weaknesses.push(texts.garminComplex[this.currentLanguage]);
+            weaknesses.push(texts.garminSize[this.currentLanguage]);
         }
 
-        return weaknesses.length > 0 ? weaknesses : ['Keine wesentlichen Schwächen'];
+        return weaknesses.length > 0 ? weaknesses : [texts.default[this.currentLanguage]];
     }
 
     renderReviewBoxes(product) {
@@ -545,5 +589,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (adminBtn) {
             adminBtn.style.display = 'flex';
         }
+    }
+});
+
+// Initialize language on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('verifyr-lang') || 'de';
+    const langOption = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
+    if (langOption) {
+        langOption.classList.add('active');
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            if (opt !== langOption) {
+                opt.classList.remove('active');
+            }
+        });
     }
 });
