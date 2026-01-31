@@ -13,14 +13,11 @@ class FeaturesController {
     }
 
     async init() {
-        // Check authentication
-        await this.checkAuth();
-
         // Check if previous steps completed
         this.checkPreviousSteps();
 
         // Load language preference
-        this.currentLanguage = localStorage.getItem('verifyr_language') || 'de';
+        this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
 
         // Load features data
         await this.loadFeatures();
@@ -31,18 +28,29 @@ class FeaturesController {
         // Setup event listeners
         this.setupEventListeners();
 
-        // Update UI text
+        // Reset button state FIRST (in case user navigated back)
+        this.resetButtonState();
+
+        // Update UI text (this sets the correct language)
         this.updateUIText();
 
         // Check if returning user (has previous selection)
         this.loadPreviousSelection();
     }
 
-    async checkAuth() {
-        const token = localStorage.getItem('verifyr_access_token');
-        if (!token) {
-            window.location.href = '/auth.html?redirect=quiz/features.html';
-            return;
+    resetButtonState() {
+        // Reset the submit button to normal state
+        // This fixes the issue when user clicks back button
+        const nextBtn = document.getElementById('nextBtn');
+        const nextBtnArrow = document.getElementById('nextBtnArrow');
+
+        if (nextBtn) {
+            nextBtn.disabled = false;
+            // Restore the original button HTML structure
+            nextBtn.innerHTML = '<span id="nextBtnText">Quiz abschließen</span>';
+        }
+        if (nextBtnArrow) {
+            nextBtnArrow.disabled = false;
         }
     }
 
@@ -224,14 +232,25 @@ class FeaturesController {
     async submitQuizToBackend(quizAnswers) {
         try {
             const token = localStorage.getItem('verifyr_access_token');
+            const headers = { 'Content-Type': 'application/json' };
+
+            // Only add Authorization header if token exists
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const response = await fetch('/quiz/score', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: headers,
                 body: JSON.stringify(quizAnswers)
             });
+
+            // Handle token expiration - retry as anonymous
+            if (!response.ok && response.status === 401) {
+                console.warn('Token expired, retrying as anonymous user');
+                localStorage.removeItem('verifyr_access_token');
+                return this.submitQuizToBackend(quizAnswers);
+            }
 
             if (!response.ok) {
                 throw new Error(`Failed to submit quiz: ${response.status}`);
@@ -300,18 +319,48 @@ class FeaturesController {
         document.getElementById('backBtnText').textContent = texts[lang].back;
         document.getElementById('nextBtnText').textContent = texts[lang].next;
         document.getElementById('selectedText').textContent = texts[lang].selected;
+
+        // Re-render cards to update their text and restore selection
+        this.renderFeatures();
+        this.loadPreviousSelection();
     }
 }
 
+// Global controller instance
+let featuresController = null;
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    new FeaturesController();
+    featuresController = new FeaturesController();
+});
+
+// Reset button state when page is shown (including back button navigation)
+window.addEventListener('pageshow', (event) => {
+    // Always reset button state to handle back button navigation
+    const nextBtn = document.getElementById('nextBtn');
+    const nextBtnArrow = document.getElementById('nextBtnArrow');
+
+    if (nextBtn && nextBtn.disabled) {
+        // Button is disabled (stuck in loading state), reset it
+        nextBtn.disabled = false;
+
+        // Restore original button structure
+        const currentLang = localStorage.getItem('verifyr-lang') || 'de';
+        const buttonText = currentLang === 'de' ? 'Quiz abschließen' : 'Complete Quiz';
+        nextBtn.innerHTML = `<span id="nextBtnText">${buttonText}</span>`;
+
+        console.log('✅ Button state reset (back navigation detected)');
+    }
+
+    if (nextBtnArrow && nextBtnArrow.disabled) {
+        nextBtnArrow.disabled = false;
+    }
 });
 
 // Language switcher functionality
 function switchLanguage(lang) {
-    // Store preference
-    localStorage.setItem('preferredLanguage', lang);
+    // Store preference (use the correct key)
+    localStorage.setItem('verifyr-lang', lang);
 
     // Update active state
     document.querySelectorAll('.lang-option').forEach(option => {
@@ -321,14 +370,17 @@ function switchLanguage(lang) {
         }
     });
 
-    // TODO: Implement actual translation logic
-    // For now, just store preference for future use
-    console.log(`Language switched to: ${lang}`);
+    // Update controller language and refresh UI text
+    if (featuresController) {
+        featuresController.currentLanguage = lang;
+        featuresController.updateUIText();
+        console.log(`✅ Language switched to: ${lang}`);
+    }
 }
 
 // Initialize language on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const savedLang = localStorage.getItem('preferredLanguage') || 'de';
+    const savedLang = localStorage.getItem('verifyr-lang') || 'de';
     const langOption = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
     if (langOption) {
         langOption.classList.add('active');
@@ -337,5 +389,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 opt.classList.remove('active');
             }
         });
+    }
+});
+
+// Show admin button if user is admin
+document.addEventListener('DOMContentLoaded', function() {
+    const isAdmin = localStorage.getItem('verifyr_is_admin') === 'true';
+    if (isAdmin) {
+        const adminBtn = document.querySelector('.admin-only');
+        if (adminBtn) {
+            adminBtn.style.display = 'block';
+        }
     }
 });

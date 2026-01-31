@@ -28,11 +28,10 @@
                 <h1 id="headerTitle">Ergebnisse</h1>
                 <p id="headerSubtitle" class="loading">Analysiere deine Antworten...</p>
             </div>
-            <a href="/chat.html" class="desktop-chat-button">
+            <a href="/chat.html" class="desktop-chat-button" title="Chat">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                 </svg>
-                Chat
             </a>
         </div>
     </header>
@@ -72,6 +71,13 @@
             <span>Profile</span>
         </button>
     </nav>
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Auth Modal Component -->
+    <link rel="stylesheet" href="/components/auth-modal.css">
+    <script src="/components/auth-modal.js"></script>
 
     <script src="/quiz/results.js"></script>
 </body>

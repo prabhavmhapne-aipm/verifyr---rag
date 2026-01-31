@@ -693,12 +693,13 @@ async def get_products_metadata(
 @app.post("/quiz/score", response_model=QuizResultsResponse, tags=["Quiz"])
 async def score_quiz(
     quiz_answers: QuizAnswers,
-    user: AuthUser = Depends(get_current_user)
+    user: Optional[AuthUser] = Depends(get_optional_user)
 ):
     """
     Score user's quiz answers and return ranked product matches.
 
-    Requires authentication.
+    Authentication is OPTIONAL. Anonymous users can submit quiz.
+    If authenticated, user_id is tracked for analytics.
 
     Scoring algorithm:
     - Category match: 40% weight (binary: matches or doesn't)
@@ -715,6 +716,10 @@ async def score_quiz(
     - Match reasons for each product
     - Quiz summary
     """
+    # Track user (authenticated or anonymous)
+    user_id = user.id if user else "anonymous"
+    print(f"Quiz submission from user: {user_id}")
+
     if products_metadata is None:
         raise HTTPException(
             status_code=503,

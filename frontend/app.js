@@ -95,16 +95,7 @@ let conversationHistory = []; // Array of {role, content} for current conversati
  * Initialize the chat interface
  */
 async function init() {
-    // First, check authentication
-    const isAuthenticated = await checkAuth();
-    if (!isAuthenticated) {
-        return; // Redirect will happen in checkAuth
-    }
-
-    // Auth passed - show the page content
-    document.body.classList.remove('auth-checking');
-
-    // Get DOM elements
+    // Get DOM elements first (needed for all cases)
     chatInput = document.getElementById('chatInput');
     sendButton = document.getElementById('sendButton');
     chatMessages = document.getElementById('chatMessages');
@@ -113,6 +104,31 @@ async function init() {
     inputNote = document.getElementById('inputNote');
     conversationSidebar = document.getElementById('conversationSidebar');
     conversationsList = document.getElementById('conversationsList');
+
+    // Check authentication (returns boolean)
+    const isAuthenticated = await checkAuth();
+
+    // Always show the page content
+    document.body.classList.remove('auth-checking');
+
+    if (!isAuthenticated) {
+        // Show auth modal overlay
+        showAuthModal();
+        // Disable chat input and send button
+        chatInput.disabled = true;
+        sendButton.disabled = true;
+        const placeholderText = currentLanguage === 'de'
+            ? 'Bitte authentifizieren Sie sich, um den Chat zu nutzen'
+            : 'Please authenticate to use chat';
+        chatInput.placeholder = placeholderText;
+
+        // Still show welcome message and basic UI
+        displayWelcomeMessage();
+        updateQuickReplies();
+        switchLanguage(currentLanguage);
+
+        return;
+    }
 
     // Display user email
     const userEmailEl = document.getElementById('userEmail');
@@ -167,7 +183,7 @@ function clearAuthData() {
 
 /**
  * Check authentication status
- * Shows auth overlay if not authenticated
+ * Returns boolean instead of redirecting
  */
 async function checkAuth() {
     try {
@@ -205,7 +221,6 @@ async function checkAuth() {
             if (tokenParts.length !== 3) {
                 console.warn('Invalid token format in localStorage');
                 clearAuthData();
-                window.location.href = '/auth.html';
                 return false;
             }
 
@@ -220,7 +235,7 @@ async function checkAuth() {
                 if (testResponse.ok) {
                     return true;
                 } else if (testResponse.status === 401) {
-                    // Token expired or invalid - clear and redirect
+                    // Token expired or invalid - clear
                     console.log('Token invalid or expired');
                     clearAuthData();
                 }
@@ -229,17 +244,28 @@ async function checkAuth() {
             }
         }
 
-        // Not authenticated, redirect to login
-        console.log('Not authenticated, redirecting to login...');
-        window.location.href = '/auth.html';
+        // Not authenticated
         return false;
 
     } catch (error) {
         console.error('Auth check error:', error);
-        // On error, redirect to login
-        window.location.href = '/auth.html';
         return false;
     }
+}
+
+/**
+ * Show auth modal overlay
+ */
+function showAuthModal() {
+    const modal = new AuthModal({
+        redirectTarget: 'chat',
+        allowClose: false,
+        onAuthSuccess: (session) => {
+            console.log('✅ Auth success, reloading chat page');
+            window.location.reload();  // Reload to initialize chat properly
+        }
+    });
+    modal.show();
 }
 
 /**

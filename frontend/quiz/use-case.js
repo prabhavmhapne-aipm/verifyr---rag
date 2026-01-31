@@ -12,14 +12,11 @@ class UseCaseController {
     }
 
     async init() {
-        // Check authentication
-        await this.checkAuth();
-
         // Check if category was selected
         this.checkCategorySelected();
 
         // Load language preference
-        this.currentLanguage = localStorage.getItem('verifyr_language') || 'de';
+        this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
 
         // Load use cases data
         await this.loadUseCases();
@@ -35,14 +32,6 @@ class UseCaseController {
 
         // Check if returning user (has previous selection)
         this.loadPreviousSelection();
-    }
-
-    async checkAuth() {
-        const token = localStorage.getItem('verifyr_access_token');
-        if (!token) {
-            window.location.href = '/auth.html?redirect=quiz/use-case.html';
-            return;
-        }
     }
 
     checkCategorySelected() {
@@ -218,18 +207,25 @@ class UseCaseController {
         document.getElementById('pageSubheading').textContent = texts[lang].subheading;
         document.getElementById('backBtnText').textContent = texts[lang].back;
         document.getElementById('nextBtnText').textContent = texts[lang].next;
+
+        // Re-render cards to update their text and restore selection
+        this.renderUseCases();
+        this.loadPreviousSelection();
     }
 }
 
+// Global controller instance
+let useCaseController = null;
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    new UseCaseController();
+    useCaseController = new UseCaseController();
 });
 
 // Language switcher functionality
 function switchLanguage(lang) {
-    // Store preference
-    localStorage.setItem('preferredLanguage', lang);
+    // Store preference (use the correct key)
+    localStorage.setItem('verifyr-lang', lang);
 
     // Update active state
     document.querySelectorAll('.lang-option').forEach(option => {
@@ -239,14 +235,28 @@ function switchLanguage(lang) {
         }
     });
 
-    // TODO: Implement actual translation logic
-    // For now, just store preference for future use
-    console.log(`Language switched to: ${lang}`);
+    // Update controller language and refresh UI text
+    if (useCaseController) {
+        useCaseController.currentLanguage = lang;
+        useCaseController.updateUIText();
+        console.log(`✅ Language switched to: ${lang}`);
+    }
 }
+
+// Show admin button if user is admin
+document.addEventListener('DOMContentLoaded', function() {
+    const isAdmin = localStorage.getItem('verifyr_is_admin') === 'true';
+    if (isAdmin) {
+        const adminBtn = document.querySelector('.admin-only');
+        if (adminBtn) {
+            adminBtn.style.display = 'block';
+        }
+    }
+});
 
 // Initialize language on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const savedLang = localStorage.getItem('preferredLanguage') || 'de';
+    const savedLang = localStorage.getItem('verifyr-lang') || 'de';
     const langOption = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
     if (langOption) {
         langOption.classList.add('active');

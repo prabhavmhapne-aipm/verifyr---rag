@@ -12,20 +12,46 @@ class ResultsController {
     }
 
     async init() {
-        await this.checkAuth();
-        this.currentLanguage = localStorage.getItem('verifyr_language') || 'de';
+        // Check auth status (returns boolean instead of redirecting)
+        const isAuthenticated = await this.checkAuth();
+
+        this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
         this.loadQuizResults();
         await this.loadProductsMetadata();
         this.renderCarousel();
         this.updateHeader();
+
+        // Show auth modal if not authenticated
+        if (!isAuthenticated) {
+            this.showAuthModal();
+        }
     }
 
     async checkAuth() {
         const token = localStorage.getItem('verifyr_access_token');
-        if (!token) {
-            window.location.href = '/auth.html?redirect=quiz/results.html';
-            return;
+        if (!token) return false;
+
+        // Optionally verify token with backend
+        try {
+            const response = await fetch('/products', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            return response.ok;
+        } catch {
+            return false;
         }
+    }
+
+    showAuthModal() {
+        const modal = new AuthModal({
+            redirectTarget: 'results',
+            allowClose: false,  // Must authenticate
+            onAuthSuccess: (session) => {
+                console.log('✅ Auth success, reloading results page');
+                window.location.reload();  // Reload to refresh with auth state
+            }
+        });
+        modal.show();
     }
 
     loadQuizResults() {
@@ -47,10 +73,12 @@ class ResultsController {
     async loadProductsMetadata() {
         try {
             const token = localStorage.getItem('verifyr_access_token');
-            const response = await fetch('/products/metadata', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
+            const response = await fetch('/products/metadata', { headers });
             if (!response.ok) throw new Error('Failed to load products metadata');
 
             const data = await response.json();
