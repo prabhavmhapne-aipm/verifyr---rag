@@ -76,17 +76,47 @@
     </style>
 </head>
 <body class="auth-checking">
-    <!-- Conversation Sidebar -->
+    <!-- Conversation Sidebar (Desktop) -->
     <aside class="conversation-sidebar" id="conversationSidebar">
         <div class="sidebar-header">
-            <h2>Konversationen</h2>
+            <h2>Menu</h2>
             <button class="sidebar-close-btn" id="sidebarCloseBtn" onclick="toggleSidebar()">×</button>
         </div>
-        <button class="new-conversation-btn" id="newConversationBtn" onclick="createNewConversation()">
-            + Neue Konversation
-        </button>
-        <div class="conversations-list" id="conversationsList">
-            <!-- Conversation items will be inserted by JavaScript -->
+
+        <!-- Language Switch -->
+        <div class="sidebar-section">
+            <div class="sidebar-lang-switch">
+                <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+            </div>
+        </div>
+
+        <!-- Model Selector -->
+        <div class="sidebar-section">
+            <label for="sidebarModelSelector" class="sidebar-section-label">Model:</label>
+            <select id="sidebarModelSelector" class="model-selector sidebar-model-selector" onchange="syncModelSelector(this, 'modelSelector')">
+                <option value="claude-sonnet-4.5">Sonnet 4.5</option>
+                <option value="claude-3.5-haiku">Haiku</option>
+                <option value="gpt-4o">GPT-4o</option>
+                <option value="gpt-4o-mini" selected>GPT-4o Mini</option>
+            </select>
+        </div>
+
+        <!-- Conversations Section -->
+        <div class="sidebar-section sidebar-conversations-section">
+            <div class="sidebar-conversations-header">
+                <span class="sidebar-section-label">Konversationen</span>
+                <button class="sidebar-new-conversation-btn" onclick="createNewConversation()">+</button>
+            </div>
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversation items will be inserted by JavaScript -->
+            </div>
+        </div>
+
+        <!-- User Section -->
+        <div class="sidebar-section sidebar-user-section">
+            <span class="sidebar-user-email" id="sidebarUserEmail"></span>
+            <button class="sidebar-logout-btn" onclick="handleLogout()">Abmelden</button>
         </div>
     </aside>
 
@@ -101,14 +131,21 @@
             <div class="header-top">
                 <div class="header-logo-section">
                     <a href="index.html" class="logo" style="text-decoration: none;">Verifyr</a>
-                    <!-- Language Switcher (matching landing page design) -->
+                    <!-- Language Switcher (hidden on desktop, moved to sidebar) -->
                     <div class="lang-switch">
                         <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
                         <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
                     </div>
                 </div>
 
-                <!-- Controls: Model Selection & User Menu -->
+                <!-- Desktop: Navigation buttons (like quiz pages) -->
+                <div class="header-nav desktop-nav">
+                    <a href="/" class="nav-btn">Home</a>
+                    <a href="/quiz/category.html" class="nav-btn">Quiz</a>
+                    <a href="/chat.html" class="nav-btn active">Chat</a>
+                </div>
+
+                <!-- Controls: Model Selection & User Menu (hidden on desktop) -->
                 <div class="header-controls">
                     <!-- Model Selector -->
                     <select id="modelSelector" class="model-selector" onchange="updateModelNote()">
@@ -125,7 +162,60 @@
                         <span class="user-email" id="userEmail"></span>
                     </div>
                 </div>
+
+                <!-- Mobile: Hamburger button -->
+                <button class="hamburger-btn mobile-nav" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
+
+            <!-- Mobile: Dropdown menu -->
+            <div class="mobile-menu" id="chatMobileMenu">
+                <!-- Language switch in mobile menu -->
+                <div class="mobile-lang-switch">
+                    <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                    <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+                </div>
+                <div class="mobile-menu-divider"></div>
+
+                <!-- Model Selector -->
+                <div class="mobile-model-selector">
+                    <label for="mobileModelSelector">Model:</label>
+                    <select id="mobileModelSelector" class="model-selector" onchange="syncModelSelector(this, 'modelSelector')">
+                        <option value="claude-sonnet-4.5">Sonnet 4.5</option>
+                        <option value="claude-3.5-haiku">Haiku</option>
+                        <option value="gpt-4o">GPT-4o</option>
+                        <option value="gpt-4o-mini" selected>GPT-4o Mini</option>
+                    </select>
+                </div>
+                <div class="mobile-menu-divider"></div>
+
+                <a href="/" class="mobile-menu-item">Home</a>
+                <a href="/quiz/category.html" class="mobile-menu-item">Quiz</a>
+                <a href="/chat.html" class="mobile-menu-item active">Chat</a>
+                <div class="mobile-menu-divider"></div>
+
+                <!-- Conversation History -->
+                <div class="mobile-conversations">
+                    <div class="mobile-conversations-header">
+                        <h3>Konversationen</h3>
+                        <button class="mobile-new-conversation-btn" onclick="createNewConversation(); closeMobileMenu();">+</button>
+                    </div>
+                    <div class="mobile-conversations-list" id="mobileConversationsList">
+                        <!-- Conversation items will be inserted by JavaScript -->
+                    </div>
+                </div>
+                <div class="mobile-menu-divider"></div>
+
+                <!-- User info and logout -->
+                <div class="mobile-user-info">
+                    <span class="mobile-user-email" id="mobileUserEmail"></span>
+                    <button class="mobile-logout-btn" onclick="handleLogout()">Abmelden</button>
+                </div>
+            </div>
+
             <div class="hero-badge-container">
                 <div class="hero-badge" id="heroBadge">Dein intelligenter Health-Tech Shopping-Berater</div>
             </div>

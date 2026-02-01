@@ -25,6 +25,8 @@ const TRANSLATIONS = {
         logout: "Abmelden",
 
         // Sidebar
+        menu: "Menu",
+        model: "Model:",
         conversations: "Konversationen",
         newConversation: "+ Neue Konversation",
 
@@ -51,6 +53,8 @@ const TRANSLATIONS = {
         logout: "Logout",
 
         // Sidebar
+        menu: "Menu",
+        model: "Model:",
         conversations: "Conversations",
         newConversation: "+ New Conversation",
 
@@ -333,16 +337,41 @@ function switchLanguage(lang) {
     const heroBadge = document.getElementById('heroBadge');
     if (heroBadge) heroBadge.textContent = t.heroBadge;
 
-    // Update logout button
+    // Update logout buttons (all variants)
     const logoutBtns = document.querySelectorAll('.logout-btn');
     logoutBtns.forEach(btn => btn.textContent = t.logout);
 
+    const sidebarLogoutBtn = document.querySelector('.sidebar-logout-btn');
+    if (sidebarLogoutBtn) sidebarLogoutBtn.textContent = t.logout;
+
+    const mobileLogoutBtn = document.querySelector('.mobile-logout-btn');
+    if (mobileLogoutBtn) mobileLogoutBtn.textContent = t.logout;
+
     // Update sidebar
     const sidebarTitle = document.querySelector('.sidebar-header h2');
-    if (sidebarTitle) sidebarTitle.textContent = t.conversations;
+    if (sidebarTitle) sidebarTitle.textContent = t.menu;
 
-    const newConvBtn = document.getElementById('newConversationBtn');
-    if (newConvBtn) newConvBtn.textContent = t.newConversation;
+    // Update model label
+    const modelLabel = document.querySelector('label[for="sidebarModelSelector"]');
+    if (modelLabel) modelLabel.textContent = t.model;
+
+    // Update mobile model label
+    const mobileModelLabel = document.querySelector('label[for="mobileModelSelector"]');
+    if (mobileModelLabel) mobileModelLabel.textContent = t.model;
+
+    // Update conversations section labels (use specific selector to avoid model label)
+    const sidebarConversationsLabel = document.querySelector('.sidebar-conversations-header .sidebar-section-label');
+    if (sidebarConversationsLabel) sidebarConversationsLabel.textContent = t.conversations;
+
+    const mobileConversationsHeader = document.querySelector('.mobile-conversations-header h3');
+    if (mobileConversationsHeader) mobileConversationsHeader.textContent = t.conversations;
+
+    // Update new conversation buttons
+    const sidebarNewConvBtn = document.querySelector('.sidebar-new-conversation-btn');
+    if (sidebarNewConvBtn) sidebarNewConvBtn.textContent = '+';
+
+    const mobileNewConvBtn = document.querySelector('.mobile-new-conversation-btn');
+    if (mobileNewConvBtn) mobileNewConvBtn.textContent = '+';
 
     // Update chat input
     if (chatInput) chatInput.placeholder = t.placeholder;
@@ -944,5 +973,133 @@ window.addEventListener('pageshow', function(event) {
             // No token, redirect immediately
             window.location.replace('/auth.html');
         }
+    }
+});
+
+// ============================================================================
+// Mobile Hamburger Menu
+// ============================================================================
+
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const mobileMenu = document.getElementById('chatMobileMenu');
+
+    if (hamburgerBtn && mobileMenu) {
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                mobileMenu.classList.remove('show');
+            }
+        });
+    }
+
+    // Sync user email to mobile menu and sidebar
+    const userEmail = document.getElementById('userEmail');
+    const mobileUserEmail = document.getElementById('mobileUserEmail');
+    const sidebarUserEmail = document.getElementById('sidebarUserEmail');
+
+    if (userEmail) {
+        // Update mobile and sidebar user email whenever it changes
+        const observer = new MutationObserver(() => {
+            if (mobileUserEmail) mobileUserEmail.textContent = userEmail.textContent;
+            if (sidebarUserEmail) sidebarUserEmail.textContent = userEmail.textContent;
+        });
+        observer.observe(userEmail, { childList: true, characterData: true, subtree: true });
+
+        // Initial sync
+        if (mobileUserEmail) mobileUserEmail.textContent = userEmail.textContent;
+        if (sidebarUserEmail) sidebarUserEmail.textContent = userEmail.textContent;
+    }
+
+    // Sync model selectors (header, mobile, and sidebar)
+    const modelSelector = document.getElementById('modelSelector');
+    const mobileModelSelector = document.getElementById('mobileModelSelector');
+    const sidebarModelSelector = document.getElementById('sidebarModelSelector');
+
+    // Sync all selectors when any changes
+    function syncAllSelectors(sourceValue) {
+        if (modelSelector) modelSelector.value = sourceValue;
+        if (mobileModelSelector) mobileModelSelector.value = sourceValue;
+        if (sidebarModelSelector) sidebarModelSelector.value = sourceValue;
+    }
+
+    if (modelSelector) {
+        modelSelector.addEventListener('change', function() {
+            syncAllSelectors(this.value);
+        });
+    }
+
+    if (mobileModelSelector) {
+        mobileModelSelector.addEventListener('change', function() {
+            syncAllSelectors(this.value);
+            if (modelSelector) modelSelector.dispatchEvent(new Event('change'));
+        });
+    }
+
+    if (sidebarModelSelector) {
+        sidebarModelSelector.addEventListener('change', function() {
+            syncAllSelectors(this.value);
+            if (modelSelector) modelSelector.dispatchEvent(new Event('change'));
+        });
+    }
+});
+
+// Sync model selector helper function
+function syncModelSelector(sourceSelect, targetId) {
+    const targetSelect = document.getElementById(targetId);
+    if (targetSelect) {
+        targetSelect.value = sourceSelect.value;
+        targetSelect.dispatchEvent(new Event('change'));
+    }
+}
+
+// Close mobile menu helper
+function closeMobileMenu() {
+    const mobileMenu = document.getElementById('chatMobileMenu');
+    if (mobileMenu) {
+        mobileMenu.classList.remove('show');
+    }
+}
+
+// Sync conversation list to mobile menu
+function syncConversationsToMobile() {
+    const desktopList = document.getElementById('conversationsList');
+    const mobileList = document.getElementById('mobileConversationsList');
+
+    if (desktopList && mobileList) {
+        // Clone the conversation items
+        mobileList.innerHTML = desktopList.innerHTML;
+
+        // Add click handlers to close menu when conversation is selected
+        mobileList.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', closeMobileMenu);
+        });
+    }
+}
+
+// Override the original renderConversations to also update mobile list
+const originalRenderConversations = window.renderConversations;
+if (originalRenderConversations) {
+    window.renderConversations = function() {
+        originalRenderConversations.apply(this, arguments);
+        syncConversationsToMobile();
+    };
+}
+
+// Initial sync on load
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for conversations to load, then sync
+    setTimeout(syncConversationsToMobile, 500);
+
+    // Set up mutation observer to watch for conversation list changes
+    const desktopList = document.getElementById('conversationsList');
+    if (desktopList) {
+        const observer = new MutationObserver(syncConversationsToMobile);
+        observer.observe(desktopList, { childList: true, subtree: true });
     }
 });

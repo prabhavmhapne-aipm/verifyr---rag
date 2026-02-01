@@ -242,3 +242,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (hamburgerBtn && mobileMenu) {
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                mobileMenu.classList.remove('show');
+            }
+        });
+
+        // Show admin menu items if user is admin
+        const isAdmin = localStorage.getItem('verifyr_is_admin') === 'true';
+        if (isAdmin) {
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = 'block';
+            });
+        }
+    }
+
+    // Initialize language active state for all language switches
+    const savedLang = localStorage.getItem('verifyr-lang') || 'de';
+    document.querySelectorAll('.lang-option').forEach(option => {
+        if (option.getAttribute('data-lang') === savedLang) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
+    });
+});

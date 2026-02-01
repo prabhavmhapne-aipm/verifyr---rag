@@ -324,7 +324,7 @@ git push origin main
 cd /var/www/verifyr
 git pull origin main
 
-# Install new packages
+# Install new Python packages
 source venv/bin/activate
 pip install -r requirements.txt
 deactivate
@@ -332,6 +332,34 @@ deactivate
 # Restart backend
 systemctl restart verifyr-backend
 systemctl status verifyr-backend
+```
+
+**⚠️ Important - System-Level Dependencies:**
+
+Some Python packages require **system binaries** to be installed separately:
+
+| Python Package | Requires System Binary | Install Command |
+|---------------|------------------------|-----------------|
+| `pytesseract` | Tesseract OCR | `apt install -y tesseract-ocr tesseract-ocr-deu tesseract-ocr-eng` |
+| `opencv-python` | OpenCV libraries | `apt install -y libopencv-dev python3-opencv` |
+| `pillow` | Image libraries | `apt install -y libjpeg-dev zlib1g-dev` |
+
+**Example - Installing Tesseract:**
+```bash
+# Install system binary
+apt update
+apt install -y tesseract-ocr tesseract-ocr-deu tesseract-ocr-eng
+
+# Verify
+tesseract --version
+
+# Then install Python wrapper
+su - verifyr
+cd /var/www/verifyr
+source venv/bin/activate
+pip install pytesseract
+deactivate
+exit
 ```
 
 ---
@@ -611,6 +639,71 @@ performance.getEntriesByType("resource")
   .filter(e => e.name.includes('.js'))
   .forEach(e => console.log(e.name, new Date(e.fetchStart)));
 ```
+
+---
+
+### Tesseract OCR Not Working
+
+**Symptom:**
+```python
+TesseractNotFoundError: tesseract is not installed or it's not in your PATH
+```
+
+Or PDF processing fails with OCR-related errors.
+
+**Cause:** `pytesseract` in requirements.txt is only the Python wrapper. The actual **Tesseract OCR binary** must be installed separately on the system.
+
+**Solution - Install Tesseract on VPS:**
+
+```bash
+# Update package list
+apt update
+
+# Install Tesseract OCR binary and language data
+apt install -y tesseract-ocr tesseract-ocr-deu tesseract-ocr-eng
+
+# Verify installation
+tesseract --version
+# Should show: tesseract 4.x.x or 5.x.x
+
+# Test OCR
+tesseract --list-langs
+# Should show: deu, eng, osd
+```
+
+**For German + English support:**
+```bash
+# Install additional language packs
+apt install -y tesseract-ocr-deu tesseract-ocr-eng
+```
+
+**Verify Python can find it:**
+```bash
+su - verifyr
+cd /var/www/verifyr
+source venv/bin/activate
+
+python -c "import pytesseract; print(pytesseract.get_tesseract_version())"
+# Should print version number without errors
+
+deactivate
+exit
+```
+
+**If still not found after installation:**
+```bash
+# Find Tesseract binary location
+which tesseract
+
+# Add to Python code (if needed)
+# In your Python script:
+# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+```
+
+**Common Issues:**
+- **pytesseract installed, Tesseract not installed:** Run `apt install tesseract-ocr`
+- **Wrong language pack:** Install language-specific packages (`tesseract-ocr-deu` for German)
+- **Outdated version:** Update with `apt upgrade tesseract-ocr`
 
 ---
 

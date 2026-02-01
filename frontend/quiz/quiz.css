@@ -74,15 +74,141 @@
     border-color: var(--primary-blue);
 }
 
+/* Hide mobile menu by default */
+.mobile-nav {
+    display: none;
+}
+
+.mobile-menu {
+    display: none;
+}
+
+.mobile-lang-switch {
+    display: none;
+}
+
 /* Mobile responsive nav buttons */
 @media (max-width: 768px) {
-    .nav-right {
-        gap: var(--spacing-xs);
+    /* Hide desktop language switch on mobile */
+    .desktop-lang {
+        display: none !important;
     }
 
-    .nav-btn {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: 0.8125rem;
+    .desktop-nav {
+        display: none !important;
+    }
+
+    .mobile-nav {
+        display: flex;
+    }
+
+    /* Hamburger button */
+    .hamburger-btn {
+        width: 44px;
+        height: 44px;
+        background: var(--white);
+        border: 2px solid var(--light-gray);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .hamburger-btn span {
+        width: 20px;
+        height: 2px;
+        background: var(--dark);
+        display: block;
+        transition: all 0.3s ease;
+    }
+
+    .hamburger-btn:hover {
+        background: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+
+    .hamburger-btn:hover span {
+        background: var(--white);
+    }
+
+    /* Dropdown menu */
+    .mobile-menu {
+        position: fixed;
+        top: 80px;
+        right: 16px;
+        background: var(--white);
+        border: 2px solid var(--light-gray);
+        border-radius: 12px;
+        padding: var(--spacing-sm);
+        box-shadow: 0 8px 24px var(--shadow-dark-medium);
+        z-index: 1000;
+        min-width: 150px;
+    }
+
+    .mobile-menu.show {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    /* Mobile language switch inside dropdown */
+    .mobile-lang-switch {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: var(--spacing-xs);
+        background: var(--light-gray);
+        border-radius: 8px;
+    }
+
+    .mobile-lang-switch .lang-option {
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: transparent;
+        color: var(--gray);
+    }
+
+    .mobile-lang-switch .lang-option.active {
+        background: var(--primary-blue);
+        color: var(--white);
+    }
+
+    .mobile-lang-switch .lang-option:hover:not(.active) {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-blue);
+    }
+
+    .mobile-menu-divider {
+        height: 1px;
+        background: var(--light-gray);
+        margin: 4px 0;
+    }
+
+    .mobile-menu-item {
+        padding: var(--spacing-sm) var(--spacing-base);
+        background: transparent;
+        color: var(--dark);
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-menu-item:hover,
+    .mobile-menu-item.active {
+        background: var(--primary-blue);
+        color: var(--white);
     }
 }
 
@@ -111,11 +237,11 @@
     width: 100%;
 }
 
-/* Navigation Arrows (Desktop only) */
+/* Navigation Arrows */
 .quiz-nav-arrow {
-    display: none;
-    width: 48px;
-    height: 48px;
+    display: flex;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-full);
     background: var(--white);
     border: 2px solid var(--light-gray);
@@ -125,6 +251,7 @@
     transition: all 0.3s ease;
     flex-shrink: 0;
     color: var(--dark);
+    text-decoration: none;
 }
 
 .quiz-nav-arrow:hover:not(:disabled) {
@@ -400,19 +527,20 @@
     text-align: center;
 }
 
-.btn-primary {
+/* Scope to quiz container to avoid affecting auth modal */
+.quiz-container .btn-primary {
     background: var(--primary-blue);
     color: var(--white);
     box-shadow: 0 4px 12px var(--shadow-blue-light);
 }
 
-.btn-primary:hover:not(:disabled) {
+.quiz-container .btn-primary:hover:not(:disabled) {
     background: var(--dark-blue);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px var(--shadow-blue-medium);
 }
 
-.btn-primary:disabled {
+.quiz-container .btn-primary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -464,43 +592,173 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .quiz-container {
-        padding: var(--spacing-xl) var(--spacing-base);
+        padding: 2px 6px;
+        padding-top: 0;
+    }
+
+    /* Reduce white space around header */
+    .quiz-container nav {
+        margin-bottom: 0;
+    }
+
+    .quiz-header-wrapper {
+        gap: 6px;
+        margin-bottom: 0;
+    }
+
+    /* Mobile navigation arrows - compact size */
+    .quiz-nav-arrow {
+        width: 32px;
+        height: 32px;
+        border-width: 1.5px;
+    }
+
+    .quiz-nav-arrow svg {
+        width: 18px;
+        height: 18px;
     }
 
     .quiz-header h1 {
-        font-size: 1.5rem;
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.1;
     }
 
     .quiz-subtitle {
-        font-size: 1rem;
+        font-size: 0.6875rem;
+        margin: 0;
+        line-height: 1.1;
     }
 
+    .quiz-progress {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    /* Cards with DOUBLED IMAGE SIZE */
     .quiz-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-base);
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+        margin-bottom: 2px;
     }
 
+    /* Compact cards with large images, minimal padding */
     .selection-card {
-        min-height: 140px;
-        padding: var(--spacing-base);
+        min-height: 102px !important;
+        padding: 2px !important;
+        gap: 0px !important;
+    }
+
+    /* Category and Use-Case cards */
+    .selection-card:not(.feature-card) {
+        min-height: 102px !important;
+    }
+
+    /* DOUBLED IMAGE SIZE - was 52px, now 95px */
+    .card-image {
+        width: 95px !important;
+        height: 95px !important;
+        margin-bottom: 0;
     }
 
     .card-icon {
-        font-size: 2.5rem;
+        font-size: 3rem !important;
     }
 
+    /* Very compact text below large image */
     .card-title {
-        font-size: 1rem;
+        font-size: 0.625rem;
+        line-height: 1.0;
+        margin: 0;
+        padding-top: 1px;
     }
 
+    .card-subtitle {
+        font-size: 0.5625rem;
+        line-height: 1.0;
+        margin: 0;
+        display: none;
+    }
+
+    /* Checkmark */
+    .selection-card.selected::after {
+        width: 22px;
+        height: 22px;
+        font-size: 0.75rem;
+        top: 2px;
+        right: 2px;
+    }
+
+    /* Bottom buttons - better UX sizing */
     .quiz-navigation {
-        flex-direction: column;
-        gap: var(--spacing-base);
+        flex-direction: row;
+        justify-content: space-between;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-xs);
+        padding-top: var(--spacing-sm);
+        border-top: 1px solid var(--light-gray);
     }
 
     .btn {
-        width: 100%;
-        justify-content: center;
+        width: auto;
+        min-width: 110px;
+        padding: 12px 16px;
+        font-size: 0.9375rem;
+        flex: 0 1 auto;
+    }
+
+    /* Ensure proper order: Back on left, Next on right */
+    .btn-secondary {
+        order: 1;
+    }
+
+    .btn-primary {
+        order: 2;
+    }
+}
+
+/* Very small phones (≤375px) - slightly smaller images but still large */
+@media (max-width: 375px) {
+    .quiz-header h1 {
+        font-size: 0.9375rem;
+    }
+
+    .quiz-subtitle {
+        font-size: 0.625rem;
+    }
+
+    .selection-card {
+        min-height: 95px !important;
+        padding: 2px !important;
+        gap: 0px !important;
+    }
+
+    .selection-card:not(.feature-card) {
+        min-height: 95px !important;
+    }
+
+    .card-image {
+        width: 88px !important;
+        height: 88px !important;
+    }
+
+    .card-icon {
+        font-size: 2.75rem !important;
+    }
+
+    .card-title {
+        font-size: 0.5625rem;
+        padding-top: 1px;
+    }
+
+    .card-subtitle {
+        display: none;
+    }
+
+    .btn {
+        min-width: 100px;
+        padding: 11px 14px;
+        font-size: 0.875rem;
     }
 }
 
@@ -543,9 +801,16 @@
         width: 32px;
     }
 
-    /* Show navigation arrows on desktop */
+    /* Larger navigation arrows on desktop */
     .quiz-nav-arrow {
-        display: flex;
+        width: 48px;
+        height: 48px;
+        border-width: 2px;
+    }
+
+    .quiz-nav-arrow svg {
+        width: 24px;
+        height: 24px;
     }
 
     .quiz-navigation {

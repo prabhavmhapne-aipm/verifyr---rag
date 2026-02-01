@@ -450,10 +450,25 @@ class ResultsController {
     }
 
     generateRecommendationText(match, product) {
-        const reasons = match.match_reasons?.join('. ') || 'Gute Übereinstimmung mit deinen Präferenzen';
+        const texts = {
+            de: {
+                defaultReason: 'Gute Übereinstimmung mit deinen Präferenzen',
+                intro: 'Basierend auf deinen Antworten im Quiz empfehlen wir dir dieses Produkt mit einem Match-Score von',
+                conclusion: 'Das Gerät bietet eine ausgezeichnete Balance zwischen Funktionen und Benutzerfreundlichkeit.'
+            },
+            en: {
+                defaultReason: 'Good match with your preferences',
+                intro: 'Based on your quiz answers, we recommend this product with a match score of',
+                conclusion: 'This device offers an excellent balance between features and usability.'
+            }
+        };
+
+        const t = texts[this.currentLanguage];
+        const reasons = match.match_reasons?.join('. ') || t.defaultReason;
+
         return `
-            Basierend auf deinen Antworten im Quiz empfehlen wir dir dieses Produkt mit einem Match-Score von ${Math.round(match.match_score * 100)}%.
-            ${reasons}. Das Gerät bietet eine ausgezeichnete Balance zwischen Funktionen und Benutzerfreundlichkeit.
+            ${t.intro} ${Math.round(match.match_score * 100)}%.
+            ${reasons}. ${t.conclusion}
         `;
     }
 
@@ -530,26 +545,32 @@ class ResultsController {
 
     setupTabSwitching(card, cardIndex) {
         const tabButtons = card.querySelectorAll('.tab-button');
-        const tabContents = card.querySelectorAll('.tab-content');
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabName = button.dataset.tab;
 
-                // Remove active from all tabs in this card
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => {
-                    if (content.dataset.cardIndex == cardIndex) {
-                        content.classList.remove('active');
+                // Switch tabs on ALL cards simultaneously
+                const allCards = document.querySelectorAll('.product-card');
+                allCards.forEach((productCard, index) => {
+                    const cardTabButtons = productCard.querySelectorAll('.tab-button');
+                    const cardTabContents = productCard.querySelectorAll('.tab-content');
+
+                    // Remove active from all tabs in this card
+                    cardTabButtons.forEach(btn => btn.classList.remove('active'));
+                    cardTabContents.forEach(content => content.classList.remove('active'));
+
+                    // Add active to the matching tab
+                    const matchingButton = productCard.querySelector(`.tab-button[data-tab="${tabName}"]`);
+                    if (matchingButton) {
+                        matchingButton.classList.add('active');
+                    }
+
+                    const targetContent = productCard.querySelector(`[data-content="${tabName}"][data-card-index="${index}"]`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
                     }
                 });
-
-                // Add active to clicked tab
-                button.classList.add('active');
-                const targetContent = card.querySelector(`[data-content="${tabName}"][data-card-index="${cardIndex}"]`);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                }
             });
         });
     }
@@ -594,14 +615,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize language on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const savedLang = localStorage.getItem('verifyr-lang') || 'de';
-    const langOption = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
-    if (langOption) {
-        langOption.classList.add('active');
-        document.querySelectorAll('.lang-option').forEach(opt => {
-            if (opt !== langOption) {
-                opt.classList.remove('active');
+    // Hamburger menu toggle
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (hamburgerBtn && mobileMenu) {
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                mobileMenu.classList.remove('show');
             }
         });
     }
+
+    // Initialize language active state for all language switches
+    const savedLang = localStorage.getItem('verifyr-lang') || 'de';
+    document.querySelectorAll('.lang-option').forEach(option => {
+        if (option.getAttribute('data-lang') === savedLang) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
+    });
 });

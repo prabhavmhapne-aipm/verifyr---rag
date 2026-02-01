@@ -22,27 +22,42 @@
         <nav>
             <div class="nav-left">
                 <a href="/" class="logo">Verifyr</a>
-                <div class="lang-switch">
+                <!-- Desktop: Show language switch -->
+                <div class="lang-switch desktop-lang">
                     <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
                     <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
                 </div>
             </div>
-            <div class="nav-right">
+
+            <!-- Desktop: Show all nav buttons -->
+            <div class="nav-right desktop-nav">
                 <a href="/" class="nav-btn">Home</a>
                 <a href="/quiz/category.html" class="nav-btn active">Quiz</a>
-                <a href="/chat.html" class="nav-btn" title="Chat">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                </a>
-                <a href="/admin.html" class="nav-btn admin-only" style="display: none;" title="Admin">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                    </svg>
-                </a>
+                <a href="/chat.html" class="nav-btn">Chat</a>
+                <a href="/admin.html" class="nav-btn admin-only" style="display: none;">Admin</a>
             </div>
+
+            <!-- Mobile: Hamburger button -->
+            <button class="hamburger-btn mobile-nav" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </nav>
+
+        <!-- Mobile: Dropdown menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <!-- Language switch in mobile menu -->
+            <div class="mobile-lang-switch">
+                <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+            </div>
+            <div class="mobile-menu-divider"></div>
+            <a href="/" class="mobile-menu-item">Home</a>
+            <a href="/quiz/category.html" class="mobile-menu-item active">Quiz</a>
+            <a href="/chat.html" class="mobile-menu-item">Chat</a>
+            <a href="/admin.html" class="mobile-menu-item admin-only" style="display: none;">Admin</a>
+        </div>
 
         <!-- Quiz Content -->
         <div class="quiz-content">

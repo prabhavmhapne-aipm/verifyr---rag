@@ -23,27 +23,42 @@
         <nav>
             <div class="nav-left">
                 <a href="/" class="logo">Verifyr</a>
-                <div class="lang-switch">
+                <!-- Desktop: Show language switch -->
+                <div class="lang-switch desktop-lang">
                     <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
                     <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
                 </div>
             </div>
-            <div class="nav-right">
+
+            <!-- Desktop: Show all nav buttons -->
+            <div class="nav-right desktop-nav">
                 <a href="/" class="nav-btn">Home</a>
                 <a href="/quiz/category.html" class="nav-btn">Quiz</a>
-                <a href="/chat.html" class="nav-btn" title="Chat">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                </a>
-                <a href="/admin.html" class="nav-btn admin-only" style="display: none;" title="Admin">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                    </svg>
-                </a>
+                <a href="/chat.html" class="nav-btn">Chat</a>
+                <a href="/admin.html" class="nav-btn admin-only" style="display: none;">Admin</a>
             </div>
+
+            <!-- Mobile: Hamburger button -->
+            <button class="hamburger-btn mobile-nav" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </nav>
+
+        <!-- Mobile: Dropdown menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <!-- Language switch in mobile menu -->
+            <div class="mobile-lang-switch">
+                <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
+            </div>
+            <div class="mobile-menu-divider"></div>
+            <a href="/" class="mobile-menu-item">Home</a>
+            <a href="/quiz/category.html" class="mobile-menu-item">Quiz</a>
+            <a href="/chat.html" class="mobile-menu-item">Chat</a>
+            <a href="/admin.html" class="mobile-menu-item admin-only" style="display: none;">Admin</a>
+        </div>
 
         <!-- Results Content -->
         <div class="quiz-content">
@@ -73,34 +88,12 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <button class="nav-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <span>Home</span>
-        </button>
-        <button class="nav-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <span>Suchen</span>
-        </button>
-        <button class="nav-item active" onclick="window.location.href='/chat.html'">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-            </svg>
-            <span>Chat</span>
-        </button>
-        <button class="nav-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"/>
-                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <span>Profile</span>
-        </button>
-    </nav>
+    <!-- Floating Chat Button (Mobile Only) -->
+    <button class="floating-chat-btn" onclick="window.location.href='/chat.html'" title="Chat">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+        </svg>
+    </button>
 
     <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
