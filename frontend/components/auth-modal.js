@@ -54,7 +54,14 @@ class AuthModal {
                 fillAllFields: 'Bitte fülle alle Felder aus.',
                 signupDisabledMessage: 'Registrierung ist derzeit deaktiviert',
                 show: 'Zeigen',
-                hide: 'Verbergen'
+                hide: 'Verbergen',
+                forgotPasswordLink: 'Passwort vergessen?',
+                forgotPasswordTitle: 'Passwort zurücksetzen',
+                forgotPasswordDesc: 'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.',
+                forgotPasswordButton: 'Link senden',
+                forgotPasswordSuccess: 'Wir haben dir einen Link zum Zurücksetzen deines Passworts gesendet. Bitte überprüfe deine E-Mails.',
+                forgotPasswordError: 'Fehler beim Senden des Links. Bitte versuche es erneut.',
+                invalidEmail: 'Bitte gib eine gültige E-Mail-Adresse ein.'
             },
             en: {
                 title: 'Sign in to continue',
@@ -88,7 +95,14 @@ class AuthModal {
                 fillAllFields: 'Please fill in all fields.',
                 signupDisabledMessage: 'Registration is currently disabled',
                 show: 'Show',
-                hide: 'Hide'
+                hide: 'Hide',
+                forgotPasswordLink: 'Forgot password?',
+                forgotPasswordTitle: 'Reset Password',
+                forgotPasswordDesc: 'Enter your email address and we\'ll send you a link to reset your password.',
+                forgotPasswordButton: 'Send Link',
+                forgotPasswordSuccess: 'We\'ve sent you a password reset link. Please check your email.',
+                forgotPasswordError: 'Error sending reset link. Please try again.',
+                invalidEmail: 'Please enter a valid email address.'
             }
         };
 
@@ -146,6 +160,11 @@ class AuthModal {
                                 <span class="btn-text">${t.loginButton}</span>
                                 <span class="btn-loading"></span>
                             </button>
+                            <div class="form-footer">
+                                <a href="#" class="forgot-password-link" id="forgotPasswordLink">
+                                    ${t.forgotPasswordLink}
+                                </a>
+                            </div>
                             <div class="form-message" id="loginMessage"></div>
                         </form>
 
@@ -167,6 +186,26 @@ class AuthModal {
                             <div class="signup-disabled-notice">
                                 <strong>${t.signupDisabledMessage}</strong>
                             </div>
+                        </form>
+                    </div>
+
+                    <!-- Forgot Password Modal -->
+                    <div class="forgot-password-modal" id="forgotPasswordModalContent" style="display: none;">
+                        <div class="forgot-password-header">
+                            <button class="back-button" id="backToLoginBtn">←</button>
+                            <h3 id="forgotPasswordTitle">${t.forgotPasswordTitle}</h3>
+                        </div>
+                        <p class="forgot-password-description" id="forgotPasswordDesc">${t.forgotPasswordDesc}</p>
+                        <form id="forgotPasswordForm">
+                            <div class="form-group">
+                                <label for="forgotPasswordEmail">${t.emailLabel}</label>
+                                <input type="email" id="forgotPasswordEmail" class="form-input" placeholder="${t.emailPlaceholder}" required autocomplete="email">
+                            </div>
+                            <button type="submit" class="btn-primary" id="forgotPasswordBtn">
+                                <span class="btn-text" id="forgotPasswordBtnText">${t.forgotPasswordButton}</span>
+                                <span class="btn-loading"></span>
+                            </button>
+                            <div class="form-message" id="forgotPasswordMessage"></div>
                         </form>
                     </div>
                 </div>
@@ -261,6 +300,27 @@ class AuthModal {
 
         const waitlistForm = this.modalEl.querySelector('#waitlistForm');
         waitlistForm.addEventListener('submit', (e) => this.handleWaitlist(e));
+
+        // Forgot password link
+        const forgotPasswordLink = this.modalEl.querySelector('#forgotPasswordLink');
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showForgotPassword();
+            });
+        }
+
+        // Back to login button
+        const backToLoginBtn = this.modalEl.querySelector('#backToLoginBtn');
+        if (backToLoginBtn) {
+            backToLoginBtn.addEventListener('click', () => this.hideForgotPassword());
+        }
+
+        // Forgot password form
+        const forgotPasswordForm = this.modalEl.querySelector('#forgotPasswordForm');
+        if (forgotPasswordForm) {
+            forgotPasswordForm.addEventListener('submit', (e) => this.handleForgotPassword(e));
+        }
     }
 
     switchTab(tabName) {
@@ -456,6 +516,110 @@ class AuthModal {
         } finally {
             this.setLoading(submitBtn, false);
             submitBtn.querySelector('.btn-text').textContent = originalText;
+        }
+    }
+
+    showForgotPassword() {
+        // Hide auth tabs and forms
+        const authTabs = this.modalEl.querySelector('.auth-tabs');
+        const authForms = this.modalEl.querySelector('.auth-forms');
+        const forgotPasswordModal = this.modalEl.querySelector('#forgotPasswordModalContent');
+
+        if (authTabs) authTabs.style.display = 'none';
+        if (authForms) authForms.style.display = 'none';
+        if (forgotPasswordModal) forgotPasswordModal.style.display = 'block';
+
+        // Clear any previous messages
+        const messageEl = this.modalEl.querySelector('#forgotPasswordMessage');
+        if (messageEl) {
+            this.clearMessage(messageEl);
+        }
+
+        // Clear email input
+        const emailInput = this.modalEl.querySelector('#forgotPasswordEmail');
+        if (emailInput) {
+            emailInput.value = '';
+        }
+
+        // Track event
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'forgot_password_open', {
+                'event_category': 'auth_modal'
+            });
+        }
+    }
+
+    hideForgotPassword() {
+        // Show auth tabs and forms
+        const authTabs = this.modalEl.querySelector('.auth-tabs');
+        const authForms = this.modalEl.querySelector('.auth-forms');
+        const forgotPasswordModal = this.modalEl.querySelector('#forgotPasswordModalContent');
+
+        if (authTabs) authTabs.style.display = 'flex';
+        if (authForms) authForms.style.display = 'block';
+        if (forgotPasswordModal) forgotPasswordModal.style.display = 'none';
+
+        // Clear messages in forgot password form
+        const messageEl = this.modalEl.querySelector('#forgotPasswordMessage');
+        if (messageEl) {
+            this.clearMessage(messageEl);
+        }
+    }
+
+    async handleForgotPassword(e) {
+        e.preventDefault();
+        const t = this.translations[this.currentLanguage];
+        const messageEl = this.modalEl.querySelector('#forgotPasswordMessage');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const emailInput = this.modalEl.querySelector('#forgotPasswordEmail');
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            this.showMessage(messageEl, t.invalidEmail, 'error');
+            return;
+        }
+
+        if (!this.supabaseClient) {
+            this.showMessage(messageEl, t.genericError, 'error');
+            return;
+        }
+
+        this.setLoading(submitBtn, true);
+        this.clearMessage(messageEl);
+
+        try {
+            // Get current origin for redirect URL
+            const redirectUrl = window.location.origin + '/reset-password.html';
+
+            const { error } = await this.supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: redirectUrl
+            });
+
+            if (error) throw error;
+
+            // Success - show message
+            this.showMessage(messageEl, t.forgotPasswordSuccess, 'success');
+
+            // Track successful request
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'forgot_password_request', {
+                    'event_category': 'auth_modal'
+                });
+            }
+
+            // Clear email input
+            emailInput.value = '';
+
+            // Return to login after 3 seconds
+            setTimeout(() => {
+                this.hideForgotPassword();
+            }, 3000);
+
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            this.showMessage(messageEl, t.forgotPasswordError, 'error');
+        } finally {
+            this.setLoading(submitBtn, false);
         }
     }
 

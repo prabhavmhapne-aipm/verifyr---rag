@@ -409,6 +409,149 @@ function getErrorMessage(error) {
 }
 
 /**
+ * Show forgot password modal
+ */
+function showForgotPasswordModal() {
+    const modal = document.getElementById('forgotPasswordModal');
+    modal.classList.add('active');
+
+    // Update language
+    updateForgotPasswordLanguage();
+
+    // Clear previous messages
+    const messageEl = document.getElementById('forgotPasswordMessage');
+    messageEl.textContent = '';
+    messageEl.className = 'form-message';
+
+    // Clear input
+    document.getElementById('forgotPasswordEmail').value = '';
+
+    // Track modal open
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'forgot_password_open', {
+            'event_category': 'auth'
+        });
+    }
+}
+
+/**
+ * Hide forgot password modal
+ */
+function hideForgotPasswordModal() {
+    const modal = document.getElementById('forgotPasswordModal');
+    modal.classList.remove('active');
+}
+
+/**
+ * Update forgot password modal language
+ */
+function updateForgotPasswordLanguage() {
+    const lang = localStorage.getItem('verifyr-lang') || 'de';
+
+    const texts = {
+        de: {
+            title: 'Passwort zurücksetzen',
+            description: 'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.',
+            emailLabel: 'E-Mail',
+            buttonText: 'Link senden',
+            successMessage: 'Wir haben dir einen Link zum Zurücksetzen deines Passworts gesendet. Bitte überprüfe deine E-Mails.',
+            errorMessage: 'Fehler beim Senden des Links. Bitte versuche es erneut.',
+            invalidEmail: 'Bitte gib eine gültige E-Mail-Adresse ein.'
+        },
+        en: {
+            title: 'Reset Password',
+            description: 'Enter your email address and we\'ll send you a link to reset your password.',
+            emailLabel: 'Email Address',
+            buttonText: 'Send Link',
+            successMessage: 'We\'ve sent you a password reset link. Please check your email.',
+            errorMessage: 'Error sending reset link. Please try again.',
+            invalidEmail: 'Please enter a valid email address.'
+        }
+    };
+
+    const t = texts[lang];
+
+    document.getElementById('forgotPasswordTitle').textContent = t.title;
+    document.getElementById('forgotPasswordDesc').textContent = t.description;
+    document.getElementById('forgotPasswordBtnText').textContent = t.buttonText;
+
+    // Store translations for use in handleForgotPassword
+    window._forgotPasswordTexts = t;
+}
+
+/**
+ * Handle forgot password form submission
+ */
+async function handleForgotPassword(event) {
+    event.preventDefault();
+
+    if (!supabaseClient) {
+        const messageEl = document.getElementById('forgotPasswordMessage');
+        messageEl.textContent = 'Authentication service not available';
+        messageEl.className = 'form-message error';
+        return;
+    }
+
+    const email = document.getElementById('forgotPasswordEmail').value.trim();
+    const btn = document.getElementById('forgotPasswordBtn');
+    const messageEl = document.getElementById('forgotPasswordMessage');
+    const t = window._forgotPasswordTexts || {
+        successMessage: 'Password reset link sent. Check your email.',
+        errorMessage: 'Error sending reset link.',
+        invalidEmail: 'Please enter a valid email address.'
+    };
+
+    if (!email) {
+        messageEl.textContent = t.invalidEmail;
+        messageEl.className = 'form-message error';
+        return;
+    }
+
+    setLoading(btn, true);
+    messageEl.textContent = '';
+    messageEl.className = 'form-message';
+
+    try {
+        // Get current domain for redirect URL
+        const redirectUrl = window.location.origin + '/reset-password.html';
+
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: redirectUrl
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        // Success - show message
+        messageEl.textContent = t.successMessage;
+        messageEl.className = 'form-message success';
+
+        // Track successful request
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'forgot_password_request', {
+                'event_category': 'auth'
+            });
+        }
+
+        // Clear email field
+        document.getElementById('forgotPasswordEmail').value = '';
+
+        // Close modal after 3 seconds
+        setTimeout(() => {
+            hideForgotPasswordModal();
+        }, 3000);
+
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        messageEl.textContent = t.errorMessage;
+        messageEl.className = 'form-message error';
+    } finally {
+        setLoading(btn, false);
+    }
+}
+
+/**
  * Handle waitlist form submission
  */
 async function handleWaitlist(event) {

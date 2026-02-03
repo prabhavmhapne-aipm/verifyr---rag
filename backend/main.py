@@ -155,6 +155,18 @@ class ProductRecommendationResponse(BaseModel):
     product: Dict[str, Any]
 
 
+class InviteUserRequest(BaseModel):
+    """Request model for inviting a user."""
+    email: str = Field(..., description="Email address of the user to invite")
+
+
+class InviteUserResponse(BaseModel):
+    """Response model for user invitation."""
+    success: bool
+    message: str
+    user_id: Optional[str] = None
+
+
 # ============================================================================
 # FastAPI Application
 # ============================================================================
@@ -1089,6 +1101,69 @@ async def admin_list_users(user: AuthUser = Depends(require_admin)):
         raise HTTPException(
             status_code=500,
             detail=f"Error listing users: {str(e)}"
+        )
+
+
+@app.post("/admin/invite-user", response_model=InviteUserResponse, tags=["Admin"])
+async def admin_invite_user(
+    request: InviteUserRequest,
+    user: AuthUser = Depends(require_admin)
+):
+    """
+    Invite a new user via email (admin only).
+
+    Sends an invitation email to the user with a link to set their password.
+    The link redirects to the reset-password page.
+    """
+    try:
+        supabase = get_supabase_admin_client()
+
+        if not supabase:
+            raise HTTPException(
+                status_code=503,
+                detail="Supabase admin client not available"
+            )
+
+        # Determine redirect URL based on environment
+        # In production, use the actual domain
+        import os
+        base_url = os.getenv("BASE_URL", "http://localhost:8000")
+        redirect_url = f"{base_url}/reset-password.html"
+
+        # Invite user with custom redirect URL
+        response = supabase.auth.admin.invite_user_by_email(
+            request.email,
+            options={
+                "redirect_to": redirect_url
+            }
+        )
+
+        if response and response.user:
+            return InviteUserResponse(
+                success=True,
+                message=f"Invitation sent to {request.email}",
+                user_id=response.user.id
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to invite user"
+            )
+
+    except Exception as e:
+        error_msg = str(e)
+
+        # Handle duplicate email
+        if "already registered" in error_msg.lower() or "duplicate" in error_msg.lower():
+            raise HTTPException(
+                status_code=409,
+                detail=f"User with email {request.email} already exists"
+            )
+
+        # Handle other errors
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error inviting user: {error_msg}"
         )
 
 

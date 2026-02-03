@@ -334,6 +334,105 @@
             color: var(--dark);
         }
 
+        /* Form Footer (for forgot password link) */
+        .form-footer {
+            margin-top: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .forgot-password-link {
+            color: var(--primary-blue);
+            font-size: var(--font-size-sm);
+            text-decoration: none;
+            transition: opacity 0.2s;
+            font-weight: var(--font-weight-medium);
+        }
+
+        .forgot-password-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* Forgot Password Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            max-width: 480px;
+            width: 90%;
+            position: relative;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            font-size: 28px;
+            color: var(--gray);
+            cursor: pointer;
+            line-height: 1;
+            background: none;
+            border: none;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .modal h3 {
+            color: var(--dark);
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-base);
+        }
+
+        .modal p {
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.5;
+        }
+
+        .form-message {
+            padding: var(--spacing-base) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+            text-align: center;
+        }
+
+        .form-message.success {
+            background: #DCFCE7;
+            color: #16A34A;
+            border: 1px solid #BBF7D0;
+        }
+
+        .form-message.error {
+            background: #FEE2E2;
+            color: #DC2626;
+            border: 1px solid #FECACA;
+        }
+
         /* Footer */
         .auth-footer {
             text-align: center;
@@ -461,6 +560,12 @@
                     <span class="btn-text" data-i18n="login.button">Anmelden</span>
                     <span class="loading"></span>
                 </button>
+                <!-- Forgot Password Link -->
+                <div class="form-footer">
+                    <a href="#" class="forgot-password-link" onclick="showForgotPasswordModal(); return false;" data-i18n="forgotPassword.link">
+                        Passwort vergessen?
+                    </a>
+                </div>
             </form>
 
             <!-- Waitlist Form -->
@@ -496,6 +601,36 @@
             <div class="auth-footer">
                 <a href="index.html" class="auth-footer-link" data-i18n="footer.backHome">Zurück zur Startseite</a>
             </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="hideForgotPasswordModal()">&times;</button>
+            <h3 id="forgotPasswordTitle" data-i18n="forgotPassword.title">Passwort zurücksetzen</h3>
+            <p id="forgotPasswordDesc" data-i18n="forgotPassword.description">
+                Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.
+            </p>
+            <form onsubmit="handleForgotPassword(event)">
+                <div class="form-group">
+                    <label class="form-label" for="forgotPasswordEmail" data-i18n="form.email">E-Mail</label>
+                    <input
+                        type="email"
+                        id="forgotPasswordEmail"
+                        class="form-input"
+                        data-i18n-placeholder="form.emailPlaceholder"
+                        placeholder="deine@email.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                <button type="submit" class="submit-btn" id="forgotPasswordBtn">
+                    <span class="btn-text" id="forgotPasswordBtnText" data-i18n="forgotPassword.button">Link senden</span>
+                    <span class="loading"></span>
+                </button>
+                <div class="form-message" id="forgotPasswordMessage"></div>
+            </form>
         </div>
     </div>
 
@@ -543,6 +678,15 @@
                 messages: {
                     loginSuccess: "Anmeldung erfolgreich! Weiterleitung...",
                     error: "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+                },
+                forgotPassword: {
+                    link: "Passwort vergessen?",
+                    title: "Passwort zurücksetzen",
+                    description: "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.",
+                    button: "Link senden",
+                    success: "Wir haben dir einen Link zum Zurücksetzen deines Passworts gesendet. Bitte überprüfe deine E-Mails.",
+                    error: "Fehler beim Senden des Links. Bitte versuche es erneut.",
+                    invalidEmail: "Bitte gib eine gültige E-Mail-Adresse ein."
                 }
             },
             en: {
@@ -583,6 +727,15 @@
                 messages: {
                     loginSuccess: "Login successful! Redirecting...",
                     error: "Something went wrong. Please try again."
+                },
+                forgotPassword: {
+                    link: "Forgot password?",
+                    title: "Reset Password",
+                    description: "Enter your email address and we'll send you a link to reset your password.",
+                    button: "Send Link",
+                    success: "We've sent you a password reset link. Please check your email.",
+                    error: "Error sending reset link. Please try again.",
+                    invalidEmail: "Please enter a valid email address."
                 }
             }
         };

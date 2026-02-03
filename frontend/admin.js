@@ -425,5 +425,96 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+/**
+ * Show invite user modal
+ */
+function showInviteUserModal() {
+    const modal = document.getElementById('inviteUserModal');
+    modal.classList.add('active');
+
+    // Clear previous data
+    document.getElementById('inviteEmail').value = '';
+    const messageEl = document.getElementById('inviteMessage');
+    messageEl.textContent = '';
+    messageEl.className = 'form-message';
+}
+
+/**
+ * Hide invite user modal
+ */
+function hideInviteUserModal() {
+    const modal = document.getElementById('inviteUserModal');
+    modal.classList.remove('active');
+}
+
+/**
+ * Handle invite user form submission
+ */
+async function handleInviteUser(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('inviteEmail').value.trim();
+    const messageEl = document.getElementById('inviteMessage');
+    const submitBtn = document.getElementById('inviteSubmitBtn');
+
+    if (!email) {
+        messageEl.textContent = 'Please enter a valid email address.';
+        messageEl.className = 'form-message error';
+        return;
+    }
+
+    // Set loading state
+    submitBtn.disabled = true;
+    submitBtn.classList.add('loading');
+    messageEl.textContent = '';
+    messageEl.className = 'form-message';
+
+    try {
+        const token = getAccessToken();
+        const response = await fetch(`${API_BASE_URL}/admin/invite-user`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Success
+            messageEl.textContent = data.message || `Invitation sent to ${email}`;
+            messageEl.className = 'form-message success';
+
+            // Clear form
+            document.getElementById('inviteEmail').value = '';
+
+            // Refresh users list
+            setTimeout(() => {
+                loadUsers();
+                hideInviteUserModal();
+            }, 2000);
+
+        } else if (response.status === 409) {
+            // User already exists
+            messageEl.textContent = data.detail || 'User already exists';
+            messageEl.className = 'form-message error';
+        } else {
+            // Other error
+            messageEl.textContent = data.detail || 'Failed to send invitation';
+            messageEl.className = 'form-message error';
+        }
+
+    } catch (error) {
+        console.error('Error inviting user:', error);
+        messageEl.textContent = 'Network error. Please try again.';
+        messageEl.className = 'form-message error';
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', init);
