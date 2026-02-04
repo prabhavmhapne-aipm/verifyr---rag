@@ -102,8 +102,18 @@
         display: flex;
     }
 
-    /* Hamburger button */
+    /* Mobile nav layout: Hamburger left, Logo centered */
+    .quiz-container nav {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Hamburger button on the left */
     .hamburger-btn {
+        position: absolute;
+        left: var(--spacing-base);
         width: 44px;
         height: 44px;
         background: var(--white);
@@ -117,6 +127,18 @@
         padding: 0;
         cursor: pointer;
         transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    /* Logo centered */
+    .nav-left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-left .logo {
+        text-align: center;
     }
 
     .hamburger-btn span {
@@ -136,18 +158,18 @@
         background: var(--white);
     }
 
-    /* Dropdown menu */
+    /* Dropdown menu - opens below hamburger on left */
     .mobile-menu {
         position: fixed;
         top: 80px;
-        right: 16px;
+        left: var(--spacing-base);
         background: var(--white);
         border: 2px solid var(--light-gray);
         border-radius: 12px;
         padding: var(--spacing-sm);
         box-shadow: 0 8px 24px var(--shadow-dark-medium);
         z-index: 1000;
-        min-width: 150px;
+        min-width: 200px;
     }
 
     .mobile-menu.show {
@@ -876,37 +898,7 @@
         font-size: 1rem;
     }
 
-    /* Mobile user info */
-    .mobile-user-info {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding: var(--spacing-xs);
-    }
-
-    .mobile-user-email {
-        font-size: 0.75rem;
-        color: var(--gray);
-        word-break: break-all;
-    }
-
-    .mobile-logout-btn {
-        padding: 6px 12px;
-        background: var(--white);
-        color: var(--dark);
-        border: 2px solid var(--light-gray);
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .mobile-logout-btn:hover {
-        background: var(--error);
-        color: var(--white);
-        border-color: var(--error);
-    }
+    /* Mobile user info - MOVED TO END OF FILE (see bottom) */
 }
 
 /* ============================================================================
@@ -1012,6 +1004,10 @@
     word-break: break-all;
 }
 
+.sidebar-user-email:empty {
+    display: none;
+}
+
 .sidebar-logout-btn,
 .sidebar-login-btn {
     width: 100%;
@@ -1067,3 +1063,46 @@
     }
 }
 
+
+/* ============================================================================
+   MOBILE MENU USER INFO - FORCED STYLES (MUST BE LAST)
+   ============================================================================ */
+@media (max-width: 768px) {
+    .mobile-user-info {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        padding: var(--spacing-xs) !important;
+    }
+
+    .mobile-user-email {
+        font-size: 0.875rem !important;
+        color: var(--gray) !important;
+        word-break: break-all !important;
+        text-align: center !important;
+    }
+
+    .mobile-user-email:empty {
+        display: none !important;
+    }
+
+    .mobile-logout-btn,
+    .mobile-login-btn {
+        width: 100% !important;
+        padding: 8px 12px !important;
+        background: var(--white) !important;
+        color: var(--dark) !important;
+        border: 2px solid var(--light-gray) !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .mobile-logout-btn:hover {
+        background: var(--error) !important;
+        color: var(--white) !important;
+        border-color: var(--error) !important;
+    }
+}

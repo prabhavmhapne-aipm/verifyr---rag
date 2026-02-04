@@ -386,7 +386,6 @@ function updateUserDisplay() {
         // Mobile
         if (mobileUserEmail) {
             mobileUserEmail.textContent = userEmail;
-            mobileUserEmail.style.display = 'block';
         }
         if (mobileLogoutBtn) {
             mobileLogoutBtn.textContent = logoutText;
@@ -398,7 +397,6 @@ function updateUserDisplay() {
         // Sidebar
         if (sidebarUserEmail) {
             sidebarUserEmail.textContent = userEmail;
-            sidebarUserEmail.style.display = 'block';
         }
         if (sidebarAuthBtn) {
             sidebarAuthBtn.textContent = logoutText;
@@ -409,10 +407,7 @@ function updateUserDisplay() {
     } else {
         // User is not logged in - hide email, show login button
 
-        // Mobile
-        if (mobileUserEmail) {
-            mobileUserEmail.style.display = 'none';
-        }
+        // Mobile (email hidden by CSS when not logged in)
         if (mobileLogoutBtn) {
             mobileLogoutBtn.textContent = loginText;
             mobileLogoutBtn.onclick = () => window.location.href = '/auth.html';
@@ -420,10 +415,7 @@ function updateUserDisplay() {
             mobileLogoutBtn.classList.add('mobile-login-btn');
         }
 
-        // Sidebar
-        if (sidebarUserEmail) {
-            sidebarUserEmail.style.display = 'none';
-        }
+        // Sidebar (email hidden by CSS when not logged in)
         if (sidebarAuthBtn) {
             sidebarAuthBtn.textContent = loginText;
             sidebarAuthBtn.onclick = () => window.location.href = '/auth.html';

@@ -805,7 +805,7 @@ body {
     }
 
     .chat-header {
-        padding: var(--spacing-base) var(--spacing-base);
+        padding: var(--spacing-base) var(--spacing-base) var(--spacing-base) 0;
     }
 
     .header-top {
@@ -813,6 +813,7 @@ body {
         align-items: center;
         gap: var(--spacing-base);
         justify-content: space-between;
+        padding-left: 0;
     }
 
     .header-logo-section {
@@ -834,8 +835,18 @@ body {
         display: flex !important;
     }
 
-    /* Hamburger button */
+    /* Mobile header layout: Hamburger left, Logo centered */
+    .header-top {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Hamburger button on the left */
     .hamburger-btn {
+        position: absolute;
+        left: var(--spacing-base);
         width: 44px;
         height: 44px;
         background: var(--white);
@@ -849,6 +860,18 @@ body {
         padding: 0;
         cursor: pointer;
         transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    /* Logo centered */
+    .header-logo-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header-logo-section .logo {
+        text-align: center;
     }
 
     .hamburger-btn span {
@@ -868,11 +891,11 @@ body {
         background: var(--white);
     }
 
-    /* Mobile menu dropdown */
+    /* Mobile menu dropdown - opens below hamburger on left */
     .mobile-menu {
         position: fixed;
         top: 80px;
-        right: 16px;
+        left: var(--spacing-base);
         background: var(--white);
         border: 2px solid var(--light-gray);
         border-radius: 12px;
@@ -1027,13 +1050,15 @@ body {
     }
 
     .mobile-user-email {
-        font-size: 0.75rem;
+        font-size: 0.875rem;
         color: var(--gray);
         word-break: break-all;
+        text-align: center;
     }
 
     .mobile-logout-btn {
-        padding: 6px 12px;
+        width: 100%;
+        padding: 8px 12px;
         background: var(--white);
         color: var(--dark);
         border: 2px solid var(--light-gray);

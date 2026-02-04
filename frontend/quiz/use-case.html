@@ -50,6 +50,13 @@
     <div class="quiz-container">
         <!-- Navigation Bar (matching index.html) -->
         <nav>
+            <!-- Mobile: Hamburger button (left side) -->
+            <button class="hamburger-btn mobile-nav" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
             <div class="nav-left">
                 <!-- Sidebar Toggle Button (Desktop) -->
                 <button class="sidebar-toggle-btn desktop-nav" onclick="toggleSidebar()" aria-label="Menu">☰</button>
@@ -68,13 +75,6 @@
                 <a href="/chat.html" class="nav-btn">Chat</a>
                 <a href="/admin.html" class="nav-btn admin-only" style="display: none;">Admin</a>
             </div>
-
-            <!-- Mobile: Hamburger button -->
-            <button class="hamburger-btn mobile-nav" aria-label="Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </nav>
 
         <!-- Mobile: Dropdown menu -->
