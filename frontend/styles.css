@@ -294,9 +294,9 @@ body {
 }
 
 .sidebar-logout-btn:hover {
-    background: var(--danger);
+    background: var(--error);
     color: var(--white);
-    border-color: var(--danger);
+    border-color: var(--error);
 }
 
 .conversation-item {
@@ -1045,9 +1045,9 @@ body {
     }
 
     .mobile-logout-btn:hover {
-        background: var(--danger);
+        background: var(--error);
         color: var(--white);
-        border-color: var(--danger);
+        border-color: var(--error);
     }
 
     /* Hide sidebar toggle button on mobile (now in hamburger menu) */

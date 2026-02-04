@@ -554,25 +554,345 @@
             border: 1px solid #FECACA;
             display: block;
         }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .admin-sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-xl);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: var(--font-size-xl);
+            color: var(--dark);
+        }
+
+        .sidebar-close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--gray);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar-close-btn:hover {
+            color: var(--dark);
+        }
+
+        .sidebar-section {
+            padding: var(--spacing-base);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-nav-link {
+            display: block;
+            padding: var(--spacing-xs) var(--spacing-base);
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav-link:hover {
+            background: var(--light-gray);
+            color: var(--primary-blue);
+        }
+
+        .sidebar-user-section {
+            margin-top: auto;
+            padding: var(--spacing-base);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-user-email {
+            font-size: 0.75rem;
+            color: var(--gray);
+            word-break: break-all;
+        }
+
+        .sidebar-logout-btn,
+        .sidebar-login-btn {
+            padding: 8px 16px;
+            background: var(--white);
+            color: var(--dark);
+            border: 2px solid var(--light-gray);
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .sidebar-logout-btn:hover {
+            background: var(--error);
+            color: var(--white);
+            border-color: var(--error);
+        }
+
+        .sidebar-login-btn:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+
+        .sidebar-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 8px;
+            margin-right: var(--spacing-xs);
+            transition: color 0.2s ease;
+        }
+
+        .sidebar-toggle-btn:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Mobile hamburger menu */
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: var(--dark);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-btn:hover span {
+            background: var(--primary-blue);
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu {
+                position: fixed;
+                top: 80px;
+                right: 16px;
+                background: var(--white);
+                border: 2px solid var(--light-gray);
+                border-radius: 12px;
+                padding: var(--spacing-sm);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                z-index: 1000;
+                min-width: 150px;
+            }
+
+            .mobile-menu.show {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-item {
+                display: block;
+                padding: 10px 16px;
+                color: var(--dark);
+                text-decoration: none;
+                font-weight: 500;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
+            }
+
+            .mobile-menu-item:hover {
+                background: var(--light-gray);
+                color: var(--primary-blue);
+            }
+
+            .mobile-menu-divider {
+                height: 1px;
+                background: var(--border-light);
+                margin: var(--spacing-xs) 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-user-info {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                padding: var(--spacing-xs);
+            }
+
+            .mobile-user-email {
+                font-size: 0.75rem;
+                color: var(--gray);
+                word-break: break-all;
+                padding: 0 var(--spacing-xs);
+            }
+
+            .mobile-logout-btn,
+            .mobile-login-btn {
+                padding: 6px 12px;
+                background: var(--white);
+                color: var(--dark);
+                border: 2px solid var(--light-gray);
+                border-radius: 6px;
+                font-weight: 600;
+                font-size: 0.875rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                text-decoration: none;
+                text-align: center;
+                display: block;
+                margin: 0 var(--spacing-xs);
+            }
+
+            .mobile-logout-btn:hover {
+                background: var(--error);
+                color: var(--white);
+                border-color: var(--error);
+            }
+
+            .mobile-login-btn:hover {
+                background: var(--primary-blue);
+                color: var(--white);
+                border-color: var(--primary-blue);
+            }
+        }
+
+        .mobile-only {
+            display: none;
+        }
+
+        /* Hide desktop nav on mobile */
+        @media (max-width: 768px) {
+            .desktop-only {
+                display: none !important;
+            }
+
+            .mobile-only {
+                display: flex !important;
+            }
+
+            .admin-sidebar {
+                width: 280px;
+            }
+
+            .admin-header {
+                position: relative;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <button class="sidebar-close-btn" onclick="toggleSidebar()">×</button>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="sidebar-section">
+            <a href="/" class="sidebar-nav-link">Home</a>
+            <a href="/quiz/category.html" class="sidebar-nav-link">Quiz</a>
+            <a href="/chat.html" class="sidebar-nav-link">Chat</a>
+            <a href="/admin.html" class="sidebar-nav-link">Admin</a>
+        </div>
+
+        <!-- User Section -->
+        <div class="sidebar-section sidebar-user-section">
+            <span class="sidebar-user-email" id="sidebarUserEmail"></span>
+            <button class="sidebar-logout-btn" id="sidebarAuthBtn" onclick="handleLogout()">Logout</button>
+        </div>
+    </aside>
+
     <div class="admin-container">
         <!-- Header -->
         <header class="admin-header">
             <div class="admin-title">
+                <!-- Sidebar Toggle Button (Desktop) -->
+                <button class="sidebar-toggle-btn desktop-only" onclick="toggleSidebar()" aria-label="Menu">☰</button>
                 <a href="index.html" class="admin-logo">Verifyr</a>
                 <span class="admin-badge">Admin</span>
             </div>
-            <div class="nav-links">
+            <div class="nav-links desktop-only">
                 <a href="quiz/category.html" class="nav-link">Quiz</a>
                 <a href="chat.html" class="nav-link">Chat</a>
             </div>
-            <div class="admin-user-info">
+            <div class="admin-user-info desktop-only">
                 <span class="admin-user-email" id="adminEmail"></span>
                 <button class="logout-btn" onclick="handleLogout()">Logout</button>
             </div>
+
+            <!-- Mobile: Hamburger button -->
+            <button class="hamburger-btn mobile-only" aria-label="Menu" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </header>
+
+        <!-- Mobile: Dropdown menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="/" class="mobile-menu-item">Home</a>
+            <a href="/quiz/category.html" class="mobile-menu-item">Quiz</a>
+            <a href="/chat.html" class="mobile-menu-item">Chat</a>
+            <a href="/admin.html" class="mobile-menu-item">Admin</a>
+
+            <div class="mobile-menu-divider"></div>
+
+            <!-- User info and logout -->
+            <div class="mobile-user-info">
+                <span class="mobile-user-email" id="mobileUserEmail"></span>
+                <button class="mobile-logout-btn" id="mobileAuthBtn" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
 
         <!-- Stats Cards -->
         <div class="stats-grid">

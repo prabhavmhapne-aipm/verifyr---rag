@@ -36,6 +36,9 @@ async function init() {
         adminEmail.textContent = email;
     }
 
+    // Update sidebar user display
+    updateUserDisplay();
+
     // Load initial data
     loadStats();
     loadConversations();
@@ -395,6 +398,94 @@ async function handleLogout() {
 }
 
 /**
+ * Toggle sidebar visibility
+ */
+function toggleSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+    }
+}
+
+/**
+ * Toggle mobile menu visibility
+ */
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileMenu) {
+        mobileMenu.classList.toggle('show');
+    }
+}
+
+/**
+ * Update user email display and login/logout button (sidebar + mobile)
+ * Admin page doesn't have language switcher, so we use English by default
+ */
+function updateUserDisplay() {
+    const userEmail = localStorage.getItem('verifyr_user_email');
+
+    // Sidebar elements
+    const sidebarUserEmail = document.getElementById('sidebarUserEmail');
+    const sidebarAuthBtn = document.getElementById('sidebarAuthBtn');
+
+    // Mobile elements
+    const mobileUserEmail = document.getElementById('mobileUserEmail');
+    const mobileAuthBtn = document.getElementById('mobileAuthBtn');
+
+    if (userEmail) {
+        // User is logged in - show email and logout button
+
+        // Sidebar
+        if (sidebarUserEmail) {
+            sidebarUserEmail.textContent = userEmail;
+            sidebarUserEmail.style.display = 'block';
+        }
+        if (sidebarAuthBtn) {
+            sidebarAuthBtn.textContent = 'Logout';
+            sidebarAuthBtn.onclick = handleLogout;
+            sidebarAuthBtn.classList.remove('sidebar-login-btn');
+            sidebarAuthBtn.classList.add('sidebar-logout-btn');
+        }
+
+        // Mobile
+        if (mobileUserEmail) {
+            mobileUserEmail.textContent = userEmail;
+            mobileUserEmail.style.display = 'block';
+        }
+        if (mobileAuthBtn) {
+            mobileAuthBtn.textContent = 'Logout';
+            mobileAuthBtn.onclick = handleLogout;
+            mobileAuthBtn.classList.remove('mobile-login-btn');
+            mobileAuthBtn.classList.add('mobile-logout-btn');
+        }
+    } else {
+        // User is not logged in - hide email, show login button
+
+        // Sidebar
+        if (sidebarUserEmail) {
+            sidebarUserEmail.style.display = 'none';
+        }
+        if (sidebarAuthBtn) {
+            sidebarAuthBtn.textContent = 'Login';
+            sidebarAuthBtn.onclick = () => window.location.href = '/auth.html';
+            sidebarAuthBtn.classList.remove('sidebar-logout-btn');
+            sidebarAuthBtn.classList.add('sidebar-login-btn');
+        }
+
+        // Mobile
+        if (mobileUserEmail) {
+            mobileUserEmail.style.display = 'none';
+        }
+        if (mobileAuthBtn) {
+            mobileAuthBtn.textContent = 'Login';
+            mobileAuthBtn.onclick = () => window.location.href = '/auth.html';
+            mobileAuthBtn.classList.remove('mobile-logout-btn');
+            mobileAuthBtn.classList.add('mobile-login-btn');
+        }
+    }
+}
+
+/**
  * Format date for display
  */
 function formatDate(isoString) {
@@ -515,6 +606,18 @@ async function handleInviteUser(event) {
         submitBtn.classList.remove('loading');
     }
 }
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+
+    if (mobileMenu && hamburgerBtn &&
+        !mobileMenu.contains(e.target) &&
+        !hamburgerBtn.contains(e.target)) {
+        mobileMenu.classList.remove('show');
+    }
+});
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', init);

@@ -17,10 +17,42 @@
     <link rel="icon" type="image/png" sizes="192x192" href="../images/favicon-192x192.png">
 </head>
 <body>
+    <!-- Sidebar (Desktop) -->
+    <aside class="quiz-sidebar" id="quizSidebar">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <button class="sidebar-close-btn" onclick="toggleSidebar()">×</button>
+        </div>
+
+        <!-- Language Switch -->
+        <div class="sidebar-section">
+            <div class="sidebar-lang-switch">
+                <span class="lang-option active" data-lang="en" onclick="switchLanguage('en')">EN</span>
+                <span class="lang-option" data-lang="de" onclick="switchLanguage('de')">DE</span>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="sidebar-section">
+            <a href="/" class="sidebar-nav-link">Home</a>
+            <a href="/quiz/category.html" class="sidebar-nav-link">Quiz</a>
+            <a href="/chat.html" class="sidebar-nav-link">Chat</a>
+            <a href="/admin.html" class="sidebar-nav-link admin-only" style="display: none;">Admin</a>
+        </div>
+
+        <!-- User Section -->
+        <div class="sidebar-section sidebar-user-section">
+            <span class="sidebar-user-email" id="sidebarUserEmail"></span>
+            <button class="sidebar-logout-btn" id="sidebarAuthBtn" onclick="handleLogout()">Abmelden</button>
+        </div>
+    </aside>
+
     <div class="quiz-container">
         <!-- Navigation Bar (matching index.html) -->
         <nav>
             <div class="nav-left">
+                <!-- Sidebar Toggle Button (Desktop) -->
+                <button class="sidebar-toggle-btn desktop-nav" onclick="toggleSidebar()" aria-label="Menu">☰</button>
                 <a href="/" class="logo">Verifyr</a>
                 <!-- Desktop: Show language switch -->
                 <div class="lang-switch desktop-lang">
@@ -57,6 +89,14 @@
             <a href="/quiz/category.html" class="mobile-menu-item active">Quiz</a>
             <a href="/chat.html" class="mobile-menu-item">Chat</a>
             <a href="/admin.html" class="mobile-menu-item admin-only" style="display: none;">Admin</a>
+
+            <div class="mobile-menu-divider"></div>
+
+            <!-- User info and logout -->
+            <div class="mobile-user-info">
+                <span class="mobile-user-email" id="mobileUserEmail"></span>
+                <button class="mobile-logout-btn" onclick="handleLogout()">Abmelden</button>
+            </div>
         </div>
 
         <!-- Quiz Content -->
