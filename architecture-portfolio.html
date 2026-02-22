@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifyr — System Architecture & Design</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e1a;
+      --bg2: #0f1526;
+      --bg3: #141d34;
+      --card: #1a2440;
+      --card2: #1f2d4a;
+      --border: #2a3a5c;
+      --border2: #3a4e72;
+      --accent: #4f8ef7;
+      --accent2: #7cb3ff;
+      --green: #22c55e;
+      --purple: #a78bfa;
+      --orange: #fb923c;
+      --pink: #f472b6;
+      --yellow: #facc15;
+      --cyan: #22d3ee;
+      --text: #e2e8f0;
+      --text2: #94a3b8;
+      --text3: #64748b;
+      --r: 12px;
+      --r2: 8px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── Typography ───────────────────────────────────── */
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.03em; }
+    h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; letter-spacing: -0.02em; }
+    h3 { font-size: 1.1rem; font-weight: 600; }
+    h4 { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+
+    /* ─── Layout ───────────────────────────────────────── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ─── Nav ──────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .nav-logo { font-weight: 800; font-size: 1.1rem; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+    .nav-links a {
+      color: var(--text2); font-size: 0.82rem; font-weight: 500;
+      padding: 5px 12px; border-radius: 20px;
+      transition: all 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--card); text-decoration: none; }
+
+    /* ─── Hero ─────────────────────────────────────────── */
+    .hero {
+      padding: 100px 0 80px;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,142,247,0.12) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(79,142,247,0.1); border: 1px solid rgba(79,142,247,0.3);
+      border-radius: 20px; padding: 5px 14px; font-size: 0.8rem;
+      color: var(--accent2); font-weight: 500; margin-bottom: 24px;
+    }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: block; }
+    .hero-title { margin-bottom: 20px; }
+    .hero-title .gradient {
+      background: linear-gradient(135deg, #4f8ef7 0%, #a78bfa 50%, #22d3ee 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      color: var(--text2); font-size: 1.15rem; max-width: 640px;
+      line-height: 1.7; margin-bottom: 40px;
+    }
+    .hero-stats {
+      display: flex; gap: 32px; flex-wrap: wrap;
+    }
+    .hero-stat { display: flex; flex-direction: column; }
+    .hero-stat .num { font-size: 1.8rem; font-weight: 800; color: var(--accent2); }
+    .hero-stat .lbl { font-size: 0.78rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ─── Tags / Badges ────────────────────────────────── */
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .tag {
+      padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .tag-blue { background: rgba(79,142,247,0.15); color: #93c5fd; border: 1px solid rgba(79,142,247,0.25); }
+    .tag-green { background: rgba(34,197,94,0.12); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+    .tag-purple { background: rgba(167,139,250,0.12); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.2); }
+    .tag-orange { background: rgba(251,146,60,0.12); color: #fdba74; border: 1px solid rgba(251,146,60,0.2); }
+    .tag-pink { background: rgba(244,114,182,0.12); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.2); }
+    .tag-cyan { background: rgba(34,211,238,0.12); color: #67e8f9; border: 1px solid rgba(34,211,238,0.2); }
+    .tag-yellow { background: rgba(250,204,21,0.1); color: #fde047; border: 1px solid rgba(250,204,21,0.2); }
+
+    /* ─── Section headers ──────────────────────────────── */
+    .section-label {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--accent); margin-bottom: 10px;
+    }
+    .section-title { margin-bottom: 12px; }
+    .section-sub { color: var(--text2); max-width: 600px; margin-bottom: 48px; }
+
+    /* ─── Cards ────────────────────────────────────────── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 24px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { border-color: var(--border2); box-shadow: 0 4px 24px rgba(79,142,247,0.06); }
+    .card-sm { padding: 16px 20px; border-radius: var(--r2); }
+
+    /* ─── Grid layouts ─────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 900px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Architecture Diagram ─────────────────────────── */
+    .arch-diagram {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 40px 32px;
+      overflow-x: auto;
+    }
+    .arch-flow {
+      display: flex; flex-direction: column; gap: 0;
+      min-width: 600px;
+    }
+    .arch-layer {
+      display: flex; align-items: stretch; gap: 0;
+      position: relative;
+    }
+    .arch-layer-label {
+      width: 130px; min-width: 130px;
+      display: flex; align-items: center;
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text3); padding-right: 16px;
+      text-align: right; justify-content: flex-end;
+    }
+    .arch-layer-content {
+      flex: 1; display: flex; gap: 8px;
+      padding: 10px 0;
+    }
+    .arch-box {
+      flex: 1; background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 0.82rem; font-weight: 500;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; gap: 4px; min-width: 80px;
+      transition: all 0.15s; cursor: default;
+      position: relative;
+    }
+    .arch-box:hover { border-color: var(--border2); background: var(--card2); transform: translateY(-1px); }
+    .arch-box .icon { font-size: 1.3rem; }
+    .arch-box .lbl { font-size: 0.75rem; color: var(--text2); line-height: 1.3; }
+    .arch-box.highlight { border-color: var(--accent); background: rgba(79,142,247,0.08); }
+    .arch-box.highlight .icon, .arch-box.highlight { color: var(--accent2); }
+    .arch-connector {
+      width: 130px; min-width: 130px;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 16px; padding-top: 0; padding-bottom: 0;
+    }
+    .arch-arrow {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0; padding: 4px 0;
+    }
+    .arch-arrow .line {
+      width: 2px; height: 20px; background: linear-gradient(to bottom, var(--border), var(--border2));
+    }
+    .arch-arrow .tip {
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 8px solid var(--border2);
+    }
+
+    /* ─── Pipeline Steps ───────────────────────────────── */
+    .pipeline {
+      display: flex; align-items: flex-start;
+      gap: 0; overflow-x: auto; padding-bottom: 8px;
+    }
+    .pipe-step {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 120px; text-align: center;
+    }
+    .pipe-node {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      border: 2px solid;
+      position: relative;
+      transition: transform 0.15s;
+    }
+    .pipe-node:hover { transform: scale(1.08); }
+    .pipe-label { font-size: 0.72rem; font-weight: 600; margin-top: 8px; line-height: 1.3; color: var(--text2); }
+    .pipe-sublabel { font-size: 0.66rem; color: var(--text3); margin-top: 3px; }
+    .pipe-connector {
+      flex: 1; height: 2px; margin-top: 27px;
+      background: linear-gradient(to right, var(--border2), var(--border));
+      min-width: 24px; max-width: 48px;
+      position: relative;
+    }
+    .pipe-connector::after {
+      content: ''; position: absolute; right: -5px; top: -4px;
+      width: 0; height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 8px solid var(--border);
+    }
+
+    /* ─── Decision cards (WHY section) ─────────────────── */
+    .decision-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px 24px;
+      border-left: 3px solid var(--accent);
+    }
+    .decision-card .q { font-size: 0.75rem; color: var(--accent2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .decision-card .title { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+    .decision-card .body { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+    .decision-card .alts { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .decision-card .alts .alt-label { font-size: 0.7rem; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .alt-row { display: flex; gap: 8px; align-items: center; font-size: 0.78rem; color: var(--text3); margin-bottom: 4px; }
+    .alt-row .chosen { color: var(--green); font-weight: 600; }
+    .alt-row .rejected { color: var(--text3); text-decoration: line-through; }
+
+    /* ─── Metric cards ─────────────────────────────────── */
+    .metric-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: 20px;
+      text-align: center;
+    }
+    .metric-card .val { font-size: 1.8rem; font-weight: 800; color: var(--accent2); line-height: 1; }
+    .metric-card .unit { font-size: 0.75rem; color: var(--text3); }
+    .metric-card .name { font-size: 0.8rem; color: var(--text2); margin-top: 6px; }
+    .metric-card .target { font-size: 0.7rem; color: var(--text3); margin-top: 2px; }
+
+    /* ─── Tech stack row ───────────────────────────────── */
+    .tech-row {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: 16px 20px;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .tech-row .t-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+    .tech-row .t-name { font-weight: 700; font-size: 0.95rem; }
+    .tech-row .t-role { font-size: 0.8rem; color: var(--accent2); margin-bottom: 4px; }
+    .tech-row .t-why { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+
+    /* ─── Quote / callout ──────────────────────────────── */
+    .callout {
+      background: rgba(79,142,247,0.06); border: 1px solid rgba(79,142,247,0.2);
+      border-left: 3px solid var(--accent); border-radius: var(--r2);
+      padding: 16px 20px; font-size: 0.88rem; color: var(--text2); line-height: 1.6;
+    }
+    .callout strong { color: var(--text); }
+
+    /* ─── Timeline ─────────────────────────────────────── */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 6px; top: 8px; bottom: 8px;
+      width: 2px; background: linear-gradient(to bottom, var(--accent), var(--border));
+    }
+    .timeline-item { position: relative; margin-bottom: 20px; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -25px; top: 5px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--card2); border: 2px solid var(--accent);
+    }
+    .timeline-item.done::before { background: var(--green); border-color: var(--green); }
+    .timeline-item.active::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
+    .timeline-item .phase { font-size: 0.72rem; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .timeline-item .desc { font-size: 0.85rem; color: var(--text2); margin-top: 2px; }
+
+    /* ─── Code block ───────────────────────────────────── */
+    pre {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: 16px 20px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.8rem; overflow-x: auto; line-height: 1.6;
+      color: var(--text2);
+    }
+    .hl-key { color: #7dd3fc; }
+    .hl-str { color: #86efac; }
+    .hl-num { color: #fca5a5; }
+    .hl-cmt { color: var(--text3); font-style: italic; }
+
+    /* ─── Tooltip ──────────────────────────────────────── */
+    [data-tip] { position: relative; cursor: help; }
+    [data-tip]::after {
+      content: attr(data-tip);
+      position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      background: var(--bg2); border: 1px solid var(--border2);
+      color: var(--text); font-size: 0.75rem; padding: 6px 10px;
+      border-radius: 6px; white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity 0.15s; z-index: 10;
+    }
+    [data-tip]:hover::after { opacity: 1; }
+
+    /* ─── Two-column split ─────────────────────────────── */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 700px) { .split { grid-template-columns: 1fr; } }
+
+    /* ─── Data flow box ────────────────────────────────── */
+    .flow-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px 24px;
+    }
+    .flow-row {
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;
+    }
+    .flow-row:last-child { margin-bottom: 0; }
+    .flow-num {
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+      background: var(--accent); color: white;
+      font-size: 0.7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .flow-content .flow-title { font-size: 0.88rem; font-weight: 600; }
+    .flow-content .flow-desc { font-size: 0.8rem; color: var(--text2); margin-top: 2px; line-height: 1.5; }
+
+    /* ─── Footer ───────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--text3); font-size: 0.82rem;
+    }
+    footer span { color: var(--text2); }
+
+    /* ─── Animations ───────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.5s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+
+    /* ─── Responsive fixes ─────────────────────────────── */
+    @media (max-width: 700px) {
+      section { padding: 48px 0; }
+      .hero { padding: 60px 0 48px; }
+      .pipeline { gap: 0; }
+      .pipe-connector { min-width: 12px; max-width: 24px; }
+      .arch-layer-label { width: 80px; min-width: 80px; font-size: 0.65rem; }
+      nav { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Navigation ─────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">Verifyr <span>·</span> Architecture</div>
+    <div class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#layers">Layers</a>
+      <a href="#decisions">Design</a>
+      <a href="#recommendation">Recommendation</a>
+      <a href="#tech">Tech Stack</a>
+      <a href="#deployment">Deployment</a>
+      <a href="#metrics">Metrics</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ─── Hero ───────────────────────────────────────────── -->
+<section class="hero" id="top">
+  <div class="page">
+    <div class="hero-badge fade-up">Live Product · Health-Tech AI</div>
+    <h1 class="hero-title fade-up delay-1">
+      <span class="gradient">RAG-Powered</span><br>Wearable Advisor
+    </h1>
+    <p class="hero-sub fade-up delay-2">
+      A full-stack conversational AI that answers pre- and post-purchase questions
+      about smartwatches using Hybrid Retrieval-Augmented Generation —
+      neutral, fast, and always source-backed.
+    </p>
+    <div class="hero-stats fade-up delay-3">
+      <div class="hero-stat"><span class="num">~4,000</span><span class="lbl">Indexed Chunks</span></div>
+      <div class="hero-stat"><span class="num">&lt;3s</span><span class="lbl">Avg Response</span></div>
+      <div class="hero-stat"><span class="num">9</span><span class="lbl">Pipeline Stages</span></div>
+      <div class="hero-stat"><span class="num">Dual</span><span class="lbl">DE/EN Languages</span></div>
+      <div class="hero-stat"><span class="num">100%</span><span class="lbl">Source-Cited</span></div>
+    </div>
+    <div class="tags" style="margin-top:32px;">
+      <span class="tag tag-blue">FastAPI</span>
+      <span class="tag tag-purple">Claude Sonnet 4.5</span>
+      <span class="tag tag-cyan">Qdrant Vector DB</span>
+      <span class="tag tag-green">BM25 + RRF Fusion</span>
+      <span class="tag tag-orange">Supabase Auth</span>
+      <span class="tag tag-yellow">Langfuse Observability</span>
+      <span class="tag tag-pink">Sentence Transformers</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── System Overview Diagram ────────────────────────── -->
+<section id="overview">
+  <div class="page">
+    <span class="section-label">High-Level Design</span>
+    <h2 class="section-title">System Architecture</h2>
+    <p class="section-sub">Three paths sharing one data layer: an offline indexing pipeline, a real-time chat (RAG) pipeline, and a quiz-based recommendation engine. The recommendation engine reuses the same hybrid index — adding a structured discovery layer on top.</p>
+
+    <div class="arch-diagram">
+      <div class="arch-flow">
+
+        <!-- USER LAYER -->
+        <div class="arch-layer">
+          <div class="arch-layer-label">Frontend</div>
+          <div class="arch-layer-content">
+            <div class="arch-box" style="border-color:#22c55e44; color:#86efac;">
+              <span class="icon">💬</span>
+              <span>Chat UI</span>
+              <span class="lbl">chat.html</span>
+            </div>
+            <div class="arch-box" style="border-color:#22c55e44; color:#86efac;">
+              <span class="icon">🏠</span>
+              <span>Landing</span>
+              <span class="lbl">index.html</span>
+            </div>
+            <div class="arch-box" style="border-color:#22c55e44; color:#86efac;">
+              <span class="icon">🎯</span>
+              <span>Quiz</span>
+              <span class="lbl">quiz/</span>
+            </div>
+            <div class="arch-box" style="border-color:#22c55e44; color:#86efac;">
+              <span class="icon">🔐</span>
+              <span>Auth</span>
+              <span class="lbl">auth.html</span>
+            </div>
+            <div class="arch-box" style="border-color:#22c55e44; color:#86efac;">
+              <span class="icon">⚙️</span>
+              <span>Admin</span>
+              <span class="lbl">admin.html</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div class="arch-layer">
+          <div class="arch-layer-label"></div>
+          <div class="arch-layer-content" style="justify-content:center; padding:0;">
+            <div style="width:100%; display:flex; justify-content:center; align-items:center; height:28px;">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="width:1px;height:12px;background:var(--border2);"></div>
+                <div style="font-size:0.68rem;color:var(--text3);padding:2px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;">HTTPS / REST API</div>
+                <div style="width:1px;height:12px;background:var(--border2);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- API GATEWAY LAYER -->
+        <div class="arch-layer">
+          <div class="arch-layer-label">FastAPI Backend</div>
+          <div class="arch-layer-content">
+            <div class="arch-box" style="border-color:#4f8ef788; color:#93c5fd; flex:2;">
+              <span class="icon">⚡</span>
+              <span>FastAPI</span>
+              <span class="lbl">18 Endpoints · JWT Auth · main.py</span>
+            </div>
+            <div class="arch-box" style="border-color:#f472b644; color:#f9a8d4;">
+              <span class="icon">🛡️</span>
+              <span>Supabase Auth</span>
+              <span class="lbl">JWT Middleware</span>
+            </div>
+            <div class="arch-box" style="border-color:#facc1544; color:#fde047;">
+              <span class="icon">📊</span>
+              <span>Langfuse</span>
+              <span class="lbl">Observability</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow: two paths -->
+        <div class="arch-layer">
+          <div class="arch-layer-label"></div>
+          <div class="arch-layer-content" style="justify-content:center; padding:0;">
+            <div style="width:100%; display:flex; justify-content:center; align-items:center; height:28px; gap:16px;">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="width:1px;height:12px;background:var(--accent);"></div>
+                <div style="font-size:0.68rem;color:var(--accent2);padding:2px 8px;background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.25);border-radius:4px;">POST /query → Chat</div>
+                <div style="width:1px;height:12px;background:var(--accent);"></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="width:1px;height:12px;background:rgba(250,204,21,0.6);"></div>
+                <div style="font-size:0.68rem;color:var(--yellow);padding:2px 8px;background:rgba(250,204,21,0.08);border:1px solid rgba(250,204,21,0.25);border-radius:4px;">POST /quiz/score → Recommend</div>
+                <div style="width:1px;height:12px;background:rgba(250,204,21,0.6);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DUAL PIPELINES LAYER -->
+        <div class="arch-layer">
+          <div class="arch-layer-label">RAG & Rec Engine</div>
+          <div class="arch-layer-content" style="gap:10px;">
+
+            <!-- Chat Pipeline group -->
+            <div style="flex:3; display:flex; gap:6px; background:rgba(79,142,247,0.04); border:1px solid rgba(79,142,247,0.15); border-radius:8px; padding:8px;">
+              <div style="writing-mode:vertical-lr;text-orientation:mixed;font-size:0.6rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;transform:rotate(180deg);flex-shrink:0;align-self:center;padding:0 2px;">Chat RAG</div>
+              <div class="arch-box highlight" style="flex:1; font-size:0.78rem;">
+                <span class="icon" style="font-size:1.1rem;">🔍</span>
+                <span>Query Analysis</span>
+                <span class="lbl">Intent · Product · Adaptive K</span>
+              </div>
+              <div class="arch-box highlight" style="flex:1.2; font-size:0.78rem;">
+                <span class="icon" style="font-size:1.1rem;">🔀</span>
+                <span>Hybrid + RRF</span>
+                <span class="lbl">BM25 + Vector · Diversity</span>
+              </div>
+              <div class="arch-box highlight" style="flex:1; font-size:0.78rem;">
+                <span class="icon" style="font-size:1.1rem;">🤖</span>
+                <span>LLM Generate</span>
+                <span class="lbl">Claude/GPT · Citations</span>
+              </div>
+            </div>
+
+            <!-- Rec Engine group -->
+            <div style="flex:2; display:flex; gap:6px; background:rgba(250,204,21,0.04); border:1px solid rgba(250,204,21,0.2); border-radius:8px; padding:8px;">
+              <div style="writing-mode:vertical-lr;text-orientation:mixed;font-size:0.6rem;color:var(--yellow);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;transform:rotate(180deg);flex-shrink:0;align-self:center;padding:0 2px;">Rec Engine</div>
+              <div class="arch-box" style="flex:1; border-color:rgba(250,204,21,0.3); color:#fde047; font-size:0.78rem;">
+                <span class="icon" style="font-size:1.1rem;">⚖️</span>
+                <span>Metadata Scorer</span>
+                <span class="lbl">40/35/25% weights</span>
+              </div>
+              <div class="arch-box" style="flex:1; border-color:rgba(250,204,21,0.3); color:#fde047; font-size:0.78rem; position:relative;">
+                <span style="position:absolute;top:-7px;right:4px;background:var(--yellow);color:#000;font-size:0.55rem;font-weight:700;padding:1px 5px;border-radius:3px;letter-spacing:0.03em;">NEXT</span>
+                <span class="icon" style="font-size:1.1rem;">✨</span>
+                <span>RAG Enhancer</span>
+                <span class="lbl">Top-3 · "For You" bullets</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div class="arch-layer">
+          <div class="arch-layer-label"></div>
+          <div class="arch-layer-content" style="justify-content:center; padding:0;">
+            <div style="width:100%; display:flex; justify-content:center; align-items:center; height:28px;">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="width:1px;height:12px;background:var(--border2);"></div>
+                <div style="font-size:0.68rem;color:var(--text3);padding:2px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;">Vector + Keyword Lookup</div>
+                <div style="width:1px;height:12px;background:var(--border2);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INDEX LAYER -->
+        <div class="arch-layer">
+          <div class="arch-layer-label">Storage & Shared Data</div>
+          <div class="arch-layer-content">
+            <div class="arch-box" style="border-color:#22d3ee44; color:#67e8f9; flex:2;">
+              <span class="icon">🗄️</span>
+              <span>Qdrant Vector DB</span>
+              <span class="lbl">384-dim cosine · ~4k points</span>
+            </div>
+            <div class="arch-box" style="border-color:#a78bfa44; color:#c4b5fd; flex:2;">
+              <span class="icon">📋</span>
+              <span>BM25 Index</span>
+              <span class="lbl">Okapi BM25 · 3.9 MB pickle</span>
+            </div>
+            <div class="arch-box" style="border-color:#fb923c44; color:#fdba74; flex:1.5;">
+              <span class="icon">💾</span>
+              <span>chunks.json</span>
+              <span class="lbl">1.8 MB · Full metadata</span>
+            </div>
+            <div class="arch-box" style="border-color:rgba(250,204,21,0.4); color:#fde047; flex:1.5;">
+              <span class="icon">📦</span>
+              <span>products_metadata</span>
+              <span class="lbl">Ratings · Bullets · Specs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div class="arch-layer">
+          <div class="arch-layer-label"></div>
+          <div class="arch-layer-content" style="justify-content:center; padding:0;">
+            <div style="width:100%; display:flex; justify-content:center; align-items:center; height:28px;">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="width:1px;height:12px;background:var(--border2);"></div>
+                <div style="font-size:0.68rem;color:var(--text3);padding:2px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;">Offline Indexing Pipeline</div>
+                <div style="width:1px;height:12px;background:var(--border2);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INGESTION LAYER -->
+        <div class="arch-layer">
+          <div class="arch-layer-label">Ingestion</div>
+          <div class="arch-layer-content">
+            <div class="arch-box" style="border-color:#64748b;">
+              <span class="icon">📄</span>
+              <span>Raw PDFs</span>
+              <span class="lbl">By product</span>
+            </div>
+            <div class="arch-box" style="border-color:#64748b;">
+              <span class="icon">⚙️</span>
+              <span>PDF Processor</span>
+              <span class="lbl">PyMuPDF + OCR</span>
+            </div>
+            <div class="arch-box" style="border-color:#64748b;">
+              <span class="icon">✂️</span>
+              <span>Chunker</span>
+              <span class="lbl">800 tok, 200 overlap</span>
+            </div>
+            <div class="arch-box" style="border-color:#64748b;">
+              <span class="icon">🧮</span>
+              <span>Embedder</span>
+              <span class="lbl">multilingual-MiniLM</span>
+            </div>
+            <div class="arch-box" style="border-color:#64748b;">
+              <span class="icon">🏗️</span>
+              <span>Indexer</span>
+              <span class="lbl">Qdrant + BM25</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXTERNAL LAYER -->
+        <div class="arch-layer" style="margin-top:12px;">
+          <div class="arch-layer-label" style="color:var(--text3);">External</div>
+          <div class="arch-layer-content" style="gap:12px;">
+            <div style="display:flex;gap:6px;flex:1;flex-wrap:wrap;">
+              <div class="arch-box" style="border-color:#5a3e9944; color:#c4b5fd; flex:1;">
+                <span class="icon">🔮</span>
+                <span>Anthropic API</span>
+                <span class="lbl">Claude Sonnet 4.5</span>
+              </div>
+              <div class="arch-box" style="border-color:#10a37f44; color:#6ee7b7; flex:1;">
+                <span class="icon">✨</span>
+                <span>OpenAI API</span>
+                <span class="lbl">GPT-4o / mini</span>
+              </div>
+              <div class="arch-box" style="border-color:#3ecf8e44; color:#6ee7b7; flex:1;">
+                <span class="icon">🟢</span>
+                <span>Supabase</span>
+                <span class="lbl">Auth + Users</span>
+              </div>
+              <div class="arch-box" style="border-color:#f97316; color:#fdba74; flex:1;">
+                <span class="icon">🔭</span>
+                <span>Langfuse</span>
+                <span class="lbl">Traces + Evals</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── Query Pipeline ──────────────────────────────────── -->
+<section id="pipeline">
+  <div class="page">
+    <span class="section-label">Real-Time Query Path</span>
+    <h2 class="section-title">From Question to Cited Answer</h2>
+    <p class="section-sub">Every user query follows this 7-stage pipeline. Latency target: under 3 seconds end-to-end.</p>
+
+    <div class="card" style="padding:32px; overflow-x:auto;">
+      <div class="pipeline">
+
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(79,142,247,0.1); border-color:var(--accent); color:var(--accent2);">🔎</div>
+          <div class="pipe-label">Query<br>Received</div>
+          <div class="pipe-sublabel">POST /query</div>
+        </div>
+        <div class="pipe-connector"></div>
+
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(167,139,250,0.1); border-color:var(--purple); color:#c4b5fd;">🧠</div>
+          <div class="pipe-label">Query<br>Analysis</div>
+          <div class="pipe-sublabel">Product detect</div>
+        </div>
+        <div class="pipe-connector"></div>
+
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(34,211,238,0.1); border-color:var(--cyan); color:#67e8f9;">📊</div>
+          <div class="pipe-label">BM25<br>Search</div>
+          <div class="pipe-sublabel">Keyword match</div>
+        </div>
+        <div class="pipe-connector"></div>
+
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(34,211,238,0.1); border-color:var(--cyan); color:#67e8f9;">🎯</div>
+          <div class="pipe-label">Vector<br>Search</div>
+          <div class="pipe-sublabel">Semantic embed</div>
+        </div>
+        <div class="pipe-connector"></div>
+
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(250,204,21,0.1); border-color:var(--yellow); color:#fde047;">🔀</div>
+          <div class="pipe-label">RRF<br>Fusion</div>
+          <div class="pipe-sublabel">+ Diversity</div>
+        </div>
+        <div class="pipe-connector"></div>
+
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(251,146,60,0.1); border-color:var(--orange); color:#fdba74;">🤖</div>
+          <div class="pipe-label">LLM<br>Generate</div>
+          <div class="pipe-sublabel">Claude / GPT</div>
+        </div>
+        <div class="pipe-connector"></div>
+
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(34,197,94,0.1); border-color:var(--green); color:#86efac;">📝</div>
+          <div class="pipe-label">Cited<br>Answer</div>
+          <div class="pipe-sublabel">[1][2][3]</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Detailed breakdown -->
+    <div class="grid-2" style="margin-top:24px;">
+
+      <div class="flow-box">
+        <h3 style="margin-bottom:16px; font-size:0.9rem; color:var(--text2);">Stage 2 — Query Analysis</h3>
+        <div class="flow-row">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <div class="flow-title">Product Detection</div>
+            <div class="flow-desc">Keyword map matches product names in the query. "Apple Watch" and "Garmin" → sets <code style="font-size:0.75rem;color:var(--accent2);">target_products</code> filter.</div>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <div class="flow-title">Intent Classification</div>
+            <div class="flow-desc">Detects comparison (vs, compare, better) and complexity (how, why, explain). Guides downstream Top-K selection.</div>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <div class="flow-title">Adaptive Top-K</div>
+            <div class="flow-desc">Simple/Comparison → K=5. Complex/Guides → K=8. Balances cost vs. context completeness.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-box">
+        <h3 style="margin-bottom:16px; font-size:0.9rem; color:var(--text2);">Stage 5 — RRF Fusion + Diversity</h3>
+        <div class="flow-row">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <div class="flow-title">Parallel Retrieval</div>
+            <div class="flow-desc">BM25 and Vector search run independently, each retrieving top-20 candidates.</div>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <div class="flow-title">RRF Formula</div>
+            <div class="flow-desc"><code style="font-size:0.75rem;color:#fde047;">score = 1/(60+bm25_rank) + 1/(60+vector_rank)</code> — ranks are robust to score scale differences.</div>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <div class="flow-title">Product Diversity Guard</div>
+            <div class="flow-desc">For comparisons, enforces ≥2 chunks per product. Prevents one product dominating context and biasing the answer.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── Layer-by-Layer Breakdown ───────────────────────── -->
+<section id="layers">
+  <div class="page">
+    <span class="section-label">Layer-by-Layer</span>
+    <h2 class="section-title">Every Layer Explained</h2>
+    <p class="section-sub">Seven layers mapping directly to the architecture diagram rows above — read top to bottom: Frontend → FastAPI Backend → RAG & Rec Engine Pipelines → Storage & Shared Data → Ingestion.</p>
+
+    <!-- Layer 1: Frontend -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🌐</div>
+        <div>
+          <h3>Layer 1 — Frontend</h3>
+          <div style="font-size:0.8rem;color:var(--text3);">Vanilla HTML/CSS/JS · Served as static files by FastAPI</div>
+        </div>
+        <div style="margin-left:auto;">
+          <span class="tag tag-green">User-Facing</span>
+        </div>
+      </div>
+      <div class="grid-4" style="margin-bottom:16px;">
+        <div class="card card-sm">
+          <div style="font-weight:600; margin-bottom:4px; font-size:0.85rem;">Landing Page</div>
+          <div style="font-size:0.78rem;color:var(--text2);">SEO-optimised, GDPR consent, multilingual, product showcase</div>
+        </div>
+        <div class="card card-sm">
+          <div style="font-weight:600; margin-bottom:4px; font-size:0.85rem;">Chat Interface</div>
+          <div style="font-size:0.78rem;color:var(--text2);">Real-time chat, model selector, conversation history, sources panel</div>
+        </div>
+        <div class="card card-sm">
+          <div style="font-weight:600; margin-bottom:4px; font-size:0.85rem;">Quiz / Advisor</div>
+          <div style="font-size:0.78rem;color:var(--text2);">3-step onboarding: category → use cases → features → ranked matches</div>
+        </div>
+        <div class="card card-sm">
+          <div style="font-weight:600; margin-bottom:4px; font-size:0.85rem;">Admin Panel</div>
+          <div style="font-size:0.78rem;color:var(--text2);">User management, conversation analytics, invite system</div>
+        </div>
+      </div>
+      <div class="callout">
+        <strong>Design choice:</strong> No React/Next.js framework. Pure vanilla stack keeps the bundle minimal, loads instantly, and avoids JS build complexity — perfect for a product where SEO and first-paint speed matter.
+      </div>
+    </div>
+
+    <!-- Layer 2: API -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">⚡</div>
+        <div>
+          <h3>Layer 2 — FastAPI Backend</h3>
+          <div style="font-size:0.8rem;color:var(--text3);">Python · 18 endpoints · Async · JWT middleware · backend/main.py</div>
+        </div>
+        <div style="margin-left:auto;"><span class="tag tag-blue">Core API</span></div>
+      </div>
+      <div class="split">
+        <div>
+          <h4 style="margin-bottom:12px;">Key Endpoints</h4>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;align-items:center;font-size:0.82rem;">
+              <span style="background:rgba(34,197,94,0.1);color:#86efac;padding:1px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;min-width:40px;text-align:center;">POST</span>
+              <code style="color:var(--accent2);">/query</code>
+              <span style="color:var(--text2);">— RAG pipeline orchestrator</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:0.82rem;">
+              <span style="background:rgba(79,142,247,0.1);color:#93c5fd;padding:1px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;min-width:40px;text-align:center;">GET</span>
+              <code style="color:var(--accent2);">/conversations</code>
+              <span style="color:var(--text2);">— User history (auth required)</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:0.82rem;">
+              <span style="background:rgba(251,146,60,0.1);color:#fdba74;padding:1px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;min-width:40px;text-align:center;">POST</span>
+              <code style="color:var(--accent2);">/quiz/score</code>
+              <span style="color:var(--text2);">— Weighted product matching</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:0.82rem;">
+              <span style="background:rgba(79,142,247,0.1);color:#93c5fd;padding:1px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;min-width:40px;text-align:center;">GET</span>
+              <code style="color:var(--accent2);">/health</code>
+              <span style="color:var(--text2);">— Liveness + readiness check</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:0.82rem;">
+              <span style="background:rgba(239,68,68,0.1);color:#fca5a5;padding:1px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;min-width:40px;text-align:center;">GET</span>
+              <code style="color:var(--accent2);">/admin/*</code>
+              <span style="color:var(--text2);">— Admin-role protected routes</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 style="margin-bottom:12px;">Startup Sequence</h4>
+          <div class="timeline">
+            <div class="timeline-item done">
+              <div class="phase">Step 1</div>
+              <div class="desc">Load BM25 index from pickle (3.9 MB → memory)</div>
+            </div>
+            <div class="timeline-item done">
+              <div class="phase">Step 2</div>
+              <div class="desc">Initialize Qdrant client (embedded SQLite mode)</div>
+            </div>
+            <div class="timeline-item done">
+              <div class="phase">Step 3</div>
+              <div class="desc">Lazy-load sentence-transformer embedding model (384-dim)</div>
+            </div>
+            <div class="timeline-item done">
+              <div class="phase">Step 4</div>
+              <div class="desc">Connect Langfuse observability client (optional)</div>
+            </div>
+            <div class="timeline-item done">
+              <div class="phase">Step 5</div>
+              <div class="desc">Serve static frontend files at root <code>/</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 3: Recommendation Engine -->
+    <div class="card" style="margin-bottom:16px; border:1px solid rgba(250,204,21,0.2);">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.25);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🎯</div>
+        <div>
+          <h3>Layer 3 — Recommendation Engine</h3>
+          <div style="font-size:0.8rem;color:var(--text3);">Quiz UI · Weighted Metadata Scorer · RAG Enhancer (in progress) · backend/main.py + backend/recommendation/</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:6px;">
+          <span class="tag tag-green">Tier 1 Live</span>
+          <span class="tag tag-yellow">Tier 2 Next</span>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+
+        <!-- Tier 1 -->
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--green);margin-bottom:12px;">Tier 1 — Metadata Scorer (POST /quiz/score)</div>
+          <div class="flow-row">
+            <div class="flow-num" style="background:var(--green);">1</div>
+            <div class="flow-content">
+              <div class="flow-title">3-Step Quiz Input</div>
+              <div class="flow-desc">category (single) + useCases[] (multi) + features[] (max 5). All validated by Pydantic on entry.</div>
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num" style="background:var(--green);">2</div>
+            <div class="flow-content">
+              <div class="flow-title">Weighted Score per Product</div>
+              <div class="flow-desc"><code style="font-size:0.73rem;color:var(--accent2);">0.40 × category + 0.35 × avg(use_case_ratings) + 0.25 × avg(feature_ratings)</code> — all from products_metadata.json</div>
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num" style="background:var(--green);">3</div>
+            <div class="flow-content">
+              <div class="flow-title">Match Reasons Generated</div>
+              <div class="flow-desc">Rating ≥4 → "Excellent for…". Rating ≤2 → ⚠️ weakness. Products with category=0 are filtered out entirely.</div>
+            </div>
+          </div>
+          <div class="flow-row" style="margin-bottom:0;">
+            <div class="flow-num" style="background:var(--green);">4</div>
+            <div class="flow-content">
+              <div class="flow-title">Ranked Results</div>
+              <div class="flow-desc">Sorted by score descending. Anonymous users allowed. Authenticated users tracked for analytics.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tier 2 -->
+        <div style="background:rgba(250,204,21,0.03); border:1px solid rgba(250,204,21,0.2); border-radius:8px; padding:16px;">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--yellow);margin-bottom:12px;">Tier 2 — RAG Enhancer (POST /quiz/score-with-rag) <span style="background:rgba(250,204,21,0.15);padding:1px 6px;border-radius:3px;font-size:0.65rem;color:var(--yellow);">NEXT</span></div>
+          <div class="flow-row">
+            <div class="flow-num" style="background:rgba(250,204,21,0.3);color:var(--yellow);">1</div>
+            <div class="flow-content">
+              <div class="flow-title">Run Tier 1 → Select Top 3</div>
+              <div class="flow-desc">Metadata scoring runs first (~50ms). Top 3 products pass to RAG enhancement.</div>
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num" style="background:rgba(250,204,21,0.3);color:var(--yellow);">2</div>
+            <div class="flow-content">
+              <div class="flow-title">Build Semantic Query per Product</div>
+              <div class="flow-desc"><code style="font-size:0.72rem;color:#fde047;">"[Product] for [use cases] with emphasis on [features]"</code> — auto-constructed from quiz inputs.</div>
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num" style="background:rgba(250,204,21,0.3);color:var(--yellow);">3</div>
+            <div class="flow-content">
+              <div class="flow-title">Product-Filtered Hybrid Retrieval</div>
+              <div class="flow-desc">Reuses existing HybridSearcher with product_name filter. Top-5 chunks per product from Qdrant + BM25.</div>
+            </div>
+          </div>
+          <div class="flow-row" style="margin-bottom:0;">
+            <div class="flow-num" style="background:rgba(250,204,21,0.3);color:var(--yellow);">4</div>
+            <div class="flow-content">
+              <div class="flow-title">Claude Generates "For You" Bullets</div>
+              <div class="flow-desc">1 personalised strength + 1 personalised weakness per product. JSON output. Appended to static bullets in results UI with a "FOR YOU" badge.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- How they connect -->
+      <div class="callout">
+        <strong>Shared infrastructure:</strong> Tier 2 reuses the same <code>HybridSearcher</code>, <code>Qdrant</code>, and <code>BM25 index</code> already serving the chat pipeline — zero duplication. The only new component is <code>backend/recommendation/rag_enhancer.py</code> which orchestrates the product-scoped retrieval and Claude bullet generation. A feature flag (<code>ENABLE_RAG_RECOMMENDATIONS</code>) controls rollout with graceful fallback to Tier 1 on timeout.
+      </div>
+
+      <!-- Data flow diagram -->
+      <div style="margin-top:16px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:8px; overflow-x:auto;">
+        <div style="font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">End-to-end recommendation data flow</div>
+        <div style="display:flex;align-items:center;gap:6px;min-width:700px;font-size:0.75rem;flex-wrap:nowrap;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;text-align:center;min-width:80px;">
+            <div style="font-size:0.9rem;">🎯</div><div style="font-weight:600;">Quiz UI</div><div style="font-size:0.68rem;color:var(--text3);">3 steps</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;text-align:center;min-width:90px;">
+            <div style="font-size:0.9rem;">⚖️</div><div style="font-weight:600;">Metadata Score</div><div style="font-size:0.68rem;color:var(--text3);">all products · ~50ms</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="background:var(--card);border:1px solid rgba(250,204,21,0.3);border-radius:6px;padding:6px 10px;text-align:center;min-width:80px;">
+            <div style="font-size:0.9rem;">🏆</div><div style="font-weight:600;">Top 3</div><div style="font-size:0.68rem;color:var(--yellow);">Tier 2 input</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="background:var(--card);border:1px solid rgba(250,204,21,0.3);border-radius:6px;padding:6px 10px;text-align:center;min-width:90px;">
+            <div style="font-size:0.9rem;">🔀</div><div style="font-weight:600;">Hybrid Retrieval</div><div style="font-size:0.68rem;color:var(--text3);">product-filtered ×3</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="background:var(--card);border:1px solid rgba(250,204,21,0.3);border-radius:6px;padding:6px 10px;text-align:center;min-width:80px;">
+            <div style="font-size:0.9rem;">🤖</div><div style="font-weight:600;">Claude Bullets</div><div style="font-size:0.68rem;color:var(--text3);">strength + weakness</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:6px;padding:6px 10px;text-align:center;min-width:90px;">
+            <div style="font-size:0.9rem;">✨</div><div style="font-weight:600;">Enhanced Results</div><div style="font-size:0.68rem;color:var(--green);">static + "For You"</div>
+          </div>
+          <div style="color:var(--text3);">→</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;text-align:center;min-width:70px;">
+            <div style="font-size:0.9rem;">💬</div><div style="font-weight:600;">Chat CTA</div><div style="font-size:0.68rem;color:var(--text3);">pre-seeded context</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Layer 4: Retrieval -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🔀</div>
+        <div>
+          <h3>Layer 4 — Hybrid Retrieval Engine</h3>
+          <div style="font-size:0.8rem;color:var(--text3);">HybridSearcher · BM25 + Qdrant + RRF + Diversity · backend/retrieval/</div>
+        </div>
+        <div style="margin-left:auto;"><span class="tag tag-yellow">Core Intelligence</span></div>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:20px;">
+        <div class="card card-sm" style="border-left:3px solid var(--cyan);">
+          <div style="font-size:1.3rem; margin-bottom:8px;">📊</div>
+          <div style="font-weight:700; margin-bottom:4px;">BM25 (Keyword)</div>
+          <div style="font-size:0.78rem;color:var(--text2);">Exact term matching. Retrieves top-20. Great for product names, model numbers, and specific technical specs.</div>
+        </div>
+        <div class="card card-sm" style="border-left:3px solid var(--purple);">
+          <div style="font-size:1.3rem; margin-bottom:8px;">🎯</div>
+          <div style="font-weight:700; margin-bottom:4px;">Vector (Semantic)</div>
+          <div style="font-size:0.78rem;color:var(--text2);">384-dim cosine similarity. Retrieves top-20. Great for paraphrased queries and multilingual understanding.</div>
+        </div>
+        <div class="card card-sm" style="border-left:3px solid var(--yellow);">
+          <div style="font-size:1.3rem; margin-bottom:8px;">🔀</div>
+          <div style="font-weight:700; margin-bottom:4px;">RRF Fusion</div>
+          <div style="font-size:0.78rem;color:var(--text2);"><code style="font-size:0.72rem;">1/(60+rank)</code> — combines rankings without normalizing scores. Robust, parameter-free merging.</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Product Diversity Algorithm:</strong> After fusion, if a comparison query finds 4/5 chunks from one product, the algorithm replaces the lowest-ranked overrepresented chunk with the highest-ranked underrepresented one — ensuring balanced LLM context for fair comparisons.
+      </div>
+    </div>
+
+    <!-- Layer 5: Generation -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🤖</div>
+        <div>
+          <h3>Layer 5 — LLM Generation</h3>
+          <div style="font-size:0.8rem;color:var(--text3);">RAGGenerator · Multi-model · Citation extraction · backend/generation/</div>
+        </div>
+        <div style="margin-left:auto;"><span class="tag tag-purple">Multi-Provider</span></div>
+      </div>
+
+      <div style="overflow-x:auto; margin-bottom:16px;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.82rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);">
+              <th style="text-align:left; padding:8px 12px; color:var(--text3); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Model</th>
+              <th style="text-align:left; padding:8px 12px; color:var(--text3); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Provider</th>
+              <th style="text-align:left; padding:8px 12px; color:var(--text3); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Cost / 1k tokens</th>
+              <th style="text-align:left; padding:8px 12px; color:var(--text3); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border); background:rgba(167,139,250,0.04);">
+              <td style="padding:8px 12px; font-weight:600; color:#c4b5fd;">Claude Sonnet 4.5</td>
+              <td style="padding:8px 12px; color:var(--text2);">Anthropic</td>
+              <td style="padding:8px 12px; color:var(--text2);">$0.003 in / $0.015 out</td>
+              <td style="padding:8px 12px; color:var(--text2);">Best quality, complex reasoning</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:600; color:#c4b5fd;">Claude 3.5 Haiku</td>
+              <td style="padding:8px 12px; color:var(--text2);">Anthropic</td>
+              <td style="padding:8px 12px; color:var(--text2);">$0.0008 in / $0.004 out</td>
+              <td style="padding:8px 12px; color:var(--text2);">Fast, cost-effective</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px; font-weight:600; color:#6ee7b7;">GPT-4o</td>
+              <td style="padding:8px 12px; color:var(--text2);">OpenAI</td>
+              <td style="padding:8px 12px; color:var(--text2);">$0.0025 in / $0.010 out</td>
+              <td style="padding:8px 12px; color:var(--text2);">Balanced quality/cost</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px; font-weight:600; color:#6ee7b7;">GPT-4o-mini <span style="background:rgba(34,197,94,0.1);color:#86efac;font-size:0.68rem;padding:1px 6px;border-radius:4px;margin-left:4px;">Default</span></td>
+              <td style="padding:8px 12px; color:var(--text2);">OpenAI</td>
+              <td style="padding:8px 12px; color:#86efac; font-weight:600;">$0.00015 in / $0.0006 out</td>
+              <td style="padding:8px 12px; color:var(--text2);">37× cheaper, dev/test</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>Citation enforcement in the system prompt:</strong> Every factual claim must include an inline citation <code>[1]</code>, <code>[2]</code>, etc. After generation, regex extracts cited numbers, maps them back to chunk metadata, deduplicates, and returns structured Source objects — creating a fully auditable answer trail.
+      </div>
+    </div>
+
+    <!-- Layer 6: Shared Data -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🗄️</div>
+        <div>
+          <h3>Layer 6 — Shared Data Layer</h3>
+          <div style="font-size:0.8rem;color:var(--text3);">Qdrant (embedded) + BM25 (pickle) + JSON chunks + Products Metadata</div>
+        </div>
+        <div style="margin-left:auto;"><span class="tag tag-cyan">Shared Data</span></div>
+      </div>
+      <div class="grid-4">
+        <div class="card card-sm">
+          <div style="font-size:1.1rem; margin-bottom:6px;">🗄️ Qdrant</div>
+          <div style="font-size:0.78rem; color:var(--text2); line-height:1.5;">
+            Embedded SQLite mode (no separate server). 384-dimensional vectors. Cosine similarity. ~4,000 points. Each point stores full chunk metadata in payload.
+          </div>
+          <div class="tags" style="margin-top:10px;">
+            <span class="tag tag-cyan">Cosine</span><span class="tag tag-cyan">384-dim</span>
+          </div>
+        </div>
+        <div class="card card-sm">
+          <div style="font-size:1.1rem; margin-bottom:6px;">📋 BM25</div>
+          <div style="font-size:0.78rem; color:var(--text2); line-height:1.5;">
+            Okapi BM25 over all chunks. Stored as 3.9 MB pickle file. Loaded into memory at startup. Simple lowercase+split tokenization works well for product specs.
+          </div>
+          <div class="tags" style="margin-top:10px;">
+            <span class="tag tag-purple">Pickle</span><span class="tag tag-purple">In-memory</span>
+          </div>
+        </div>
+        <div class="card card-sm">
+          <div style="font-size:1.1rem; margin-bottom:6px;">📦 Chunks JSON</div>
+          <div style="font-size:0.78rem; color:var(--text2); line-height:1.5;">
+            Single 1.8 MB JSON file with all ~4,000 chunks. Each chunk has: id, product, doc_type, page, source URL, source name, and text.
+          </div>
+          <div class="tags" style="margin-top:10px;">
+            <span class="tag tag-orange">1.8 MB</span><span class="tag tag-orange">~4000 chunks</span>
+          </div>
+        </div>
+        <div class="card card-sm">
+          <div style="font-size:1.1rem; margin-bottom:6px;">⚖️ Products Metadata</div>
+          <div style="font-size:0.78rem; color:var(--text2); line-height:1.5;">
+            JSON file with pre-rated scores per product: category fit, use-case ratings (1–5), feature ratings (1–5). Powers the quiz scorer without any DB query.
+          </div>
+          <div class="tags" style="margin-top:10px;">
+            <span class="tag tag-yellow">JSON</span><span class="tag tag-yellow">Quiz Source</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 7: Ingestion -->
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📄</div>
+        <div>
+          <h3>Layer 7 — Offline Ingestion Pipeline</h3>
+          <div style="font-size:0.8rem;color:var(--text3);">Run once to rebuild index · PyMuPDF + OCR + Chunking + Embedding</div>
+        </div>
+        <div style="margin-left:auto;"><span class="tag tag-orange">Offline</span></div>
+      </div>
+      <div style="display:flex; gap:0; overflow-x:auto; padding-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:nowrap;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:120px;text-align:center;">
+            <div style="font-size:1.1rem;">📁</div>
+            <div style="font-size:0.78rem;font-weight:600;margin-top:4px;">Raw PDFs</div>
+            <div style="font-size:0.7rem;color:var(--text3);">data/raw/</div>
+          </div>
+          <div style="color:var(--text3);font-size:0.8rem;">→</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:120px;text-align:center;">
+            <div style="font-size:1.1rem;">⚙️</div>
+            <div style="font-size:0.78rem;font-weight:600;margin-top:4px;">PDF Extractor</div>
+            <div style="font-size:0.7rem;color:var(--text3);">PyMuPDF + OCR</div>
+          </div>
+          <div style="color:var(--text3);font-size:0.8rem;">→</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:120px;text-align:center;">
+            <div style="font-size:1.1rem;">✂️</div>
+            <div style="font-size:0.78rem;font-weight:600;margin-top:4px;">Chunker</div>
+            <div style="font-size:0.7rem;color:var(--text3);">800 tok / 200 overlap</div>
+          </div>
+          <div style="color:var(--text3);font-size:0.8rem;">→</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:120px;text-align:center;">
+            <div style="font-size:1.1rem;">🧮</div>
+            <div style="font-size:0.78rem;font-weight:600;margin-top:4px;">Embedder</div>
+            <div style="font-size:0.7rem;color:var(--text3);">384-dim vectors</div>
+          </div>
+          <div style="color:var(--text3);font-size:0.8rem;">→</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:120px;text-align:center;">
+            <div style="font-size:1.1rem;">🗄️</div>
+            <div style="font-size:0.78rem;font-weight:600;margin-top:4px;">Qdrant Upload</div>
+            <div style="font-size:0.7rem;color:var(--text3);">Cosine + payload</div>
+          </div>
+          <div style="color:var(--text3);font-size:0.8rem;">+</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:120px;text-align:center;">
+            <div style="font-size:1.1rem;">📋</div>
+            <div style="font-size:0.78rem;font-weight:600;margin-top:4px;">BM25 Build</div>
+            <div style="font-size:0.7rem;color:var(--text3);">Tokenize + pickle</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ─── Design Decisions ────────────────────────────────── -->
+<section id="decisions">
+  <div class="page">
+    <span class="section-label">System Design Thinking</span>
+    <h2 class="section-title">Key Design Decisions</h2>
+    <p class="section-sub">Not just <em>what</em> was built, but <em>why</em> — the trade-offs considered at each architectural decision point.</p>
+
+    <div class="grid-2">
+
+      <div class="decision-card">
+        <div class="q">Decision #1 — Retrieval Strategy</div>
+        <div class="title">Why Hybrid Search over pure Vector?</div>
+        <div class="body">Product manuals contain exact model numbers, spec values, and brand names. Vector search misses exact-match queries like "Garmin FR970 GPS accuracy". BM25 excels at these but fails at semantic paraphrases. Hybrid + RRF captures both signal types without score normalization headaches.</div>
+        <div class="alts">
+          <div class="alt-label">Alternatives Considered</div>
+          <div class="alt-row"><span class="chosen">✓ Hybrid BM25 + Vector</span> — chosen</div>
+          <div class="alt-row"><span class="rejected">× Pure Vector Search</span> — misses exact spec lookups</div>
+          <div class="alt-row"><span class="rejected">× Pure BM25</span> — no semantic understanding</div>
+          <div class="alt-row"><span class="rejected">× Reranker model</span> — added latency, marginal gain</div>
+        </div>
+      </div>
+
+      <div class="decision-card" style="border-left-color:var(--purple);">
+        <div class="q">Decision #2 — Chunk Size</div>
+        <div class="title">Why 800 tokens with 200 token overlap?</div>
+        <div class="body">Too small (200-400 tokens): single spec values without context, poor answer quality. Too large (1200+ tokens): LLM context fills up quickly, noisy retrieval. 800 tokens is the sweet spot — enough context for a complete spec section with overlap preventing sentence-boundary information loss.</div>
+        <div class="alts">
+          <div class="alt-label">Alternatives Considered</div>
+          <div class="alt-row"><span class="chosen">✓ 800 tokens / 200 overlap</span> — chosen</div>
+          <div class="alt-row"><span class="rejected">× 400 tokens</span> — loses spec context</div>
+          <div class="alt-row"><span class="rejected">× 1200 tokens</span> — too noisy, fills context window</div>
+          <div class="alt-row"><span class="rejected">× Sentence-level</span> — too fragmented for manuals</div>
+        </div>
+      </div>
+
+      <div class="decision-card" style="border-left-color:var(--cyan);">
+        <div class="q">Decision #3 — Embedding Model</div>
+        <div class="title">Why multilingual-MiniLM over text-embedding-3?</div>
+        <div class="body">Primary market is German-speaking (60% DE, 40% EN queries). OpenAI's text-embedding-3 requires API calls for every query (latency + cost). multilingual-MiniLM runs locally, is optimized for 50+ languages including German, costs $0, and produces 384-dim vectors (fast Qdrant search). The quality trade-off is acceptable for product specification documents.</div>
+        <div class="alts">
+          <div class="alt-label">Alternatives Considered</div>
+          <div class="alt-row"><span class="chosen">✓ paraphrase-multilingual-MiniLM-L12</span> — chosen</div>
+          <div class="alt-row"><span class="rejected">× text-embedding-3-small</span> — API latency + cost per embed</div>
+          <div class="alt-row"><span class="rejected">× all-mpnet-base-v2</span> — English-only</div>
+        </div>
+      </div>
+
+      <div class="decision-card" style="border-left-color:var(--orange);">
+        <div class="q">Decision #4 — Qdrant Mode</div>
+        <div class="title">Why embedded SQLite mode?</div>
+        <div class="body">Running Qdrant as a separate Docker service adds operational overhead for a single-developer product. Embedded mode stores everything in a local directory — zero infrastructure, same API surface, and ~4,000 vectors fit comfortably in local storage. The trade-off: only one process can access at a time (requires killing server before re-indexing).</div>
+        <div class="alts">
+          <div class="alt-label">Alternatives Considered</div>
+          <div class="alt-row"><span class="chosen">✓ Qdrant embedded (SQLite)</span> — chosen</div>
+          <div class="alt-row"><span class="rejected">× Qdrant Docker container</span> — overkill for current scale</div>
+          <div class="alt-row"><span class="rejected">× Pinecone / Weaviate Cloud</span> — cost + vendor lock-in</div>
+          <div class="alt-row"><span class="rejected">× FAISS in-memory</span> — no persistence</div>
+        </div>
+      </div>
+
+      <div class="decision-card" style="border-left-color:var(--green);">
+        <div class="q">Decision #5 — Auth Strategy</div>
+        <div class="title">Why Supabase over rolling custom JWT?</div>
+        <div class="body">Building auth from scratch introduces security risk (OWASP Top 10 vulnerabilities). Supabase provides email auth, OAuth, password reset, email invites, and a hosted user table — all free up to 50,000 users. The backend only validates JWTs; it never stores passwords. Perfect separation of concerns.</div>
+        <div class="alts">
+          <div class="alt-label">Alternatives Considered</div>
+          <div class="alt-row"><span class="chosen">✓ Supabase Auth</span> — chosen</div>
+          <div class="alt-row"><span class="rejected">× Custom JWT + bcrypt</span> — security risk, maintenance burden</div>
+          <div class="alt-row"><span class="rejected">× Firebase Auth</span> — Google dependency, less flexible</div>
+          <div class="alt-row"><span class="rejected">× Auth0</span> — paid at scale</div>
+        </div>
+      </div>
+
+      <div class="decision-card" style="border-left-color:var(--yellow);">
+        <div class="q">Decision #6 — Observability</div>
+        <div class="title">Why Langfuse for RAG tracing?</div>
+        <div class="body">Generic APM tools (Datadog, Grafana) don't understand RAG-specific concepts: retrieval quality, chunk relevance, citation accuracy, or RAGAS metrics. Langfuse provides native LLM tracing with span-level drill-down, dataset evaluation runners, and cost tracking per query — all self-hostable for zero ongoing cost.</div>
+        <div class="alts">
+          <div class="alt-label">Alternatives Considered</div>
+          <div class="alt-row"><span class="chosen">✓ Langfuse (self-hosted)</span> — chosen</div>
+          <div class="alt-row"><span class="rejected">× LangSmith</span> — LangChain lock-in</div>
+          <div class="alt-row"><span class="rejected">× Custom logging</span> — no RAGAS eval integration</div>
+          <div class="alt-row"><span class="rejected">× Helicone</span> — proxy model, adds latency</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── Product Thinking ────────────────────────────────── -->
+<section id="product">
+  <div class="page">
+    <span class="section-label">Product Thinking</span>
+    <h2 class="section-title">Problem → Product Decisions</h2>
+    <p class="section-sub">The architectural choices trace back to specific user problems and product constraints.</p>
+
+    <div class="grid-2" style="margin-bottom:24px;">
+
+      <div class="card">
+        <h4 style="margin-bottom:16px;">Core User Problems</h4>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="font-size:1.2rem;">😕</span>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem;margin-bottom:3px;">Biased Reviews</div>
+              <div style="font-size:0.8rem;color:var(--text2);">Amazon reviews and influencer content are incentivised. Users can't trust them for objective specs.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="font-size:1.2rem;">📚</span>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem;margin-bottom:3px;">Manual Overload</div>
+              <div style="font-size:0.8rem;color:var(--text2);">Product manuals are 200+ pages. Nobody reads them to find one spec or troubleshoot one issue.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="font-size:1.2rem;">🤔</span>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem;margin-bottom:3px;">Post-Purchase Regret</div>
+              <div style="font-size:0.8rem;color:var(--text2);">49% of wearable buyers feel unsupported after purchase. Setup help, feature discovery, troubleshooting.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="font-size:1.2rem;">🌍</span>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem;margin-bottom:3px;">Language Barrier</div>
+              <div style="font-size:0.8rem;color:var(--text2);">German-speaking market (DACH) underserved by English-only AI tools and review sites.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="margin-bottom:16px;">Product Principles → Architecture Impact</h4>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="color:var(--green);font-size:0.9rem;font-weight:700;flex-shrink:0;margin-top:1px;">→</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">"Source-backed only"</div>
+              <div style="font-size:0.78rem;color:var(--text2);">Drives mandatory citations in system prompt. Every claim traceable to a real document page.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="color:var(--accent2);font-size:0.9rem;font-weight:700;flex-shrink:0;margin-top:1px;">→</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">"Neutral recommendations"</div>
+              <div style="font-size:0.78rem;color:var(--text2);">Drives product diversity algorithm — ensures fair representation in hybrid search results.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="color:var(--purple);font-size:0.9rem;font-weight:700;flex-shrink:0;margin-top:1px;">→</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">"Dual-mode: pre & post purchase"</div>
+              <div style="font-size:0.78rem;color:var(--text2);">Drives including manual, specification, and review PDFs — all doc_types indexed together.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="color:var(--yellow);font-size:0.9rem;font-weight:700;flex-shrink:0;margin-top:1px;">→</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">"Works in German"</div>
+              <div style="font-size:0.78rem;color:var(--text2);">Drives choice of multilingual-MiniLM embeddings and language detection for German system prompts.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="color:var(--orange);font-size:0.9rem;font-weight:700;flex-shrink:0;margin-top:1px;">→</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">"Affordable to run"</div>
+              <div style="font-size:0.78rem;color:var(--text2);">Drives cost tracking, gpt-4o-mini default, and Qdrant embedded mode (no server costs).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>The quiz feature</strong> is a direct product insight: users with unclear intent (not sure which watch to buy) need a guided path before they're ready to ask specific questions. The 3-step quiz (category → use cases → features) narrows context and creates a personalised entry point into the chat, increasing engagement and answer relevance.
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── Recommendation System ───────────────────────────── -->
+<section id="recommendation">
+  <div class="page">
+    <span class="section-label">Recommendation Engine</span>
+    <h2 class="section-title">From "What do I need?" to a Ranked Match</h2>
+    <p class="section-sub">A hybrid two-tier system: a fast weighted metadata scorer for all products, then RAG-enhanced personalised insights for the top 3. The quiz acts as a structured onboarding layer before the open-ended chat.</p>
+
+    <!-- Status badges -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;">
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:8px;padding:8px 16px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></span>
+        <span style="font-size:0.82rem;font-weight:600;color:#86efac;">Tier 1 — Metadata Scoring &amp; Quiz UI</span>
+        <span style="font-size:0.72rem;color:var(--text3);margin-left:4px;">Implemented</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(250,204,21,0.08);border:1px solid rgba(250,204,21,0.25);border-radius:8px;padding:8px 16px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0;"></span>
+        <span style="font-size:0.82rem;font-weight:600;color:#fde047;">Tier 2 — RAG Enhancement Layer</span>
+        <span style="font-size:0.72rem;color:var(--text3);margin-left:4px;">Designed · In Progress</span>
+      </div>
+    </div>
+
+    <!-- 3-step quiz flow -->
+    <div class="card" style="margin-bottom:24px; padding:28px 32px;">
+      <h4 style="margin-bottom:20px;">3-Step Quiz Flow (Figma-Designed UI)</h4>
+      <div style="display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding-bottom:8px;">
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:160px;text-align:center;flex:1;">
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(79,142,247,0.12);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:10px;">1</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:6px;">Category</div>
+          <div style="font-size:0.75rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">"What are you looking for?"<br>Single selection · 6 categories</div>
+          <div style="display:flex;flex-direction:column;gap:3px;width:100%;">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">⌚ Smartwatch &amp; Fitness</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">🌙 Recovery &amp; Sleep</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">❤️ Heart Rate Monitors</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text3);">+ 3 more categories</div>
+          </div>
+        </div>
+
+        <div style="flex-shrink:0;display:flex;align-items:center;padding:0 12px;padding-top:24px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">category ID</div>
+            <div style="width:40px;height:2px;background:var(--border2);position:relative;">
+              <div style="position:absolute;right:-5px;top:-4px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--border2);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:160px;text-align:center;flex:1;">
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(167,139,250,0.12);border:2px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:10px;">2</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:6px;">Use Cases</div>
+          <div style="font-size:0.75rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">"What mainly for?"<br>Multi-select · 6 options · min 1</div>
+          <div style="display:flex;flex-direction:column;gap:3px;width:100%;">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">🏃 Lifestyle &amp; Fitness</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">🏃🚴 Running &amp; Cycling</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">🥾 Hiking</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text3);">+ 3 more use cases</div>
+          </div>
+        </div>
+
+        <div style="flex-shrink:0;display:flex;align-items:center;padding:0 12px;padding-top:24px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">useCases[]</div>
+            <div style="width:40px;height:2px;background:var(--border2);position:relative;">
+              <div style="position:absolute;right:-5px;top:-4px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--border2);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:160px;text-align:center;flex:1;">
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(250,204,21,0.12);border:2px solid var(--yellow);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:10px;">3</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:6px;">Feature Priorities</div>
+          <div style="font-size:0.75rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">"What's most important?"<br>Multi-select · 14 options · max 5</div>
+          <div style="display:flex;flex-direction:column;gap:3px;width:100%;">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">🔋 Long Battery</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">🛰️ Precise GPS &amp; Sensors</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text2);">💧 Waterproof &amp; Robust</div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:0.7rem;color:var(--text3);">+ 11 more features</div>
+          </div>
+        </div>
+
+        <div style="flex-shrink:0;display:flex;align-items:center;padding:0 12px;padding-top:24px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">features[]</div>
+            <div style="width:40px;height:2px;background:var(--green);position:relative;">
+              <div style="position:absolute;right:-5px;top:-4px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--green);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:140px;text-align:center;flex:1;">
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(34,197,94,0.12);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:10px;">🏆</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:6px;">Ranked Results</div>
+          <div style="font-size:0.75rem;color:var(--text2);line-height:1.5;">Match score 0–1<br>Reasons + CTA to chat</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tier 1: Scoring Algorithm -->
+    <div class="split" style="margin-bottom:24px;">
+
+      <div class="card" style="border-left:3px solid var(--green);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="font-size:1.2rem;">⚖️</span>
+          <div>
+            <div style="font-weight:700;">Tier 1 — Weighted Metadata Scoring</div>
+            <div style="font-size:0.75rem;color:var(--green);">POST /quiz/score · Implemented</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-weight:600;font-size:0.85rem;">Category Match</span>
+              <span style="font-weight:800;font-size:1rem;color:var(--accent2);">40%</span>
+            </div>
+            <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+              <div style="width:40%;height:100%;background:var(--accent);border-radius:3px;"></div>
+            </div>
+            <div style="font-size:0.73rem;color:var(--text3);margin-top:5px;">Binary (1.0 or 0.0). Product excluded from results if category doesn't match.</div>
+          </div>
+
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-weight:600;font-size:0.85rem;">Use Case Ratings</span>
+              <span style="font-weight:800;font-size:1rem;color:var(--purple);">35%</span>
+            </div>
+            <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+              <div style="width:35%;height:100%;background:var(--purple);border-radius:3px;"></div>
+            </div>
+            <div style="font-size:0.73rem;color:var(--text3);margin-top:5px;">Per-product rating (1–5) per use case, averaged over selections, normalised to 0–1.</div>
+          </div>
+
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-weight:600;font-size:0.85rem;">Feature Ratings</span>
+              <span style="font-weight:800;font-size:1rem;color:var(--yellow);">25%</span>
+            </div>
+            <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+              <div style="width:25%;height:100%;background:var(--yellow);border-radius:3px;"></div>
+            </div>
+            <div style="font-size:0.73rem;color:var(--text3);margin-top:5px;">Per-product rating (1–5) per feature priority, averaged, normalised. Features ≤2 flagged as ⚠️ weaknesses.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-family:monospace;font-size:0.78rem;color:var(--text2);">
+          final_score = 0.40 × category<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 0.35 × avg(use_case_ratings)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 0.25 × avg(feature_ratings)
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <div class="card">
+          <h4 style="margin-bottom:12px;">Data Source — products_metadata.json</h4>
+          <div style="font-size:0.8rem;color:var(--text2);line-height:1.6;margin-bottom:12px;">
+            Each product has pre-rated scores per use case and feature (1–5 scale), plus static strength/weakness bullets in DE and EN.
+          </div>
+          <pre style="font-size:0.72rem; padding:12px 14px;"><span class="hl-cmt">// Example product entry</span>
+{
+  <span class="hl-key">"id"</span>: <span class="hl-str">"garmin_forerunner_970_2025"</span>,
+  <span class="hl-key">"category"</span>: <span class="hl-str">"smartwatch_fitness"</span>,
+  <span class="hl-key">"use_cases"</span>: {
+    <span class="hl-key">"running_cycling"</span>: { <span class="hl-key">"rating"</span>: <span class="hl-num">5</span> },
+    <span class="hl-key">"hiking"</span>: { <span class="hl-key">"rating"</span>: <span class="hl-num">5</span> },
+    <span class="hl-key">"swimming"</span>: { <span class="hl-key">"rating"</span>: <span class="hl-num">4</span> }
+  },
+  <span class="hl-key">"feature_priorities"</span>: {
+    <span class="hl-key">"long_battery"</span>: {
+      <span class="hl-key">"rating"</span>: <span class="hl-num">5</span>,
+      <span class="hl-key">"value"</span>: <span class="hl-str">"15 days / 26h GPS"</span>
+    },
+    <span class="hl-key">"gps_accuracy"</span>: {
+      <span class="hl-key">"rating"</span>: <span class="hl-num">5</span>,
+      <span class="hl-key">"value"</span>: <span class="hl-str">"Multi-Band GNSS"</span>
+    }
+  }
+}</pre>
+        </div>
+
+        <div class="card">
+          <h4 style="margin-bottom:12px;">Scored Example</h4>
+          <div style="font-size:0.8rem;color:var(--text2);margin-bottom:10px;">Input: Smartwatch · Running + Hiking · Battery + GPS + Water</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:6px;">
+              <span style="font-size:0.82rem;font-weight:600;">🥇 Garmin Forerunner 970</span>
+              <span style="font-weight:800;color:var(--green);">91%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.15);border-radius:6px;">
+              <span style="font-size:0.82rem;font-weight:600;">🥈 Apple Watch Series 11</span>
+              <span style="font-weight:800;color:var(--accent2);">83%</span>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-top:8px;">Garmin wins on battery (5/5) and GPS (5/5). Apple Watch scores lower on multi-day battery but higher on app ecosystem.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tier 2: RAG Enhancement (Planned) -->
+    <div class="card" style="margin-bottom:24px; border:1px solid rgba(250,204,21,0.25); background:rgba(250,204,21,0.02);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <span style="font-size:1.3rem;">✨</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem;">Tier 2 — RAG Enhancement Layer</div>
+          <div style="font-size:0.75rem;color:var(--yellow);">POST /quiz/score-with-rag · Designed · Next to implement</div>
+        </div>
+      </div>
+
+      <p style="font-size:0.85rem;color:var(--text2);line-height:1.6;margin-bottom:20px;">
+        After metadata scoring ranks all products, the top 3 are enhanced with <strong style="color:var(--text);">one personalised strength + one personalised weakness bullet</strong> generated by Claude from real product documentation — specific to each user's quiz inputs, not generic copy.
+      </p>
+
+      <div class="grid-3" style="margin-bottom:20px;">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:1.3rem;margin-bottom:6px;">⚖️</div>
+          <div style="font-weight:600;font-size:0.85rem;margin-bottom:4px;">Step 1</div>
+          <div style="font-size:0.75rem;color:var(--text2);">Metadata scorer runs as normal. Ranks all products (existing).</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:1.3rem;margin-bottom:6px;">🔍</div>
+          <div style="font-weight:600;font-size:0.85rem;margin-bottom:4px;">Step 2</div>
+          <div style="font-size:0.75rem;color:var(--text2);">For each top-3 product: build semantic query from quiz inputs + run hybrid retrieval (product-filtered, top-5 chunks).</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:1.3rem;margin-bottom:6px;">🤖</div>
+          <div style="font-weight:600;font-size:0.85rem;margin-bottom:4px;">Step 3</div>
+          <div style="font-size:0.75rem;color:var(--text2);">Claude generates 1 strength + 1 weakness from chunks, grounded in user's exact use cases and features.</div>
+        </div>
+      </div>
+
+      <!-- Query example -->
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
+        <div style="font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Auto-generated retrieval query</div>
+        <div style="font-family:monospace;font-size:0.8rem;color:var(--accent2);">"Garmin Forerunner 970 for running, hiking, swimming with emphasis on battery life, GPS accuracy, water resistance"</div>
+      </div>
+
+      <!-- Output example -->
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Claude output — JSON</div>
+        <pre style="font-size:0.75rem;margin:0;background:transparent;border:none;padding:0;">{
+  <span class="hl-key">"strength"</span>: <span class="hl-str">"15-day battery and multi-band GNSS make this ideal for your multi-day hiking trips with reliable GPS even in dense forest"</span>,
+  <span class="hl-key">"weakness"</span>: <span class="hl-str">"At 56g it's heavier than competitors — noticeable during long running sessions"</span>
+}</pre>
+      </div>
+
+      <!-- What changes in the UI -->
+      <div style="background:var(--bg);border:1px solid rgba(250,204,21,0.2);border-radius:8px;padding:14px 16px;">
+        <div style="font-size:0.7rem;color:var(--yellow);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Results UI — added bullet (visually distinguished)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.8rem;">
+          <div style="display:flex;gap:8px;align-items:flex-start;color:var(--text2);">
+            <span style="color:var(--green);">✓</span><span>Static strength bullet 1 (from metadata)</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;color:var(--text2);">
+            <span style="color:var(--green);">✓</span><span>Static strength bullet 2 (from metadata)</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;padding:6px 10px;background:rgba(250,204,21,0.08);border-left:3px solid var(--yellow);border-radius:4px;color:var(--text);">
+            <span style="background:var(--yellow);color:#000;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:3px;flex-shrink:0;letter-spacing:0.04em;">FOR YOU</span>
+            <span>15-day battery and multi-band GNSS make this ideal for your multi-day hiking trips…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance & Design decisions -->
+    <div class="grid-2">
+
+      <div class="card" style="border-left:3px solid var(--cyan);">
+        <h4 style="margin-bottom:14px;">Performance Budget</h4>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.8rem;">
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2);">Metadata scoring (Tier 1)</span><span style="font-weight:600;color:var(--green);">~50ms</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2);">Hybrid retrieval × 3 products</span><span style="font-weight:600;">~1.5s</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2);">Claude bullet generation × 3</span><span style="font-weight:600;">~2.4s</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0 5px;border-top:1px solid var(--border);">
+            <span style="font-weight:600;">Total (Tier 1 + 2)</span><span style="font-weight:800;color:var(--accent2);">~4.1s ✓</span>
+          </div>
+          <div style="font-size:0.72rem;color:var(--text3);padding-top:4px;">Future: parallel LLM calls → ~1.5s. Cache common patterns → 80% cost reduction.</div>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--orange);">
+        <h4 style="margin-bottom:14px;">Cost per Quiz Submission</h4>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.8rem;">
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2);">Tier 1 only (metadata)</span><span style="font-weight:600;color:var(--green);">$0.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2);">Tier 2 RAG (3 × 2 bullets)</span><span style="font-weight:600;">~$0.018</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text2);">1,000 quizzes/month</span><span style="font-weight:600;">~$18</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;">
+            <span style="color:var(--text2);">With Haiku (fallback model)</span><span style="font-weight:600;color:var(--green);">~$0.004 / quiz</span>
+          </div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">Rollout: 10% → 25% → 50% → 100% with feature flag <code style="font-size:0.68rem;">ENABLE_RAG_RECOMMENDATIONS</code>. Fallback to Tier 1 if RAG times out.</div>
+      </div>
+
+    </div>
+
+    <!-- Why quiz before chat -->
+    <div class="callout" style="margin-top:20px;">
+      <strong>Product insight behind this design:</strong> Users with unformed intent ("I want a smartwatch, not sure which") don't know what to ask in a chat. The quiz converts vague preferences into structured signals (category + use cases + features) — creating a personalised context before the user ever types a message. After the quiz, the chat is pre-seeded with their product matches, making the first exchange immediately relevant.
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ─── Tech Stack ──────────────────────────────────────── -->
+<section id="tech">
+  <div class="page">
+    <span class="section-label">Technology Stack</span>
+    <h2 class="section-title">Every Tool & Why</h2>
+    <p class="section-sub">Technology choices made for concrete reasons — performance, cost, fit, and team constraints.</p>
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+
+      <div class="tech-row">
+        <div class="t-icon">⚡</div>
+        <div style="flex:1;">
+          <div class="t-name">FastAPI <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">— Python 3.11</span></div>
+          <div class="t-role">API Gateway + RAG Orchestration</div>
+          <div class="t-why">Async Python with automatic OpenAPI docs. Pydantic models for strict I/O validation. Dependency injection for clean auth middleware. Serves both REST API and static frontend from one process.</div>
+        </div>
+        <div><span class="tag tag-blue">Backend Core</span></div>
+      </div>
+
+      <div class="tech-row">
+        <div class="t-icon">🗄️</div>
+        <div style="flex:1;">
+          <div class="t-name">Qdrant <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">— Embedded mode</span></div>
+          <div class="t-role">Vector Database (Semantic Search)</div>
+          <div class="t-why">Purpose-built for vector similarity search. Embedded SQLite mode — no Docker, no server, just a local directory. Rich payload filtering enables product-scoped searches. COSINE distance for normalized embedding comparison.</div>
+        </div>
+        <div><span class="tag tag-cyan">Vector DB</span></div>
+      </div>
+
+      <div class="tech-row">
+        <div class="t-icon">📊</div>
+        <div style="flex:1;">
+          <div class="t-name">rank-bm25 <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">— Okapi BM25</span></div>
+          <div class="t-role">Keyword Search Index</div>
+          <div class="t-why">Classic TF-IDF variant that handles term frequency saturation. Pickle-serialized for fast startup (3.9 MB). Loaded into memory — zero query latency for retrieval. Complements vector search for exact spec lookups.</div>
+        </div>
+        <div><span class="tag tag-purple">Keyword Search</span></div>
+      </div>
+
+      <div class="tech-row">
+        <div class="t-icon">🧠</div>
+        <div style="flex:1;">
+          <div class="t-name">sentence-transformers <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">— paraphrase-multilingual-MiniLM-L12-v2</span></div>
+          <div class="t-role">Dense Embeddings (384-dim)</div>
+          <div class="t-why">Local inference — no API calls, no per-embed cost. Optimized for 50+ languages including German. 384 dimensions balances quality and Qdrant search speed. One-time model download (~100 MB), then instant local inference.</div>
+        </div>
+        <div><span class="tag tag-pink">Embeddings</span></div>
+      </div>
+
+      <div class="tech-row">
+        <div class="t-icon">🔮</div>
+        <div style="flex:1;">
+          <div class="t-name">Claude Sonnet 4.5 <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">— Anthropic API</span></div>
+          <div class="t-role">Primary LLM (Answer Generation)</div>
+          <div class="t-why">Superior instruction following for citation enforcement. Strong multilingual (DE/EN) generation. 200k context window. Temperature 0.3 for deterministic, factual answers. Multi-provider support (also OpenAI) for cost flexibility.</div>
+        </div>
+        <div><span class="tag tag-purple">LLM</span></div>
+      </div>
+
+      <div class="tech-row">
+        <div class="t-icon">📄</div>
+        <div style="flex:1;">
+          <div class="t-name">PyMuPDF (fitz) <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">+ pytesseract fallback</span></div>
+          <div class="t-role">PDF Text Extraction</div>
+          <div class="t-why">Fast native PDF text extraction. Falls back to OCR (Tesseract) when text density is low (&lt;10%) — handles scanned/image PDFs. Preserves page numbers for accurate citation generation.</div>
+        </div>
+        <div><span class="tag tag-orange">Ingestion</span></div>
+      </div>
+
+      <div class="tech-row">
+        <div class="t-icon">🟢</div>
+        <div style="flex:1;">
+          <div class="t-name">Supabase <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">— Auth + User DB</span></div>
+          <div class="t-role">Authentication & Authorization</div>
+          <div class="t-why">Managed auth-as-a-service: email/password, magic links, OAuth, email invites, password reset — all included. Backend validates JWTs with the secret key; zero password storage. Admin role RBAC built on Supabase metadata. Free up to 50k users.</div>
+        </div>
+        <div><span class="tag tag-green">Auth</span></div>
+      </div>
+
+      <div class="tech-row">
+        <div class="t-icon">🔭</div>
+        <div style="flex:1;">
+          <div class="t-name">Langfuse <span style="color:var(--text3);font-weight:400;font-size:0.8rem;">— Self-hosted</span></div>
+          <div class="t-role">LLM Observability & Evaluation</div>
+          <div class="t-why">RAG-native tracing: query → retrieval span → generation span → complete trace. Dataset evaluation runner for RAGAS metrics (faithfulness, relevancy, context precision). Cost tracking per query. Self-hosted with Docker Compose = zero ongoing cost.</div>
+        </div>
+        <div><span class="tag tag-yellow">Observability</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── Metrics & Quality ───────────────────────────────── -->
+<section id="metrics">
+  <div class="page">
+    <span class="section-label">Quality Targets</span>
+    <h2 class="section-title">Evaluation Framework</h2>
+    <p class="section-sub">Phase 12 targets — measured with RAGAS and custom metrics via Langfuse experiment runner.</p>
+
+    <div class="grid-4" style="margin-bottom:32px;">
+      <div class="metric-card">
+        <div class="val">85%</div>
+        <div class="unit">target</div>
+        <div class="name">Hit Rate @ 5</div>
+        <div class="target">Retrieval: correct chunk in top-5</div>
+      </div>
+      <div class="metric-card">
+        <div class="val">0.7</div>
+        <div class="unit">MRR target</div>
+        <div class="name">Mean Reciprocal Rank</div>
+        <div class="target">Avg rank of first correct chunk</div>
+      </div>
+      <div class="metric-card">
+        <div class="val">0.95</div>
+        <div class="unit">RAGAS target</div>
+        <div class="name">Faithfulness</div>
+        <div class="target">Answer grounded in context</div>
+      </div>
+      <div class="metric-card">
+        <div class="val">0.85</div>
+        <div class="unit">RAGAS target</div>
+        <div class="name">Answer Relevancy</div>
+        <div class="target">Answer addresses the question</div>
+      </div>
+      <div class="metric-card">
+        <div class="val">0.7</div>
+        <div class="unit">RAGAS target</div>
+        <div class="name">Context Precision</div>
+        <div class="target">Retrieved chunks are relevant</div>
+      </div>
+      <div class="metric-card">
+        <div class="val">0.85</div>
+        <div class="unit">custom target</div>
+        <div class="name">Citation Quality</div>
+        <div class="target">Every claim has source reference</div>
+      </div>
+      <div class="metric-card">
+        <div class="val">&lt;3s</div>
+        <div class="unit">p95 target</div>
+        <div class="name">Response Latency</div>
+        <div class="target">End-to-end query time</div>
+      </div>
+      <div class="metric-card">
+        <div class="val">$0.00014</div>
+        <div class="unit">per query</div>
+        <div class="name">Cost (gpt-4o-mini)</div>
+        <div class="target">~$0.14 / 1000 queries</div>
+      </div>
+    </div>
+
+    <!-- Development Roadmap -->
+    <h3 style="margin-bottom:20px; color:var(--text2);">Development Phases</h3>
+    <div class="split">
+      <div>
+        <div class="timeline">
+          <div class="timeline-item done"><div class="phase">Phase 1-4</div><div class="desc">PDF ingestion, chunking, dual-index build (BM25 + Qdrant)</div></div>
+          <div class="timeline-item done"><div class="phase">Phase 5-7</div><div class="desc">Hybrid retrieval + RRF fusion + Claude LLM generation with citations</div></div>
+          <div class="timeline-item done"><div class="phase">Phase 8-9</div><div class="desc">Chat UI, conversation persistence, product quiz</div></div>
+          <div class="timeline-item done"><div class="phase">Phase 10</div><div class="desc">Supabase authentication, JWT middleware, admin panel</div></div>
+          <div class="timeline-item done"><div class="phase">Phase 11</div><div class="desc">Langfuse tracing, basic metrics, 15 test cases</div></div>
+          <div class="timeline-item active"><div class="phase">Phase 12 (Active)</div><div class="desc">RAGAS evaluation, 75 test cases, retrieval metrics, quality targets</div></div>
+          <div class="timeline-item"><div class="phase">Phase 13</div><div class="desc">Production deployment, performance optimisation, multi-product expansion</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="height:100%;">
+          <h4 style="margin-bottom:16px;">System Configuration</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:0.82rem;">
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Chunk size</span><span style="color:var(--text);font-weight:600;">800 tokens</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Chunk overlap</span><span style="color:var(--text);font-weight:600;">200 tokens</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Embedding dimensions</span><span style="color:var(--text);font-weight:600;">384</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Retrieve-K (per method)</span><span style="color:var(--text);font-weight:600;">20</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Final Top-K (adaptive)</span><span style="color:var(--text);font-weight:600;">5–8</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">RRF constant k</span><span style="color:var(--text);font-weight:600;">60</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">LLM temperature</span><span style="color:var(--text);font-weight:600;">0.3</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Max output tokens</span><span style="color:var(--text);font-weight:600;">800</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Conversation memory</span><span style="color:var(--text);font-weight:600;">Last 10 messages</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+              <span style="color:var(--text2);">Total indexed chunks</span><span style="color:var(--text);font-weight:600;">~4,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── Deployment & CI/CD ─────────────────────────────── -->
+<section id="deployment">
+  <div class="page">
+    <span class="section-label">Infrastructure & Deployment</span>
+    <h2 class="section-title">GitHub → VPS Deployment</h2>
+    <p class="section-sub">Production runs on a Hostinger VPS (Ubuntu 24.04) behind Nginx with Let's Encrypt TLS. Deployment is a deliberate manual trigger: push to GitHub, pull on VPS, restart the service.</p>
+
+    <!-- Deploy flow diagram -->
+    <div class="card" style="padding:32px; margin-bottom:24px; overflow-x:auto;">
+      <h4 style="margin-bottom:24px;">Deployment Flow</h4>
+      <div style="display:flex; align-items:center; gap:0; min-width:600px; flex-wrap:nowrap;">
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:110px;text-align:center;">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(79,142,247,0.1);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">💻</div>
+          <div style="font-size:0.78rem;font-weight:600;margin-top:8px;">Local Dev</div>
+          <div style="font-size:0.68rem;color:var(--text3);">Windows + venv</div>
+        </div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:80px;">
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">git commit</div>
+          <div style="height:2px;width:100%;background:linear-gradient(to right,var(--accent),var(--border2));position:relative;">
+            <div style="position:absolute;right:-6px;top:-4px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--border2);"></div>
+          </div>
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">git push origin main</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:110px;text-align:center;">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🐙</div>
+          <div style="font-size:0.78rem;font-weight:600;margin-top:8px;">GitHub</div>
+          <div style="font-size:0.68rem;color:var(--text3);">main branch</div>
+        </div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:80px;">
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">SSH / Browser</div>
+          <div style="height:2px;width:100%;background:linear-gradient(to right,var(--green),var(--border2));position:relative;">
+            <div style="position:absolute;right:-6px;top:-4px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--border2);"></div>
+          </div>
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">git pull origin main</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:110px;text-align:center;">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(250,204,21,0.1);border:2px solid var(--yellow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🖥️</div>
+          <div style="font-size:0.78rem;font-weight:600;margin-top:8px;">VPS</div>
+          <div style="font-size:0.68rem;color:var(--text3);">/var/www/verifyr</div>
+        </div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:80px;">
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">systemctl restart</div>
+          <div style="height:2px;width:100%;background:linear-gradient(to right,var(--yellow),var(--orange));position:relative;">
+            <div style="position:absolute;right:-6px;top:-4px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--orange);"></div>
+          </div>
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;">verifyr-backend</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:110px;text-align:center;">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(34,211,238,0.1);border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🌍</div>
+          <div style="font-size:0.78rem;font-weight:600;margin-top:8px;">Live</div>
+          <div style="font-size:0.68rem;color:var(--text3);">verifyr.de</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Infrastructure stack -->
+    <div class="grid-2" style="margin-bottom:24px;">
+
+      <div class="card">
+        <h4 style="margin-bottom:16px;">VPS Infrastructure Stack</h4>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+            <span style="font-size:1.2rem;">🌐</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">Nginx <span style="color:var(--text3);font-weight:400;">— Reverse Proxy</span></div>
+              <div style="font-size:0.78rem;color:var(--text2);margin-top:3px;">Terminates HTTPS, forwards to <code style="font-size:0.73rem;color:var(--accent2);">localhost:8000</code>. Serves no static files directly — FastAPI handles that. Zero-downtime config reloads with <code style="font-size:0.73rem;color:var(--accent2);">nginx -t && reload</code>.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+            <span style="font-size:1.2rem;">⚙️</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">systemd Service <span style="color:var(--text3);font-weight:400;">— Process Manager</span></div>
+              <div style="font-size:0.78rem;color:var(--text2);margin-top:3px;"><code style="font-size:0.73rem;color:var(--accent2);">verifyr-backend.service</code> runs uvicorn as a non-root <code style="font-size:0.73rem;color:var(--accent2);">verifyr</code> user. Auto-restarts on crash. Enabled to survive reboots.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+            <span style="font-size:1.2rem;">🔒</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">Let's Encrypt + Certbot <span style="color:var(--text3);font-weight:400;">— TLS</span></div>
+              <div style="font-size:0.78rem;color:var(--text2);margin-top:3px;">Free TLS certificate for <code style="font-size:0.73rem;color:var(--accent2);">verifyr.de</code>. Auto-renews 30 days before expiry via certbot cron. Zero cost.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+            <span style="font-size:1.2rem;">🐍</span>
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;">Uvicorn + Python 3.12 <span style="color:var(--text3);font-weight:400;">— ASGI Server</span></div>
+              <div style="font-size:0.78rem;color:var(--text2);margin-top:3px;">FastAPI served via uvicorn on <code style="font-size:0.73rem;color:var(--accent2);">127.0.0.1:8000</code>. Isolated in a Python venv at <code style="font-size:0.73rem;color:var(--accent2);">/var/www/verifyr/venv/</code>.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <div class="card">
+          <h4 style="margin-bottom:12px;">Server Specs</h4>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:0.82rem;">
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Provider</span><span style="font-weight:600;">Hostinger VPS</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">OS</span><span style="font-weight:600;">Ubuntu 24.04.3 LTS</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Domain</span><span style="font-weight:600; color:var(--accent2);">verifyr.de</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Python</span><span style="font-weight:600;">3.12.3</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Project path</span><span style="font-weight:600; font-size:0.75rem; color:var(--accent2);">/var/www/verifyr</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--text2);">Service user</span><span style="font-weight:600;">verifyr (non-root)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;">
+              <span style="color:var(--text2);">Monthly cost</span><span style="font-weight:600; color:var(--green);">~$8–9 / month</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4 style="margin-bottom:12px;">Infrastructure Cost Breakdown</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:0.82rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:var(--text2);">🖥️ VPS (Hostinger)</span>
+              <span style="font-weight:700; color:var(--text);">$7 / month</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:var(--text2);">🌐 Domain (verifyr.de)</span>
+              <span style="font-weight:700; color:var(--text);">~$1 / month</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:var(--text2);">🔒 SSL Certificate</span>
+              <span style="font-weight:700; color:var(--green);">FREE</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:var(--text2);">🟢 Supabase Auth</span>
+              <span style="font-weight:700; color:var(--green);">FREE (≤50k users)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:var(--text2);">🔭 Langfuse</span>
+              <span style="font-weight:700; color:var(--green);">FREE (self-hosted)</span>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-weight:600;">Total infra</span>
+              <span style="font-weight:800; color:var(--accent2); font-size:1rem;">~$8–9 / month</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Deployment steps -->
+    <div class="card" style="margin-bottom:24px;">
+      <h4 style="margin-bottom:20px;">6-Step Deployment Runbook</h4>
+      <div class="grid-2" style="gap:12px;">
+
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:white;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+          <div>
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">Develop & Test Locally</div>
+            <div style="font-size:0.78rem;color:var(--text2);">Run <code style="font-size:0.73rem;color:var(--accent2);">.\manage_server.ps1 -Action restart</code> and test at <code style="font-size:0.73rem;color:var(--accent2);">localhost:8000</code>.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:white;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+          <div>
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">Commit & Push to GitHub</div>
+            <div style="font-size:0.78rem;color:var(--text2);"><code style="font-size:0.73rem;color:var(--accent2);">git add [files] → git commit -m "..." → git push origin main</code>. Never commit <code style="font-size:0.73rem;color:var(--pink);">.env</code>, venv, or qdrant_storage.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--green);color:white;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+          <div>
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">SSH into VPS</div>
+            <div style="font-size:0.78rem;color:var(--text2);">Via Hostinger browser terminal or SSH. Switch to <code style="font-size:0.73rem;color:var(--accent2);">su - verifyr</code> before git ops to maintain file ownership.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--green);color:white;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+          <div>
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">Pull Latest Code</div>
+            <div style="font-size:0.78rem;color:var(--text2);"><code style="font-size:0.73rem;color:var(--accent2);">cd /var/www/verifyr && git pull origin main</code>. If new packages: <code style="font-size:0.73rem;color:var(--accent2);">pip install -r requirements.txt</code>.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--yellow);color:#000;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+          <div>
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">Restart Service (Backend only)</div>
+            <div style="font-size:0.78rem;color:var(--text2);"><code style="font-size:0.73rem;color:var(--accent2);">systemctl restart verifyr-backend</code>. Frontend changes need no restart — Nginx serves updated static files immediately.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--cyan);color:#000;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">6</div>
+          <div>
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:4px;">Verify Production</div>
+            <div style="font-size:0.78rem;color:var(--text2);">Hit <code style="font-size:0.73rem;color:var(--accent2);">https://verifyr.de/health</code> — should return <code style="font-size:0.73rem;color:var(--green);">{"status":"healthy","indexes_loaded":true}</code>.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Security & Secrets -->
+    <div class="grid-2">
+
+      <div class="card" style="border-left:3px solid var(--pink);">
+        <h4 style="margin-bottom:14px;">Secrets Management</h4>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:0.82rem;">
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--pink);font-weight:700;flex-shrink:0;">✕</span>
+            <div><code style="font-size:0.73rem;color:var(--pink);">.env</code> — <span style="color:var(--text2);">never committed. Contains all API keys (Anthropic, OpenAI, Supabase). Edited directly on VPS only.</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--pink);font-weight:700;flex-shrink:0;">✕</span>
+            <div><code style="font-size:0.73rem;color:var(--pink);">data/qdrant_storage/</code> — <span style="color:var(--text2);">excluded from git. Rebuilt on VPS via indexing pipeline.</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--pink);font-weight:700;flex-shrink:0;">✕</span>
+            <div><code style="font-size:0.73rem;color:var(--pink);">venv/</code> — <span style="color:var(--text2);">excluded. VPS has its own venv, dependencies installed from <code style="font-size:0.73rem;">requirements.txt</code>.</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--green);font-weight:700;flex-shrink:0;">✓</span>
+            <div><code style="font-size:0.73rem;color:var(--accent2);">.env</code> <span style="color:var(--text2);">permissions set to <code style="font-size:0.73rem;">600</code> (owner read-only). Not world-readable.</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <span style="color:var(--green);font-weight:700;flex-shrink:0;">✓</span>
+            <div><span style="color:var(--text2);">Backend runs as <code style="font-size:0.73rem;color:var(--accent2);">verifyr</code> user (non-root). Minimises blast radius of any compromise.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--yellow);">
+        <h4 style="margin-bottom:14px;">What GitHub Hosts</h4>
+        <div style="font-size:0.82rem;color:var(--text2);line-height:1.7;">
+          <p style="margin-bottom:10px;">GitHub is the <strong style="color:var(--text);">source of truth</strong> for all application code. The VPS is a deployment target — it only pulls, never pushes.</p>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;"><span style="color:var(--green);">✓</span> <span>All Python backend code (<code style="font-size:0.73rem;color:var(--accent2);">backend/</code>)</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--green);">✓</span> <span>All frontend files (<code style="font-size:0.73rem;color:var(--accent2);">frontend/</code>)</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--green);">✓</span> <span>Requirements (<code style="font-size:0.73rem;color:var(--accent2);">requirements.txt</code>)</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--green);">✓</span> <span>Raw PDFs (<code style="font-size:0.73rem;color:var(--accent2);">data/raw/</code>) and sources metadata</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--green);">✓</span> <span>All documentation (<code style="font-size:0.73rem;color:var(--accent2);">docs/</code>)</span></div>
+          </div>
+          <p style="margin-top:10px; font-size:0.78rem; color:var(--text3);">Next step: GitHub Actions workflow to automate the pull + restart on every merge to main.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Ops commands callout -->
+    <div class="callout" style="margin-top:20px;">
+      <strong>Key operational insight:</strong> Frontend changes (HTML/CSS/JS) require <em>no service restart</em> — FastAPI's StaticFiles middleware serves the updated files immediately after a git pull. Only Python backend changes need a <code>systemctl restart verifyr-backend</code>. This means frontend-only deploys have zero downtime.
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ─── Footer ──────────────────────────────────────────── -->
+<footer>
+  <div class="page">
+    <p style="margin-bottom:8px;">
+      <strong style="color:var(--text);">Verifyr</strong> — Wearable AI Advisor · Built by <span>Prabhdeep</span>
+    </p>
+    <p style="margin-bottom:16px;">
+      FastAPI · Qdrant · BM25 · Claude Sonnet 4.5 · Sentence Transformers · Supabase · Langfuse
+    </p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="#top" style="color:var(--text3);font-size:0.8rem;">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  // ─── Smooth scroll offset for sticky nav ───────────────
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        const offset = 72; // nav height
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ─── Active nav link highlight on scroll ───────────────
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.style.color = '';
+          link.style.background = '';
+          if (link.getAttribute('href') === '#' + entry.target.id) {
+            link.style.color = 'var(--accent2)';
+            link.style.background = 'rgba(79,142,247,0.08)';
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-60px 0px -50% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
