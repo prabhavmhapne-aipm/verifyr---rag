@@ -35,7 +35,7 @@ Verifyr helps athletes, fitness enthusiasts, and health-conscious people find th
 | Layer | Technology |
 |---|---|
 | Backend API | FastAPI (Python) |
-| LLM | Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`) |
+| LLM | Claude Sonnet 4.5, Haiku 4.5, GPT-5.1, GPT-5 Mini, Gemini 2.5 Flash/Pro |
 | Vector Database | Qdrant (embedded mode) |
 | Keyword Search | BM25 |
 | Embeddings | `paraphrase-multilingual-MiniLM-L12-v2` (384 dims) |
@@ -57,7 +57,7 @@ Verifyr is organized into seven layers, read top-to-bottom from the user's brows
 | 2 | **FastAPI Backend** | 18 async endpoints. JWT middleware via Supabase. Orchestrates all downstream components from `backend/main.py`. |
 | 3 | **Recommendation Engine** | Two-tier quiz system. Tier 1: weighted metadata scorer (40% category / 35% use-cases / 25% features). Tier 2 (upcoming): RAG-enhanced "For You" bullet generation via Claude. |
 | 4 | **Hybrid Retrieval Engine** | BM25 keyword search + Qdrant vector search run in parallel, fused via RRF. Product diversity guard ensures balanced context for comparison queries. |
-| 5 | **LLM Generation** | Multi-provider: Claude Sonnet 4.5, Claude 3.5 Haiku, GPT-4o, GPT-4o-mini. Inline citation enforcement via system prompt + regex extraction post-generation. |
+| 5 | **LLM Generation** | Multi-provider: Claude Sonnet 4.5, Claude Haiku 4.5, GPT-5.1, GPT-5 Mini, Gemini 2.5 Flash, Gemini 2.5 Pro. Inline citation enforcement via system prompt + regex extraction post-generation. |
 | 6 | **Shared Data Layer** | Qdrant (embedded SQLite, ~4k points) + BM25 (3.9 MB pickle, in-memory) + chunks.json (1.8 MB, ~4k chunks) + products_metadata.json (quiz ratings). |
 | 7 | **Offline Ingestion** | Run once to rebuild: Raw PDFs → PyMuPDF extraction → Chunker → Embedder → Qdrant upload + BM25 build. |
 
@@ -142,10 +142,12 @@ data/raw/            →  PDF Extractor     →  Chunker           →  Embedder
 
 | Model | Provider | Input / Output | Use Case |
 |---|---|---|---|
-| Claude Sonnet 4.5 | Anthropic | $0.003 / $0.015 per 1k tokens | Best quality, complex reasoning |
-| Claude 3.5 Haiku | Anthropic | $0.0008 / $0.004 per 1k tokens | Fast, cost-effective |
-| GPT-4o | OpenAI | $0.0025 / $0.010 per 1k tokens | Balanced quality/cost |
-| GPT-4o-mini | OpenAI | $0.00015 / $0.0006 per 1k tokens | Dev/test (37× cheaper) |
+| Claude Sonnet 4.5 | Anthropic | $3.00 / $15.00 per 1M tokens | Best quality, complex reasoning |
+| Claude Haiku 4.5 | Anthropic | $0.80 / $4.00 per 1M tokens | Fast, cost-effective |
+| GPT-5.1 | OpenAI | $1.25 / $10.00 per 1M tokens | Balanced quality/cost |
+| GPT-5 Mini | OpenAI | $0.25 / $2.00 per 1M tokens | Budget option |
+| Gemini 2.5 Flash | Google | Free (250 req/day) | Free tier, fast, good quality |
+| Gemini 2.5 Pro | Google | Free (100 req/day) | Free tier, highest Gemini quality |
 
 ---
 
@@ -179,7 +181,7 @@ verifyr - rag/
 │   ├── ingestion/          # PDF processing, chunking
 │   ├── indexing/           # BM25 + vector store indexing
 │   ├── retrieval/          # Hybrid search (BM25 + Qdrant + RRF)
-│   ├── generation/         # Claude API integration
+│   ├── generation/         # Multi-provider LLM integration (Claude, GPT, Gemini)
 │   └── main.py             # FastAPI app + static file serving
 ├── frontend/
 │   ├── index.html          # Landing page
@@ -206,7 +208,10 @@ verifyr - rag/
 
 - Python 3.10+
 - Windows (PowerShell) or Linux/macOS
-- Anthropic API key
+- API keys (at least one required):
+  - Anthropic API key — for Claude models
+  - OpenAI API key — for GPT models
+  - Google API key — for Gemini models (free, no credit card needed)
 
 ### Installation
 
@@ -223,8 +228,12 @@ python -m venv venv
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Set your API key
-$env:ANTHROPIC_API_KEY = "your-key-here"
+# 4. Configure API keys
+copy .env.example .env
+# Edit .env and add your API keys:
+#   ANTHROPIC_API_KEY  — https://console.anthropic.com/settings/keys
+#   OPENAI_API_KEY     — https://platform.openai.com/api-keys
+#   GOOGLE_API_KEY     — https://aistudio.google.com/apikey (free)
 ```
 
 ### Run the Indexing Pipeline
