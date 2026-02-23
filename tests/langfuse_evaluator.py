@@ -17,7 +17,7 @@ Usage:
     python tests/langfuse_evaluator.py --model claude-sonnet-4.5 --use-evaluators
 
     # Without evaluators (Phase 11 - batch testing)
-    python tests/langfuse_evaluator.py --model gpt-4o-mini
+    python tests/langfuse_evaluator.py --model gpt-5-mini
 
     # Quick test with 10 cases
     python tests/langfuse_evaluator.py --max-tests 10
@@ -84,7 +84,7 @@ def rag_task(*, item, **kwargs):
     question = item.input.get("question")
     category = item.input.get("category", "unknown")
     language = item.input.get("language", "en")
-    model = kwargs.get("model", "gpt-4o-mini")
+    model = kwargs.get("model", "gpt-5-mini")
 
     # Call backend API
     try:
@@ -591,7 +591,7 @@ Examples:
   python tests/langfuse_evaluator.py --model claude-sonnet-4.5 --use-evaluators
 
   # Phase 11: Run without evaluators (batch testing only)
-  python tests/langfuse_evaluator.py --model gpt-4o-mini
+  python tests/langfuse_evaluator.py --model gpt-5-mini
 
   # Quick test with 10 cases
   python tests/langfuse_evaluator.py --max-tests 10
@@ -603,9 +603,9 @@ Examples:
     parser.add_argument(
         "--model",
         type=str,
-        choices=["gpt-4o-mini", "gpt-4o", "claude-sonnet-4.5", "claude-3.5-haiku"],
+        choices=["gpt-5-mini", "gpt-5.1", "claude-sonnet-4.5", "claude-haiku-4.5", "gemini-2.5-flash", "gemini-2.5-pro"],
         default=None,
-        help="LLM model to use for evaluation (default: gpt-4o-mini)"
+        help="LLM model to use for evaluation (default: gpt-5-mini)"
     )
     parser.add_argument(
         "--dataset-name",
@@ -667,26 +667,30 @@ Examples:
     else:
         print("\n=== Model Selection ===")
         print("Available models:")
-        print("  1. gpt-4o-mini (default, cheapest)")
-        print("  2. gpt-4o (higher quality)")
+        print("  1. gpt-5-mini (default, cheapest)")
+        print("  2. gpt-5.1 (higher quality)")
         print("  3. claude-sonnet-4.5 (best quality)")
-        print("  4. claude-3.5-haiku (fast)")
+        print("  4. claude-haiku-4.5 (fast)")
+        print("  5. gemini-2.5-flash (free, Google)")
+        print("  6. gemini-2.5-pro (free, Google)")
 
         try:
-            model_choice = input("\nSelect model (1-4) or press Enter for default [1]: ").strip()
+            model_choice = input("\nSelect model (1-6) or press Enter for default [1]: ").strip()
         except EOFError:
             # Non-interactive mode, use default
-            print("Non-interactive mode detected, using default model: gpt-4o-mini")
+            print("Non-interactive mode detected, using default model: gpt-5-mini")
             model_choice = ""
 
         model_map = {
-            "1": "gpt-4o-mini",
-            "2": "gpt-4o",
+            "1": "gpt-5-mini",
+            "2": "gpt-5.1",
             "3": "claude-sonnet-4.5",
-            "4": "claude-3.5-haiku",
-            "": "gpt-4o-mini"
+            "4": "claude-haiku-4.5",
+            "5": "gemini-2.5-flash",
+            "6": "gemini-2.5-pro",
+            "": "gpt-5-mini"
         }
-        model = model_map.get(model_choice, "gpt-4o-mini")
+        model = model_map.get(model_choice, "gpt-5-mini")
 
     # Load test cases
     print("\n=== Loading test cases ===")

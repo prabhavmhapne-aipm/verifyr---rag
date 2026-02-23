@@ -90,7 +90,7 @@ let conversationsList;
 // State
 let isLoading = false;
 let currentLanguage = localStorage.getItem('verifyr-lang') || 'de'; // Sync with global language
-let selectedModel = 'gpt-4o-mini'; // Default matches HTML, will be synced in init()
+let selectedModel = 'gpt-5-mini'; // Default matches HTML, will be synced in init()
 
 // Conversation Management State
 let currentConversationId = null;
@@ -448,9 +448,11 @@ function updateModelNote() {
     const t = TRANSLATIONS[lang];
     const modelNames = {
         'claude-sonnet-4.5': 'Claude Sonnet 4.5',
-        'claude-3.5-haiku': 'Claude Haiku',
-        'gpt-4o': 'GPT-4o',
-        'gpt-4o-mini': 'GPT-4o Mini'
+        'claude-haiku-4.5': 'Claude Haiku 4.5',
+        'gpt-5.1': 'GPT-5.1',
+        'gpt-5-mini': 'GPT-5 Mini',
+        'gemini-2.5-flash': 'Gemini 2.5 Flash',
+        'gemini-2.5-pro': 'Gemini 2.5 Pro'
     };
     inputNote.textContent = `${t.inputNote} • Powered by ${modelNames[selectedModel]}`;
 }

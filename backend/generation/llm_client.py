@@ -2,7 +2,7 @@
 LLM Client - Phase 7
 
 Multi-model LLM integration for RAG answer generation.
-Supports Anthropic (Claude) and OpenAI (GPT) models.
+Supports Anthropic (Claude), OpenAI (GPT), and Google (Gemini) models.
 """
 
 import sys
@@ -24,31 +24,45 @@ if sys.platform == "win32":
 MODEL_CONFIGS = {
     "claude-sonnet-4.5": {
         "provider": "anthropic",
-        "model_id": "claude-sonnet-4-20250514",
+        "model_id": "claude-sonnet-4-5-20250929",
         "max_tokens": 800,
         "cost_per_1k_input": 0.003,
         "cost_per_1k_output": 0.015
     },
-    "claude-3.5-haiku": {
+    "claude-haiku-4.5": {
         "provider": "anthropic",
-        "model_id": "claude-3-5-haiku-20241022",
+        "model_id": "claude-haiku-4-5-20251001",
         "max_tokens": 800,
         "cost_per_1k_input": 0.0008,
         "cost_per_1k_output": 0.004
     },
-    "gpt-4o": {
+    "gpt-5.1": {
         "provider": "openai",
-        "model_id": "gpt-4o",
+        "model_id": "gpt-5.1",
         "max_tokens": 800,
-        "cost_per_1k_input": 0.0025,
+        "cost_per_1k_input": 0.00125,
         "cost_per_1k_output": 0.010
     },
-    "gpt-4o-mini": {
+    "gpt-5-mini": {
         "provider": "openai",
-        "model_id": "gpt-4o-mini",
+        "model_id": "gpt-5-mini",
         "max_tokens": 800,
-        "cost_per_1k_input": 0.00015,
-        "cost_per_1k_output": 0.0006
+        "cost_per_1k_input": 0.00025,
+        "cost_per_1k_output": 0.002
+    },
+    "gemini-2.5-flash": {
+        "provider": "google",
+        "model_id": "gemini-2.5-flash",
+        "max_tokens": 800,
+        "cost_per_1k_input": 0.0,
+        "cost_per_1k_output": 0.0
+    },
+    "gemini-2.5-pro": {
+        "provider": "google",
+        "model_id": "gemini-2.5-pro",
+        "max_tokens": 800,
+        "cost_per_1k_input": 0.0,
+        "cost_per_1k_output": 0.0
     }
 }
 
@@ -135,6 +149,16 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
                     "Please set it in .env file or pass as parameter."
                 )
             self.client = OpenAI(api_key=api_key)
+
+        elif self.provider == "google":
+            from google import genai
+            api_key = api_key or os.getenv("GOOGLE_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "GOOGLE_API_KEY not found in environment variables. "
+                    "Please set it in .env file or pass as parameter."
+                )
+            self.client = genai.Client(api_key=api_key)
 
     def _format_context(self, chunks: List[Dict[str, Any]]) -> str:
         """
@@ -258,6 +282,36 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
             }
         }
 
+    def _call_google(self, messages: List[Dict[str, str]], max_tokens: int) -> Dict[str, Any]:
+        """Call Google Gemini API with messages array."""
+        from google.genai.types import GenerateContentConfig
+
+        # Convert messages to Gemini content format
+        contents = []
+        for msg in messages:
+            role = "user" if msg["role"] == "user" else "model"
+            contents.append({"role": role, "parts": [{"text": msg["content"]}]})
+
+        response = self.client.models.generate_content(
+            model=self.config["model_id"],
+            contents=contents,
+            config=GenerateContentConfig(
+                system_instruction=self.SYSTEM_PROMPT,
+                max_output_tokens=max_tokens,
+                temperature=0.3
+            )
+        )
+
+        # Extract token usage from response metadata
+        usage = response.usage_metadata
+        return {
+            "answer": response.text or "",
+            "tokens": {
+                "input": getattr(usage, "prompt_token_count", 0) or 0,
+                "output": getattr(usage, "candidates_token_count", 0) or 0
+            }
+        }
+
     def generate_answer(
         self,
         query: str,
@@ -322,6 +376,8 @@ Write your answer with citations now:"""
             result = self._call_anthropic(messages, self.config["max_tokens"])
         elif self.provider == "openai":
             result = self._call_openai(messages, self.config["max_tokens"])
+        elif self.provider == "google":
+            result = self._call_google(messages, self.config["max_tokens"])
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
 
@@ -384,7 +440,7 @@ def main():
     test_query = "Welche Uhr hat eine längere Akkulaufzeit?"
 
     # Test all models
-    models_to_test = ["claude-sonnet-4.5", "claude-3.5-haiku", "gpt-4o", "gpt-4o-mini"]
+    models_to_test = ["claude-sonnet-4.5", "claude-haiku-4.5", "gpt-5.1", "gpt-5-mini", "gemini-2.5-flash", "gemini-2.5-pro"]
     results = {}
 
     for model_name in models_to_test:

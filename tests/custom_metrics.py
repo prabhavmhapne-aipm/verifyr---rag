@@ -51,7 +51,7 @@ def citation_quality_evaluator(*, output, **kwargs):
     """
     answer = output.get("answer", "")
     sources = output.get("sources", [])
-    judge_model = kwargs.get("judge_model", "gpt-4o")
+    judge_model = kwargs.get("judge_model", "gpt-5.1")
 
     # Handle empty answer
     if not answer:
@@ -156,7 +156,7 @@ def helpfulness_evaluator(*, output, **kwargs):
     # Extract question from item if available
     question = item.input.get("question", "") if item else ""
     answer = output.get("answer", "")
-    judge_model = kwargs.get("judge_model", "gpt-4o")
+    judge_model = kwargs.get("judge_model", "gpt-5.1")
 
     # Handle empty answer
     if not answer:

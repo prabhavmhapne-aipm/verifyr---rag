@@ -63,7 +63,7 @@ if sys.platform == "win32":
 class QueryRequest(BaseModel):
     """Request model for query endpoint."""
     question: str = Field(..., min_length=1, description="User question")
-    model: Optional[str] = Field(default="gpt-4o-mini", description="LLM model to use")
+    model: Optional[str] = Field(default="gpt-5-mini", description="LLM model to use")
     language: Optional[str] = Field(default="en", description="Response language: 'en' or 'de'")
     conversation_history: Optional[List[Dict[str, str]]] = Field(
         default_factory=list,
@@ -233,8 +233,8 @@ async def startup_event():
         )
 
         # Initialize RAG generator with default model
-        print("\n🤖 Initializing LLM (GPT-4o Mini)...")
-        rag_generator = RAGGenerator(model_name="gpt-4o-mini")
+        print("\n🤖 Initializing LLM (GPT-5 Mini)...")
+        rag_generator = RAGGenerator(model_name="gpt-5-mini")
 
         # Initialize Langfuse client (Phase 11)
         langfuse_client = None
@@ -304,7 +304,7 @@ async def startup_event():
         print(f"\n✅ Indexes loaded successfully!")
         print(f"   Products available: {len(products_list)}")
         print(f"   Total chunks: {len(hybrid_searcher.bm25_index.chunks)}")
-        print(f"   Default model: gpt-4o-mini")
+        print(f"   Default model: gpt-5-mini")
         print("\n" + "=" * 60)
         print("✅ API ready to serve requests!")
         print("=" * 60 + "\n")
