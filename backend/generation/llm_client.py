@@ -269,12 +269,15 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
 
         response = self.client.chat.completions.create(
             model=self.config["model_id"],
-            max_completion_tokens=max_tokens,
+            max_completion_tokens=max_tokens + 4096,
             messages=full_messages
         )
 
+
+        answer = response.choices[0].message.content or ""
+
         return {
-            "answer": response.choices[0].message.content,
+            "answer": answer,
             "tokens": {
                 "input": response.usage.prompt_tokens,
                 "output": response.usage.completion_tokens
