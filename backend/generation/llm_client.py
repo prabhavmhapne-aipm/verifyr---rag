@@ -270,7 +270,6 @@ Helpful, confident, and trustworthy - like a knowledgeable friend who wants you 
         response = self.client.chat.completions.create(
             model=self.config["model_id"],
             max_completion_tokens=max_tokens,
-            temperature=0.3,
             messages=full_messages
         )
 
