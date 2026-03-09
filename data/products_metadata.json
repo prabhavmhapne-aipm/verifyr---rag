@@ -641,8 +641,8 @@
     }
   ],
   "categories": {
-    "smartwatch": {
-      "id": "smartwatch",
+    "smartwatch_fitness": {
+      "id": "smartwatch_fitness",
       "name": {
         "de": "Smartwatch & Fitnesstrackers",
         "en": "Smartwatch & Fitness Trackers"

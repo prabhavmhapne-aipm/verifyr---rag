@@ -676,32 +676,3 @@ body {
     }
 }
 
-/* ============================================================================
-   Dynamic RAG Insight Bullets
-   ============================================================================ */
-
-.dynamic-insight {
-    background: linear-gradient(90deg, #f0f7ff 0%, transparent 100%);
-    padding: 8px 12px;
-    border-left: 3px solid #0066cc;
-    margin: 8px 0;
-    border-radius: 0 4px 4px 0;
-    list-style: none !important;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #1e293b;
-}
-
-.insight-badge {
-    display: inline-block;
-    background: #0066cc;
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 3px;
-    margin-right: 8px;
-    letter-spacing: 0.5px;
-    vertical-align: middle;
-}
