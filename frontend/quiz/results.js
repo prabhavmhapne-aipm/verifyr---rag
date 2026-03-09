@@ -239,6 +239,10 @@ class ResultsController {
                     <h4 class="section-title">${t.strengths[this.currentLanguage]}</h4>
                     <ul class="section-list">
                         ${this.generateStrengths(product).map(s => `<li>+ ${s}</li>`).join('')}
+                        ${match.dynamic_strength ? `
+                        <li class="dynamic-insight">
+                            <span class="insight-badge">${this.currentLanguage === 'de' ? 'Für Sie' : 'For You'}</span>${match.dynamic_strength}
+                        </li>` : ''}
                     </ul>
                 </div>
 
@@ -246,6 +250,10 @@ class ResultsController {
                     <h4 class="section-title">${t.weaknesses[this.currentLanguage]}</h4>
                     <ul class="section-list">
                         ${this.generateWeaknesses(product).map(w => `<li>- ${w}</li>`).join('')}
+                        ${match.dynamic_weakness ? `
+                        <li class="dynamic-insight">
+                            <span class="insight-badge">${this.currentLanguage === 'de' ? 'Für Sie' : 'For You'}</span>${match.dynamic_weakness}
+                        </li>` : ''}
                     </ul>
                 </div>
             </div>

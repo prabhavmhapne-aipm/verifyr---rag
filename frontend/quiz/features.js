@@ -239,7 +239,7 @@ class FeaturesController {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const response = await fetch('/quiz/score', {
+            const response = await fetch('/quiz/score-with-rag', {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(quizAnswers)

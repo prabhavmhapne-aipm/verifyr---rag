@@ -49,6 +49,7 @@ load_dotenv()
 
 from retrieval.hybrid_search import HybridSearcher
 from generation.llm_client import RAGGenerator
+from recommendation.rag_enhancer import RAGEnhancer
 
 # Set UTF-8 encoding for Windows console
 if sys.platform == "win32":
@@ -150,6 +151,21 @@ class ProductsMetadataResponse(BaseModel):
     features_metadata: Optional[Dict[str, Any]] = None
 
 
+class EnhancedMatchedProduct(BaseModel):
+    """Matched product enriched with RAG-generated dynamic bullets."""
+    product_id: str
+    match_score: float = Field(..., ge=0, le=1)
+    match_reasons: List[str]
+    dynamic_strength: str = ""
+    dynamic_weakness: str = ""
+
+
+class EnhancedQuizResultsResponse(BaseModel):
+    """Response model for /quiz/score-with-rag endpoint."""
+    matched_products: List[EnhancedMatchedProduct]
+    quiz_summary: Dict[str, Any]
+
+
 class ProductRecommendationResponse(BaseModel):
     """Response model for product recommendation endpoint."""
     product: Dict[str, Any]
@@ -201,6 +217,7 @@ else:
 # Global state
 hybrid_searcher: Optional[HybridSearcher] = None
 rag_generator: Optional[RAGGenerator] = None
+rag_enhancer: Optional[RAGEnhancer] = None
 products_list: List[str] = []
 langfuse_client: Optional[Langfuse] = None
 products_metadata: Optional[Dict[str, Any]] = None
@@ -213,7 +230,7 @@ products_metadata: Optional[Dict[str, Any]] = None
 @app.on_event("startup")
 async def startup_event():
     """Initialize indexes and models on startup."""
-    global hybrid_searcher, rag_generator, products_list, langfuse_client, products_metadata
+    global hybrid_searcher, rag_generator, rag_enhancer, products_list, langfuse_client, products_metadata
 
     print("\n" + "=" * 60)
     print("🚀 STARTING VERIFYR RAG API")
@@ -300,6 +317,16 @@ async def startup_event():
             print(f"\n⚠️  Error loading products metadata: {e}")
             print("   Quiz endpoints will not be available")
             products_metadata = None
+
+        # Initialize RAG enhancer (requires both hybrid_searcher and products_metadata)
+        if hybrid_searcher and products_metadata:
+            rag_enhancer = RAGEnhancer(
+                searcher=hybrid_searcher,
+                products_metadata=products_metadata
+            )
+            print(f"\n✅ RAG Enhancer initialized!")
+        else:
+            print(f"\n⚠️  RAG Enhancer skipped (missing searcher or metadata)")
 
         print(f"\n✅ Indexes loaded successfully!")
         print(f"   Products available: {len(products_list)}")
@@ -852,6 +879,134 @@ async def score_quiz(
 
     return QuizResultsResponse(
         matched_products=[MatchedProduct(**p) for p in matched_products],
+        quiz_summary=quiz_summary
+    )
+
+
+@app.post("/quiz/score-with-rag", response_model=EnhancedQuizResultsResponse, tags=["Quiz"])
+async def score_quiz_with_rag(
+    quiz_answers: QuizAnswers,
+    user: Optional[AuthUser] = Depends(get_optional_user)
+):
+    """
+    Score quiz answers using metadata scoring, then enhance the top-3 products
+    with RAG-generated personalized insights (1 strength + 1 weakness each).
+
+    Authentication is OPTIONAL. Falls back gracefully if RAG step fails.
+    """
+    user_id = user.id if user else "anonymous"
+    print(f"RAG quiz submission from user: {user_id}")
+
+    if products_metadata is None:
+        raise HTTPException(status_code=503, detail="Service unavailable: Products metadata not loaded")
+
+    if not quiz_answers.category:
+        raise HTTPException(status_code=400, detail="Category is required")
+    if not quiz_answers.useCases:
+        raise HTTPException(status_code=400, detail="At least one use case is required")
+    if not quiz_answers.features:
+        raise HTTPException(status_code=400, detail="At least one feature is required")
+    if len(quiz_answers.features) > 5:
+        raise HTTPException(status_code=400, detail="Maximum 5 features allowed")
+
+    # --- Step 1: Metadata scoring (identical to /quiz/score) ---
+    weights = products_metadata.get("scoring_weights", {
+        "category": 0.40, "use_cases": 0.35, "features": 0.25
+    })
+
+    scored = []
+    for product in products_metadata["products"]:
+        product_id = product["id"]
+        scores = {"category": 0.0, "use_cases": 0.0, "features": 0.0}
+        reasons = []
+
+        # Category match (40%)
+        category_data = products_metadata.get("categories", {}).get(quiz_answers.category, {})
+        category_products = category_data.get("products", [])
+        if product["category"] == quiz_answers.category or product_id in category_products:
+            scores["category"] = 1.0
+            reasons.append(f"Matches your selected category: {category_data.get('name', {}).get('en', quiz_answers.category)}")
+
+        # Use cases (35%)
+        uc_ratings, uc_details = [], []
+        for uc_id in quiz_answers.useCases:
+            if uc_id in product.get("use_cases", {}):
+                rating = product["use_cases"][uc_id].get("rating", 0)
+                uc_ratings.append(rating / 5.0)
+                if rating >= 4:
+                    uc_name = products_metadata.get("use_cases_metadata", {}).get(uc_id, {}).get("name", {}).get("en", uc_id)
+                    uc_details.append(f"{uc_name} ({rating}/5 rating)")
+        if uc_ratings:
+            scores["use_cases"] = sum(uc_ratings) / len(uc_ratings)
+            if scores["use_cases"] >= 0.8:
+                reasons.append(f"Excellent for: {', '.join(uc_details)}")
+            elif scores["use_cases"] >= 0.6:
+                reasons.append(f"Good for: {', '.join(uc_details)}")
+
+        # Features (25%)
+        feat_ratings, feat_details = [], []
+        for feat_id in quiz_answers.features:
+            if feat_id in product.get("feature_priorities", {}):
+                feat_data = product["feature_priorities"][feat_id]
+                rating = feat_data.get("rating", 0)
+                feat_ratings.append(rating / 5.0)
+                feat_name = products_metadata.get("features_metadata", {}).get(feat_id, {}).get("name", {}).get("en", feat_id)
+                feat_value = feat_data.get("value", "")
+                if rating >= 4:
+                    feat_details.append(f"{feat_name}: {feat_value}")
+                elif rating <= 2:
+                    feat_details.append(f"⚠️ {feat_name}: {feat_value}")
+        if feat_ratings:
+            scores["features"] = sum(feat_ratings) / len(feat_ratings)
+            if feat_details:
+                reasons.append(f"Key features: {', '.join(feat_details)}")
+
+        final_score = (
+            scores["category"] * weights["category"] +
+            scores["use_cases"] * weights["use_cases"] +
+            scores["features"] * weights["features"]
+        )
+
+        if scores["category"] > 0:
+            scored.append({
+                "product_id": product_id,
+                "match_score": round(final_score, 3),
+                "match_reasons": reasons or ["Partially matches your requirements"]
+            })
+
+    scored.sort(key=lambda x: x["match_score"], reverse=True)
+
+    quiz_summary = {
+        "category": quiz_answers.category,
+        "use_cases": quiz_answers.useCases,
+        "features": quiz_answers.features,
+        "primary_use_case": quiz_answers.useCases[0] if quiz_answers.useCases else None,
+        "priorities": quiz_answers.features[:3]
+    }
+
+    # --- Step 2: RAG enhancement on top 3 ---
+    top_3 = scored[:3]
+    remaining = scored[3:]
+
+    if rag_enhancer:
+        try:
+            enhanced_top = rag_enhancer.enhance_recommendations(
+                top_products=top_3,
+                quiz_inputs=quiz_answers.dict(),
+            )
+        except Exception as e:
+            print(f"WARNING: RAG enhancement failed, falling back to static: {e}")
+            enhanced_top = [{**p, "dynamic_strength": "", "dynamic_weakness": ""} for p in top_3]
+    else:
+        enhanced_top = [{**p, "dynamic_strength": "", "dynamic_weakness": ""} for p in top_3]
+
+    # Non-top products get no RAG bullets
+    all_products = enhanced_top + [
+        {**p, "dynamic_strength": "", "dynamic_weakness": ""} for p in remaining
+    ]
+
+    return EnhancedQuizResultsResponse(
+        matched_products=[EnhancedMatchedProduct(**p) for p in all_products],
         quiz_summary=quiz_summary
     )
 
