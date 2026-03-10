@@ -65,6 +65,7 @@
     },
     {
       "id": "sport_earbuds",
+      "coming_soon": true,
       "title": {
         "de": "Sport Earbuds",
         "en": "Sport Earbuds"
@@ -86,6 +87,7 @@
     },
     {
       "id": "metabolic_monitors",
+      "coming_soon": true,
       "title": {
         "de": "Metabolische Monitore",
         "en": "Metabolic Monitors"
@@ -107,6 +109,7 @@
     },
     {
       "id": "womens_health",
+      "coming_soon": true,
       "title": {
         "de": "Frauen Health Tech",
         "en": "Women's Health Tech"

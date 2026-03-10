@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifyr – Analysiert...</title>
+
+    <!-- Unbounded font for logo (matches Figma spec) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #256abb 61%, #09284d 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ── Main content (top section) ── */
+        .loading-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 18.8vh;
+            /* bottom padding = circle height (119px) + its bottom offset (9.4vh) + extra gap (24px) */
+            padding-bottom: calc(9.4vh + 143px);
+            width: 100%;
+            max-width: 420px; /* keeps it feeling like a centred mobile card on desktop */
+        }
+
+        /* ── Logo ── */
+        .loading-logo {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 700;
+            font-size: 36px;
+            color: #f1f1f1;
+            letter-spacing: -0.32px;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        /* ── Tagline ── */
+        .loading-tagline {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 17px;
+            color: #f1f1f1;
+            letter-spacing: -0.32px;
+            line-height: 21px;
+            margin-bottom: 44px;
+        }
+
+        /* ── Spinner ── */
+        @keyframes loading-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                rgba(255, 255, 255, 0.92) 0%,
+                rgba(255, 255, 255, 0.18) 65%,
+                transparent 80%
+            );
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), black 0);
+            mask: radial-gradient(farthest-side, transparent calc(100% - 4px), black 0);
+            animation: loading-spin 1s linear infinite;
+            margin-bottom: 44px;
+        }
+
+        /* (status styles moved to stacked log section below) */
+
+        /* ── Stacked status log ── */
+        .loading-status-log {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: center;
+        }
+
+        .loading-status {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: -0.32px;
+            line-height: 21px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease;
+        }
+
+        .loading-status.visible {
+            opacity: 1;
+            transform: translateY(0);
+            color: #ffffff;
+        }
+
+        .loading-status.done {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ── Activation circle (bottom) ── */
+        .loading-activation {
+            position: absolute;
+            bottom: 9.4vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 119px;
+            height: 119px;
+            /* outer glow matching the ring colours */
+            filter: drop-shadow(0 0 18px rgba(236, 72, 153, 0.45))
+                    drop-shadow(0 0 32px rgba(56, 189, 248, 0.35));
+        }
+
+        @keyframes glow-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pink → purple → blue → cyan rotating ring */
+        .activation-glow-ring {
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #ec4899   0deg,    /* pink/magenta */
+                #a855f7  90deg,    /* purple */
+                #3b82f6  180deg,   /* blue */
+                #38bdf8  270deg,   /* cyan */
+                #ec4899  360deg    /* back to pink */
+            );
+            animation: glow-spin 3s linear infinite;
+        }
+
+        /* Dark charcoal inner circle */
+        .activation-inner {
+            position: absolute;
+            inset: 3px;
+            background: #1c1c2e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Lightning bolt — outline / stroke style */
+        .activation-inner svg {
+            width: 44px;
+            height: 44px;
+            fill: none;
+            stroke: url(#boltGradient);
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top content block -->
+    <div class="loading-main">
+        <h1 class="loading-logo">Verifyr</h1>
+        <p class="loading-tagline" id="loadingTagline">Dein Health-Tech Kaufberater</p>
+        <div class="loading-spinner"></div>
+        <div class="loading-status-log" id="statusLog"></div>
+    </div>
+
+    <!-- Bottom activation circle -->
+    <div class="loading-activation">
+        <div class="activation-glow-ring"></div>
+        <div class="activation-inner">
+            <!-- Lightning bolt — outline stroke with pink→cyan gradient -->
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="boltGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%"   stop-color="#e0e7ff"/>
+                        <stop offset="50%"  stop-color="#a5b4fc"/>
+                        <stop offset="100%" stop-color="#38bdf8"/>
+                    </linearGradient>
+                </defs>
+                <path d="M13 2L4.09 12.92C3.73 13.38 4.07 14 4.62 14H11V22L19.91 11.08C20.27 10.62 19.93 10 19.38 10H13V2Z"/>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        const lang = localStorage.getItem('verifyr-lang') || 'de';
+
+        // ── Tagline (bilingual) ──
+        const taglines = { de: 'Dein Health-Tech Kaufberater', en: 'Your Health-Tech Advisor' };
+        document.getElementById('loadingTagline').textContent = taglines[lang] || taglines.de;
+
+        // ── Status message cycling ──
+        const statusMessages = {
+            de: [
+                '⏳ amazon.de durchsucht...',
+                '⏳ garmin.de durchsucht...',
+                '⏳ apple.de durchsucht...',
+                '🔍 Stiftung Warentest wird analysiert...',
+                '🔍 Online-Bewertungen werden analysiert...',
+                '🔍 Reddit-Foren werden analysiert...',
+                '🔍 Produkte werden verglichen...',
+                '✨ Empfehlungen werden erstellt...',
+            ],
+            en: [
+                '⏳ Searching amazon.de...',
+                '⏳ Searching garmin.de...',
+                '⏳ Searching apple.de...',
+                '🔍 Analysing Stiftung Warentest...',
+                '🔍 Analysing online reviews...',
+                '🔍 Analysing Reddit forums...',
+                '🔍 Comparing products...',
+                '✨ Creating recommendations...',
+            ]
+        };
+
+        const messages = statusMessages[lang] || statusMessages.de;
+        const statusLog = document.getElementById('statusLog');
+        let msgIndex = 0;
+
+        function appendMessage() {
+            if (msgIndex >= messages.length) return;
+
+            // Dim the previous message
+            const prev = statusLog.lastElementChild;
+            if (prev) prev.classList.add('done');
+
+            // Append new message
+            const el = document.createElement('p');
+            el.className = 'loading-status';
+            el.textContent = messages[msgIndex++];
+            statusLog.appendChild(el);
+
+            // Trigger fade-in on next frame
+            requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+        }
+
+        // Show first message immediately, then one every 2s
+        appendMessage();
+        const statusInterval = setInterval(appendMessage, 2000);
+
+        // ── API call ──
+        async function submitQuiz() {
+            const quizAnswers = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+            const token = localStorage.getItem('verifyr_access_token');
+
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            try {
+                const response = await fetch('/quiz/score-with-rag', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(quizAnswers)
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const results = await response.json();
+
+                clearInterval(statusInterval);
+                localStorage.setItem('verifyr_quiz_results', JSON.stringify(results));
+                localStorage.setItem('verifyr_quiz_completed', 'true');
+                window.location.href = '/quiz/results.html';
+
+            } catch (error) {
+                console.error('Quiz submission failed:', error);
+                clearInterval(statusInterval);
+                window.location.href = '/quiz/features.html';
+            }
+        }
+
+        submitQuiz();
+    </script>
+</body>
+</html>

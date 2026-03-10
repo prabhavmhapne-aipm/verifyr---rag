@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Was ist dir am wichtigsten? - Verifyr Quiz</title>
+    <title>Wir sind gleich da... - Verifyr Quiz</title>
 
     <!-- Design System -->
     <link rel="stylesheet" href="/design-system/design-system.css">
     <link rel="stylesheet" href="/quiz/quiz.css">
+    <link rel="stylesheet" href="/quiz/budget.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
@@ -23,24 +24,18 @@
             <h2>Menu</h2>
             <button class="sidebar-close-btn" onclick="toggleSidebar()">×</button>
         </div>
-
-        <!-- Language Switch -->
         <div class="sidebar-section">
             <div class="sidebar-lang-switch">
-                <span class="lang-option active" data-lang="en" onclick="switchLanguage('en')">EN</span>
-                <span class="lang-option" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
+                <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
             </div>
         </div>
-
-        <!-- Navigation Links -->
         <div class="sidebar-section">
             <a href="/" class="sidebar-nav-link">Home</a>
             <a href="/quiz/category.html" class="sidebar-nav-link">Quiz</a>
             <a href="/chat.html" class="sidebar-nav-link">Chat</a>
             <a href="/admin.html" class="sidebar-nav-link admin-only" style="display: none;">Admin</a>
         </div>
-
-        <!-- User Section -->
         <div class="sidebar-section sidebar-user-section">
             <span class="sidebar-user-email" id="sidebarUserEmail"></span>
             <button class="sidebar-logout-btn" id="sidebarAuthBtn" onclick="handleLogout()">Abmelden</button>
@@ -48,27 +43,19 @@
     </aside>
 
     <div class="quiz-container">
-        <!-- Navigation Bar (matching index.html) -->
+        <!-- Nav Bar -->
         <nav>
-            <!-- Mobile: Hamburger button (left side) -->
             <button class="hamburger-btn mobile-nav" aria-label="Menu">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
-
             <div class="nav-left">
-                <!-- Sidebar Toggle Button (Desktop) -->
                 <button class="sidebar-toggle-btn desktop-nav" onclick="toggleSidebar()" aria-label="Menu">☰</button>
                 <a href="/" class="logo">Verifyr</a>
-                <!-- Desktop: Show language switch -->
                 <div class="lang-switch desktop-lang">
                     <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
                     <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
                 </div>
             </div>
-
-            <!-- Desktop: Show all nav buttons -->
             <div class="nav-right desktop-nav">
                 <a href="/" class="nav-btn">Home</a>
                 <a href="/quiz/category.html" class="nav-btn active">Quiz</a>
@@ -77,9 +64,8 @@
             </div>
         </nav>
 
-        <!-- Mobile: Dropdown menu -->
+        <!-- Mobile menu -->
         <div class="mobile-menu" id="mobileMenu">
-            <!-- Language switch in mobile menu -->
             <div class="mobile-lang-switch">
                 <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
                 <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
@@ -89,10 +75,7 @@
             <a href="/quiz/category.html" class="mobile-menu-item active">Quiz</a>
             <a href="/chat.html" class="mobile-menu-item">Chat</a>
             <a href="/admin.html" class="mobile-menu-item admin-only" style="display: none;">Admin</a>
-
             <div class="mobile-menu-divider"></div>
-
-            <!-- User info and logout -->
             <div class="mobile-user-info">
                 <span class="mobile-user-email" id="mobileUserEmail"></span>
                 <button class="mobile-logout-btn" onclick="handleLogout()">Abmelden</button>
@@ -101,20 +84,21 @@
 
         <!-- Quiz Content -->
         <div class="quiz-content">
+
             <!-- Header with Navigation Arrows -->
             <div class="quiz-header-wrapper">
-                <a href="/quiz/use-case.html" class="quiz-nav-arrow quiz-nav-back">
+                <a href="/quiz/features.html" class="quiz-nav-arrow quiz-nav-back">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M15 18l-6-6 6-6"/>
                     </svg>
                 </a>
 
                 <div class="quiz-header">
-                    <h1 id="pageHeading">Was ist dir am wichtigsten?</h1>
-                    <p class="quiz-subtitle" id="pageSubheading">Wähle bis zu 5 Prioritäten</p>
+                    <h1 id="budgetTitle">Wir sind gleich da...</h1>
+                    <p class="quiz-subtitle" id="budgetSubtitle">Optional</p>
                 </div>
 
-                <button class="quiz-nav-arrow quiz-nav-next" id="nextBtnArrow" disabled>
+                <button class="quiz-nav-arrow quiz-nav-next" id="nextBtnArrow">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 18l6-6-6-6"/>
                     </svg>
@@ -126,93 +110,77 @@
             </div>
             <script>
                 var f = document.getElementById('progressLineFill');
-                f.style.width = '50%';
+                f.style.width = '75%';
                 requestAnimationFrame(() => requestAnimationFrame(() => {
-                    f.style.width = '75%';
+                    f.style.width = '100%';
                 }));
             </script>
 
-            <!-- Selection Counter -->
-            <div style="text-align: center; margin-bottom: var(--spacing-base);">
-                <p style="color: var(--gray); font-size: 0.875rem;">
-                    <span id="selectionCount">0</span> / 10 <span id="selectedText">ausgewählt</span>
-                </p>
+            <!-- Budget section -->
+            <div class="budget-card" style="background-image: url('/images/quiz/budget-card.png');">
+                <div class="budget-card-overlay">
+                    <span id="budgetCardLabel">Was ist dein Budget?</span>
+                </div>
             </div>
 
-            <!-- Selection Grid (dynamically populated) -->
-            <div class="quiz-grid" id="featuresGrid">
-                <!-- Features will be loaded from features.json -->
+            <!-- Range Slider -->
+            <div class="budget-slider-section">
+                <div class="budget-slider-label">
+                    <span id="priceRangeLabel">Preis Range</span>
+                    <span id="priceRangeValue">300–800€</span>
+                </div>
+                <div class="budget-range-wrapper">
+                    <div class="budget-range-track">
+                        <div class="budget-range-fill" id="rangeFill"></div>
+                    </div>
+                    <input type="range" class="budget-range-input" id="sliderMin" min="0" max="2000" value="300" step="50">
+                    <input type="range" class="budget-range-input" id="sliderMax" min="0" max="2000" value="800" step="50">
+                </div>
+            </div>
+
+            <!-- Special request section -->
+            <div class="budget-card" style="background-image: url('/images/quiz/special-request-card.png');">
+                <div class="budget-card-overlay">
+                    <span id="specialCardLabel">Haben wir alles gefragt?</span>
+                </div>
+            </div>
+
+            <!-- Special request input -->
+            <div class="budget-textarea-wrapper">
+                <label class="budget-textarea-label" id="specialRequestLabel" for="specialRequest">
+                    Besondere Anforderungen
+                </label>
+                <textarea
+                    id="specialRequest"
+                    class="budget-textarea"
+                    maxlength="100"
+                    placeholder="Hier beschreiben..."
+                ></textarea>
+                <span class="budget-char-counter"><span id="charCount">0</span>/100</span>
             </div>
 
             <!-- Navigation -->
             <div class="quiz-navigation">
-                <a href="/quiz/use-case.html" class="btn btn-secondary">
+                <a href="/quiz/features.html" class="btn btn-secondary">
                     <span id="backBtnText">Zurück</span>
                 </a>
-                <button class="btn btn-primary" id="nextBtn" disabled>
-                    <span id="nextBtnText">Weiter</span>
+                <button class="btn btn-primary" id="recommendBtn">
+                    <span id="ctaText">Produkte Empfehlen</span>
                 </button>
             </div>
+
         </div>
     </div>
 
-    <script src="/quiz/features.js"></script>
+    <script src="/quiz/budget.js"></script>
 
-    <!-- ========================================
-         CODE PROTECTION
-         Discourages casual code copying while maintaining professional UX
-         ======================================== -->
     <script>
         (function() {
-            // 1. Disable right-click to prevent easy access to "View Source"
-            document.addEventListener('contextmenu', e => {
-                e.preventDefault();
-                console.log('Right-click disabled. © 2026 Verifyr');
-            });
-
-            // 2. Disable common DevTools keyboard shortcuts
+            document.addEventListener('contextmenu', e => e.preventDefault());
             document.addEventListener('keydown', e => {
-                // F12 - DevTools
-                if (e.key === 'F12') {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'u')) {
                     e.preventDefault();
-                    return false;
                 }
-
-                // Ctrl+Shift+I - Inspect Element
-                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                    e.preventDefault();
-                    return false;
-                }
-
-                // Ctrl+Shift+J - Console
-                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-                    e.preventDefault();
-                    return false;
-                }
-
-                // Ctrl+U - View Source
-                if (e.ctrlKey && e.key === 'u') {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-
-            // 3. Professional console message for curious developers
-            const styles = {
-                title: 'font-size:20px;font-weight:bold;color:#3B82F6;',
-                text: 'font-size:14px;color:#0F172A;',
-                link: 'font-size:14px;color:#64748B;',
-                copyright: 'font-size:12px;color:#2563eb;font-weight:600;'
-            };
-
-            console.log('%cVerifyr - AI Shopping Assistant', styles.title);
-            console.log('%cBuilt with FastAPI, Claude Code in Cursor, and Qdrant Vector DB for RAG', styles.text);
-            console.log('%cBy Prabhav Mhapne | https://linkedin.com/in/prabhavmhapne', styles.link);
-            console.log('%c© 2026 All rights reserved.', styles.copyright);
-
-            // 4. Disable text selection on code elements (preserves UX for content)
-            document.querySelectorAll('script, style').forEach(el => {
-                if (el.style) el.style.userSelect = 'none';
             });
         })();
     </script>

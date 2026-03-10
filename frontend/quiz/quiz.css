@@ -342,6 +342,25 @@
     background: var(--primary-blue);
 }
 
+/* ── Quiz Progress Line (fluid step indicator) ── */
+.quiz-progress-line {
+    width: 100%;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.quiz-progress-line-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #60a5fa, var(--primary-blue));
+    border-radius: 999px;
+    transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Selection Cards Grid */
 .quiz-grid {
     display: grid;
@@ -467,6 +486,36 @@
     line-height: 1.4;
     margin: 0;
     text-align: center;
+}
+
+/* Coming Soon Cards */
+.selection-card.coming-soon {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(55%);
+    position: relative;
+}
+
+.selection-card.coming-soon:hover {
+    transform: none;
+    box-shadow: 0 2px 8px var(--shadow-dark-light);
+    border-color: var(--light-gray);
+}
+
+.coming-soon-badge {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.7);
+    color: #ffffff;
+    font-size: 0.625rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: 0.4px;
+    z-index: 1;
 }
 
 /* Feature Cards (photographic style) */

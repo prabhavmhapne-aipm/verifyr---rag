@@ -71,15 +71,27 @@ class CategoryController {
         // Get localized text
         const title = category.title[this.currentLanguage] || category.title.de;
         const subtitle = category.subtitle?.[this.currentLanguage] || category.subtitle?.de || '';
-        const description = category.description?.[this.currentLanguage] || category.description?.de || '';
 
-        card.innerHTML = `
-            ${iconHtml}
-            <div class="card-text">
-                <h3 class="card-title">${title}</h3>
-                ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ''}
-            </div>
-        `;
+        if (category.coming_soon) {
+            const badgeText = this.currentLanguage === 'en' ? 'Coming soon' : 'Bald verfügbar';
+            card.classList.add('coming-soon');
+            card.innerHTML = `
+                <span class="coming-soon-badge">${badgeText}</span>
+                ${iconHtml}
+                <div class="card-text">
+                    <h3 class="card-title">${title}</h3>
+                    ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ''}
+                </div>
+            `;
+        } else {
+            card.innerHTML = `
+                ${iconHtml}
+                <div class="card-text">
+                    <h3 class="card-title">${title}</h3>
+                    ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ''}
+                </div>
+            `;
+        }
 
         return card;
     }
@@ -105,6 +117,8 @@ class CategoryController {
     }
 
     handleCardClick(card) {
+        if (card.classList.contains('coming-soon')) return;
+
         const categoryId = card.dataset.categoryId;
 
         // Single-select: remove selection from all other cards

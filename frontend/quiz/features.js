@@ -1,13 +1,13 @@
 /**
  * Feature Priorities Selection Page (Screen 4)
- * Verifyr Quiz - Feature priorities multi-selection logic (max 5)
+ * Verifyr Quiz - Feature priorities multi-selection logic (max 10)
  */
 
 class FeaturesController {
     constructor() {
         this.features = null;
         this.selectedFeatures = [];
-        this.maxSelections = 5;
+        this.maxSelections = 10;
         this.currentLanguage = 'de';
         this.init();
     }
@@ -47,7 +47,7 @@ class FeaturesController {
         if (nextBtn) {
             nextBtn.disabled = false;
             // Restore the original button HTML structure
-            nextBtn.innerHTML = '<span id="nextBtnText">Quiz abschließen</span>';
+            nextBtn.innerHTML = '<span id="nextBtnText">Weiter</span>';
         }
         if (nextBtnArrow) {
             nextBtnArrow.disabled = false;
@@ -76,7 +76,7 @@ class FeaturesController {
             }
             const data = await response.json();
             this.features = data.features;
-            this.maxSelections = data.metadata?.max_selections || 5;
+            this.maxSelections = data.metadata?.max_selections || 10;
             console.log('✅ Features loaded:', this.features.length);
             console.log('Max selections:', this.maxSelections);
         } catch (error) {
@@ -202,7 +202,7 @@ class FeaturesController {
             return;
         }
 
-        // Save selection to localStorage
+        // Save features to localStorage then hand off to dedicated loading screen
         const quizAnswers = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
         quizAnswers.features = this.selectedFeatures;
         localStorage.setItem('verifyr_quiz_answers', JSON.stringify(quizAnswers));
@@ -210,23 +210,7 @@ class FeaturesController {
         console.log('✅ Features saved:', this.selectedFeatures);
         console.log('📋 Complete quiz answers:', quizAnswers);
 
-        // Show loading state
-        const nextBtn = document.getElementById('nextBtn');
-        const nextBtnArrow = document.getElementById('nextBtnArrow');
-        nextBtn.disabled = true;
-        nextBtnArrow.disabled = true;
-        nextBtn.innerHTML = '<span class="loading">Ergebnisse werden analysiert...</span>';
-
-        try {
-            // Submit quiz to backend
-            await this.submitQuizToBackend(quizAnswers);
-        } catch (error) {
-            console.error('Error submitting quiz:', error);
-            nextBtn.disabled = false;
-            nextBtnArrow.disabled = false;
-            nextBtn.innerHTML = '<span id="nextBtnText">Quiz abschließen</span>';
-            alert('Fehler beim Absenden des Quiz. Bitte versuche es erneut.');
-        }
+        window.location.href = '/quiz/budget.html';
     }
 
     async submitQuizToBackend(quizAnswers) {
@@ -299,16 +283,16 @@ class FeaturesController {
         const texts = {
             de: {
                 heading: 'Was ist dir am wichtigsten?',
-                subheading: 'Wähle bis zu 5 Prioritäten',
+                subheading: 'Wähle bis zu 10 Prioritäten',
                 back: 'Zurück',
-                next: 'Quiz abschließen',
+                next: 'Weiter',
                 selected: 'ausgewählt'
             },
             en: {
                 heading: 'What is most important to you?',
-                subheading: 'Choose up to 5 priorities',
+                subheading: 'Choose up to 10 priorities',
                 back: 'Back',
-                next: 'Complete Quiz',
+                next: 'Next',
                 selected: 'selected'
             }
         };
@@ -443,7 +427,7 @@ window.addEventListener('pageshow', (event) => {
 
         // Restore original button structure
         const currentLang = localStorage.getItem('verifyr-lang') || 'de';
-        const buttonText = currentLang === 'de' ? 'Quiz abschließen' : 'Complete Quiz';
+        const buttonText = currentLang === 'de' ? 'Weiter' : 'Next';
         nextBtn.innerHTML = `<span id="nextBtnText">${buttonText}</span>`;
 
         console.log('✅ Button state reset (back navigation detected)');

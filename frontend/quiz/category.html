@@ -121,12 +121,14 @@
                 </button>
             </div>
 
-            <!-- Progress Indicator -->
-            <div class="quiz-progress">
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
+            <div class="quiz-progress-line">
+                <div class="quiz-progress-line-fill" id="progressLineFill"></div>
             </div>
+            <script>
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    document.getElementById('progressLineFill').style.width = '25%';
+                }));
+            </script>
 
             <!-- Selection Grid (dynamically populated) -->
             <div class="quiz-grid" id="categoryGrid">
