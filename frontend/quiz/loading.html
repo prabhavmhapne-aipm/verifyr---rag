@@ -181,6 +181,19 @@
             stroke-linejoin: round;
         }
     </style>
+
+    <!-- Google Analytics -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      const _savedConsent = localStorage.getItem('verifyr-consent');
+      let _analyticsAllowed = false;
+      if (_savedConsent) { try { _analyticsAllowed = JSON.parse(_savedConsent).analytics === true; } catch(e) {} }
+      gtag('consent', 'default', { 'analytics_storage': _analyticsAllowed ? 'granted' : 'denied' });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1ZT0DR8VL1"></script>
+    <script>gtag('config', 'G-1ZT0DR8VL1', { 'anonymize_ip': true, 'page_title': 'Quiz - Loading' });</script>
 </head>
 <body>
 
@@ -297,7 +310,22 @@
             }
         }
 
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'quiz_submitted', { 'event_category': 'quiz_funnel' });
+        }
+
         submitQuiz();
+    </script>
+
+    <script>
+        (function() {
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'u')) {
+                    e.preventDefault();
+                }
+            });
+        })();
     </script>
 </body>
 </html>

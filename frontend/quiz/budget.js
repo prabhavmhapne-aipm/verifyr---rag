@@ -136,6 +136,16 @@ function handleSubmit() {
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(quizAnswers));
 
     console.log('✅ Budget & special request saved:', { minBudget, maxBudget, specialNote });
+
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'quiz_budget_set', {
+            'event_category': 'quiz_funnel',
+            'budget_min': minBudget,
+            'budget_max': maxBudget,
+            'has_special_request': !!specialNote
+        });
+    }
+
     window.location.href = '/quiz/loading.html';
 }
 

@@ -1,10 +1,31 @@
 # Verifyr
 
+![Status](https://img.shields.io/badge/status-beta-orange)
+![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
+![Claude](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-6B4FBB?logo=anthropic&logoColor=white)
+![Qdrant](https://img.shields.io/badge/vector%20DB-Qdrant-DC244C?logo=qdrant&logoColor=white)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
+
+🌐 [verifyr.de](https://verifyr.de)
+
 **Conversational AI assistant for wearable health-tech purchasing decisions.**
 
-Verifyr helps athletes, fitness enthusiasts, and health-conscious people find the right smartwatch, fitness tracker, or health ring — without spending hours comparing specs across countless reviews. It delivers neutral, source-backed recommendations and answers both pre- and post-purchase questions through a conversational RAG (Retrieval-Augmented Generation) pipeline.
+<p align="center">
+  <img src="frontend/images/app-preview-readme.png" width="900" alt="Verifyr – AI Health-Tech Advisor"/>
+</p>
 
-> "Von Überforderung zu Kaufklarheit." — From overwhelm to purchase clarity.
+<p align="center">
+  <img src="frontend/images/usecases-readme.png" width="900" alt="Verifyr – Use Cases"/>
+</p>
+
+<p align="center">
+  <img src="frontend/images/rag-chat-readme.png" width="900" alt="Verifyr – RAG Chat"/>
+</p>
+
+Verifyr is your conversational AI assistant that compares Health-Tech products, curates test reports, and answers all your questions – brand-independent, transparent, and in seconds. Make purchase decisions with confidence – no doubts, no regrets.
+
+Powered by a **conversational RAG pipeline**, Verifyr acts as an AI recommender for the full buyer journey: a guided 4-step quiz surfaces personalised product matches before purchase, while the chat interface handles post-purchase support – setup guides, how-tos, and troubleshooting – all grounded in verified product documents.
 
 ---
 
@@ -22,10 +43,12 @@ Verifyr helps athletes, fitness enthusiasts, and health-conscious people find th
 ## Features
 
 - **Conversational product comparison** — Ask naturally, get 3–4 ranked recommendations with transparent reasoning
+- **Guided quiz advisor** — 4-step quiz (category → use cases → feature priorities → budget) feeds a two-tier recommendation engine with RAG-enhanced personalised insights
 - **Hybrid RAG retrieval** — BM25 keyword search + semantic vector search fused via RRF for maximum accuracy
 - **Source-backed answers** — Every response cites `[Product, Document Type, Page X]`
 - **Multilingual** — Optimized for German and English queries
 - **Pre- & post-purchase QA** — One assistant for the full buyer journey
+- **Analytics** — Google Analytics 4 funnel tracking across the full quiz flow
 - **Observability** — Full tracing and evaluation via Langfuse
 
 ---
@@ -54,8 +77,8 @@ Verifyr is organized into seven layers, read top-to-bottom from the user's brows
 | Layer | Component | Description |
 |---|---|---|
 | 1 | **Frontend** | Vanilla HTML/CSS/JS served as static files by FastAPI. Landing page, chat interface, quiz/advisor, admin panel. No React/Next.js — minimal bundle, fast first paint, SEO-friendly. |
-| 2 | **FastAPI Backend** | 18 async endpoints. JWT middleware via Supabase. Orchestrates all downstream components from `backend/main.py`. |
-| 3 | **Recommendation Engine** | Two-tier quiz system. Tier 1: weighted metadata scorer (40% category / 35% use-cases / 25% features). Tier 2 (upcoming): RAG-enhanced "For You" bullet generation via Claude. |
+| 2 | **FastAPI Backend** | 18 async endpoints. JWT middleware via Supabase. `Cache-Control: no-cache` middleware ensures users always receive fresh HTML/JS/CSS/JSON without hard refreshes. Orchestrates all downstream components from `backend/main.py`. |
+| 3 | **Recommendation Engine** | Two-tier quiz system. Tier 1: weighted metadata scorer (40% category / 35% use-cases / 25% features). Tier 2: RAG-enhanced "For You" bullet generation via Claude — personalised strength + weakness per product. |
 | 4 | **Hybrid Retrieval Engine** | BM25 keyword search + Qdrant vector search run in parallel, fused via RRF. Product diversity guard ensures balanced context for comparison queries. |
 | 5 | **LLM Generation** | Multi-provider: Claude Sonnet 4.5, Claude Haiku 4.5, GPT-5.1, GPT-5 Mini, Gemini 2.5 Flash, Gemini 2.5 Pro. Inline citation enforcement via system prompt + regex extraction post-generation. |
 | 6 | **Shared Data Layer** | Qdrant (embedded SQLite, ~4k points) + BM25 (3.9 MB pickle, in-memory) + chunks.json (1.8 MB, ~4k chunks) + products_metadata.json (quiz ratings). |
@@ -100,11 +123,11 @@ POST /query
 
 ### Recommendation Engine
 
-The quiz advisor runs a two-tier pipeline via `POST /quiz/score`:
+The quiz advisor runs a two-tier pipeline via `POST /quiz/score-with-rag`:
 
 ```
-Quiz UI (3 steps)
-  category (single) + useCases[] (multi) + features[] (max 5)
+Quiz UI (4 steps)
+  category (single) + useCases[] (multi) + features[] (max 10) + budget range + special request
     │
     ▼
 Tier 1 — Metadata Scorer (~50 ms)
@@ -113,7 +136,7 @@ Tier 1 — Metadata Scorer (~50 ms)
   Rating ≥4 → "Excellent for…" | Rating ≤2 → weakness warning
     │
     ▼ (Top 3 products pass to Tier 2)
-Tier 2 — RAG Enhancer [upcoming]  POST /quiz/score-with-rag
+Tier 2 — RAG Enhancer  POST /quiz/score-with-rag
   Build semantic query per product → Hybrid retrieval (product-filtered) →
   Claude generates 1 personalised strength + 1 weakness per product →
   Appended to static bullets with "FOR YOU" badge
@@ -186,8 +209,16 @@ verifyr - rag/
 ├── frontend/
 │   ├── index.html          # Landing page
 │   ├── chat.html           # Chat interface
+│   ├── auth.html           # Login / signup / waitlist
 │   ├── app.js              # Chat logic
 │   ├── styles.css          # Styles
+│   ├── quiz/               # 4-step quiz advisor flow
+│   │   ├── category.html   # Step 1 — product category
+│   │   ├── use-case.html   # Step 2 — use cases
+│   │   ├── features.html   # Step 3 — feature priorities (max 10)
+│   │   ├── budget.html     # Step 4 — budget range + special request
+│   │   ├── loading.html    # Animated loading screen (calls /quiz/score-with-rag)
+│   │   └── results.html    # Ranked product recommendations
 │   └── design-system/      # Design tokens & components
 ├── data/
 │   ├── raw/                # Source PDFs organized by product

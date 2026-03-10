@@ -210,6 +210,13 @@ class FeaturesController {
         console.log('✅ Features saved:', this.selectedFeatures);
         console.log('📋 Complete quiz answers:', quizAnswers);
 
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'quiz_features_selected', {
+                'event_category': 'quiz_funnel',
+                'feature_count': this.selectedFeatures.length
+            });
+        }
+
         window.location.href = '/quiz/budget.html';
     }
 

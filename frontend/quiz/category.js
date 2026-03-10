@@ -149,6 +149,13 @@ class CategoryController {
 
         console.log('✅ Category saved:', this.selectedCategory);
 
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'quiz_category_selected', {
+                'event_category': 'quiz_funnel',
+                'category': this.selectedCategory
+            });
+        }
+
         // Navigate to use-case page
         window.location.href = '/quiz/use-case.html';
     }

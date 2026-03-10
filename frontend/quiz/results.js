@@ -21,6 +21,13 @@ class ResultsController {
         this.renderCarousel();
         this.updateHeader();
 
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'quiz_results_viewed', {
+                'event_category': 'quiz_funnel',
+                'authenticated': isAuthenticated
+            });
+        }
+
         // Show auth modal if not authenticated
         if (!isAuthenticated) {
             this.showAuthModal();

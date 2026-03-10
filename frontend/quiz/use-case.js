@@ -160,6 +160,13 @@ class UseCaseController {
 
         console.log('✅ Use cases saved:', this.selectedUseCases);
 
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'quiz_usecase_selected', {
+                'event_category': 'quiz_funnel',
+                'usecase_count': this.selectedUseCases.length
+            });
+        }
+
         // Navigate to features page
         window.location.href = '/quiz/features.html';
     }

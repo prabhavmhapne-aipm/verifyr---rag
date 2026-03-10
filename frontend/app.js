@@ -45,7 +45,7 @@ const TRANSLATIONS = {
 
         // Footer
         inputNote: "Enter zum Senden",
-        beta: "BETA - Die KI kann Fehler machen, überprüfe wichtige Informationen"
+        beta: "BETA - KI kann Fehler machen, Antworten auf Richtigkeit prüfen"
     },
     en: {
         // Header
@@ -73,7 +73,7 @@ const TRANSLATIONS = {
 
         // Footer
         inputNote: "Press Enter to send",
-        beta: "BETA - AI can make mistakes, verify important information"
+        beta: "BETA - AI can make mistakes, check responses for accuracy"
     }
 };
 
