@@ -310,10 +310,6 @@ class FeaturesController {
         document.getElementById('backBtnText').textContent = texts[lang].back;
         document.getElementById('nextBtnText').textContent = texts[lang].next;
         document.getElementById('selectedText').textContent = texts[lang].selected;
-
-        // Re-render cards to update their text and restore selection
-        this.renderFeatures();
-        this.loadPreviousSelection();
     }
 }
 
@@ -462,6 +458,8 @@ function switchLanguage(lang) {
     if (featuresController) {
         featuresController.currentLanguage = lang;
         featuresController.updateUIText();
+        featuresController.renderFeatures();
+        featuresController.loadPreviousSelection();
         console.log(`✅ Language switched to: ${lang}`);
     }
 

@@ -788,8 +788,8 @@ async def score_quiz(
     if not quiz_answers.features or len(quiz_answers.features) == 0:
         raise HTTPException(status_code=400, detail="At least one feature is required")
 
-    if len(quiz_answers.features) > 5:
-        raise HTTPException(status_code=400, detail="Maximum 5 features allowed")
+    if len(quiz_answers.features) > 10:
+        raise HTTPException(status_code=400, detail="Maximum 10 features allowed")
 
     # Get scoring weights
     weights = products_metadata.get("scoring_weights", {
@@ -919,8 +919,8 @@ async def score_quiz_with_rag(
         raise HTTPException(status_code=400, detail="At least one use case is required")
     if not quiz_answers.features:
         raise HTTPException(status_code=400, detail="At least one feature is required")
-    if len(quiz_answers.features) > 5:
-        raise HTTPException(status_code=400, detail="Maximum 5 features allowed")
+    if len(quiz_answers.features) > 10:
+        raise HTTPException(status_code=400, detail="Maximum 10 features allowed")
 
     # --- Step 1: Metadata scoring (identical to /quiz/score) ---
     weights = products_metadata.get("scoring_weights", {

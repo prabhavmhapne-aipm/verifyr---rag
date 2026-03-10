@@ -203,10 +203,6 @@ class CategoryController {
         document.getElementById('pageSubheading').textContent = texts[lang].subheading;
         document.getElementById('backBtnText').textContent = texts[lang].back;
         document.getElementById('nextBtnText').textContent = texts[lang].next;
-
-        // Re-render cards to update their text and restore selection
-        this.renderCategories();
-        this.loadPreviousSelection();
     }
 }
 
@@ -332,6 +328,8 @@ function switchLanguage(lang) {
     if (categoryController) {
         categoryController.currentLanguage = lang;
         categoryController.updateUIText();
+        categoryController.renderCategories();
+        categoryController.loadPreviousSelection();
         console.log(`✅ Language switched to: ${lang}`);
     }
 

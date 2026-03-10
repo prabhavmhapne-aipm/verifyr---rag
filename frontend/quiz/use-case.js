@@ -214,10 +214,6 @@ class UseCaseController {
         document.getElementById('pageSubheading').textContent = texts[lang].subheading;
         document.getElementById('backBtnText').textContent = texts[lang].back;
         document.getElementById('nextBtnText').textContent = texts[lang].next;
-
-        // Re-render cards to update their text and restore selection
-        this.renderUseCases();
-        this.loadPreviousSelection();
     }
 }
 
@@ -343,6 +339,8 @@ function switchLanguage(lang) {
     if (useCaseController) {
         useCaseController.currentLanguage = lang;
         useCaseController.updateUIText();
+        useCaseController.renderUseCases();
+        useCaseController.loadPreviousSelection();
         console.log(`✅ Language switched to: ${lang}`);
     }
 
