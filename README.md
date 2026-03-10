@@ -1,15 +1,28 @@
-# Verifyr
+<p align="center">
+  <img src="frontend/images/apple-touch-icon.png" width="100" alt="Verifyr Logo"/>
+</p>
 
-![Status](https://img.shields.io/badge/status-beta-orange)
-![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
-![Claude](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-6B4FBB?logo=anthropic&logoColor=white)
-![Qdrant](https://img.shields.io/badge/vector%20DB-Qdrant-DC244C?logo=qdrant&logoColor=white)
-![License](https://img.shields.io/badge/license-Apache%202.0-blue)
+<h1 align="center">Verifyr.de</h1>
 
-🌐 [verifyr.de](https://verifyr.de)
+<p align="center">
+  <strong>Conversational AI assistant for wearable health-tech purchasing decisions.</strong>
+</p>
 
-**Conversational AI assistant for wearable health-tech purchasing decisions.**
+<p align="center">
+  <img src="https://img.shields.io/badge/status-beta-orange" alt="Status"/>
+  <img src="https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/vector%20DB-Qdrant-DC244C?logo=qdrant&logoColor=white" alt="Qdrant"/>
+  <img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="License"/>
+</p>
+
+<p align="center">
+  🌐 <a href="https://verifyr.de">www.verifyr.de</a>
+</p>
+
+Verifyr is your conversational AI assistant that compares Health-Tech products, curates test reports, and answers all your questions – brand-independent, transparent, and in seconds. Make purchase decisions with confidence – no doubts, no regrets.
+
+Powered by a **conversational RAG pipeline**, Verifyr acts as an AI recommender for the full buyer journey: a guided 4-step quiz surfaces personalised product matches before purchase, while the chat interface handles post-purchase support – setup guides, how-tos, and troubleshooting – all grounded in verified product documents.
 
 <p align="center">
   <img src="frontend/images/app-preview-readme.png" width="900" alt="Verifyr – AI Health-Tech Advisor"/>
@@ -22,10 +35,6 @@
 <p align="center">
   <img src="frontend/images/rag-chat-readme.png" width="900" alt="Verifyr – RAG Chat"/>
 </p>
-
-Verifyr is your conversational AI assistant that compares Health-Tech products, curates test reports, and answers all your questions – brand-independent, transparent, and in seconds. Make purchase decisions with confidence – no doubts, no regrets.
-
-Powered by a **conversational RAG pipeline**, Verifyr acts as an AI recommender for the full buyer journey: a guided 4-step quiz surfaces personalised product matches before purchase, while the chat interface handles post-purchase support – setup guides, how-tos, and troubleshooting – all grounded in verified product documents.
 
 ---
 
