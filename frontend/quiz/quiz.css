@@ -6,6 +6,10 @@
  */
 
 /* Quiz Container */
+body {
+    overflow-x: hidden; /* prevents horizontal scroll from full-width progress bar */
+}
+
 .quiz-container {
     min-height: 100vh;
     width: 100%;
@@ -15,7 +19,6 @@
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
-    overflow-x: hidden; /* prevents horizontal scroll from full-width progress bar */
 }
 
 /* Navigation inside quiz container */
