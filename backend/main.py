@@ -20,6 +20,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
@@ -202,6 +204,17 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Prevent browsers from caching HTML pages so users always get the latest version
+class NoCacheMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        path = request.url.path
+        if path.endswith((".html", ".js", ".css", ".json")) or path.endswith("/"):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
+
+app.add_middleware(NoCacheMiddleware)
 
 # Mount frontend static files at root
 # frontend/ is at project root, main.py is in backend/
