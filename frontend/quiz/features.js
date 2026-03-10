@@ -19,6 +19,12 @@ class FeaturesController {
         // Load language preference
         this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
 
+        // Update UI text immediately (before async fetch) to avoid language flicker
+        this.updateUIText();
+
+        // Reset button state (in case user navigated back)
+        this.resetButtonState();
+
         // Load features data
         await this.loadFeatures();
 
@@ -27,12 +33,6 @@ class FeaturesController {
 
         // Setup event listeners
         this.setupEventListeners();
-
-        // Reset button state FIRST (in case user navigated back)
-        this.resetButtonState();
-
-        // Update UI text (this sets the correct language)
-        this.updateUIText();
 
         // Check if returning user (has previous selection)
         this.loadPreviousSelection();

@@ -215,9 +215,11 @@ function initMobileMenu() {
     });
 }
 
+// Apply texts immediately (script is at bottom of body, DOM is ready) to avoid language flicker
+applyTexts();
+
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
-    applyTexts();
     updateUserDisplay();
     initLanguage();
     initMobileMenu();

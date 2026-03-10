@@ -18,6 +18,9 @@ class UseCaseController {
         // Load language preference
         this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
 
+        // Update UI text immediately (before async fetch) to avoid language flicker
+        this.updateUIText();
+
         // Load use cases data
         await this.loadUseCases();
 
@@ -26,9 +29,6 @@ class UseCaseController {
 
         // Setup event listeners
         this.setupEventListeners();
-
-        // Update UI text
-        this.updateUIText();
 
         // Check if returning user (has previous selection)
         this.loadPreviousSelection();

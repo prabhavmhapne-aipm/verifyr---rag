@@ -15,6 +15,9 @@ class CategoryController {
         // Load language preference
         this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
 
+        // Update UI text immediately (before async fetch) to avoid language flicker
+        this.updateUIText();
+
         // Load categories data
         await this.loadCategories();
 
@@ -23,9 +26,6 @@ class CategoryController {
 
         // Setup event listeners
         this.setupEventListeners();
-
-        // Update UI text
-        this.updateUIText();
 
         // Check if returning user (has previous selection)
         this.loadPreviousSelection();
