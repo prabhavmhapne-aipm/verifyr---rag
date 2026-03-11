@@ -114,6 +114,17 @@ class CategoryController {
         document.getElementById('nextBtnArrow').addEventListener('click', () => {
             this.handleNext();
         });
+
+        // Reset icon
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+            delete qa.category;
+            localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+            this.selectedCategory = null;
+            document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('nextBtnArrow').disabled = true;
+        });
     }
 
     handleCardClick(card) {

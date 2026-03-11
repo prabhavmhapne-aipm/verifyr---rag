@@ -117,6 +117,16 @@ class UseCaseController {
         document.getElementById('nextBtnArrow').addEventListener('click', () => {
             this.handleNext();
         });
+
+        // Reset icon
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+            delete qa.use_cases;
+            localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+            this.selectedUseCases = [];
+            document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
+            this.updateNextButton();
+        });
     }
 
     handleCardClick(card) {

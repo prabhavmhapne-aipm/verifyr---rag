@@ -610,6 +610,32 @@ html.lang-en .lang-option[data-lang="de"].active {
     background: linear-gradient(180deg, rgba(62, 142, 244, 0.3) 0%, rgba(0, 0, 0, 0.85) 100%);
 }
 
+/* Reset icon */
+.quiz-reset-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #cbd5e1;
+    transition: color 0.2s ease, background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.quiz-reset-btn:hover {
+    color: #94a3b8;
+    background: #f1f5f9;
+}
+
+.quiz-reset-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
 /* Navigation Buttons */
 .quiz-navigation {
     display: flex;

@@ -140,6 +140,17 @@ class FeaturesController {
         document.getElementById('nextBtnArrow').addEventListener('click', () => {
             this.handleSubmit();
         });
+
+        // Reset icon
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+            delete qa.features;
+            localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+            this.selectedFeatures = [];
+            document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
+            this.updateSelectionCounter();
+            this.updateNextButton();
+        });
     }
 
     handleCardClick(card) {

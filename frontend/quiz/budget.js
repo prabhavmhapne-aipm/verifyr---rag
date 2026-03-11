@@ -127,6 +127,19 @@ textarea.addEventListener('input', () => {
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
 });
 
+// ── Reset icon ──
+document.getElementById('resetBtn').addEventListener('click', () => {
+    const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+    delete qa.budget_min;
+    delete qa.budget_max;
+    delete qa.special_request;
+    localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+    sliderMin.value = 300;
+    sliderMax.value = 800;
+    document.getElementById('specialRequest').value = '';
+    updateSlider.call(sliderMin);
+});
+
 // ── Submit ──
 document.getElementById('recommendBtn').addEventListener('click', handleSubmit);
 document.getElementById('nextBtnArrow').addEventListener('click', handleSubmit);
