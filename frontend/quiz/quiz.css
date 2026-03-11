@@ -610,6 +610,18 @@ html.lang-en .lang-option[data-lang="de"].active {
     background: linear-gradient(180deg, rgba(62, 142, 244, 0.3) 0%, rgba(0, 0, 0, 0.85) 100%);
 }
 
+/* Features subtitle + counter row */
+.features-subtitle-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.features-counter {
+    font-size: inherit;
+}
+
 /* Reset icon */
 .quiz-reset-btn {
     display: flex;
@@ -840,6 +852,18 @@ html.lang-en .lang-option[data-lang="de"].active {
     /* Hide bottom reset icon on mobile — top one is sufficient */
     .quiz-navigation .quiz-reset-btn {
         display: none;
+    }
+
+    /* Features: stack subtitle and counter vertically on mobile */
+    .features-subtitle-wrapper {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .features-counter {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .btn {
