@@ -86,8 +86,18 @@ function updateSlider() {
 sliderMin.addEventListener('input', updateSlider);
 sliderMax.addEventListener('input', updateSlider);
 
+// Restore saved budget from previous visit
+const _saved = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+if (_saved.budget_min != null) sliderMin.value = _saved.budget_min;
+if (_saved.budget_max != null) sliderMax.value = _saved.budget_max;
+
 // Set initial fill on load
 updateSlider.call(sliderMin);
+
+// Restore saved special request
+if (_saved.special_request) {
+    document.getElementById('specialRequest').value = _saved.special_request;
+}
 
 // ── Textarea: auto-grow + character counter ──
 const textarea    = document.getElementById('specialRequest');
