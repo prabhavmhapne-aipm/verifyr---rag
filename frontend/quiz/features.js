@@ -141,8 +141,8 @@ class FeaturesController {
             this.handleSubmit();
         });
 
-        // Reset icon
-        document.getElementById('resetBtn').addEventListener('click', () => {
+        // Reset icons (bottom nav + top counter)
+        const doReset = () => {
             const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
             delete qa.features;
             localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
@@ -150,7 +150,9 @@ class FeaturesController {
             document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
             this.updateSelectionCounter();
             this.updateNextButton();
-        });
+        };
+        document.getElementById('resetBtn').addEventListener('click', doReset);
+        document.getElementById('resetBtnTop').addEventListener('click', doReset);
     }
 
     handleCardClick(card) {

@@ -118,15 +118,17 @@ class UseCaseController {
             this.handleNext();
         });
 
-        // Reset icon
-        document.getElementById('resetBtn').addEventListener('click', () => {
+        // Reset icons (bottom nav + top subtitle)
+        const doReset = () => {
             const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
-            delete qa.use_cases;
+            delete qa.useCases;
             localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
             this.selectedUseCases = [];
             document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
             this.updateNextButton();
-        });
+        };
+        document.getElementById('resetBtn').addEventListener('click', doReset);
+        document.getElementById('resetBtnTop').addEventListener('click', doReset);
     }
 
     handleCardClick(card) {

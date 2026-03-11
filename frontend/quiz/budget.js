@@ -127,8 +127,8 @@ textarea.addEventListener('input', () => {
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
 });
 
-// ── Reset icon ──
-document.getElementById('resetBtn').addEventListener('click', () => {
+// ── Reset icons (bottom nav + top subtitle) ──
+function doReset() {
     const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
     delete qa.budget_min;
     delete qa.budget_max;
@@ -138,7 +138,9 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     sliderMax.value = 800;
     document.getElementById('specialRequest').value = '';
     updateSlider.call(sliderMin);
-});
+}
+document.getElementById('resetBtn').addEventListener('click', doReset);
+document.getElementById('resetBtnTop').addEventListener('click', doReset);
 
 // ── Submit ──
 document.getElementById('recommendBtn').addEventListener('click', handleSubmit);

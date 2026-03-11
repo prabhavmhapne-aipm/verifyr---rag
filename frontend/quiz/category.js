@@ -115,8 +115,8 @@ class CategoryController {
             this.handleNext();
         });
 
-        // Reset icon
-        document.getElementById('resetBtn').addEventListener('click', () => {
+        // Reset icons (bottom nav + top subtitle)
+        const doReset = () => {
             const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
             delete qa.category;
             localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
@@ -124,7 +124,9 @@ class CategoryController {
             document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('nextBtn').disabled = true;
             document.getElementById('nextBtnArrow').disabled = true;
-        });
+        };
+        document.getElementById('resetBtn').addEventListener('click', doReset);
+        document.getElementById('resetBtnTop').addEventListener('click', doReset);
     }
 
     handleCardClick(card) {
