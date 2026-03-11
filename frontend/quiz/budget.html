@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wir sind gleich da... - Verifyr Quiz</title>
 
+    <script>(function(){if(localStorage.getItem('verifyr-lang')==='en')document.documentElement.classList.add('lang-en');})();</script>
+
     <!-- Design System -->
     <link rel="stylesheet" href="/design-system/design-system.css">
     <link rel="stylesheet" href="/quiz/quiz.css">
     <link rel="stylesheet" href="/quiz/budget.css">
-
-    <!-- Prevent language flicker: hide translatable elements before body renders -->
-    <script>(function(){if(localStorage.getItem('verifyr-lang')==='en'){var s=document.createElement('style');s.id='lpf';s.textContent='#budgetTitle,#budgetSubtitle,#ctaText,#backBtnText{visibility:hidden}';document.head.appendChild(s);}})();</script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
@@ -199,7 +198,6 @@
         </div>
     </div>
 
-    <script>(function(){var l=localStorage.getItem('verifyr-lang'),s=document.getElementById('lpf');if(l==='en'){var m={budgetTitle:'Almost there...',budgetSubtitle:'Optional',ctaText:'Recommend Products',backBtnText:'Back'};for(var k in m){var e=document.getElementById(k);if(e)e.textContent=m[k];}}if(s)s.parentNode.removeChild(s);})();</script>
     <script src="/quiz/budget.js"></script>
 
     <script>

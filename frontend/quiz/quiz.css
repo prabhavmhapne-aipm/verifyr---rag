@@ -5,6 +5,18 @@
  * Shared styles for all quiz pages (category, use-case, features)
  */
 
+/* Language toggle: override active pill before JS runs (prevents EN→DE flicker) */
+html.lang-en .lang-option[data-lang="en"] {
+    background: var(--primary-blue);
+    color: var(--white);
+    box-shadow: var(--shadow-blue-sm);
+}
+html.lang-en .lang-option[data-lang="de"].active {
+    background: transparent;
+    color: var(--gray);
+    box-shadow: none;
+}
+
 /* Quiz Container */
 .quiz-container {
     min-height: 100vh;
