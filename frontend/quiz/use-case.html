@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="/design-system/design-system.css">
     <link rel="stylesheet" href="/quiz/quiz.css">
 
+    <!-- Prevent language flicker: hide translatable elements before body renders -->
+    <script>(function(){if(localStorage.getItem('verifyr-lang')==='en'){var s=document.createElement('style');s.id='lpf';s.textContent='#pageHeading,#pageSubheading,#backBtnText,#nextBtnText{visibility:hidden}';document.head.appendChild(s);}})();</script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
@@ -162,7 +165,7 @@
         </div>
     </div>
 
-    <script>(function(){var l=localStorage.getItem('verifyr-lang');if(l==='en'){var m={pageHeading:'What mainly for?',pageSubheading:'Choose all that apply',backBtnText:'Back',nextBtnText:'Next'};for(var k in m){var e=document.getElementById(k);if(e)e.textContent=m[k];}}})();</script>
+    <script>(function(){var l=localStorage.getItem('verifyr-lang'),s=document.getElementById('lpf');if(l==='en'){var m={pageHeading:'What mainly for?',pageSubheading:'Choose all that apply',backBtnText:'Back',nextBtnText:'Next'};for(var k in m){var e=document.getElementById(k);if(e)e.textContent=m[k];}}if(s)s.parentNode.removeChild(s);})();</script>
     <script src="/quiz/use-case.js"></script>
 
     <!-- ========================================

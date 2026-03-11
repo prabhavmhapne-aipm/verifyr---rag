@@ -15,7 +15,7 @@ class CategoryController {
         // Load language preference
         this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
 
-        // Update UI text immediately (before async fetch) to avoid language flicker
+        // Apply UI text in correct language
         this.updateUIText();
 
         // Load categories data
