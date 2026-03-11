@@ -6,10 +6,6 @@
  */
 
 /* Quiz Container */
-body {
-    overflow-x: hidden; /* prevents horizontal scroll from full-width progress bar */
-}
-
 .quiz-container {
     min-height: 100vh;
     width: 100%;
@@ -319,30 +315,48 @@ body {
     margin: 0;
 }
 
-/* Progress Indicator */
+/* Progress Indicator — dots (desktop only) */
 .quiz-progress {
-    display: flex;
+    display: none; /* hidden on mobile */
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-sm);
+    gap: 0;
     margin-top: var(--spacing-sm);
     margin-bottom: var(--spacing-lg);
 }
 
 .progress-step {
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-full);
-    background: var(--light-gray);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #e2e8f0;
+    background: transparent;
     transition: all 0.3s ease;
-}
-
-.progress-step.active {
-    background: var(--primary-blue);
-    width: 24px;
+    flex-shrink: 0;
 }
 
 .progress-step.completed {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.progress-step.active {
+    width: 14px;
+    height: 14px;
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.progress-connector {
+    width: 44px;
+    height: 2px;
+    background: #e2e8f0;
+    transition: background 0.3s ease;
+    flex-shrink: 0;
+}
+
+.progress-connector.completed {
     background: var(--primary-blue);
 }
 
@@ -365,13 +379,14 @@ body {
     transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Desktop: stretch progress bar edge-to-edge across the full viewport */
+/* Desktop: show dots, hide line */
 @media (min-width: 1024px) {
+    .quiz-progress {
+        display: flex;
+    }
+
     .quiz-progress-line {
-        width: 100vw;
-        margin-left: calc(-50vw + 50%);
-        border-radius: 0;
-        margin-top: 0;
+        display: none;
     }
 }
 
