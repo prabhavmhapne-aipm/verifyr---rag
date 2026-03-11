@@ -279,8 +279,15 @@
         font-size: 0.8125rem;
     }
 
-    /* Full-width single-column card — slightly taller than the 2-col feature tiles
-       to compensate for the wider aspect ratio */
+    .budget-subheader {
+        padding: 6px 0;
+        margin-bottom: 6px;
+    }
+
+    .budget-progress-bar {
+        margin-bottom: 6px;
+    }
+
     .budget-card {
         height: 150px;
     }

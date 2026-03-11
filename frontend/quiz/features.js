@@ -146,6 +146,7 @@ class FeaturesController {
             const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
             delete qa.features;
             localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+            localStorage.removeItem('verifyr_quiz_completed');
             this.selectedFeatures = [];
             document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
             this.updateSelectionCounter();
@@ -319,7 +320,6 @@ class FeaturesController {
 
         const lang = this.currentLanguage;
         document.getElementById('pageHeading').textContent = texts[lang].heading;
-        document.getElementById('pageSubheading').textContent = texts[lang].subheading;
         document.getElementById('backBtnText').textContent = texts[lang].back;
         document.getElementById('nextBtnText').textContent = texts[lang].next;
         document.getElementById('selectedText').textContent = texts[lang].selected;

@@ -120,6 +120,7 @@ class CategoryController {
             const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
             delete qa.category;
             localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+            localStorage.removeItem('verifyr_quiz_completed');
             this.selectedCategory = null;
             document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('nextBtn').disabled = true;

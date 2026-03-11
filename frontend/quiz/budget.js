@@ -16,6 +16,7 @@ const texts = {
         inputLabel:     'Besondere Anforderungen',
         placeholder:    'Hier beschreiben...',
         cta:            'Produkte Empfehlen',
+        showResults:    'Ergebnisse anzeigen',
         back:           'Zurück',
         logout:         'Abmelden',
         login:          'Anmelden',
@@ -29,6 +30,7 @@ const texts = {
         inputLabel:     'Special requirements',
         placeholder:    'Describe here...',
         cta:            'Recommend Products',
+        showResults:    'Show Results',
         back:           'Back',
         logout:         'Logout',
         login:          'Login',
@@ -44,8 +46,10 @@ function applyTexts() {
     document.getElementById('budgetCardLabel').textContent  = t.budgetCard;
     document.getElementById('priceRangeLabel').textContent  = t.priceRange;
     document.getElementById('specialCardLabel').textContent = t.specialCard;
-    document.getElementById('ctaText').textContent          = t.cta;
     document.getElementById('backBtnText').textContent      = t.back;
+
+    const hasResults = localStorage.getItem('verifyr_quiz_completed') === 'true';
+    document.getElementById('ctaText').textContent = hasResults ? t.showResults : t.cta;
 
     const textarea = document.getElementById('specialRequest');
     if (textarea) textarea.placeholder = t.placeholder;
@@ -134,10 +138,12 @@ function doReset() {
     delete qa.budget_max;
     delete qa.special_request;
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+    localStorage.removeItem('verifyr_quiz_completed');
     sliderMin.value = 300;
     sliderMax.value = 800;
     document.getElementById('specialRequest').value = '';
     updateSlider.call(sliderMin);
+    document.getElementById('ctaText').textContent = t.cta;
 }
 document.getElementById('resetBtn').addEventListener('click', doReset);
 document.getElementById('resetBtnTop').addEventListener('click', doReset);
@@ -147,6 +153,12 @@ document.getElementById('recommendBtn').addEventListener('click', handleSubmit);
 document.getElementById('nextBtnArrow').addEventListener('click', handleSubmit);
 
 function handleSubmit() {
+    // If results already exist, go straight to them
+    if (localStorage.getItem('verifyr_quiz_completed') === 'true') {
+        window.location.href = '/quiz/results.html';
+        return;
+    }
+
     const minBudget   = parseInt(sliderMin.value);
     const maxBudget   = parseInt(sliderMax.value);
     const specialNote = (document.getElementById('specialRequest').value || '').trim();
