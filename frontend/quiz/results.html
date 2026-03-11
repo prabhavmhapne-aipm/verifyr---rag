@@ -17,6 +17,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="../images/favicon-192x192.png">
 
+    <!-- Language: set class before body renders to prevent toggle flicker -->
+    <script>(function(){if(localStorage.getItem('verifyr-lang')==='en')document.documentElement.classList.add('lang-en');})();</script>
+
     <!-- Google Analytics -->
     <script>
       window.dataLayer = window.dataLayer || [];

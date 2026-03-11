@@ -740,47 +740,6 @@ html.lang-en .lang-option[data-lang="de"].active {
         margin-bottom: 0;
     }
 
-    /* Fix entire container, only grid scrolls */
-    .quiz-container {
-        position: fixed;
-        inset: 0;
-        overflow: hidden;
-        padding-top: 0;
-        background: transparent;
-    }
-
-    /* Frosted glass on fixed header and nav areas */
-    .quiz-container nav,
-    .quiz-header-wrapper,
-    .quiz-progress-line,
-    .quiz-navigation {
-        background: rgba(240, 244, 255, 0.82);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        position: relative;
-        z-index: 2;
-    }
-
-    /* Grid extends slightly under the header for scroll-behind effect */
-    .quiz-grid {
-        margin-top: -8px;
-        padding-top: 8px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .quiz-content {
-        flex: 1;
-        overflow: hidden;
-        min-height: 0;
-    }
-
-    .quiz-grid {
-        flex: 1;
-        overflow-y: auto;
-        min-height: 0;
-    }
-
     .quiz-header-wrapper {
         gap: 6px;
         margin-bottom: 0;
