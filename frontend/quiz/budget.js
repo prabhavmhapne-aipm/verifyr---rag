@@ -81,6 +81,12 @@ function updateSlider() {
     rangeFill.style.width = (rightPct - leftPct) + '%';
 
     rangeLabel.textContent = `${lo}–${hi}€`;
+
+    // Persist immediately so navigating back restores the position
+    const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+    qa.budget_min = lo;
+    qa.budget_max = hi;
+    localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
 }
 
 sliderMin.addEventListener('input', updateSlider);
@@ -114,6 +120,11 @@ textarea.addEventListener('input', () => {
     charCount.textContent = len;
     charCounter.classList.toggle('near-limit', len >= 80 && len < 100);
     charCounter.classList.toggle('at-limit',   len >= 100);
+
+    // Persist immediately
+    const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
+    qa.special_request = textarea.value.trim() || null;
+    localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
 });
 
 // ── Submit ──
