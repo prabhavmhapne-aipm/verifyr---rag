@@ -837,6 +837,11 @@ html.lang-en .lang-option[data-lang="de"].active {
         border-top: 1px solid var(--light-gray);
     }
 
+    /* Hide bottom reset icon on mobile — top one is sufficient */
+    .quiz-navigation .quiz-reset-btn {
+        display: none;
+    }
+
     .btn {
         width: auto;
         min-width: 110px;
