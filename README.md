@@ -22,7 +22,7 @@
 
 Verifyr is your brand-independent AI assistant that compares and recommends Health-Tech products, curates expert reviews, and guides you from pre-purchase questions to post-purchase support — neutral, transparent, and in seconds.
 
-Powered by a **conversational RAG pipeline**, Verifyr covers the full buyer journey: a guided 4-step quiz surfaces personalised product matches, while the chat interface handles post-purchase support — setup guides, how-tos, and troubleshooting — all grounded in verified product documents.
+Powered by a **conversational RAG pipeline**, Verifyr covers the full buyer journey: a guided 4-step quiz recommends personalised product matches, while the chat interface handles pre and post-purchase support — setup guides, how-tos, and troubleshooting — all grounded in verified product documents, reviews & test results.
 
 <p align="center">
   <img src="frontend/images/app-preview-readme.png" width="900" alt="Verifyr – AI Health-Tech Advisor"/>
@@ -37,19 +37,23 @@ Powered by a **conversational RAG pipeline**, Verifyr covers the full buyer jour
 </p>
 
 <p align="center">
+  <img src="frontend/images/results-readme.png" width="900" alt="Verifyr – Quiz Results"/>
+</p>
+
+<p align="center">
   <img src="frontend/images/rag-chat-readme.png" width="900" alt="Verifyr – RAG Chat"/>
 </p>
 
 ---
 
-## The Old Way vs. the Verifyr Way
+## Why Verifyr
 
-| Without Verifyr | With Verifyr |
+| Problem | Verifyr's Solution |
 |---|---|
-| Search through 20+ browser tabs | All product info in one app |
-| Read contradictory reviews | Curated neutral reviews & test results |
-| Commission-based rankings & recommendations | 100% transparent & brand-independent recommendations |
-| Hours spent researching | Ad-hoc pre-purchase + post-purchase support |
+| Too many tabs, too many reviews | Curated answers from verified sources in one place |
+| Biased affiliate rankings | 100% brand-agnostic recommendations |
+| Confusing tech specs | Plain-language explanations with source citations |
+| No post-purchase support | Built-in QA chat for setup, how-tos, and troubleshooting |
 
 ---
 
