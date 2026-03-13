@@ -20,9 +20,9 @@
   🌐 <a href="https://verifyr.de">www.verifyr.de</a>
 </p>
 
-Verifyr is your conversational AI assistant that compares Health-Tech products, curates test reports, and answers all your questions – brand-independent, transparent, and in seconds. Make purchase decisions with confidence – no doubts, no regrets.
+Verifyr is your brand-independent AI assistant that compares and recommends Health-Tech products, curates expert reviews, and guides you from pre-purchase questions to post-purchase support — neutral, transparent, and in seconds.
 
-Powered by a **conversational RAG pipeline**, Verifyr acts as an AI recommender for the full buyer journey: a guided 4-step quiz surfaces personalised product matches before purchase, while the chat interface handles post-purchase support – setup guides, how-tos, and troubleshooting – all grounded in verified product documents.
+Powered by a **conversational RAG pipeline**, Verifyr covers the full buyer journey: a guided 4-step quiz surfaces personalised product matches, while the chat interface handles post-purchase support — setup guides, how-tos, and troubleshooting — all grounded in verified product documents.
 
 <p align="center">
   <img src="frontend/images/app-preview-readme.png" width="900" alt="Verifyr – AI Health-Tech Advisor"/>
@@ -33,19 +33,23 @@ Powered by a **conversational RAG pipeline**, Verifyr acts as an AI recommender 
 </p>
 
 <p align="center">
+  <img src="frontend/images/loading-screen-readme.png" width="900" alt="Verifyr – Loading Screen"/>
+</p>
+
+<p align="center">
   <img src="frontend/images/rag-chat-readme.png" width="900" alt="Verifyr – RAG Chat"/>
 </p>
 
 ---
 
-## Why Verifyr
+## The Old Way vs. the Verifyr Way
 
-| Problem | Verifyr's Solution |
+| Without Verifyr | With Verifyr |
 |---|---|
-| Too many tabs, too many reviews | Curated answers from verified sources in one place |
-| Biased affiliate rankings | 100% brand-agnostic recommendations |
-| Confusing tech specs | Plain-language explanations with source citations |
-| No post-purchase support | Built-in QA chat for setup, how-tos, and troubleshooting |
+| Search through 20+ browser tabs | All product info in one app |
+| Read contradictory reviews | Curated neutral reviews & test results |
+| Commission-based rankings & recommendations | 100% transparent & brand-independent recommendations |
+| Hours spent researching | Ad-hoc pre-purchase + post-purchase support |
 
 ---
 
