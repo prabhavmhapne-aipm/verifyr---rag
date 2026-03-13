@@ -220,8 +220,10 @@
         welcomeEl.textContent = WIDGET_TEXT.welcome[lang] || WIDGET_TEXT.welcome.en;
         input.placeholder     = WIDGET_TEXT.placeholder[lang] || WIDGET_TEXT.placeholder.en;
 
+        // Conversation state — matches app.js structure
         let widgetHistory = [];
         let isLoading = false;
+        let convId = 'conv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
         // Toggle open/close
         toggleBtn.addEventListener('click', () => {
@@ -260,6 +262,27 @@
             } catch(e) { return null; }
         }
 
+        function saveConversation() {
+            try {
+                const stored = JSON.parse(localStorage.getItem('verifyr_conversations') || '{}');
+                const now = new Date().toISOString();
+                const firstUserMsg = widgetHistory.find(m => m.role === 'user');
+                const title = firstUserMsg
+                    ? firstUserMsg.content.substring(0, 40) + (firstUserMsg.content.length > 40 ? '...' : '')
+                    : 'Results Chat';
+
+                if (!stored[convId]) {
+                    stored[convId] = { id: convId, title, messages: [], createdAt: now, updatedAt: now };
+                }
+                stored[convId].messages = [...widgetHistory];
+                stored[convId].updatedAt = now;
+
+                localStorage.setItem('verifyr_conversations', JSON.stringify(stored));
+                // Mark as active so chat.html picks it up when opened
+                localStorage.setItem('verifyr_active_conversation_id', convId);
+            } catch(e) { console.warn('Could not save widget conversation:', e); }
+        }
+
         function appendMessage(text, role) {
             const div = document.createElement('div');
             div.className = 'chat-widget-msg ' + role;
@@ -295,6 +318,7 @@
                         model: 'gpt-5-mini',
                         language: lang,
                         conversation_history: widgetHistory.slice(0, -1),
+                        conversation_id: convId,
                         quiz_profile: getQuizProfile()
                     })
                 });
@@ -307,6 +331,9 @@
                 const answer = data.answer || data.detail || '—';
                 appendMessage(answer, 'assistant');
                 widgetHistory.push({ role: 'assistant', content: answer });
+
+                // Save after every assistant reply
+                saveConversation();
 
             } catch(e) {
                 loadingEl.remove();
