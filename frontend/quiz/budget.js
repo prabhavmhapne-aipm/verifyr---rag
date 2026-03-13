@@ -181,6 +181,7 @@ function handleSubmit() {
     quizAnswers.budget_min      = minBudget;
     quizAnswers.budget_max      = maxBudget;
     quizAnswers.special_request = specialNote || null;
+    quizAnswers.language        = localStorage.getItem('verifyr-lang') || 'de';
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(quizAnswers));
 
     console.log('✅ Budget & special request saved:', { minBudget, maxBudget, specialNote });

@@ -466,12 +466,10 @@ class ResultsController {
             de: {
                 defaultReason: 'Gute Übereinstimmung mit deinen Präferenzen',
                 intro: 'Basierend auf deinen Antworten im Quiz empfehlen wir dir dieses Produkt mit einem Match-Score von',
-                conclusion: 'Das Gerät bietet eine ausgezeichnete Balance zwischen Funktionen und Benutzerfreundlichkeit.'
             },
             en: {
                 defaultReason: 'Good match with your preferences',
                 intro: 'Based on your quiz answers, we recommend this product with a match score of',
-                conclusion: 'This device offers an excellent balance between features and usability.'
             }
         };
 
@@ -480,7 +478,7 @@ class ResultsController {
 
         return `
             ${t.intro} ${Math.round(match.match_score * 100)}%.
-            ${reasons}. ${t.conclusion}
+            ${reasons}.
         `;
     }
 

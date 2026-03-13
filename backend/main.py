@@ -131,6 +131,7 @@ class QuizAnswers(BaseModel):
     category: str = Field(..., description="Selected category ID")
     useCases: List[str] = Field(..., description="Selected use case IDs")
     features: List[str] = Field(..., description="Selected feature IDs (max 5)")
+    language: Optional[str] = Field(default="de", description="Response language: 'en' or 'de'")
 
 
 class MatchedProduct(BaseModel):
@@ -843,27 +844,27 @@ async def score_quiz(
 
         # 3. Features Match (25% weight)
         feature_ratings = []
-        feature_details = []
+        good_features = []
+        weak_features = []
         for feature_id in quiz_answers.features:
             if feature_id in product.get("feature_priorities", {}):
                 feature_data = product["feature_priorities"][feature_id]
                 rating = feature_data.get("rating", 0)
                 feature_ratings.append(rating / 5.0)  # Normalize to 0-1
 
-                # Add reason if rating is high (4 or 5)
+                feature_name = products_metadata.get("features_metadata", {}).get(feature_id, {}).get("name", {}).get("en", feature_id)
                 if rating >= 4:
-                    feature_name = products_metadata.get("features_metadata", {}).get(feature_id, {}).get("name", {}).get("en", feature_id)
+                    good_features.append(feature_name)
+                elif rating <= 2:
                     feature_value = feature_data.get("value", "")
-                    feature_details.append(f"{feature_name}: {feature_value}")
-                elif rating <= 2:  # Low rating - mention as weakness
-                    feature_name = products_metadata.get("features_metadata", {}).get(feature_id, {}).get("name", {}).get("en", feature_id)
-                    feature_value = feature_data.get("value", "")
-                    feature_details.append(f"⚠️ {feature_name}: {feature_value}")
+                    weak_features.append(f"{feature_name}: {feature_value}" if feature_value else feature_name)
 
         if feature_ratings:
             scores["features"] = sum(feature_ratings) / len(feature_ratings)
-            if feature_details:
-                reasons.append(f"Key features: {', '.join(feature_details)}")
+            if good_features:
+                reasons.append(f"Strong on: {', '.join(good_features)}")
+            if weak_features:
+                reasons.append(f"Limited: {', '.join(weak_features)}")
 
         # Calculate weighted final score
         final_score = (
@@ -959,22 +960,24 @@ async def score_quiz_with_rag(
                 reasons.append(f"Good for: {', '.join(uc_details)}")
 
         # Features (25%)
-        feat_ratings, feat_details = [], []
+        feat_ratings, good_feats, weak_feats = [], [], []
         for feat_id in quiz_answers.features:
             if feat_id in product.get("feature_priorities", {}):
                 feat_data = product["feature_priorities"][feat_id]
                 rating = feat_data.get("rating", 0)
                 feat_ratings.append(rating / 5.0)
                 feat_name = products_metadata.get("features_metadata", {}).get(feat_id, {}).get("name", {}).get("en", feat_id)
-                feat_value = feat_data.get("value", "")
                 if rating >= 4:
-                    feat_details.append(f"{feat_name}: {feat_value}")
+                    good_feats.append(feat_name)
                 elif rating <= 2:
-                    feat_details.append(f"⚠️ {feat_name}: {feat_value}")
+                    feat_value = feat_data.get("value", "")
+                    weak_feats.append(f"{feat_name}: {feat_value}" if feat_value else feat_name)
         if feat_ratings:
             scores["features"] = sum(feat_ratings) / len(feat_ratings)
-            if feat_details:
-                reasons.append(f"Key features: {', '.join(feat_details)}")
+            if good_feats:
+                reasons.append(f"Strong on: {', '.join(good_feats)}")
+            if weak_feats:
+                reasons.append(f"Limited: {', '.join(weak_feats)}")
 
         final_score = (
             scores["category"] * weights["category"] +
@@ -1008,6 +1011,7 @@ async def score_quiz_with_rag(
             enhanced_top = rag_enhancer.enhance_recommendations(
                 top_products=top_3,
                 quiz_inputs=quiz_answers.dict(),
+                language=quiz_answers.language or "de",
             )
         except Exception as e:
             print(f"WARNING: RAG enhancement failed, falling back to static: {e}")

@@ -23,9 +23,10 @@ Rules:
 1. ONE strength bullet and ONE weakness bullet — both must directly address the user's specific use cases and feature priorities
 2. Each bullet: 1-2 sentences max, conversational tone
 3. Ground every bullet in the provided excerpts — use specific numbers, feature names, or facts from the text
-4. If the excerpts do not contain relevant data for the user's use case, say so honestly instead of inventing a generic claim
+4. If the excerpts do not contain relevant data for the user's use case, return an empty string "" for that bullet — do not invent a fallback, generic claim, or explanatory note
    Example of what NOT to write: "This device offers an excellent balance between features and usability."
    Example of what TO write: "The Garmin Forerunner 970 offers up to 26 hours in GPS mode — enough for ultramarathons without recharging."
+   Example of what TO write when no data: ""
 5. Be honest about real limitations — do not soften weaknesses
 6. Do NOT duplicate points already listed under static strengths/weaknesses
 7. Output ONLY valid JSON with "strength" and "weakness" keys — no markdown, no preamble"""
