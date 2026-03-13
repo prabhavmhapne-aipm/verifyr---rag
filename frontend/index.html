@@ -168,8 +168,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: transparent;
+            transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 4px 20px rgba(0, 0, 0, 0.04);
+            padding: 1rem 4rem;
         }
 
         .nav-left {
@@ -239,17 +252,19 @@
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            animation: btn-glow-pulse 2.4s ease-in-out infinite;
         }
 
         .nav-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.45);
+            animation: none;
         }
 
         /* Hero + Video Side-by-Side Layout */
         .hero-video-layout {
             padding: 2rem 4rem;
+            padding-top: calc(2rem + 80px); /* offset for fixed nav */
             display: flex;
             align-items: stretch;
             gap: 4rem;
@@ -287,14 +302,32 @@
 
         .hero-badge {
             display: inline-block;
-            background: var(--light-blue);
-            color: var(--dark-blue);
+            background: linear-gradient(135deg, #1D4ED8 0%, #3B82F6 60%, #60A5FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border: 1.5px solid transparent;
+            background-origin: border-box;
             padding: 0.5rem 1.25rem;
             border-radius: 50px;
             font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 1rem;
             animation: fadeInUp 0.6s ease;
+            position: relative;
+        }
+
+        .hero-badge::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50px;
+            padding: 1.5px;
+            background: linear-gradient(135deg, #1D4ED8, #3B82F6, #60A5FA);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
         }
 
         @keyframes fadeInUp {
@@ -559,6 +592,14 @@
         .comparison-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-card.solution:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 0 0 1px rgba(59, 130, 246, 0.25),
+                0 12px 40px rgba(59, 130, 246, 0.2),
+                0 0 80px rgba(59, 130, 246, 0.1);
         }
 
         .comparison-card.problem {
@@ -857,6 +898,11 @@
             outline: none;
         }
 
+        @keyframes btn-glow-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5), 0 4px 14px rgba(59, 130, 246, 0.3); }
+            50%       { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0), 0 4px 20px rgba(59, 130, 246, 0.4); }
+        }
+
         .submit-btn {
             padding: 1rem 2rem;
             background: var(--primary-blue);
@@ -868,12 +914,14 @@
             cursor: pointer;
             transition: all 0.3s ease;
             white-space: nowrap;
+            animation: btn-glow-pulse 2.4s ease-in-out infinite;
         }
 
         .submit-btn:hover {
             background: var(--dark-blue);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.45);
+            animation: none;
         }
 
         .submit-btn:active {
@@ -883,6 +931,7 @@
         .submit-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            animation: none;
         }
 
         .pilot-note {
@@ -939,9 +988,23 @@
                 padding: 0.4rem 0.75rem;
             }
 
+            nav > div:last-child {
+                flex-direction: column;
+                gap: 0.4rem;
+            }
+
+            .nav-login,
             .nav-cta {
-                padding: 0.65rem 1.25rem;
-                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+                text-align: center;
+                width: 100%;
+                box-sizing: border-box;
+                animation: none;
+            }
+
+            .nav-login {
+                border-width: 1.5px;
             }
 
             .comparison-grid {
@@ -958,18 +1021,23 @@
             }
 
             .email-form {
-                flex-direction: column;
-                border-radius: 16px;
-                padding: 0.75rem;
+                flex-direction: row;
+                border-radius: 50px;
+                padding: 0.4rem;
+                max-width: 100%;
             }
 
             .email-input {
-                padding: 1rem 1.25rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                min-width: 0;
             }
 
             .submit-btn {
-                width: 100%;
-                padding: 1rem;
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
+                white-space: nowrap;
+                animation: none;
             }
 
             .hero-stats {
@@ -1615,15 +1683,15 @@
 
             <div class="hero-stats">
                 <div class="stat">
-                    <span class="stat-number">20+</span>
+                    <span class="stat-number" data-target="20" data-suffix="+">0+</span>
                     <span class="stat-label" data-i18n="hero.stat1">Tabs gespart</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number">50%</span>
+                    <span class="stat-number" data-target="50" data-suffix="%">0%</span>
                     <span class="stat-label" data-i18n="hero.stat2">Zeitersparnis</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number">100%</span>
+                    <span class="stat-number" data-target="100" data-suffix="%">0%</span>
                     <span class="stat-label" data-i18n="hero.stat3">Markenunabhängig</span>
                 </div>
             </div>
@@ -3042,6 +3110,46 @@
                 el.style.transform = 'translateY(30px)';
                 el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
                 observer.observe(el);
+            });
+
+            // Glassmorphism navbar on scroll
+            const nav = document.querySelector('nav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            }, { passive: true });
+
+            // Animate stat counters on scroll
+            function animateCounter(el) {
+                const target = parseInt(el.dataset.target, 10);
+                const suffix = el.dataset.suffix || '';
+                const duration = 2500;
+                const start = performance.now();
+                function step(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // Ease out cubic
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = Math.round(eased * target) + suffix;
+                    if (progress < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            }
+
+            const statObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        statObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+                statObserver.observe(el);
             });
 
             console.log('All initialization complete!');
