@@ -53,11 +53,6 @@ const QUIZ_FEATURE_LABELS = {
     "vo2_max":              { en: "VO2 Max Tracker",              de: "VO2 Max Tracker" }
 };
 
-const QUIZ_BUDGET_LABELS = {
-    "budget":  { en: "Budget (under €150)",    de: "Budget (unter €150)" },
-    "mid":     { en: "Mid-range (€150–€350)",  de: "Mittelklasse (€150–€350)" },
-    "premium": { en: "Premium (€350+)",        de: "Premium (€350+)" }
-};
 
 /**
  * Reads verifyr_quiz_answers from localStorage and returns a
@@ -75,13 +70,13 @@ function getQuizProfileString() {
 
         const category = resolve(QUIZ_CATEGORY_LABELS, qa.category);
         const useCases = (qa.useCases || []).map(id => resolve(QUIZ_USE_CASE_LABELS, id)).join(', ');
-        const budget   = resolve(QUIZ_BUDGET_LABELS, qa.budget || '');
         const features = (qa.features || []).map(id => resolve(QUIZ_FEATURE_LABELS, id)).join(', ');
 
         const parts = [`Category: ${category}`];
         if (useCases) parts.push(`Use Cases: ${useCases}`);
-        if (budget && qa.budget) parts.push(`Budget: ${budget}`);
+        if (qa.budget_min != null && qa.budget_max != null) parts.push(`Budget: €${qa.budget_min}–€${qa.budget_max}`);
         if (features) parts.push(`Feature Priorities: ${features}`);
+        if (qa.special_request) parts.push(`Special Request: ${qa.special_request}`);
 
         return parts.join(' | ');
     } catch (e) {

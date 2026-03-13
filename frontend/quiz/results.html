@@ -144,12 +144,47 @@
         </div>
     </div>
 
-    <!-- Floating Chat Button (Mobile Only) -->
-    <button class="floating-chat-btn" onclick="window.location.href='/chat.html'" title="Chat">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-        </svg>
-    </button>
+    <!-- Floating Chat Widget -->
+    <div id="chatWidget">
+        <!-- Collapsed: floating button -->
+        <button class="floating-chat-btn" id="chatWidgetToggle" title="Chat">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+            </svg>
+        </button>
+
+        <!-- Expanded: chat panel -->
+        <div class="chat-widget-panel" id="chatWidgetPanel">
+            <div class="chat-widget-header">
+                <span class="chat-widget-title">Verifyr Chat</span>
+                <div class="chat-widget-actions">
+                    <a href="/chat.html" class="chat-widget-action-btn" title="Open full chat">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                        </svg>
+                    </a>
+                    <button class="chat-widget-action-btn" id="chatWidgetClose" title="Close">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="chat-widget-messages" id="chatWidgetMessages">
+                <div class="chat-widget-msg assistant">
+                    <span id="chatWidgetWelcome">Ask me anything about these products!</span>
+                </div>
+            </div>
+            <div class="chat-widget-input-row">
+                <input type="text" id="chatWidgetInput" placeholder="Ask a question..." maxlength="500"/>
+                <button id="chatWidgetSend">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -159,6 +194,131 @@
     <script src="/components/auth-modal.js"></script>
 
     <script src="/quiz/results.js"></script>
+
+    <!-- Chat Widget Logic -->
+    <script>
+    (function() {
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8000' : window.location.origin;
+
+        const lang = localStorage.getItem('verifyr-lang') || 'de';
+        const WIDGET_TEXT = {
+            welcome:     { de: 'Frag mich alles zu diesen Produkten!', en: 'Ask me anything about these products!' },
+            placeholder: { de: 'Stell eine Frage...', en: 'Ask a question...' },
+            loading:     { de: 'Schreibe...', en: 'Typing...' }
+        };
+
+        const panel      = document.getElementById('chatWidgetPanel');
+        const toggleBtn  = document.getElementById('chatWidgetToggle');
+        const closeBtn   = document.getElementById('chatWidgetClose');
+        const messages   = document.getElementById('chatWidgetMessages');
+        const input      = document.getElementById('chatWidgetInput');
+        const sendBtn    = document.getElementById('chatWidgetSend');
+        const welcomeEl  = document.getElementById('chatWidgetWelcome');
+
+        // Apply language
+        welcomeEl.textContent = WIDGET_TEXT.welcome[lang] || WIDGET_TEXT.welcome.en;
+        input.placeholder     = WIDGET_TEXT.placeholder[lang] || WIDGET_TEXT.placeholder.en;
+
+        let widgetHistory = [];
+        let isLoading = false;
+
+        // Toggle open/close
+        toggleBtn.addEventListener('click', () => {
+            const isOpen = panel.classList.contains('open');
+            panel.classList.toggle('open', !isOpen);
+            if (!isOpen) input.focus();
+        });
+
+        closeBtn.addEventListener('click', () => {
+            panel.classList.remove('open');
+        });
+
+        // Send on Enter
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', () => { if (!isLoading) sendMessage(); });
+
+        function getQuizProfile() {
+            try {
+                const raw = localStorage.getItem('verifyr_quiz_answers');
+                if (!raw) return null;
+                const qa = JSON.parse(raw);
+                if (!qa || !qa.category) return null;
+                const parts = [];
+                if (qa.category) parts.push('Category: ' + qa.category);
+                if (qa.useCases?.length) parts.push('Use Cases: ' + qa.useCases.join(', '));
+                if (qa.budget_min != null && qa.budget_max != null) parts.push('Budget: €' + qa.budget_min + '–€' + qa.budget_max);
+                if (qa.features?.length) parts.push('Feature Priorities: ' + qa.features.join(', '));
+                if (qa.special_request) parts.push('Special Request: ' + qa.special_request);
+                return parts.join(' | ') || null;
+            } catch(e) { return null; }
+        }
+
+        function appendMessage(text, role) {
+            const div = document.createElement('div');
+            div.className = 'chat-widget-msg ' + role;
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+            return div;
+        }
+
+        async function sendMessage() {
+            const question = input.value.trim();
+            if (!question || isLoading) return;
+
+            isLoading = true;
+            sendBtn.disabled = true;
+            input.value = '';
+
+            appendMessage(question, 'user');
+            widgetHistory.push({ role: 'user', content: question });
+
+            const loadingEl = appendMessage(WIDGET_TEXT.loading[lang] || WIDGET_TEXT.loading.en, 'loading');
+
+            try {
+                const token = localStorage.getItem('verifyr_access_token');
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = 'Bearer ' + token;
+
+                const res = await fetch(API_BASE + '/query', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        question,
+                        model: 'gpt-5-mini',
+                        language: lang,
+                        conversation_history: widgetHistory.slice(0, -1),
+                        quiz_profile: getQuizProfile()
+                    })
+                });
+
+                loadingEl.remove();
+
+                if (!res.ok) throw new Error('API error ' + res.status);
+
+                const data = await res.json();
+                const answer = data.answer || data.detail || '—';
+                appendMessage(answer, 'assistant');
+                widgetHistory.push({ role: 'assistant', content: answer });
+
+            } catch(e) {
+                loadingEl.remove();
+                appendMessage(lang === 'de' ? 'Fehler – bitte erneut versuchen.' : 'Error – please try again.', 'assistant');
+            }
+
+            isLoading = false;
+            sendBtn.disabled = false;
+            input.focus();
+        }
+    })();
+    </script>
 
     <!-- ========================================
          CODE PROTECTION

@@ -164,7 +164,10 @@ class ResultsController {
             weaknesses: { de: 'Schwächen', en: 'Weaknesses' },
             verifiedTests: { de: 'Neutral Verifizierte Tests zusammengefasst', en: 'Neutral verified tests summarized' },
             forumDiscussion: { de: 'Forum Diskussion und Review', en: 'Forum discussion and review' },
-            orderAt: { de: 'Bestellen für', en: 'Order for' }
+            amazonBtn: { de: 'Bei Amazon.de', en: 'Buy at Amazon.de' },
+            ebayBtn:   { de: 'Bei eBay.de',   en: 'Buy at eBay.de' },
+            mmBtn:     { de: 'Bei Media Markt', en: 'Buy at Media Markt' },
+            orderAt:   { de: 'Bestellen für', en: 'for' }
         };
 
         card.innerHTML = `
@@ -220,13 +223,13 @@ class ResultsController {
             <div class="purchase-section">
                 <div class="purchase-buttons">
                     <a href="https://amazon.de" target="_blank" class="purchase-button purchase-button-1">
-                        Bei Amazon.de<br>${t.orderAt[this.currentLanguage]} 778€
+                        ${t.amazonBtn[this.currentLanguage]}<br>${t.orderAt[this.currentLanguage]} 778€
                     </a>
                     <a href="https://ebay.de" target="_blank" class="purchase-button purchase-button-2">
-                        Bei eBay.de<br>${t.orderAt[this.currentLanguage]} 799€
+                        ${t.ebayBtn[this.currentLanguage]}<br>${t.orderAt[this.currentLanguage]} 799€
                     </a>
                     <a href="#" class="purchase-button purchase-button-3">
-                        Bei Media Markt<br>${t.orderAt[this.currentLanguage]} 849€
+                        ${t.mmBtn[this.currentLanguage]}<br>${t.orderAt[this.currentLanguage]} 849€
                     </a>
                 </div>
             </div>

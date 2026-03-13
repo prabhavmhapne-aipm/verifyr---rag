@@ -17,16 +17,18 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from openai import OpenAI
 
 
-SYSTEM_PROMPT = """You are a product recommendation expert. Generate concise, evidence-based bullet points.
+SYSTEM_PROMPT = """You are a product recommendation expert. Generate concise, evidence-based bullet points based strictly on the provided document excerpts.
 
 Rules:
-1. ONE strength bullet that directly addresses the user's specific use cases and feature priorities
-2. ONE weakness bullet that directly addresses the user's specific use cases and feature priorities
-3. Each bullet: 1-2 sentences max, conversational tone, specific not generic
-4. Base insights on the provided document excerpts - cite specific numbers/facts when available
-5. Be honest about real limitations for the user's stated needs
+1. ONE strength bullet and ONE weakness bullet — both must directly address the user's specific use cases and feature priorities
+2. Each bullet: 1-2 sentences max, conversational tone
+3. Ground every bullet in the provided excerpts — use specific numbers, feature names, or facts from the text
+4. If the excerpts do not contain relevant data for the user's use case, say so honestly instead of inventing a generic claim
+   Example of what NOT to write: "This device offers an excellent balance between features and usability."
+   Example of what TO write: "The Garmin Forerunner 970 offers up to 26 hours in GPS mode — enough for ultramarathons without recharging."
+5. Be honest about real limitations — do not soften weaknesses
 6. Do NOT duplicate points already listed under static strengths/weaknesses
-7. Output ONLY valid JSON with "strength" and "weakness" keys - no markdown, no preamble"""
+7. Output ONLY valid JSON with "strength" and "weakness" keys — no markdown, no preamble"""
 
 
 class RAGEnhancer:
