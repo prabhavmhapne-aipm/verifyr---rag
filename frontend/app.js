@@ -45,7 +45,7 @@ const TRANSLATIONS = {
 
         // Footer
         inputNote: "Enter zum Senden",
-        beta: "BETA - KI kann Fehler machen, Antworten auf Richtigkeit prüfen"
+        beta: "BETA - Verifyr nutzt KI und kann Fehler machen. Bitte überprüfe die Antworten."
     },
     en: {
         // Header
@@ -73,7 +73,7 @@ const TRANSLATIONS = {
 
         // Footer
         inputNote: "Press Enter to send",
-        beta: "BETA - AI can make mistakes, check responses for accuracy"
+        beta: "BETA - Verifyr uses AI and can make mistakes. Please double-check responses for accuracy."
     }
 };
 
