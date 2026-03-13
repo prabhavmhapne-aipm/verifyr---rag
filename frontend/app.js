@@ -17,6 +17,79 @@ let currentSession = null;
 let SUPABASE_URL = '';
 let SUPABASE_ANON_KEY = '';
 
+// Quiz label maps — mirrors frontend/quiz/data/categories.json, use-cases.json, features.json, budget.js
+const QUIZ_CATEGORY_LABELS = {
+    "smartwatch_fitness": { en: "Smartwatch & Fitness Trackers", de: "Smartwatch & Fitnesstrackers" },
+    "recovery_sleep":     { en: "Recovery & Sleep",              de: "Recovery & Sleep" },
+    "heart_rate_monitors":{ en: "Heart Rate Monitors",           de: "Herzfrequenzmesser" },
+    "sport_earbuds":      { en: "Sport Earbuds",                 de: "Sport Earbuds" },
+    "metabolic_monitors": { en: "Metabolic Monitors",            de: "Metabolische Monitore" },
+    "womens_health":      { en: "Women's Health Tech",           de: "Frauen Health Tech" }
+};
+
+const QUIZ_USE_CASE_LABELS = {
+    "lifestyle_fitness":      { en: "Lifestyle & Fitness",        de: "Lifestyle & Fitness" },
+    "running_cycling":        { en: "Running & Cycling",          de: "Laufen & Fahrradfahren" },
+    "hiking":                 { en: "Hiking",                     de: "Wandern" },
+    "swimming":               { en: "Swimming",                   de: "Schwimmen" },
+    "health_wellbeing":       { en: "Health & Wellbeing",         de: "Health & Wellbeing" },
+    "competition_performance":{ en: "Competition & Performance",  de: "Wettkampf & Leistung" }
+};
+
+const QUIZ_FEATURE_LABELS = {
+    "light_comfortable":    { en: "Light & Comfortable",          de: "Leicht & Komfortabel" },
+    "long_battery":         { en: "Long Battery Life",            de: "Lange Akkulaufzeit" },
+    "water_resistance":     { en: "Waterproof & Robust",          de: "Wasserdicht & Robust" },
+    "gps_accuracy":         { en: "Precise GPS & Sensors",        de: "Präzise GPS & Sensoren" },
+    "smartphone_independent":{ en: "Smartphone Independent",      de: "Smartphone unabhängig" },
+    "app_ecosystem":        { en: "App Integration & Ecosystem",  de: "App Integration & Ecosystem" },
+    "design_modern":        { en: "Digital, Smart & Modern",      de: "Digital, Smart & Modern" },
+    "design_classic":       { en: "Analog, Smart & Classic",      de: "Analog, Smart & Klassich" },
+    "with_display":         { en: "With Display",                 de: "Mit Display" },
+    "no_display":           { en: "Without Display / Discreet",   de: "Ohne Display / Diskret" },
+    "sleep_monitor":        { en: "Sleep Monitor",                de: "Sleep Monitor" },
+    "stress_monitor":       { en: "Body / Stress Monitor",        de: "Body / Stress Monitor" },
+    "ecg_hrv":              { en: "ECG / HRV Monitor",            de: "EKG / HRV Monitor" },
+    "vo2_max":              { en: "VO2 Max Tracker",              de: "VO2 Max Tracker" }
+};
+
+const QUIZ_BUDGET_LABELS = {
+    "budget":  { en: "Budget (under €150)",    de: "Budget (unter €150)" },
+    "mid":     { en: "Mid-range (€150–€350)",  de: "Mittelklasse (€150–€350)" },
+    "premium": { en: "Premium (€350+)",        de: "Premium (€350+)" }
+};
+
+/**
+ * Reads verifyr_quiz_answers from localStorage and returns a
+ * human-readable profile string in the current language, or null if no quiz data exists.
+ */
+function getQuizProfileString() {
+    try {
+        const raw = localStorage.getItem('verifyr_quiz_answers');
+        if (!raw) return null;
+        const qa = JSON.parse(raw);
+        if (!qa || !qa.category) return null;
+
+        const lang = currentLanguage || 'de';
+        const resolve = (map, id) => (map[id] && map[id][lang]) || (map[id] && map[id]['en']) || id;
+
+        const category = resolve(QUIZ_CATEGORY_LABELS, qa.category);
+        const useCases = (qa.useCases || []).map(id => resolve(QUIZ_USE_CASE_LABELS, id)).join(', ');
+        const budget   = resolve(QUIZ_BUDGET_LABELS, qa.budget || '');
+        const features = (qa.features || []).map(id => resolve(QUIZ_FEATURE_LABELS, id)).join(', ');
+
+        const parts = [`Category: ${category}`];
+        if (useCases) parts.push(`Use Cases: ${useCases}`);
+        if (budget && qa.budget) parts.push(`Budget: ${budget}`);
+        if (features) parts.push(`Feature Priorities: ${features}`);
+
+        return parts.join(' | ');
+    } catch (e) {
+        console.warn('Could not read quiz profile from localStorage:', e);
+        return null;
+    }
+}
+
 // Unified Translations - Single source of truth for all UI text
 const TRANSLATIONS = {
     de: {
@@ -755,7 +828,8 @@ async function handleSend() {
                 model: selectedModel,
                 language: currentLanguage,
                 conversation_history: conversationHistory.slice(0, -1), // Exclude current message (already sent as question)
-                conversation_id: currentConversationId
+                conversation_id: currentConversationId,
+                quiz_profile: getQuizProfileString()
             })
         });
 

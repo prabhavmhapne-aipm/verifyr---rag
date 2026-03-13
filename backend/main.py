@@ -74,6 +74,7 @@ class QueryRequest(BaseModel):
     )
     conversation_id: Optional[str] = Field(default=None, description="Conversation ID for tracking")
     skip_langfuse_trace: Optional[bool] = Field(default=False, description="Skip Langfuse trace creation (for experiment runs where trace is created externally)")
+    quiz_profile: Optional[str] = Field(default=None, description="Human-readable quiz profile resolved on the frontend, e.g. 'Category: Smartwatch | Use Cases: Running | Budget: Mid-range | Feature Priorities: GPS, Battery'")
 
 
 class Source(BaseModel):
@@ -553,7 +554,8 @@ async def query(
             request.question,
             retrieved_chunks,
             language=request.language or "en",
-            conversation_history=request.conversation_history or []
+            conversation_history=request.conversation_history or [],
+            quiz_profile=request.quiz_profile
         )
 
         generation_time_ms = int((time.time() - generation_start) * 1000)

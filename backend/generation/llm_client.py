@@ -322,7 +322,8 @@ Direct, honest, and genuinely helpful — like a knowledgeable friend, not a sal
         query: str,
         retrieved_chunks: List[Dict[str, Any]],
         language: str = "en",
-        conversation_history: Optional[List[Dict[str, str]]] = None
+        conversation_history: Optional[List[Dict[str, str]]] = None,
+        quiz_profile: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Generate answer from query and retrieved chunks.
@@ -341,8 +342,9 @@ Direct, honest, and genuinely helpful — like a knowledgeable friend, not a sal
 
         # Create user prompt with explicit language instruction
         language_instruction = "English" if language == "en" else "German"
+        profile_block = f"User Profile: {quiz_profile}\n\n" if quiz_profile else ""
 
-        user_prompt = f"""Context: {context}
+        user_prompt = f"""{profile_block}Context: {context}
 
 Question: {query}
 
