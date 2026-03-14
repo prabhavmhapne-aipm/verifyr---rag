@@ -38,3 +38,7 @@ docs/
 # Claude Code
 .claude/
 CLAUDE.md
+
+# Local only files
+architecture-portfolio.html
+.env.example
