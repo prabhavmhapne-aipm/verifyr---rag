@@ -22,8 +22,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.verifyr.de">
-    <meta property="og:title" content="Verifyr – Your trusted AI Product Recommender">
-    <meta property="og:description" content="Brand-independent AI assistant for health-tech wearables. Get neutral, source-backed recommendations for smartwatches, fitness trackers & rings – in seconds.">
+    <meta property="og:title" content="Your trusted AI Product Recommender - Verifyr">
+    <meta property="og:description" content="Brand-independent AI assistant that compares and recommends Health-Tech products, curates expert reviews, and guides you from pre-purchase questions to post-purchase support — neutral, transparent, and in seconds.">
     <meta property="og:image" content="https://www.verifyr.de/images/og-image.png">
     <meta property="og:locale" content="en_US">
     <meta property="og:locale:alternate" content="de_DE">
@@ -31,14 +31,88 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://www.verifyr.de">
-    <meta property="twitter:title" content="Verifyr – Your trusted AI Product Recommender">
-    <meta property="twitter:description" content="Brand-independent AI assistant for health-tech wearables. Neutral, transparent recommendations in seconds.">
+    <meta property="twitter:title" content="Your trusted AI Product Recommender - Verifyr">
+    <meta property="twitter:description" content="Brand-independent AI assistant that compares and recommends Health-Tech products, curates expert reviews, and guides you from pre-purchase questions to post-purchase support — neutral, transparent, and in seconds.">
     <meta property="twitter:image" content="https://www.verifyr.de/images/og-image.png">
 
     <!-- Creator Attribution -->
     <meta property="article:author" content="Prabhav Mhapne">
     <meta name="creator" content="Prabhav Mhapne">
-    
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://www.verifyr.de/#website",
+          "url": "https://www.verifyr.de",
+          "name": "Verifyr",
+          "description": "KI-Produktberater für Wearables – neutral, transparent, quellenbasiert",
+          "inLanguage": ["de", "en"],
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://www.verifyr.de/chat.html?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://www.verifyr.de/#organization",
+          "name": "Verifyr",
+          "url": "https://www.verifyr.de",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.verifyr.de/images/og-image.png",
+            "width": 1200,
+            "height": 630
+          },
+          "description": "Brand-independent AI assistant for comparing health-tech wearables – smartwatches, fitness trackers and rings",
+          "founder": {
+            "@type": "Person",
+            "name": "Prabhav Mhapne"
+          },
+          "areaServed": ["DE", "AT", "CH"],
+          "knowsAbout": ["Smartwatch", "Fitness Tracker", "Wearables", "Health Tech", "Produktvergleich", "Kaufberatung"]
+        },
+        {
+          "@type": ["SoftwareApplication", "WebApplication"],
+          "@id": "https://www.verifyr.de/#app",
+          "name": "Verifyr – AI Wearable Comparison & Recommender",
+          "url": "https://www.verifyr.de",
+          "applicationCategory": "ShoppingApplication",
+          "applicationSubCategory": "Product Comparison",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires JavaScript",
+          "inLanguage": ["de", "en"],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+          },
+          "description": "KI-gestützter Produktvergleich für Smartwatches, Fitness Tracker und Gesundheits-Wearables. Neutral, quellenbasiert und in Sekunden.",
+          "featureList": [
+            "AI-powered product comparison",
+            "Neutral brand-independent recommendations",
+            "Source-backed answers with citations",
+            "Smartwatch, fitness tracker & ring comparison",
+            "Multi-language support (DE/EN)"
+          ],
+          "screenshot": "https://www.verifyr.de/images/og-image.png",
+          "author": {
+            "@id": "https://www.verifyr.de/#organization"
+          },
+          "publisher": {
+            "@id": "https://www.verifyr.de/#organization"
+          }
+        }
+      ]
+    }
+    </script>
 
     <!-- Prevent EN→DE language flicker on load -->
     <script>(function(){if(localStorage.getItem('verifyr-lang')==='en')document.documentElement.classList.add('lang-en');})();</script>

@@ -5,6 +5,8 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /api/
+Disallow: /quiz/loading.html
+Disallow: /reset-password.html
 
 # Sitemap location
 Sitemap: https://www.verifyr.de/sitemap.xml
