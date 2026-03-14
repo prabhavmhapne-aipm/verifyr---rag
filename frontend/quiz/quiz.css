@@ -63,32 +63,26 @@ html.lang-en .lang-option[data-lang="de"].active {
     gap: var(--spacing-base);
 }
 
-/* Nav buttons styling */
+/* Nav buttons styling — plain text links */
 .nav-btn {
-    padding: var(--spacing-xs) var(--spacing-base);
-    background: var(--white);
+    padding: 0.5rem 0.9rem;
+    background: transparent;
     color: var(--dark);
-    border: 2px solid var(--light-gray);
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.875rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
-.nav-btn svg {
-    display: block;
-    flex-shrink: 0;
-}
-
 .nav-btn:hover {
-    background: var(--primary-blue);
-    color: var(--white);
-    border-color: var(--primary-blue);
+    background: var(--light-blue);
+    color: var(--primary-blue);
     transform: translateY(-2px);
 }
 
@@ -99,7 +93,24 @@ html.lang-en .lang-option[data-lang="de"].active {
 .nav-btn.active {
     background: var(--primary-blue);
     color: var(--white);
-    border-color: var(--primary-blue);
+}
+
+/* Login button — matches index.html .nav-login */
+.nav-login-btn {
+    color: var(--primary-blue);
+    padding: 0.6rem 1.25rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 2px solid var(--primary-blue);
+    white-space: nowrap;
+}
+
+.nav-login-btn:hover {
+    background: var(--light-blue);
+    transform: translateY(-2px);
 }
 
 /* Hide mobile menu by default */

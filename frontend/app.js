@@ -89,7 +89,7 @@ function getQuizProfileString() {
 const TRANSLATIONS = {
     de: {
         // Header
-        heroBadge: "Dein intelligenter Health-Tech Shopping-Berater",
+        heroBadge: "Dein vertrauensvoller KI-Produktberater",
         logout: "Abmelden",
 
         // Sidebar
@@ -117,7 +117,7 @@ const TRANSLATIONS = {
     },
     en: {
         // Header
-        heroBadge: "Your intelligent Health-Tech shopping advisor",
+        heroBadge: "Your trusted AI Product Recommender",
         logout: "Logout",
 
         // Sidebar
@@ -179,6 +179,12 @@ async function init() {
     conversationSidebar = document.getElementById('conversationSidebar');
     conversationsList = document.getElementById('conversationsList');
 
+    // Show Results nav button if quiz has been completed
+    if (localStorage.getItem('verifyr_quiz_completed') === 'true') {
+        const resultsBtn = document.getElementById('navResultsBtn');
+        if (resultsBtn) resultsBtn.style.display = '';
+    }
+
     // Check authentication (returns boolean)
     const isAuthenticated = await checkAuth();
 
@@ -214,8 +220,10 @@ async function init() {
     // Sync selectedModel with actual dropdown value
     updateModelNote();
 
-    // Load conversations from localStorage
+    // Load conversations: localStorage first, then sync from server
     loadConversationsFromStorage();
+    renderConversationsList();
+    syncConversationsFromServer();
 
     // Check if we have an active conversation
     const activeConvId = localStorage.getItem('verifyr_active_conversation_id');
@@ -545,6 +553,47 @@ function loadConversationsFromStorage() {
 }
 
 /**
+ * Sync conversations from server — adds any server-side conversations
+ * not present in localStorage (e.g. from another device/browser)
+ */
+async function syncConversationsFromServer() {
+    const token = localStorage.getItem('verifyr_access_token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/conversations', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const serverConversations = data.conversations || [];
+
+        let updated = false;
+        for (const serverConv of serverConversations) {
+            const id = serverConv.conversation_id;
+            if (!conversations[id]) {
+                // Not in localStorage — add as a stub (messages loaded on demand)
+                conversations[id] = {
+                    id,
+                    title: serverConv.title || id,
+                    messages: null,
+                    createdAt: serverConv.created_at,
+                    updatedAt: serverConv.updated_at,
+                    isStub: true
+                };
+                updated = true;
+            }
+        }
+
+        if (updated) renderConversationsList();
+
+    } catch (err) {
+        console.warn('Could not sync conversations from server:', err);
+    }
+}
+
+/**
  * Save current conversation to localStorage
  */
 function saveConversationToStorage() {
@@ -620,15 +669,38 @@ function createNewConversation() {
 }
 
 /**
- * Load a conversation by ID
+ * Load a conversation by ID — fetches from server if it's a stub
  */
-function loadConversation(conversationId) {
+async function loadConversation(conversationId) {
     if (!conversations[conversationId]) {
         console.error('Conversation not found:', conversationId);
         return;
     }
 
     const conversation = conversations[conversationId];
+
+    // If stub (server-only, no local messages), fetch full conversation first
+    if (conversation.isStub) {
+        const token = localStorage.getItem('verifyr_access_token');
+        try {
+            const response = await fetch(`/conversations/${conversationId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+
+            conversation.messages = data.messages.map(m => ({ role: m.role, content: m.content }));
+            conversation.isStub = false;
+
+            // Persist to localStorage now that we have full data
+            localStorage.setItem('verifyr_conversations', JSON.stringify(
+                Object.fromEntries(Object.entries(conversations).filter(([, v]) => !v.isStub))
+            ));
+        } catch (err) {
+            console.error('Failed to load conversation from server:', err);
+            return;
+        }
+    }
 
     // Set as active conversation
     currentConversationId = conversationId;
@@ -647,7 +719,6 @@ function loadConversation(conversationId) {
         if (msg.role === 'user') {
             displayUserMessage(msg.content);
         } else if (msg.role === 'assistant') {
-            // For assistant messages, we might not have sources anymore, so display without them
             displayAssistantMessage(msg.content, [], null);
         }
     });
@@ -686,14 +757,44 @@ function renderConversationsList() {
         }
 
         item.innerHTML = `
-            <div class="conversation-title">${escapeHtml(conv.title)}</div>
-            <div class="conversation-timestamp">${formatTimestamp(conv.updatedAt)}</div>
+            <div class="conversation-item-content">
+                <div class="conversation-title">${escapeHtml(conv.title)}</div>
+                <div class="conversation-timestamp">${formatTimestamp(conv.updatedAt)}</div>
+            </div>
+            <button class="conversation-delete-btn" title="Delete conversation" onclick="deleteConversation(event, '${conv.id}')">×</button>
         `;
 
-        item.onclick = () => loadConversation(conv.id);
+        item.querySelector('.conversation-item-content').addEventListener('click', () => loadConversation(conv.id));
 
         conversationsList.appendChild(item);
     });
+}
+
+/**
+ * Delete a conversation from both localStorage and server
+ */
+async function deleteConversation(event, conversationId) {
+    event.stopPropagation();
+
+    // Remove from localStorage
+    delete conversations[conversationId];
+    localStorage.setItem('verifyr_conversations', JSON.stringify(conversations));
+
+    // If it was the active conversation, start fresh
+    if (currentConversationId === conversationId) {
+        startNewConversation();
+    } else {
+        renderConversationsList();
+    }
+
+    // Delete from server (fire and forget — don't block UI)
+    const token = localStorage.getItem('verifyr_access_token');
+    if (token) {
+        fetch(`/conversations/${conversationId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        }).catch(err => console.warn('Server delete failed:', err));
+    }
 }
 
 /**

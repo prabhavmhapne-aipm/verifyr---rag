@@ -74,8 +74,10 @@
             <div class="nav-right desktop-nav">
                 <a href="/" class="nav-btn">Home</a>
                 <a href="/quiz/category.html" class="nav-btn active">Quiz</a>
+                <a href="/quiz/results.html" class="nav-btn" id="navResultsBtn" style="display:none;">Results</a>
                 <a href="/chat.html" class="nav-btn">Chat</a>
                 <a href="/admin.html" class="nav-btn admin-only" style="display: none;">Admin</a>
+                <a href="/auth.html" class="nav-login-btn" id="navLoginBtn" style="display:none;">Login</a>
             </div>
         </nav>
 
@@ -222,6 +224,18 @@
                     e.preventDefault();
                 }
             });
+        })();
+    </script>
+    <script>
+        (function(){
+            if (localStorage.getItem("verifyr_quiz_completed") === "true") {
+                var rb = document.getElementById("navResultsBtn");
+                if (rb) rb.style.display = "";
+            }
+            if (!localStorage.getItem("verifyr_access_token")) {
+                var btn = document.getElementById("navLoginBtn");
+                if (btn) btn.style.display = "";
+            }
         })();
     </script>
 </body>

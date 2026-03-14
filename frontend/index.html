@@ -40,18 +40,20 @@
     <meta name="creator" content="Prabhav Mhapne">
     
 
+    <!-- Prevent EN→DE language flicker on load -->
+    <script>(function(){if(localStorage.getItem('verifyr-lang')==='en')document.documentElement.classList.add('lang-en');})();</script>
+
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="images/favicon-192x192.png">
 
+    <!-- Self-hosted fonts — GDPR compliant -->
+    <link rel="stylesheet" href="/fonts/fonts.css">
+
     <!-- Resource Hints for Performance -->
     <link rel="dns-prefetch" href="https://aoeskfvjqlnxpwerzdxh.supabase.co">
-    <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 
     <!-- Google Analytics 4 with Consent Mode -->
     <script>
@@ -229,6 +231,18 @@
             color: var(--primary-blue);
         }
 
+        /* Correct toggle active state before JS runs (prevents EN→DE flicker) */
+        html.lang-en .lang-option[data-lang="en"] {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+        html.lang-en .lang-option[data-lang="de"].active {
+            background: transparent;
+            color: var(--gray);
+            box-shadow: none;
+        }
+
         .nav-login {
             color: var(--primary-blue);
             padding: 0.75rem 1.5rem;
@@ -294,9 +308,29 @@
             .hero-video-layout {
                 flex-direction: column;
                 gap: 2rem;
+                padding: 1rem 1.25rem;
+                padding-top: calc(1rem + 115px);
             }
             .hero {
                 text-align: center;
+            }
+            .video-section {
+                width: 100%;
+                max-width: 100%;
+            }
+            .product-tour-btn {
+                padding: 0.5rem 0.65rem 0.5rem 1rem;
+                gap: 0.5rem;
+            }
+            .product-tour-btn-title {
+                font-size: 0.82rem;
+            }
+            .product-tour-btn-sub {
+                font-size: 0.68rem;
+            }
+            .product-tour-play {
+                width: 32px;
+                height: 32px;
             }
         }
 
@@ -354,20 +388,12 @@
 
         .hero h1 .highlight {
             color: var(--primary-blue);
-            position: relative;
-            display: inline-block;
-        }
-
-        .hero h1 .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 0.1em;
-            left: 0;
-            width: 100%;
-            height: 0.15em;
-            background: linear-gradient(90deg, var(--primary-blue), var(--accent));
-            opacity: 0.3;
-            border-radius: 10px;
+            display: inline;
+            text-decoration: underline;
+            text-decoration-color: rgba(59, 130, 246, 0.3);
+            text-decoration-thickness: 0.12em;
+            text-underline-offset: 0.15em;
+            text-decoration-skip-ink: none;
         }
 
         .hero p {
@@ -388,6 +414,10 @@
             width: 100%;
             flex-wrap: wrap;
             animation: fadeInUp 0.6s ease 0.6s backwards;
+        }
+
+        .hero-form-wrapper {
+            animation: fadeInUp 0.6s ease 0.8s backwards;
         }
 
         .stat {
@@ -929,9 +959,18 @@
         }
 
         .submit-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.75;
             cursor: not-allowed;
-            animation: none;
+        }
+
+        @keyframes btn-unlock-flash {
+            0%   { box-shadow: 0 0 0 0 rgba(99, 179, 237, 1), 0 4px 20px rgba(59, 130, 246, 0.5); transform: translateY(0) scale(1); }
+            55%  { box-shadow: 0 0 0 20px rgba(99, 179, 237, 0), 0 8px 40px rgba(59, 130, 246, 0.65); transform: translateY(-2px) scale(1.03); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0), 0 4px 14px rgba(59, 130, 246, 0.3); transform: translateY(0) scale(1); }
+        }
+
+        .submit-btn.btn-unlocked {
+            animation: btn-unlock-flash 0.55s ease-out forwards;
         }
 
         .pilot-note {
@@ -968,7 +1007,7 @@
         /* Responsive */
         @media (max-width: 768px) {
             nav {
-                padding: 1rem;
+                padding: 0.65rem 1rem;
             }
 
             .nav-left {
@@ -1020,6 +1059,11 @@
                 margin: 0 auto;
             }
 
+            .hero-form-wrapper {
+                padding-top: 2rem;
+                animation: none;
+            }
+
             .email-form {
                 flex-direction: row;
                 border-radius: 50px;
@@ -1038,6 +1082,43 @@
                 font-size: 0.9rem;
                 white-space: nowrap;
                 animation: none;
+            }
+
+            .consent-checkbox-row {
+                width: 100%;
+                padding: 0 0.5rem;
+                box-sizing: border-box;
+            }
+
+            .consent-checkbox-label {
+                font-size: 0.7rem;
+                white-space: normal !important;
+                text-align: left;
+                line-height: 1.4;
+                align-items: flex-start;
+            }
+
+            .consent-checkbox-label span,
+            .consent-checkbox-label span span {
+                white-space: normal !important;
+            }
+
+            .consent-checkbox-label input[type="checkbox"] {
+                margin-top: 2px;
+                flex-shrink: 0;
+            }
+
+            .trust-badges-row {
+                gap: 1rem;
+                justify-content: center;
+            }
+
+            .trust-badge-title {
+                font-size: 0.78rem;
+            }
+
+            .trust-badge-sub {
+                font-size: 0.68rem;
             }
 
             .hero-stats {
@@ -1262,6 +1343,223 @@
             font-weight: 600;
         }
 
+        /* Product Tour Button */
+        .product-tour-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(100, 116, 139, 0.72);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 50px;
+            padding: 0.75rem 0.9rem 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+            text-align: left;
+        }
+
+        .product-tour-btn:hover {
+            background: rgba(100, 116, 139, 0.88);
+            transform: translate(-50%, -50%) scale(1.04);
+        }
+
+        .product-tour-btn-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .product-tour-btn-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .product-tour-btn-sub {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .product-tour-play {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .product-tour-btn:hover .product-tour-play {
+            transform: scale(1.08);
+        }
+
+        .product-tour-play::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 10px solid #0F172A;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            margin-left: 3px;
+        }
+
+        /* Video Lightbox */
+        .video-lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 10002;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .video-lightbox.active {
+            display: flex;
+        }
+
+        .video-lightbox-inner {
+            width: 100%;
+            max-width: 1050px;
+            position: relative;
+        }
+
+        .video-lightbox-close {
+            position: absolute;
+            top: -2.75rem;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .video-lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        .video-lightbox-frame {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .video-lightbox-frame iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Consent Checkbox */
+        .consent-checkbox-row {
+            margin-top: 0.6rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .consent-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .consent-checkbox-label input[type="checkbox"] {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+        }
+
+        .consent-checkbox-label span {
+            font-size: 0.72rem;
+            color: var(--gray);
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+
+        .consent-checkbox-label span a {
+            color: var(--primary-blue);
+            text-decoration: underline;
+        }
+
+        /* Trust Badge Cards */
+        .trust-badges-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .trust-badge-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .trust-badge-icon svg {
+            border-radius: 3px;
+            display: block;
+        }
+
+        .trust-badge-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.05rem;
+        }
+
+        .trust-badge-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .trust-badge-sub {
+            font-size: 0.72rem;
+            color: var(--gray);
+            line-height: 1.2;
+        }
+
         /* Footer Links */
         footer a {
             color: var(--primary-blue);
@@ -1441,6 +1739,30 @@
         .consent-toggle input[type="checkbox"]:disabled {
             cursor: not-allowed;
             opacity: 0.5;
+        }
+
+        .consent-item-list {
+            list-style: none;
+            margin: 8px 0 0 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .consent-item-list li {
+            font-size: 12px;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+
+        .consent-item-list code {
+            font-family: monospace;
+            font-size: 11px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            padding: 1px 4px;
+            color: #475569;
         }
 
         /* Mobile adjustments */
@@ -1651,6 +1973,13 @@
         </div>
     </div>
 
+    <!-- SVG sprite for reusable flag parts -->
+    <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <polygon id="eu-star" fill="#FFCC00" points="0,-1.1 0.33,-0.45 1.05,-0.34 0.52,0.18 0.65,0.9 0,0.55 -0.65,0.9 -0.52,0.18 -1.05,-0.34 -0.33,-0.45"/>
+        </defs>
+    </svg>
+
     <div class="bg-gradient"></div>
 
     <nav>
@@ -1696,37 +2025,87 @@
                 </div>
             </div>
 
-            <div style="margin-top: auto; padding-top: 3.5rem; text-align: center; width: 100%;">
+            <div class="hero-form-wrapper" style="margin-top: auto; padding-top: 3.5rem; text-align: center; width: 100%;">
                 <form class="email-form" id="heroWaitlistForm" style="margin: 0 auto;">
                     <input
                         type="email"
                         class="email-input"
                         data-i18n-placeholder="cta.placeholder"
-                        placeholder="Your Email"
+                        placeholder="Deine E-Mail"
                         required
                         id="heroEmailInput"
                     >
-                    <button type="submit" class="submit-btn" id="heroSubmitBtn">
+                    <button type="submit" class="submit-btn" id="heroSubmitBtn" disabled>
                         <span data-i18n="cta.button">Join Waitlist</span>
                     </button>
                 </form>
-                <p class="pilot-note" style="font-size: 1rem; margin-top: 1.5rem;" data-i18n="cta.note">In Beta-Phase</p>
+                <div class="consent-checkbox-row">
+                    <label class="consent-checkbox-label">
+                        <input type="checkbox" id="heroConsentCheck" onchange="handleConsentToggle('heroSubmitBtn', this)">
+                        <span><span data-i18n="cta.consentPre">Ich stimme der Verarbeitung meiner E-Mail-Adresse gemäß der</span> <a href="#" onclick="openModal('datenschutz'); return false;" data-i18n="cta.consentLink">Datenschutzerklärung</a> <span data-i18n="cta.consentPost">zu.</span></span>
+                    </label>
+                </div>
+                <p class="pilot-note" style="font-size: 1rem; margin-top: 0.75rem;" data-i18n="cta.note">In Beta-Phase</p>
                 <div id="heroFormMessage"></div>
+                <div class="trust-badges-row" style="margin-top: 1rem;">
+                    <div class="trust-badge-card">
+                        <span class="trust-badge-icon">
+                            <svg width="28" height="19" viewBox="0 0 28 19" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="28" height="19" fill="#003399"/>
+                                <use href="#eu-star" transform="translate(14,3.5)"/>
+                                <use href="#eu-star" transform="translate(17,4.3)"/>
+                                <use href="#eu-star" transform="translate(19.2,6.5)"/>
+                                <use href="#eu-star" transform="translate(20,9.5)"/>
+                                <use href="#eu-star" transform="translate(19.2,12.5)"/>
+                                <use href="#eu-star" transform="translate(17,14.7)"/>
+                                <use href="#eu-star" transform="translate(14,15.5)"/>
+                                <use href="#eu-star" transform="translate(11,14.7)"/>
+                                <use href="#eu-star" transform="translate(8.8,12.5)"/>
+                                <use href="#eu-star" transform="translate(8,9.5)"/>
+                                <use href="#eu-star" transform="translate(8.8,6.5)"/>
+                                <use href="#eu-star" transform="translate(11,4.3)"/>
+                            </svg>
+                        </span>
+                        <div class="trust-badge-text">
+                            <span class="trust-badge-title" data-i18n="trust.dsgvo">DSGVO-konform</span>
+                            <span class="trust-badge-sub" data-i18n="trust.hostedEU">Gehostet in der EU</span>
+                        </div>
+                    </div>
+                    <div class="trust-badge-card">
+                        <span class="trust-badge-icon">
+                            <svg width="28" height="19" viewBox="0 0 28 19" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="28" height="6.33" fill="#000"/>
+                                <rect y="6.33" width="28" height="6.34" fill="#DD0000"/>
+                                <rect y="12.67" width="28" height="6.33" fill="#FFCE00"/>
+                            </svg>
+                        </span>
+                        <div class="trust-badge-text">
+                            <span class="trust-badge-title" data-i18n="trust.madeIn">Made in Germany</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section class="video-section">
             <div class="video-container">
                 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 16px;">
-                    <iframe
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 16px;"
-                        src="https://www.youtube-nocookie.com/embed/tSk09vYgnoQ?rel=0&modestbranding=1&autoplay=1&mute=1"
-                        title="Verifyr Prototype Demo"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen>
-                    </iframe>
+                    <button class="product-tour-btn" onclick="openVideoLightbox()" data-i18n-title="video.tourBtn" data-i18n-sub="video.tourDuration">
+                        <div class="product-tour-btn-text">
+                            <span class="product-tour-btn-title" data-i18n="video.tourBtn">Watch a Product Tour</span>
+                            <span class="product-tour-btn-sub" data-i18n="video.tourDuration">1 Minute</span>
+                        </div>
+                        <div class="product-tour-play"></div>
+                    </button>
+                    <video
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 16px; object-fit: cover;"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        poster="/images/video-thumbnail.png">
+                        <source src="/videos/background-video.mp4" type="video/mp4">
+                    </video>
                 </div>
 
                 <p class="video-description">
@@ -1878,15 +2257,21 @@
                 type="email" 
                 class="email-input" 
                 data-i18n-placeholder="cta.placeholder"
-                placeholder="Your Email" 
+                placeholder="Deine E-Mail" 
                 required
                 id="emailInput"
             >
-            <button type="submit" class="submit-btn" id="submitBtn">
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>
                 <span data-i18n="cta.button">Join Waitlist</span>
             </button>
         </form>
-        
+        <div class="consent-checkbox-row">
+            <label class="consent-checkbox-label">
+                <input type="checkbox" id="earlyConsentCheck" onchange="handleConsentToggle('submitBtn', this)">
+                <span><span data-i18n="cta.consentPre">Ich stimme der Verarbeitung meiner E-Mail-Adresse gemäß der</span> <a href="#" onclick="openModal('datenschutz'); return false;" data-i18n="cta.consentLink">Datenschutzerklärung</a> <span data-i18n="cta.consentPost">zu.</span></span>
+            </label>
+        </div>
+
         <p class="pilot-note" data-i18n="cta.note">In Beta-Phase</p>
         
         <p class="pilot-note" style="margin-top: 0.5rem; color: var(--primary-blue); font-weight: 600;" data-i18n="cta.freeForever">
@@ -1912,7 +2297,58 @@
             <a onclick="openModal('datenschutz')" data-i18n="footer.privacy">Datenschutz</a> |
             <a onclick="openConsentModal()" data-i18n="footer.cookies">Cookie-Einstellungen</a>
         </p>
+
+        <div class="trust-badges-row" style="margin-top: 1.25rem;">
+            <div class="trust-badge-card">
+                <span class="trust-badge-icon">
+                    <svg width="28" height="19" viewBox="0 0 28 19" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="19" fill="#003399"/>
+                        <use href="#eu-star" transform="translate(14,3.5)"/>
+                        <use href="#eu-star" transform="translate(17,4.3)"/>
+                        <use href="#eu-star" transform="translate(19.2,6.5)"/>
+                        <use href="#eu-star" transform="translate(20,9.5)"/>
+                        <use href="#eu-star" transform="translate(19.2,12.5)"/>
+                        <use href="#eu-star" transform="translate(17,14.7)"/>
+                        <use href="#eu-star" transform="translate(14,15.5)"/>
+                        <use href="#eu-star" transform="translate(11,14.7)"/>
+                        <use href="#eu-star" transform="translate(8.8,12.5)"/>
+                        <use href="#eu-star" transform="translate(8,9.5)"/>
+                        <use href="#eu-star" transform="translate(8.8,6.5)"/>
+                        <use href="#eu-star" transform="translate(11,4.3)"/>
+                    </svg>
+                </span>
+                <div class="trust-badge-text">
+                    <span class="trust-badge-title" data-i18n="trust.dsgvo">DSGVO-konform</span>
+                    <span class="trust-badge-sub" data-i18n="trust.hostedEU">Gehostet in der EU</span>
+                </div>
+            </div>
+            <div class="trust-badge-card">
+                <span class="trust-badge-icon">
+                    <svg width="28" height="19" viewBox="0 0 28 19" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="6.33" fill="#000"/>
+                        <rect y="6.33" width="28" height="6.34" fill="#DD0000"/>
+                        <rect y="12.67" width="28" height="6.33" fill="#FFCE00"/>
+                    </svg>
+                </span>
+                <div class="trust-badge-text">
+                    <span class="trust-badge-title" data-i18n="trust.madeIn">Made in Germany</span>
+                </div>
+            </div>
+        </div>
     </footer>
+
+    <!-- Video Lightbox -->
+    <div class="video-lightbox" id="videoLightbox" onclick="handleLightboxClick(event)">
+        <div class="video-lightbox-inner">
+            <button class="video-lightbox-close" onclick="closeVideoLightbox()">&#x2715;</button>
+            <div class="video-lightbox-frame">
+                <iframe id="lightboxIframe" src="" title="Verifyr Product Tour"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen referrerpolicy="strict-origin-when-cross-origin">
+                </iframe>
+            </div>
+        </div>
+    </div>
 
     <!-- Impressum Modal -->
     <div id="impressum" class="modal">
@@ -2018,7 +2454,7 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('datenschutz')"></button>
             <h2>Datenschutzerklärung</h2>
-            
+
             <h3>1. Verantwortlicher</h3>
             <p>
                 Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br><br>
@@ -2028,209 +2464,196 @@
                 E-Mail: info@verifyr.de
             </p>
 
-            <h3>2. Erhebung und Speicherung personenbezogener Daten</h3>
-            <p>
-                Bei der Anmeldung zur Waitlist erheben wir folgende Daten:
-            </p>
-            <ul>
-                <li>E-Mail-Adresse: Die von Ihnen eingegebene E-Mail-Adresse</li>
-                <li>Zeitstempel: Datum und Uhrzeit der Anmeldung</li>
-            </ul>
+            <h3>2. Erhobene Daten und Zwecke</h3>
 
-            <h3>2.1 Nutzungsstatistiken (nur mit Ihrer Einwilligung)</h3>
-            <p>
-                Zur Validierung des Verifyr-Prototyps erfassen wir mit Ihrer <strong>ausdrücklichen Einwilligung</strong>
-                anonyme Nutzungsstatistiken:
-            </p>
+            <h3>2.1 Waitlist-Anmeldung</h3>
+            <p>Bei der Anmeldung zur Waitlist erheben wir folgende Daten:</p>
             <ul>
-                <li>Seitenaufrufe: Welche Seiten besucht werden</li>
-                <li>Button-Klicks: Wenn Sie auf Buttons wie "Early Access" klicken</li>
-                <li>Zeitstempel: Wann der Klick erfolgte</li>
+                <li><strong>E-Mail-Adresse:</strong> Zur Zusendung des Early-Access-Links und von Produktupdates</li>
+                <li><strong>Zeitstempel:</strong> Datum und Uhrzeit der Anmeldung</li>
             </ul>
             <p>
-                <strong>Wichtig:</strong> Diese Daten sind <u>vollständig anonymisiert</u>. Es werden keine IP-Adressen,
-                Cookies oder sonstige persönlich identifizierbaren Informationen gespeichert.
-                Eine Zuordnung zu Ihrer Person ist nicht möglich.
+                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO – Sie erteilen diese
+                durch Ankreuzen der Einwilligungs-Checkbox und Absenden des Formulars.<br>
+                <strong>Speicherdauer:</strong> Maximal 12 Monate ab Anmeldung, oder bis Sie die Löschung beantragen.
+            </p>
+
+            <h3>2.2 Anonyme Nutzungsstatistiken (nur mit Ihrer Einwilligung)</h3>
+            <p>
+                Mit Ihrer ausdrücklichen Einwilligung erfassen wir anonyme Nutzungsstatistiken über Supabase
+                (Seitenaufrufe, Button-Klicks, Zeitstempel). Diese Daten enthalten keinerlei personenbezogene
+                Informationen und können keiner Person zugeordnet werden.
             </p>
             <p>
-                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO
-                (freiwillige Zustimmung über Cookie-Banner).
+                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.<br>
+                <strong>Widerruf:</strong> Jederzeit über
+                <a href="#" onclick="openConsentModal(); return false;" style="color: var(--primary-blue); text-decoration: underline;">Cookie-Einstellungen</a>.
             </p>
+
+            <h3>2.3 Google Analytics 4 (nur mit Ihrer Einwilligung)</h3>
             <p>
-                <strong>Widerruf:</strong> Sie können Ihre Einwilligung jederzeit widerrufen, indem Sie auf
+                Mit Ihrer ausdrücklichen Einwilligung verwenden wir Google Analytics 4 (Google LLC, USA).
+                Dabei werden anonymisierte Nutzungsdaten erhoben (Seitenaufrufe, Interaktionen, Geräteinformationen,
+                gekürzte IP-Adresse). Consent Mode V1 ist aktiviert – Tracking startet erst nach Ihrer Zustimmung.
+            </p>
+            <ul>
+                <li>IP-Anonymisierung aktiv – vollständige IP wird nicht gespeichert</li>
+                <li>Datenlöschung nach 2 Monaten (Google Analytics Standardeinstellung)</li>
+            </ul>
+            <p>
+                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.<br>
+                <strong>Dienstleister:</strong> Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA –
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
+                <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">AVV</a><br>
+                <strong>Widerruf:</strong> Über
                 <a href="#" onclick="openConsentModal(); return false;" style="color: var(--primary-blue); text-decoration: underline;">Cookie-Einstellungen</a>
-                klicken und "Analytics & Statistiken" deaktivieren. Nach dem Widerruf werden keine weiteren Nutzungsstatistiken erfasst.
+                oder das <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out Add-on</a>.
             </p>
 
-            <h3>2.2 Google Analytics (nur mit Ihrer Einwilligung)</h3>
+            <h3>3. Lokaler Speicher (localStorage)</h3>
             <p>
-                Mit Ihrer <strong>ausdrücklichen Einwilligung</strong> verwenden wir Google Analytics 4,
-                einen Webanalysedienst der Google LLC („Google"), um die Nutzung unserer Website zu analysieren
-                und kontinuierlich zu verbessern.
-            </p>
-            <p><strong>Erhobene Daten:</strong></p>
-            <ul>
-                <li>Seitenaufrufe und besuchte Seiten</li>
-                <li>Nutzerinteraktionen (z.B. Button-Klicks, Formularabsendungen)</li>
-                <li>Anonymisierte IP-Adresse (vollständige IP wird NICHT gespeichert)</li>
-                <li>Geräteinformationen (Browsertyp, Betriebssystem)</li>
-                <li>Verweildauer und Navigation auf der Website</li>
-            </ul>
-            <p><strong>Zweck der Verarbeitung:</strong></p>
-            <ul>
-                <li>Analyse des Nutzerverhaltens zur Verbesserung der Website</li>
-                <li>Optimierung der Benutzerfreundlichkeit</li>
-                <li>Identifikation beliebter Inhalte und Funktionen</li>
-            </ul>
-            <p>
-                <strong>Datenschutzmaßnahmen:</strong>
+                Verifyr speichert folgende Daten ausschließlich lokal in Ihrem Browser (localStorage).
+                Diese Daten werden <strong>nicht an Server übertragen</strong> und verbleiben auf Ihrem Gerät.
+                Sie können diese jederzeit über die Browser-Einstellungen löschen.
             </p>
             <ul>
-                <li>IP-Anonymisierung aktiviert (vollständige IP wird NICHT gespeichert)</li>
-                <li>Werbe-Features deaktiviert (keine personalisierte Werbung)</li>
-                <li>Consent Mode V2 aktiviert (Tracking nur nach Einwilligung)</li>
-                <li>Datenverarbeitung bevorzugt auf EU-Servern</li>
+                <li><strong>verifyr-consent</strong> – Ihre Cookie-Einwilligungsentscheidung. Zweck: Merkung Ihrer Auswahl, damit das Banner nicht bei jedem Besuch erscheint. Speicherdauer: Persistent.</li>
+                <li><strong>verifyr-lang</strong> – Ihre Sprachpräferenz (DE/EN). Zweck: Anzeige der Website in Ihrer bevorzugten Sprache. Speicherdauer: Persistent.</li>
+                <li><strong>Quiz-Antworten</strong> (verifyr-quiz-*) – Ihre Auswahl im Produktberater-Quiz (Kategorie, Budget, Prioritäten). Zweck: Ergebnisanzeige ohne erneute API-Abfrage. Speicherdauer: Sitzungsbasiert.</li>
+                <li><strong>Konversationshistorie</strong> – Ihr Chat-Verlauf im KI-Assistenten. Zweck: Anzeige gespeicherter Gespräche innerhalb der App. Speicherdauer: Bis zur manuellen Löschung durch Sie.</li>
             </ul>
             <p>
-                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO
-                (freiwillige Zustimmung über Cookie-Banner).
-            </p>
-            <p>
-                <strong>Speicherdauer:</strong> Daten werden nach 14 Monaten automatisch gelöscht.
-            </p>
-            <p>
-                <strong>Dienstleister:</strong> Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA<br>
-                Datenschutzerklärung: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>
-            </p>
-            <p>
-                <strong>Widerruf:</strong> Sie können Ihre Einwilligung jederzeit widerrufen, indem Sie auf
-                <a href="#" onclick="openConsentModal(); return false;" style="color: var(--primary-blue); text-decoration: underline;">Cookie-Einstellungen</a>
-                klicken und "Analytics & Statistiken" deaktivieren. Sie können Google Analytics auch durch Installation des
-                <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Browser-Add-ons zur Deaktivierung von Google Analytics</a>
-                dauerhaft deaktivieren.
+                <strong>Rechtsgrundlage:</strong> Berechtigtes Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO
+                (technisch notwendige Funktionen) sowie Einwilligung für nicht notwendige Speicherungen.
             </p>
 
-            <h3>3. Zweck der Datenverarbeitung</h3>
-            <p>
-                Wir verwenden Ihre E-Mail-Adresse ausschließlich für folgende Zwecke:
-            </p>
+            <h3>4. Cookie- und Tracking-Inventar</h3>
+            <p>Die folgende Tabelle listet alle auf dieser Website verwendeten Cookies und Speichermechanismen:</p>
+
+            <p><strong>Notwendig (immer aktiv):</strong></p>
             <ul>
-                <li>Validierung des Verifyr-Prototyps</li>
-                <li>Zusendung von Produktinformationen und Updates</li>
-                <li>Versendung eines Early-Access-Links</li>
+                <li><strong>verifyr-consent</strong> | localStorage | Speichert Ihre Cookie-Einstellungen | Persistent</li>
+                <li><strong>verifyr-lang</strong> | localStorage | Speichert Ihre Sprachpräferenz | Persistent</li>
+                <li><strong>verifyr-quiz-*</strong> | localStorage | Quiz-Fortschritt und Ergebnisse | Sitzungsbasiert</li>
+                <li><strong>Konversationshistorie</strong> | localStorage | Chat-Verlauf | Persistent, manuell löschbar</li>
             </ul>
 
-            <h3>4. Rechtsgrundlage</h3>
-            <p>
-                Die Verarbeitung Ihrer E-Mail-Adresse erfolgt auf Grundlage Ihrer <strong>ausdrücklichen Einwilligung 
-                gemäß Art. 6 Abs. 1 lit. a DSGVO</strong>. Durch die Eingabe Ihrer E-Mail-Adresse und das Klicken 
-                auf den "Join Waitlist"-Button erklären Sie sich mit der Verarbeitung einverstanden.
-            </p>
-
-            <h3>5. Speicherdauer</h3>
-            <p>
-                Ihre E-Mail-Adresse wird gespeichert:
-            </p>
+            <p><strong>Analytics (nur mit Ihrer Einwilligung):</strong></p>
             <ul>
-                <li>Bis zum Launch von Verifyr oder</li>
-                <li>Bis Sie eine Löschung beantragen</li>
-                <li>Maximal 3 Monate ab Anmeldung</li>
+                <li><strong>_ga</strong> | Cookie | Google Analytics: Unterscheidet Nutzer anhand einer zufälligen ID | 2 Jahre</li>
+                <li><strong>_ga_1ZT0DR8VL1</strong> | Cookie | Google Analytics 4: Session-Status | 2 Jahre</li>
             </ul>
 
-            <h3>6. Weitergabe von Daten</h3>
+            <h3>5. Weitergabe von Daten an Dritte</h3>
             <p>
-                Ihre Daten werden nicht an Dritte zu Werbezwecken weitergegeben. 
-                Wir nutzen folgende vertrauenswürdige Dienstleister (Auftragsverarbeiter) zur technischen Bereitstellung:
+                Ihre Daten werden nicht zu Werbezwecken an Dritte weitergegeben.
+                Wir setzen folgende Auftragsverarbeiter ein, mit denen jeweils ein
+                Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO besteht:
             </p>
 
-            <p><strong>Hosting der Website und Backend:</strong></p>
+            <p><strong>Hosting (Website, Backend, RAG-System):</strong></p>
             <ul>
-                <li>Hostinger International Ltd. (Litauen, EU, DSGVO-konform)</li>
-                <li>Zweck: Bereitstellung und Auslieferung der Website, Backend-API und RAG-System</li>
-                <li>Serverstandort: VPS Frankfurt, Deutschland (Europa)</li>
-                <li>Servertyp: Virtueller Private Server (VPS) mit Ubuntu 22.04 LTS</li>
-                <li>Datenschutzerklärung: <a href="https://www.hostinger.com/privacy" target="_blank">hostinger.com/privacy</a></li>
+                <li>Hostinger International Ltd., Litauen (EU) – VPS Frankfurt, Deutschland</li>
+                <li><a href="https://www.hostinger.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
+                    <a href="https://www.hostinger.com/legal/data-processing-agreement" target="_blank" rel="noopener">AVV</a></li>
+            </ul>
+
+            <p><strong>Datenbank (E-Mail-Adressen, Statistiken):</strong></p>
+            <ul>
+                <li>Supabase Inc., USA – Server: AWS EU-Central-1, Frankfurt, Deutschland</li>
+                <li><a href="https://supabase.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
+                    <a href="https://supabase.com/legal/dpa" target="_blank" rel="noopener">AVV</a></li>
+            </ul>
+
+            <p><strong>Webanalyse (nur mit Einwilligung):</strong></p>
+            <ul>
+                <li>Google LLC, USA – EU-Server bevorzugt, SCC abgeschlossen</li>
+                <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
+                    <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">AVV</a></li>
+            </ul>
+
+            <h3>6. Ihre Rechte</h3>
+            <p>Sie haben gemäß DSGVO folgende Rechte:</p>
+            <ul>
+                <li><strong>Auskunft</strong> (Art. 15): Welche Daten wir über Sie gespeichert haben</li>
+                <li><strong>Berichtigung</strong> (Art. 16): Korrektur unrichtiger Daten</li>
+                <li><strong>Löschung</strong> (Art. 17): Vollständige Löschung Ihrer Daten</li>
+                <li><strong>Einschränkung</strong> (Art. 18): Beschränkung der Verarbeitung</li>
+                <li><strong>Widerruf</strong> (Art. 7 Abs. 3): Widerruf Ihrer Einwilligung jederzeit ohne Angabe von Gründen</li>
+                <li><strong>Beschwerde</strong> (Art. 77): Beschwerde bei der zuständigen Aufsichtsbehörde (LDI NRW, <a href="https://www.ldi.nrw.de" target="_blank" rel="noopener">ldi.nrw.de</a>)</li>
             </ul>
             <p>
-
-            <p><strong>Datenbank-Speicherung:</strong></p>
-            <ul>
-                <li>Supabase Inc. (USA, DSGVO-konform)</li>
-                <li>Zweck: Speicherung Ihrer E-Mail-Adresse und anonymer Nutzungsstatistiken</li>
-                <li>Serverstandort: AWS EU-Central-1 (Frankfurt, Deutschland)</li>
-                <li>Datenschutzerklärung: <a href="https://supabase.com/privacy" target="_blank">supabase.com/privacy</a></li>
-            </ul>
-
-            <p><strong>Webanalyse (nur mit Ihrer Einwilligung):</strong></p>
-            <ul>
-                <li>Google LLC (USA, DSGVO-konform mit Standardvertragsklauseln)</li>
-                <li>Zweck: Website-Analyse und Optimierung (siehe Abschnitt 2.2)</li>
-                <li>Serverstandort: EU-Server bevorzugt, teilweise USA</li>
-                <li>Datenschutzerklärung: <a href="https://policies.google.com/privacy" target="_blank">policies.google.com/privacy</a></li>
-            </ul>
-
-            </p><strong>Gespeicherte Datentypen:</strong></p>
-            <ul>
-                <li>Personenbezogene Daten: E-Mail-Adressen der Waitlist (siehe Abschnitt 2)</li>
-                <li>Anonyme Daten: Click-Statistiken ohne Personenbezug (siehe Abschnitt 2.1)</li>
-            </ul>
-
-            <p>
-            <ul>
-                Beide Dienstleister sind EU-DSGVO-konform und haben Standardvertragsklauseln (SCC) 
-                für Datentransfers abgeschlossen. Ihre Daten werden ausschließlich auf Servern 
-                innerhalb der Europäischen Union verarbeitet (Deutschland).
-            </ul>
-            </p
-
-
-            <h3>7. Ihre Rechte</h3>
-            <p>
-                Sie haben folgende Rechte bezüglich Ihrer personenbezogenen Daten:
-            </p>
-            <ul>
-                <li>Auskunftsrecht: Sie können Auskunft über Ihre gespeicherten Daten verlangen</li>
-                <li>Löschungsrecht: Sie können die Löschung Ihrer Daten jederzeit verlangen</li>
-                <li>Widerrufsrecht: Sie können Ihre Einwilligung jederzeit widerrufen</li>
-                <li>Beschwerderecht: Sie können sich bei einer Aufsichtsbehörde beschweren</li>
-            </ul>
-            <p>
-                Um eines dieser Rechte auszuüben, senden Sie einfach eine E-Mail an:
-                info@verifyr.de
-            </p>
-            <p>
-                Wir werden Ihre Anfrage innerhalb von 30 Tagen bearbeiten und Ihre Daten bei Wunsch vollständig löschen.
+                Zur Ausübung Ihrer Rechte genügt eine E-Mail an <strong>info@verifyr.de</strong>.
+                Wir bearbeiten Ihre Anfrage innerhalb von 30 Tagen.
             </p>
 
-            <h3>8. Datensicherheit</h3>
-            <p>
-                Wir nehmen den Schutz Ihrer Daten sehr ernst und setzen umfassende Sicherheitsmaßnahmen ein:
-            </p>
+            <h3>7. Datensicherheit</h3>
             <ul>
-                <li><strong>Verschlüsselung:</strong> TLS/SSL-Verschlüsselung für alle Datenübertragungen (HTTPS)</li>
-                <li><strong>Serverstandort:</strong> Dedizierter VPS in Frankfurt, Deutschland (EU-DSGVO-konform)</li>
-                <li><strong>Isolation:</strong> Virtueller Private Server mit erhöhter Sicherheit und Datenisolation</li>
-                <li><strong>Firewall:</strong> Konfigurierte Firewall zum Schutz vor unbefugten Zugriffen</li>
-                <li><strong>Datensparsamkeit:</strong> Ihre E-Mail-Adresse wird ausschließlich für die angegebenen Zwecke verwendet</li>
-                <li><strong>Regelmäßige Updates:</strong> Automatische Sicherheitsupdates auf dem Server</li>
+                <li><strong>Übertragung:</strong> TLS/SSL-Verschlüsselung (HTTPS) für alle Verbindungen</li>
+                <li><strong>Hosting:</strong> Dedizierter VPS in Frankfurt, Deutschland</li>
+                <li><strong>Schriftfonts:</strong> Selbst gehostet – kein Aufruf externer Font-Server</li>
+                <li><strong>Firewall & Updates:</strong> Konfigurierte Firewall, automatische Sicherheitsupdates</li>
+                <li><strong>Datensparsamkeit:</strong> Nur die für den jeweiligen Zweck notwendigen Daten werden erhoben</li>
             </ul>
+
+            <h3>8. Änderungen dieser Datenschutzerklärung</h3>
             <p>
-                Alle Daten werden ausschließlich auf Servern innerhalb der Europäischen Union verarbeitet.
+                Diese Datenschutzerklärung wird bei wesentlichen Änderungen an der Website oder der
+                Datenverarbeitung aktualisiert. Das Datum der letzten Aktualisierung ist unten angegeben.
             </p>
 
-            <h3>9. Änderungen dieser Datenschutzerklärung</h3>
-            <p>
-                Diese Datenschutzerklärung kann bei Bedarf angepasst werden. Die aktuelle Version 
-                ist stets auf dieser Website verfügbar.
-            </p>
-            
             <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--gray);">
-                <strong>Stand:</strong> 31. Januar 2026
+                <strong>Stand:</strong> 14. März 2026
             </p>
         </div>
     </div>
 
     <script>
+        // ============================================
+        // VIDEO LIGHTBOX
+        // ============================================
+        function openVideoLightbox() {
+            const lightbox = document.getElementById('videoLightbox');
+            const iframe = document.getElementById('lightboxIframe');
+            iframe.src = 'https://www.youtube-nocookie.com/embed/tSk09vYgnoQ?rel=0&modestbranding=1&autoplay=1';
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideoLightbox() {
+            const lightbox = document.getElementById('videoLightbox');
+            const iframe = document.getElementById('lightboxIframe');
+            lightbox.classList.remove('active');
+            iframe.src = '';
+            document.body.style.overflow = '';
+        }
+
+        function handleLightboxClick(e) {
+            if (e.target === document.getElementById('videoLightbox')) {
+                closeVideoLightbox();
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeVideoLightbox();
+        });
+
+        // ============================================
+        // CONSENT CHECKBOX TOGGLE
+        // ============================================
+        function handleConsentToggle(btnId, checkbox) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = !checkbox.checked;
+            if (checkbox.checked) {
+                btn.classList.remove('btn-unlocked');
+                void btn.offsetWidth; // force reflow to restart animation
+                btn.classList.add('btn-unlocked');
+                setTimeout(() => {
+                    btn.classList.remove('btn-unlocked');
+                }, 600);
+            }
+        }
+
         // ============================================
         // GLOBAL FUNCTIONS (must be defined first!)
         // ============================================
@@ -2238,7 +2661,7 @@
         // Translations Object
         const translations = {
             de: {
-                nav: { cta: "Try Verifyr", login: "Login" },
+                nav: { cta: "Try Verifyr", login: "Login", openChat: "Chat öffnen" },
                 hero: {
                     badge: "Dein vertrauensvoller KI-Produktberater",
                     title1: "Nie wieder stundenlang",
@@ -2251,8 +2674,11 @@
                 },
                 video: {
                     intro: "Du brauchst einen neuen Fitness-Tracker. Du öffnest 15 Tabs, vergleichst Specs, liest widersprüchliche Reviews – und weißt immer noch nicht, welchen du kaufen sollst. Kommt dir bekannt vor?",
-                    cta: "Sieh dir an, wie Verifyr deine perfekte Wahl findet"
+                    cta: "Sieh dir an, wie Verifyr deine perfekte Wahl findet",
+                    tourBtn: "Produkttour ansehen",
+                    tourDuration: "1 Minute"
                 },
+
                 problem: {
                     label: "Das Problem",
                     title: "Produktvergleich ist kompliziert",
@@ -2314,6 +2740,9 @@
                     }
                 },
                 trust: {
+                    dsgvo: "DSGVO-konform",
+                    hostedEU: "Gehostet in der EU",
+                    madeIn: "Made in Germany",
                     label: "Vertrauen & Sicherheit",
                     title: "Kaufentscheidungen mit Selbstvertrauen treffen",
                     description: "Mit Verifyr triffst du Kaufentscheidungen mit voller Überzeugung und Klarheit.",
@@ -2337,7 +2766,10 @@
                     placeholder: "Deine E-Mail",
                     button: "Join Waitlist",
                     note: "In Beta-Phase",
-                    freeForever: "Die App bleibt für dich immer kostenlos"
+                    freeForever: "Die App bleibt für dich immer kostenlos",
+                    consentPre: "Ich stimme der Verarbeitung meiner E-Mail-Adresse gemäß der",
+                    consentLink: "Datenschutzerklärung",
+                    consentPost: "zu."
                 },
                 footer: {
                     copyright: "© 2026 Verifyr",
@@ -2370,17 +2802,25 @@
                         necessary: {
                             title: "Notwendige Funktionen",
                             description: "Erforderlich für grundlegende Funktionen der Website (Session-Management, Formulare)",
-                            label: "Immer aktiv"
+                            label: "Immer aktiv",
+                            item1: "Speichert Ihre Cookie-Einstellungen (localStorage, dauerhaft)",
+                            item2: "Speichert Ihre Sprachpräferenz DE/EN (localStorage, dauerhaft)",
+                            item3: "Quiz-Antworten und Ergebnisse (localStorage, Sitzung)",
+                            item4: "Chat-Verlauf lokal (localStorage, dauerhaft)",
+                            item5: "Login-Session (localStorage, bis Abmeldung)"
                         },
                         analytics: {
                             title: "Analytics & Statistiken",
-                            description: "Hilft uns zu verstehen, wie Besucher die Website nutzen (Seitenaufrufe, Klicks, Navigation)"
+                            description: "Hilft uns zu verstehen, wie Besucher die Website nutzen (Seitenaufrufe, Klicks, Navigation)",
+                            item1: "Google Analytics Besucher-ID (Cookie, 2 Jahre)",
+                            item2: "Google Analytics Session-Status (Cookie, 2 Jahre)",
+                            item3: "Google Analytics Tages-Session (Cookie, 24 Stunden)"
                         }
                     }
                 }
             },
             en: {
-                nav: { cta: "Try Verifyr", login: "Login" },
+                nav: { cta: "Try Verifyr", login: "Login", openChat: "Open Chat" },
                 hero: {
                     badge: "Your trusted AI Product Recommender",
                     title1: "Never spend hours",
@@ -2393,8 +2833,11 @@
                 },
                 video: {
                     intro: "You need a new fitness tracker. You open 15 tabs comparing specs, read contradictory reviews, and still don't know which to buy. Sound familiar?",
-                    cta: "Watch how Verifyr finds your perfect match"
+                    cta: "Watch how Verifyr finds your perfect match",
+                    tourBtn: "Watch a Product Tour",
+                    tourDuration: "1 Minute"
                 },
+
                 problem: {
                     label: "The Problem",
                     title: "Product comparison is complicated",
@@ -2456,6 +2899,9 @@
                     }
                 },
                 trust: {
+                    dsgvo: "GDPR-compliant",
+                    hostedEU: "Hosted in the EU",
+                    madeIn: "Made in Germany",
                     label: "Trust & Confidence",
                     title: "Make purchase decisions with confidence",
                     description: "With Verifyr, you make purchase decisions with full conviction and clarity.",
@@ -2479,7 +2925,10 @@
                     placeholder: "Your Email",
                     button: "Join Waitlist",
                     note: "In Beta-Phase",
-                    freeForever: "The app will always be free for you"
+                    freeForever: "The app will always be free for you",
+                    consentPre: "I agree to the processing of my email address per the",
+                    consentLink: "Privacy Policy",
+                    consentPost: "."
                 },
                 footer: {
                     copyright: "© 2026 Verifyr",
@@ -2512,11 +2961,19 @@
                         necessary: {
                             title: "Necessary Functions",
                             description: "Required for basic website functions (session management, forms)",
-                            label: "Always active"
+                            label: "Always active",
+                            item1: "Stores your cookie preferences (localStorage, permanent)",
+                            item2: "Stores your language preference DE/EN (localStorage, permanent)",
+                            item3: "Quiz answers and results (localStorage, session)",
+                            item4: "Local chat history (localStorage, permanent)",
+                            item5: "Login session (localStorage, until sign-out)"
                         },
                         analytics: {
                             title: "Analytics & Statistics",
-                            description: "Helps us understand how visitors use the website (page views, clicks, navigation)"
+                            description: "Helps us understand how visitors use the website (page views, clicks, navigation)",
+                            item1: "Google Analytics visitor ID (cookie, 2 years)",
+                            item2: "Google Analytics session status (cookie, 2 years)",
+                            item3: "Google Analytics daily session (cookie, 24 hours)"
                         }
                     }
                 }
@@ -2885,6 +3342,17 @@
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing...');
+
+            // If already logged in, redirect login button to chat
+            if (localStorage.getItem('verifyr_access_token')) {
+                const loginBtn = document.querySelector('.nav-login');
+                if (loginBtn) {
+                    loginBtn.href = '/chat.html';
+                    loginBtn.setAttribute('data-i18n', 'nav.openChat');
+                    const lang = localStorage.getItem('verifyr-lang') || 'de';
+                    loginBtn.textContent = lang === 'en' ? 'Open Chat' : 'Chat öffnen';
+                }
+            }
 
             // Check and show consent banner
             checkAndShowConsentBanner();

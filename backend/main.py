@@ -629,10 +629,12 @@ async def query(
                     with open(conversation_file, 'r', encoding='utf-8') as f:
                         conversation_data = json.load(f)
                 else:
+                    title = request.question[:50] + "..." if len(request.question) > 50 else request.question
                     conversation_data = {
                         "conversation_id": request.conversation_id,
                         "user_id": user.id,
                         "user_email": user.email,
+                        "title": title,
                         "messages": [],
                         "created_at": datetime.now().isoformat(),
                         "updated_at": datetime.now().isoformat()
@@ -1104,6 +1106,7 @@ async def list_conversations(user: AuthUser = Depends(get_current_user)):
                     "conversation_id": data.get("conversation_id", conv_file.stem),
                     "user_id": conv_user_id,
                     "user_email": data.get("user_email"),
+                    "title": data.get("title", ""),
                     "created_at": data.get("created_at", ""),
                     "updated_at": data.get("updated_at", ""),
                     "message_count": len(data.get("messages", []))
@@ -1174,6 +1177,42 @@ async def get_conversation(
             status_code=500,
             detail=f"Error loading conversation: {str(e)}"
         )
+
+
+@app.delete("/conversations/{conversation_id}", tags=["Conversations"])
+async def delete_conversation(
+    conversation_id: str,
+    user: AuthUser = Depends(get_current_user)
+):
+    """
+    Delete a specific conversation by ID.
+
+    Requires authentication.
+    - Users can only delete their own conversations
+    - Admins can delete any conversation
+    """
+    try:
+        project_root = Path(__file__).parent.parent
+        conversations_dir = project_root / "data" / "conversations"
+        conversation_file = conversations_dir / f"{conversation_id}.json"
+
+        if not conversation_file.exists():
+            raise HTTPException(status_code=404, detail="Conversation not found")
+
+        with open(conversation_file, 'r', encoding='utf-8') as f:
+            conversation_data = json.load(f)
+
+        conv_user_id = conversation_data.get("user_id", "anonymous")
+        if not user.is_admin and conv_user_id != user.id and conv_user_id != "anonymous":
+            raise HTTPException(status_code=403, detail="Access denied")
+
+        conversation_file.unlink()
+        return {"success": True, "conversation_id": conversation_id}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting conversation: {str(e)}")
 
 
 # ============================================================================

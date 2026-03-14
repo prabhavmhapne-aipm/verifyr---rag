@@ -12,6 +12,9 @@
     <!-- Canonical -->
     <link rel="canonical" href="https://www.verifyr.de/auth.html">
 
+    <!-- Prevent EN→DE language flicker on load -->
+    <script>(function(){if(localStorage.getItem('verifyr-lang')==='en')document.documentElement.classList.add('lang-en');})();</script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
@@ -478,6 +481,16 @@
             color: var(--white);
         }
 
+        /* Correct toggle active state before JS runs (prevents EN→DE flicker) */
+        html.lang-en .lang-option[data-lang="en"] {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+        html.lang-en .lang-option[data-lang="de"].active {
+            background: transparent;
+            color: var(--gray);
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .auth-container {
@@ -500,7 +513,7 @@
         <div class="auth-card">
             <div class="auth-header">
                 <a href="index.html" class="auth-logo">Verifyr</a>
-                <p class="auth-subtitle" data-i18n="subtitle">Dein intelligenter Health-Tech Shopping-Berater</p>
+                <p class="auth-subtitle" data-i18n="subtitle">Dein vertrauensvoller KI-Produktberater</p>
                 <!-- Language Switcher -->
                 <div class="lang-switch">
                     <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
@@ -641,7 +654,7 @@
     <script>
         const translations = {
             de: {
-                subtitle: "Dein intelligenter Health-Tech Shopping-Berater",
+                subtitle: "Dein vertrauensvoller KI-Produktberater",
                 tabs: {
                     login: "Anmelden",
                     waitlist: "Warteliste",
@@ -690,7 +703,7 @@
                 }
             },
             en: {
-                subtitle: "Your intelligent Health-Tech shopping advisor",
+                subtitle: "Your trusted AI Product Recommender",
                 tabs: {
                     login: "Login",
                     waitlist: "Waitlist",

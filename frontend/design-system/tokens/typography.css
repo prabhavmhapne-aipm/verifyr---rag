@@ -5,8 +5,8 @@
  * Font families, sizes, weights, and line heights
  */
 
-/* Font Imports */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700;800&display=swap');
+/* Font Imports — self-hosted for GDPR compliance */
+@import url('../../fonts/fonts.css');
 
 :root {
     /* Font Families */

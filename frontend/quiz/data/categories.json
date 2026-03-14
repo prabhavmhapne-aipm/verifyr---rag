@@ -23,6 +23,7 @@
     },
     {
       "id": "recovery_sleep",
+      "coming_soon": true,
       "title": {
         "de": "Recovery & Sleep",
         "en": "Recovery & Sleep"
@@ -44,6 +45,7 @@
     },
     {
       "id": "heart_rate_monitors",
+      "coming_soon": true,
       "title": {
         "de": "Herzfrequenzmesser",
         "en": "Heart Rate Monitors"
