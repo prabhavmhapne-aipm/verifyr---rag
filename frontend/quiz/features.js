@@ -7,7 +7,7 @@ class FeaturesController {
     constructor() {
         this.features = null;
         this.selectedFeatures = [];
-        this.maxSelections = 10;
+        this.maxSelections = 5;
         this.currentLanguage = 'de';
         this.init();
     }
@@ -76,7 +76,7 @@ class FeaturesController {
             }
             const data = await response.json();
             this.features = data.features;
-            this.maxSelections = data.metadata?.max_selections || 10;
+            this.maxSelections = data.metadata?.max_selections || 5;
             console.log('✅ Features loaded:', this.features.length);
             console.log('Max selections:', this.maxSelections);
         } catch (error) {
@@ -304,14 +304,14 @@ class FeaturesController {
         const texts = {
             de: {
                 heading: 'Was ist dir am wichtigsten?',
-                subheading: 'Wähle bis zu 10 Prioritäten',
+                subheading: 'Wähle bis zu 5 Prioritäten',
                 back: 'Zurück',
                 next: 'Weiter',
                 selected: 'ausgewählt'
             },
             en: {
                 heading: 'What is most important to you?',
-                subheading: 'Choose up to 10 priorities',
+                subheading: 'Choose up to 5 priorities',
                 back: 'Back',
                 next: 'Next',
                 selected: 'selected'

@@ -242,7 +242,7 @@
   "metadata": {
     "total_features": 14,
     "selection_type": "multi",
-    "max_selections": 10,
+    "max_selections": 5,
     "min_selections": 1,
     "grid_layout": "2x7",
     "card_dimensions": {

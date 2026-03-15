@@ -242,7 +242,7 @@ class ResultsController {
             <div class="recommendation-box">
                 <div class="recommendation-header">
                     <h3 class="recommendation-title">${t.ourRecommendation[this.currentLanguage]}</h3>
-                    <span class="average-score ${(() => { const s = Math.round(match.match_score * 100); return s >= 85 ? 'score-high' : s >= 70 ? 'score-mid' : 'score-low'; })()">${Math.round(match.match_score * 100)}% Match</span>
+                    <span class="average-score ${Math.round(match.match_score * 100) >= 85 ? 'score-high' : Math.round(match.match_score * 100) >= 70 ? 'score-mid' : 'score-low'}">${Math.round(match.match_score * 100)}% Match</span>
                 </div>
 
                 <div class="recommendation-text">
