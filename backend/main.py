@@ -272,7 +272,7 @@ async def startup_event():
         langfuse_client = None
         if LANGFUSE_AVAILABLE:
             try:
-                langfuse_host = os.getenv("LANGFUSE_HOST", "http://localhost:3000")
+                langfuse_host = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
                 langfuse_public_key = os.getenv("LANGFUSE_PUBLIC_KEY")
                 langfuse_secret_key = os.getenv("LANGFUSE_SECRET_KEY")
 

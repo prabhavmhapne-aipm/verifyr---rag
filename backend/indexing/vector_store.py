@@ -29,7 +29,7 @@ class VectorStore:
         chunks_path: str = "data/processed/chunks.json",
         qdrant_path: str = "data/qdrant_storage",
         collection_name: str = "product_docs",
-        embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2"
+        embedding_model: str = "intfloat/multilingual-e5-base"
     ):
         """
         Initialize vector store.
@@ -151,8 +151,8 @@ class VectorStore:
         print(f"\n🔢 Generating embeddings for {len(chunks)} chunks")
         print(f"   Batch size: {batch_size}")
 
-        # Extract text from chunks
-        texts = [chunk["text"] for chunk in chunks]
+        # Extract text from chunks — e5 models require "passage: " prefix for documents
+        texts = ["passage: " + chunk["text"] for chunk in chunks]
 
         # Generate embeddings with progress bar
         embeddings = []
@@ -231,8 +231,8 @@ class VectorStore:
         if self.embedding_model is None:
             self._load_embedding_model()
 
-        # Generate query embedding
-        query_embedding = self.embedding_model.encode(query, convert_to_numpy=True).tolist()
+        # Generate query embedding — e5 models require "query: " prefix for queries
+        query_embedding = self.embedding_model.encode("query: " + query, convert_to_numpy=True).tolist()
 
         # Search using query method
         search_results = self.client.query_points(
@@ -284,7 +284,7 @@ def main():
     print("\n" + "=" * 60)
     print("🚀 PHASE 3: VECTOR EMBEDDINGS & QDRANT SETUP")
     print("=" * 60)
-    print(f"  Model: paraphrase-multilingual-MiniLM-L12-v2")
+    print(f"  Model: intfloat/multilingual-e5-base")
     print(f"  Distance metric: Cosine similarity")
     print(f"  Database: Qdrant (embedded mode)")
     print("=" * 60)

@@ -31,7 +31,7 @@ class HybridSearcher:
         bm25_index_path: str = "data/processed/bm25_index.pkl",
         qdrant_path: str = "data/qdrant_storage",
         collection_name: str = "product_docs",
-        embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2",
+        embedding_model: str = "intfloat/multilingual-e5-base",
         rrf_k: int = 60
     ):
         """

@@ -225,7 +225,7 @@ try {
 
     # Parse output for stats
     if ($Output -match "(\d+) vectors") {
-        Write-Info "Indexed $($Matches[1]) vectors (384-dim, paraphrase-multilingual-MiniLM-L12-v2)"
+        Write-Info "Indexed $($Matches[1]) vectors (768-dim, intfloat/multilingual-e5-base)"
     }
 } catch {
     Write-Error-Custom "Vector indexing failed: $_"
@@ -323,7 +323,7 @@ if (Test-Path $ChunksFile) {
         Write-Host "  Chunks: $TotalChunks"
         Write-Host "  Products: $($Products.Count) ($($Products -join ', '))"
         Write-Host "  Chunk size: 800 tokens, 200 overlap"
-        Write-Host "  Embedding model: paraphrase-multilingual-MiniLM-L12-v2 (384-dim)"
+        Write-Host "  Embedding model: intfloat/multilingual-e5-base (768-dim)"
     } catch {
         Write-Warning-Custom "Could not read chunk statistics"
     }
