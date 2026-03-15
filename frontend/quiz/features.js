@@ -191,18 +191,24 @@ class FeaturesController {
 
     showMaxSelectionsMessage() {
         const texts = {
-            de: `Du kannst maximal ${this.maxSelections} Prioritäten auswählen`,
+            de: `Maximal ${this.maxSelections} Prioritäten wählbar`,
             en: `You can select up to ${this.maxSelections} priorities`
         };
-        const message = texts[this.currentLanguage];
+        const message = texts[this.currentLanguage] || texts.en;
 
-        // Simple alert for now (could be replaced with toast notification)
-        alert(message);
+        const toast = document.getElementById('quizToast');
+        if (!toast) return;
+
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(this._toastTimer);
+        this._toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
     updateSelectionCounter() {
         const count = this.selectedFeatures.length;
         document.getElementById('selectionCount').textContent = count;
+        document.getElementById('maxCount').textContent = this.maxSelections;
     }
 
     updateNextButton() {

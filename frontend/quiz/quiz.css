@@ -359,6 +359,31 @@ html.lang-en .lang-option[data-lang="de"].active {
     margin: 0;
 }
 
+/* Toast Notification */
+.quiz-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--dark);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.quiz-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 /* Progress Indicator — dots (desktop only) */
 .quiz-progress {
     display: none; /* hidden on mobile */
