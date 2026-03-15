@@ -7,6 +7,8 @@ class ResultsController {
     constructor() {
         this.quizResults = null;
         this.productsMetadata = {};
+        this.useCasesMetadata = {};
+        this.featuresMetadata = {};
         this.currentLanguage = 'de';
         this.init();
     }
@@ -92,6 +94,8 @@ class ResultsController {
             data.products.forEach(product => {
                 this.productsMetadata[product.id] = product;
             });
+            this.useCasesMetadata = data.use_cases_metadata || {};
+            this.featuresMetadata = data.features_metadata || {};
 
             console.log('✅ Products metadata loaded:', Object.keys(this.productsMetadata).length);
         } catch (error) {
@@ -238,7 +242,7 @@ class ResultsController {
             <div class="recommendation-box">
                 <div class="recommendation-header">
                     <h3 class="recommendation-title">${t.ourRecommendation[this.currentLanguage]}</h3>
-                    <span class="average-score">${Math.round(match.match_score * 100)}% Match</span>
+                    <span class="average-score ${(() => { const s = Math.round(match.match_score * 100); return s >= 85 ? 'score-high' : s >= 70 ? 'score-mid' : 'score-low'; })()">${Math.round(match.match_score * 100)}% Match</span>
                 </div>
 
                 <div class="recommendation-text">
@@ -462,24 +466,53 @@ class ResultsController {
     }
 
     generateRecommendationText(match, product) {
+        const lang = this.currentLanguage;
+        const summary = this.quizResults?.quiz_summary || {};
+
         const texts = {
             de: {
-                defaultReason: 'Gute Übereinstimmung mit deinen Präferenzen',
-                intro: 'Basierend auf deinen Antworten im Quiz empfehlen wir dir dieses Produkt mit einem Match-Score von',
+                intro: 'Basierend auf deinen Quiz-Antworten empfehlen wir dieses Produkt mit einem Match-Score von',
+                useCasesLabel: 'Deine Anwendungsfälle',
+                featuresLabel: 'Deine Prioritäten',
             },
             en: {
-                defaultReason: 'Good match with your preferences',
                 intro: 'Based on your quiz answers, we recommend this product with a match score of',
+                useCasesLabel: 'Your use cases',
+                featuresLabel: 'Your priorities',
             }
         };
 
-        const t = texts[this.currentLanguage];
-        const reasons = match.match_reasons?.join('. ') || t.defaultReason;
+        const t = texts[lang];
 
-        return `
-            ${t.intro} ${Math.round(match.match_score * 100)}%.
-            ${reasons}.
-        `;
+        // Translate use case IDs to human-readable names
+        const useCaseNames = (summary.use_cases || []).map(id => {
+            const meta = this.useCasesMetadata?.[id];
+            return meta?.name?.[lang] || meta?.name?.en || id.replace(/_/g, ' ');
+        });
+
+        // Translate top 3 feature IDs to human-readable names
+        const featureIds = (summary.priorities?.length ? summary.priorities : summary.features) || [];
+        const featureNames = featureIds.slice(0, 3).map(id => {
+            const meta = this.featuresMetadata?.[id];
+            return meta?.name?.[lang] || meta?.name?.en || id.replace(/_/g, ' ');
+        });
+
+        // Match reasons (only non-trivial ones, skip empty strings)
+        const reasons = (match.match_reasons || []).filter(r => r && r.trim()).join('. ');
+
+        let html = `<p>${t.intro} <strong>${Math.round(match.match_score * 100)}%</strong>.</p>`;
+
+        if (useCaseNames.length) {
+            html += `<p><strong>${t.useCasesLabel}:</strong> ${useCaseNames.join(', ')}</p>`;
+        }
+        if (featureNames.length) {
+            html += `<p><strong>${t.featuresLabel}:</strong> ${featureNames.join(', ')}</p>`;
+        }
+        if (reasons) {
+            html += `<p>${reasons}.</p>`;
+        }
+
+        return html;
     }
 
     generateStrengths(product) {

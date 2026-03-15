@@ -337,8 +337,31 @@ body {
 
 .average-score {
     font-size: 12px;
-    font-weight: 600;
-    color: #090814;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 50px;
+    display: inline-block;
+}
+
+/* ≥85% — excellent match */
+.average-score.score-high {
+    color: #065F46;
+    background: #D1FAE5;
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3), 0 0 10px rgba(16, 185, 129, 0.25);
+}
+
+/* 70–84% — good match */
+.average-score.score-mid {
+    color: #1E40AF;
+    background: #DBEAFE;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3), 0 0 10px rgba(59, 130, 246, 0.25);
+}
+
+/* <70% — partial match */
+.average-score.score-low {
+    color: #92400E;
+    background: #FEF3C7;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3), 0 0 10px rgba(245, 158, 11, 0.25);
 }
 
 .recommendation-text {

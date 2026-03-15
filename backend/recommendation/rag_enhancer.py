@@ -191,7 +191,7 @@ Output as JSON only:
             model="gpt-5-mini",
             max_completion_tokens=4096 + 400,  # +4096 for reasoning model internal tokens
             messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "developer", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt}
             ]
         )

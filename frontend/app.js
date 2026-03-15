@@ -525,6 +525,7 @@ function updateModelNote() {
     const modelNames = {
         'claude-sonnet-4.5': 'Claude Sonnet 4.5',
         'claude-haiku-4.5': 'Claude Haiku 4.5',
+        'gpt-4o-mini': 'GPT-4o Mini',
         'gpt-5.1': 'GPT-5.1',
         'gpt-5-mini': 'GPT-5 Mini',
         'gemini-2.5-flash': 'Gemini 2.5 Flash',

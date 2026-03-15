@@ -36,6 +36,13 @@ MODEL_CONFIGS = {
         "cost_per_1k_input": 0.0008,
         "cost_per_1k_output": 0.004
     },
+    "gpt-4o-mini": {
+        "provider": "openai",
+        "model_id": "gpt-4o-mini",
+        "max_tokens": 800,
+        "cost_per_1k_input": 0.00015,
+        "cost_per_1k_output": 0.0006
+    },
     "gpt-5.1": {
         "provider": "openai",
         "model_id": "gpt-5.1",
