@@ -317,9 +317,7 @@ Scoring summary:
             lines.append("Weaknesses: " + "; ".join(cons))
 
         specs = product.get("key_specs", {})
-        relevant_specs = ["battery_life", "water_resistance", "sensors", "training", "navigation"]
-        for key in relevant_specs:
-            spec = specs.get(key)
+        for key, spec in specs.items():
             if not spec:
                 continue
             value = spec.get("en") if isinstance(spec, dict) else str(spec)
