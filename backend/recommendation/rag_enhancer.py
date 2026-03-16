@@ -70,9 +70,10 @@ class RAGEnhancer:
         """
         use_cases = quiz_inputs.get("useCases", [])
         features = quiz_inputs.get("features", [])
+        total = len(top_products)
         enhanced = []
 
-        for product_match in top_products:
+        for rank, product_match in enumerate(top_products, start=1):
             product_id = product_match["product_id"]
             product_name = self._get_display_name(product_id)
 
@@ -92,10 +93,28 @@ class RAGEnhancer:
                 print(f"WARNING: RAG enhancement failed for {product_name}: {e}")
                 strength, weakness = "", ""
 
+            try:
+                reasoning = self._generate_reasoning(
+                    product_id=product_id,
+                    product_name=product_name,
+                    rank=rank,
+                    total=total,
+                    match_score=product_match["match_score"],
+                    match_reasons=product_match.get("match_reasons", []),
+                    use_cases=use_cases,
+                    features=features,
+                    special_request=special_request,
+                    language=language,
+                )
+            except Exception as e:
+                print(f"WARNING: Reasoning generation failed for {product_name}: {e}")
+                reasoning = ""
+
             enhanced.append({
                 **product_match,
                 "dynamic_strength": strength,
                 "dynamic_weakness": weakness,
+                "reasoning": reasoning,
             })
 
         return enhanced
@@ -211,6 +230,103 @@ Output as JSON only:
 
         bullets = json.loads(content)
         return bullets.get("strength", "").strip(), bullets.get("weakness", "").strip()
+
+    def _generate_reasoning(
+        self,
+        product_id: str,
+        product_name: str,
+        rank: int,
+        total: int,
+        match_score: float,
+        match_reasons: List[str],
+        use_cases: List[str],
+        features: List[str],
+        special_request: str,
+        language: str,
+    ) -> str:
+        """Call gpt-4o-mini to generate a personalised rank-aware recommendation sentence."""
+        use_case_names = [
+            self.products_metadata.get("use_cases_metadata", {})
+                .get(uc, {}).get("name", {}).get("en", uc.replace("_", " "))
+            for uc in use_cases
+        ]
+        feature_names = [
+            self.products_metadata.get("features_metadata", {})
+                .get(f, {}).get("name", {}).get("en", f.replace("_", " "))
+            for f in features
+        ]
+
+        rank_label = {1: "the strongest match", 2: "the second strongest match", 3: "the third strongest match"}
+        rank_desc = rank_label.get(rank, f"ranked {rank} out of {total}")
+
+        special_block = f"\nUser's Special Request: {special_request}" if special_request else ""
+        scoring_summary = "\n".join(f"- {r}" for r in match_reasons) if match_reasons else "- Partially matches requirements"
+        lang_instruction = "Write in German." if language == "de" else "Write in English."
+        product_context = self._get_product_context(product_id)
+
+        system_prompt = """You are a product recommendation expert. Write 2-3 sentences explaining why this product is ranked where it is for this specific user.
+
+Rules:
+1. Be rank-aware — rank 1: emphasise it's the best fit; rank 2: strong alternative with slight trade-offs vs rank 1; rank 3+: worth considering but has clear limitations
+2. Use the product context to make specific, concrete references — never be generic
+3. Reference the user's actual use cases and feature priorities
+4. If the product is over budget, acknowledge it honestly
+5. If a special request is provided and relevant, reference it
+6. Conversational, honest tone — like a knowledgeable friend
+7. 2-3 sentences max
+8. Plain text only — no markdown, no bullet points, no headers"""
+
+        user_prompt = f"""Product: {product_name}
+Rank: {rank_desc} (score: {round(match_score * 100)}%)
+User's Use Cases: {', '.join(use_case_names)}
+User's Feature Priorities: {', '.join(feature_names)}{special_block}
+
+Product Context:
+{product_context}
+
+Scoring summary:
+{scoring_summary}
+
+{lang_instruction}"""
+
+        response = self._openai.chat.completions.create(
+            model="gpt-4o-mini",
+            max_tokens=150,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
+        )
+
+        return (response.choices[0].message.content or "").strip()
+
+    def _get_product_context(self, product_id: str) -> str:
+        """Extract pros, cons and key specs in English for use in the reasoning prompt."""
+        product = next((p for p in self.products_metadata.get("products", []) if p["id"] == product_id), None)
+        if not product:
+            return ""
+
+        lines = []
+
+        pros = product.get("pros", {}).get("en") or []
+        if pros:
+            lines.append("Strengths: " + "; ".join(pros))
+
+        cons = product.get("cons", {}).get("en") or []
+        if cons:
+            lines.append("Weaknesses: " + "; ".join(cons))
+
+        specs = product.get("key_specs", {})
+        relevant_specs = ["battery_life", "water_resistance", "sensors", "training", "navigation"]
+        for key in relevant_specs:
+            spec = specs.get(key)
+            if not spec:
+                continue
+            value = spec.get("en") if isinstance(spec, dict) else str(spec)
+            if value:
+                lines.append(f"{key.replace('_', ' ').title()}: {value}")
+
+        return "\n".join(lines)
 
     def _format_chunks(self, chunks: List[Dict[str, Any]]) -> str:
         if not chunks:

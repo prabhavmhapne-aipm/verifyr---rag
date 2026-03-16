@@ -246,7 +246,7 @@ class ResultsController {
                 </div>
 
                 <div class="recommendation-text">
-                    ${this.generateRecommendationText(match, product)}
+                    ${match.reasoning ? `<p>${match.reasoning}</p>` : this.generateRecommendationText(match, product)}
                 </div>
 
                 <div class="strengths-section">

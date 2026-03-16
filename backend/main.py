@@ -165,6 +165,7 @@ class EnhancedMatchedProduct(BaseModel):
     match_reasons: List[str]
     dynamic_strength: str = ""
     dynamic_weakness: str = ""
+    reasoning: str = ""
 
 
 class EnhancedQuizResultsResponse(BaseModel):
