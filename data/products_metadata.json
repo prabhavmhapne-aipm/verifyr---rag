@@ -8,10 +8,7 @@
       },
       "brand": "Apple",
       "category": "smartwatch_fitness",
-      "price_range": {
-        "de": "€449-€899",
-        "en": "€449-€899"
-      },
+      "price": 449,
       "release_year": 2025,
       "image_url": "/images/products/apple_watch_series 11_1.png",
       "manufacturer_link": {
@@ -313,14 +310,7 @@
       },
       "brand": "Garmin",
       "category": "smartwatch_fitness",
-      "price_range": {
-        "de": "€599-€649",
-        "en": "€599-€649"
-      },
-      "typical_price": {
-        "de": "~650€",
-        "en": "~650€"
-      },
+      "price": 649,
       "manufacturer_link": {
         "de": "Mehr Info beim Hersteller",
         "en": "More info from manufacturer",

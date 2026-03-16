@@ -11,7 +11,7 @@ import time
 import json
 import os
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
 
 # Add backend directory to path for imports (must be before local imports)
@@ -132,6 +132,9 @@ class QuizAnswers(BaseModel):
     useCases: List[str] = Field(..., description="Selected use case IDs")
     features: List[str] = Field(..., description="Selected feature IDs (max 5)")
     language: Optional[str] = Field(default="de", description="Response language: 'en' or 'de'")
+    budget_min: Optional[int] = Field(default=None, description="Minimum budget in EUR")
+    budget_max: Optional[int] = Field(default=None, description="Maximum budget in EUR")
+    special_request: Optional[str] = Field(default=None, description="Free-text special requirement")
 
 
 class MatchedProduct(BaseModel):
@@ -185,6 +188,29 @@ class InviteUserResponse(BaseModel):
     success: bool
     message: str
     user_id: Optional[str] = None
+
+
+# ============================================================================
+# Helpers
+# ============================================================================
+
+def _check_budget(
+    product: Dict[str, Any],
+    budget_min: Optional[int],
+    budget_max: Optional[int]
+) -> Tuple[float, Optional[str]]:
+    """Return (score_multiplier, reason) based on product price vs user budget."""
+    if budget_max is None:
+        return 1.0, None
+
+    product_price = product.get("price")
+    if product_price is None:
+        return 1.0, None
+
+    if product_price <= budget_max:
+        return 1.0, "Within your budget"
+    else:
+        return 0.70, "Over your budget"
 
 
 # ============================================================================
@@ -875,6 +901,12 @@ async def score_quiz(
             scores["features"] * weights["features"]
         )
 
+        # Apply budget penalty
+        budget_multiplier, budget_reason = _check_budget(product, quiz_answers.budget_min, quiz_answers.budget_max)
+        final_score = final_score * budget_multiplier
+        if budget_reason:
+            reasons.append(budget_reason)
+
         # Add product to results if category matches (don't show products from wrong categories)
         if scores["category"] > 0:
             matched_products.append({
@@ -892,7 +924,10 @@ async def score_quiz(
         "use_cases": quiz_answers.useCases,
         "features": quiz_answers.features,
         "primary_use_case": quiz_answers.useCases[0] if quiz_answers.useCases else None,
-        "priorities": quiz_answers.features[:3]  # Top 3 feature priorities
+        "priorities": quiz_answers.features[:3],
+        "budget_min": quiz_answers.budget_min,
+        "budget_max": quiz_answers.budget_max,
+        "special_request": quiz_answers.special_request,
     }
 
     return QuizResultsResponse(
@@ -987,6 +1022,12 @@ async def score_quiz_with_rag(
             scores["features"] * weights["features"]
         )
 
+        # Apply budget penalty
+        budget_multiplier, budget_reason = _check_budget(product, quiz_answers.budget_min, quiz_answers.budget_max)
+        final_score = final_score * budget_multiplier
+        if budget_reason:
+            reasons.append(budget_reason)
+
         if scores["category"] > 0:
             scored.append({
                 "product_id": product_id,
@@ -1001,7 +1042,10 @@ async def score_quiz_with_rag(
         "use_cases": quiz_answers.useCases,
         "features": quiz_answers.features,
         "primary_use_case": quiz_answers.useCases[0] if quiz_answers.useCases else None,
-        "priorities": quiz_answers.features[:3]
+        "priorities": quiz_answers.features[:3],
+        "budget_min": quiz_answers.budget_min,
+        "budget_max": quiz_answers.budget_max,
+        "special_request": quiz_answers.special_request,
     }
 
     # --- Step 2: RAG enhancement on top 3 ---
@@ -1014,6 +1058,7 @@ async def score_quiz_with_rag(
                 top_products=top_3,
                 quiz_inputs=quiz_answers.dict(),
                 language=quiz_answers.language or "de",
+                special_request=quiz_answers.special_request or "",
             )
         except Exception as e:
             print(f"WARNING: RAG enhancement failed, falling back to static: {e}")

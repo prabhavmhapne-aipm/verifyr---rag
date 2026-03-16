@@ -53,7 +53,8 @@ class RAGEnhancer:
         self,
         top_products: List[Dict[str, Any]],
         quiz_inputs: Dict[str, Any],
-        language: str = "en"
+        language: str = "en",
+        special_request: str = "",
     ) -> List[Dict[str, Any]]:
         """
         Enhance top products with RAG-generated dynamic bullets.
@@ -84,7 +85,8 @@ class RAGEnhancer:
                     chunks=chunks,
                     use_cases=use_cases,
                     features=features,
-                    language=language
+                    language=language,
+                    special_request=special_request,
                 )
             except Exception as e:
                 print(f"WARNING: RAG enhancement failed for {product_name}: {e}")
@@ -147,7 +149,8 @@ class RAGEnhancer:
         chunks: List[Dict[str, Any]],
         use_cases: List[str],
         features: List[str],
-        language: str
+        language: str,
+        special_request: str = "",
     ) -> Tuple[str, str]:
         """Call GPT-5 Mini to generate 1 strength + 1 weakness bullet."""
         use_case_names = [
@@ -169,9 +172,11 @@ class RAGEnhancer:
             else "Write the bullets in English."
         )
 
+        special_block = f"\nUser's Special Request: {special_request}" if special_request else ""
+
         user_prompt = f"""Product: {product_name}
 User's Use Cases: {', '.join(use_case_names)}
-User's Feature Priorities: {', '.join(feature_names)}
+User's Feature Priorities: {', '.join(feature_names)}{special_block}
 
 Relevant excerpts from product documentation:
 {chunks_text}

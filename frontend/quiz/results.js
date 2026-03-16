@@ -342,7 +342,7 @@ class ResultsController {
                 <!-- Price -->
                 ${renderRow(
                     lang === 'de' ? 'Preis' : 'Price',
-                    product.typical_price ? getValue(product.typical_price) : getValue(product.price_range)
+                    product.price != null ? `€${product.price}` : ''
                 )}
 
                 <!-- Display -->
@@ -474,11 +474,15 @@ class ResultsController {
                 intro: 'Basierend auf deinen Quiz-Antworten empfehlen wir dieses Produkt mit einem Match-Score von',
                 useCasesLabel: 'Deine Anwendungsfälle',
                 featuresLabel: 'Deine Prioritäten',
+                budgetLabel: 'Dein Budget',
+                specialLabel: 'Besondere Anforderung',
             },
             en: {
                 intro: 'Based on your quiz answers, we recommend this product with a match score of',
                 useCasesLabel: 'Your use cases',
                 featuresLabel: 'Your priorities',
+                budgetLabel: 'Your budget',
+                specialLabel: 'Special requirement',
             }
         };
 
@@ -510,6 +514,16 @@ class ResultsController {
         }
         if (reasons) {
             html += `<p>${reasons}.</p>`;
+        }
+
+        const budgetMin = summary.budget_min;
+        const budgetMax = summary.budget_max;
+        if (budgetMin != null && budgetMax != null) {
+            html += `<p><strong>${t.budgetLabel}:</strong> €${budgetMin}–€${budgetMax}</p>`;
+        }
+
+        if (summary.special_request) {
+            html += `<p><strong>${t.specialLabel}:</strong> ${summary.special_request}</p>`;
         }
 
         return html;
