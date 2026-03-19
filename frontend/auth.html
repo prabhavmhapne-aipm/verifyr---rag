@@ -164,7 +164,7 @@
         .form-input {
             width: 100%;
             padding: var(--spacing-base) var(--spacing-lg);
-            border: 2px solid var(--border-light);
+            border: 2px solid #CBD5E1;
             border-radius: var(--radius-md);
             font-size: var(--font-size-base);
             font-family: var(--font-primary);
@@ -454,42 +454,6 @@
             text-decoration: underline;
         }
 
-        /* Language Switcher */
-        .lang-switch {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin-top: var(--spacing-base);
-        }
-
-        .lang-option {
-            padding: 4px 12px;
-            font-size: var(--font-size-sm);
-            font-weight: var(--font-weight-semibold);
-            color: var(--gray);
-            cursor: pointer;
-            border-radius: var(--radius-sm);
-            transition: all 0.2s ease;
-        }
-
-        .lang-option:hover {
-            color: var(--dark);
-        }
-
-        .lang-option.active {
-            background: var(--primary-blue);
-            color: var(--white);
-        }
-
-        /* Correct toggle active state before JS runs (prevents EN→DE flicker) */
-        html.lang-en .lang-option[data-lang="en"] {
-            background: var(--primary-blue);
-            color: var(--white);
-        }
-        html.lang-en .lang-option[data-lang="de"].active {
-            background: transparent;
-            color: var(--gray);
-        }
 
         /* Responsive */
         @media (max-width: 480px) {
@@ -514,11 +478,6 @@
             <div class="auth-header">
                 <a href="index.html" class="auth-logo">Verifyr</a>
                 <p class="auth-subtitle" data-i18n="subtitle">Dein vertrauensvoller KI-Produktberater</p>
-                <!-- Language Switcher -->
-                <div class="lang-switch">
-                    <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
-                    <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
-                </div>
             </div>
 
             <!-- Auth Tabs - 3 tabs -->
@@ -547,7 +506,7 @@
                         id="loginEmail"
                         class="form-input"
                         data-i18n-placeholder="form.emailPlaceholder"
-                        placeholder="deine@email.com"
+                        placeholder="benutzername@email.com"
                         required
                         autocomplete="email"
                     >
@@ -591,7 +550,7 @@
                         id="waitlistEmail"
                         class="form-input"
                         data-i18n-placeholder="form.emailPlaceholder"
-                        placeholder="deine@email.com"
+                        placeholder="benutzername@email.com"
                         required
                         autocomplete="email"
                     >
@@ -633,7 +592,7 @@
                         id="forgotPasswordEmail"
                         class="form-input"
                         data-i18n-placeholder="form.emailPlaceholder"
-                        placeholder="deine@email.com"
+                        placeholder="benutzername@email.com"
                         required
                         autocomplete="email"
                     >
@@ -679,7 +638,7 @@
                 },
                 form: {
                     email: "E-Mail",
-                    emailPlaceholder: "deine@email.com",
+                    emailPlaceholder: "benutzername@email.com",
                     password: "Passwort",
                     passwordPlaceholder: "Gib dein Passwort ein",
                     show: "Zeigen",
@@ -728,7 +687,7 @@
                 },
                 form: {
                     email: "Email",
-                    emailPlaceholder: "your@email.com",
+                    emailPlaceholder: "username@email.com",
                     password: "Password",
                     passwordPlaceholder: "Enter your password",
                     show: "Show",

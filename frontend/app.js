@@ -342,6 +342,7 @@ function showAuthModal() {
     const modal = new AuthModal({
         redirectTarget: 'chat',
         allowClose: false,
+        defaultTab: 'waitlist',
         onAuthSuccess: (session) => {
             console.log('✅ Auth success, reloading chat page');
             window.location.reload();  // Reload to initialize chat properly
@@ -937,7 +938,7 @@ async function handleSend() {
             // Handle authentication errors
             if (response.status === 401) {
                 console.log('Session expired, redirecting to login...');
-                window.location.href = '/auth.html';
+                window.location.href = '/auth.html?tab=waitlist';
                 return;
             }
             const errorData = await response.json().catch(() => ({}));
@@ -1144,7 +1145,7 @@ window.addEventListener('pageshow', function(event) {
         const token = localStorage.getItem('verifyr_access_token');
         if (!token) {
             // No token, redirect immediately
-            window.location.replace('/auth.html');
+            window.location.replace('/auth.html?tab=waitlist');
         }
     }
 });

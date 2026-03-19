@@ -48,6 +48,11 @@ async function initAuth() {
         // Update UI based on signup setting
         updateSignupUI();
 
+        // Switch to waitlist tab if requested via URL param
+        if (new URLSearchParams(window.location.search).get('tab') === 'waitlist') {
+            showWaitlistForm();
+        }
+
     } catch (error) {
         console.error('Error initializing auth:', error);
         showMessage('Failed to load authentication. Please try again later.', 'error');

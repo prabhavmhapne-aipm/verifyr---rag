@@ -172,7 +172,7 @@ function handleSubmit() {
         quizAnswers.budget_max      = maxBudget;
         quizAnswers.special_request = specialNote || null;
         localStorage.setItem('verifyr_quiz_answers', JSON.stringify(quizAnswers));
-        window.location.href = '/auth.html?redirect=/quiz/budget.html';
+        window.location.href = '/auth.html?tab=waitlist&redirect=/quiz/budget.html';
         return;
     }
 

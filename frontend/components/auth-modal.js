@@ -9,6 +9,7 @@ class AuthModal {
         this.redirectTarget = options.redirectTarget; // 'results' or 'chat'
         this.onAuthSuccess = options.onAuthSuccess;
         this.allowClose = options.allowClose || false; // Cannot close on results/chat
+        this.defaultTab = options.defaultTab || 'login';
         this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
         this.supabaseClient = null;
         this.supabaseConfig = null;
@@ -29,7 +30,7 @@ class AuthModal {
                 signupTab: 'Registrieren',
                 signupDisabled: 'Registrierung ist derzeit deaktiviert',
                 emailLabel: 'E-Mail',
-                emailPlaceholder: 'deine@email.com',
+                emailPlaceholder: 'benutzername@email.com',
                 passwordLabel: 'Passwort',
                 passwordPlaceholder: 'Gib dein Passwort ein',
                 confirmPasswordLabel: 'Passwort bestätigen',
@@ -70,7 +71,7 @@ class AuthModal {
                 signupTab: 'Sign Up',
                 signupDisabled: 'Registration is currently disabled',
                 emailLabel: 'Email Address',
-                emailPlaceholder: 'your@email.com',
+                emailPlaceholder: 'username@email.com',
                 passwordLabel: 'Password',
                 passwordPlaceholder: 'Enter your password',
                 confirmPasswordLabel: 'Confirm Password',
@@ -127,11 +128,6 @@ class AuthModal {
 
                     <div class="auth-modal-header">
                         <h2 class="auth-modal-title">${t.title}</h2>
-                        <div class="language-switcher">
-                            <button class="lang-btn ${this.currentLanguage === 'de' ? 'active' : ''}" data-lang="de">DE</button>
-                            <span class="lang-separator">|</span>
-                            <button class="lang-btn ${this.currentLanguage === 'en' ? 'active' : ''}" data-lang="en">EN</button>
-                        </div>
                     </div>
 
                     <div class="auth-tabs">
@@ -225,6 +221,11 @@ class AuthModal {
 
         // Setup event listeners
         this.setupEventListeners();
+
+        // Switch to default tab if not login
+        if (this.defaultTab !== 'login') {
+            this.switchTab(this.defaultTab);
+        }
     }
 
     async loadSupabaseConfig() {
