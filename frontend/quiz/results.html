@@ -105,11 +105,6 @@
                 <!-- Sidebar Toggle Button (Desktop) -->
                 <button class="sidebar-toggle-btn desktop-nav" onclick="toggleSidebar()" aria-label="Menu">☰</button>
                 <a href="/" class="logo">Verifyr</a>
-                <!-- Desktop: Show language switch -->
-                <div class="lang-switch desktop-lang">
-                    <span class="lang-option active" data-lang="de" onclick="switchLanguage('de')">DE</span>
-                    <span class="lang-option" data-lang="en" onclick="switchLanguage('en')">EN</span>
-                </div>
             </div>
 
             <!-- Desktop: Show all nav buttons -->
@@ -164,11 +159,18 @@
                 <div class="quiz-nav-arrow" style="visibility: hidden;"></div>
             </div>
 
+            <!-- Mobile scroll dots — between subtitle and carousel -->
+            <div class="carousel-dots" id="carouselDots"></div>
+
             <!-- Horizontal Scroll Carousel -->
-            <div class="carousel-container" id="carouselContainer">
-                <div class="carousel-track" id="carouselTrack">
-                    <!-- Product cards will be dynamically inserted here -->
+            <div class="carousel-wrapper">
+                <button class="carousel-arrow carousel-arrow-left" id="carouselPrev" aria-label="Previous product">&#8249;</button>
+                <div class="carousel-container" id="carouselContainer">
+                    <div class="carousel-track" id="carouselTrack">
+                        <!-- Product cards will be dynamically inserted here -->
+                    </div>
                 </div>
+                <button class="carousel-arrow carousel-arrow-right" id="carouselNext" aria-label="Next product">&#8250;</button>
             </div>
         </div>
     </div>

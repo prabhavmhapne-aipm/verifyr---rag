@@ -117,6 +117,40 @@ body {
     50% { opacity: 0.5; }
 }
 
+/* Carousel wrapper — needed for arrow/gradient positioning */
+.carousel-wrapper {
+    position: relative;
+}
+
+/* Desktop arrow buttons — hidden on mobile */
+.carousel-arrow {
+    display: none;
+}
+
+/* Scroll dots — mobile only */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 0 4px;
+}
+
+.carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #BFDBFE;
+    transition: background 0.2s ease, width 0.2s ease, border-radius 0.2s ease;
+    cursor: pointer;
+}
+
+.carousel-dot.active {
+    width: 18px;
+    border-radius: 3px;
+    background: #3B82F6;
+}
+
 /* Horizontal Scroll Carousel */
 .carousel-container {
     position: relative;
@@ -131,18 +165,21 @@ body {
 .carousel-track {
     display: flex;
     gap: 2px;
-    min-height: 100%; /* Changed: Allow content to be taller than viewport */
-    padding: 0 45px; /* Show 1.5 cards: (393 - 303) / 2 = 45px */
+    min-height: 100%;
+    padding: 0 45px;
+    align-items: stretch;
 }
 
 /* Product Card (303px × auto height) */
 .product-card {
     flex-shrink: 0;
     width: 303px;
-    min-height: 100%; /* Changed: Removed fixed height, removed overflow-y */
+    min-height: 100%;
     background: #FFFFFF;
     scroll-snap-align: start;
     padding: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 1. Product Image (240px) */
@@ -166,6 +203,176 @@ body {
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
+}
+
+/* Prev / Next arrows */
+.img-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #E2E8F0;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0F172A;
+    z-index: 2;
+    transition: background 0.15s;
+    padding: 0;
+}
+.img-nav:hover { background: #fff; }
+.img-nav-prev { left: 8px; }
+.img-nav-next { right: 8px; }
+
+/* Expand button */
+.img-expand {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    padding: 0;
+    transition: background 0.15s;
+}
+.img-expand:hover { background: #fff; }
+.img-expand svg { width: 14px; height: 14px; stroke: #0F172A; }
+
+/* Lightbox */
+#img-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+#img-lightbox.open { display: flex; }
+
+.lb-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+}
+
+.lb-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 90vw;
+    max-height: 90vh;
+    z-index: 1;
+    flex-direction: column;
+}
+
+.lb-img {
+    max-width: min(700px, 85vw);
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff;
+    padding: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 28px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.15s;
+    z-index: 2;
+}
+.lb-nav:hover { background: rgba(255,255,255,0.3); }
+.lb-prev { left: -56px; }
+.lb-next { right: -56px; }
+
+.lb-close {
+    position: absolute;
+    top: -16px;
+    right: -16px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0F172A;
+    z-index: 3;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.lb-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 4px;
+}
+.lb-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transition: background 0.15s;
+}
+.lb-dot.active { background: #fff; }
+
+.product-thumbnails {
+    display: flex;
+    gap: 6px;
+    padding: 0 4px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.product-thumb {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border: 2px solid #E2E8F0;
+    border-radius: 8px;
+    background: #F9FAFB;
+    cursor: pointer;
+    padding: 2px;
+    transition: border-color 0.15s;
+}
+
+.product-thumb:hover {
+    border-color: #94A3B8;
+}
+
+.product-thumb.active {
+    border-color: #0F172A;
 }
 
 .favorite-button {
@@ -218,9 +425,11 @@ body {
     font-size: 15px;
 }
 
-.star-icon {
-    color: #FFA500;
-    font-size: 20px;
+.rating-stars {
+    color: #F97316;
+    font-size: 16px;
+    letter-spacing: 1px;
+    line-height: 1;
 }
 
 .rating-number {
@@ -267,7 +476,9 @@ body {
 }
 
 .tab-content.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 /* 4. Purchase Options (50px) */
@@ -420,11 +631,9 @@ body {
 .review-box {
     border: 1.333px solid rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    height: 71px;
     padding: 13px 16px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: flex-start;
     margin-bottom: 8px;
 }
 
@@ -433,8 +642,49 @@ body {
 }
 
 .review-logo {
-    height: 24px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0F172A;
     margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.review-pct {
+    font-size: 9px;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+.review-pct-pos {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
+.review-pct-neu {
+    background: #F1F5F9;
+    color: #64748B;
+}
+
+.review-pct-neg {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.review-summary {
+    font-size: 11px;
+    color: #4A5565;
+    line-height: 1.5;
+    margin: 0 0 6px;
+}
+
+.review-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .review-link {
@@ -442,7 +692,11 @@ body {
     font-weight: 400;
     color: #4A5565;
     text-decoration: underline;
-    display: block;
+}
+
+.review-date {
+    font-size: 9px;
+    color: #C4CADB;
 }
 
 .review-rating {
@@ -573,6 +827,98 @@ body {
     stroke: #3E8EF4;
 }
 
+/* Responsive - Mobile only */
+@media (max-width: 767px) {
+    /* Card fills screen width with minimal side padding */
+    .carousel-track {
+        padding: 0 12px;
+    }
+
+    /* Right-edge gradient — hints that more cards exist without narrowing the card */
+    .carousel-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 48px;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.88));
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* Smaller review count and last updated text on mobile */
+    .sentiment-count {
+        font-size: 9px !important;
+    }
+
+    .sentiment-last-updated {
+        font-size: 7px !important;
+    }
+
+    /* Compact dots — sits between subtitle and carousel with minimal height */
+    .carousel-dots {
+        padding: 4px 0;
+        margin: 0;
+    }
+
+    /* Hide dots when only 1 product */
+    .carousel-dots:has(.carousel-dot:only-child) {
+        display: none;
+    }
+
+    .product-card {
+        width: calc(100vw - 24px);
+    }
+
+    /* Smaller buy button text so all 3 buttons fit comfortably */
+    .purchase-button {
+        font-size: 9px;
+        height: 42px;
+    }
+
+    /* Consistent horizontal edge alignment for all content boxes */
+    .purchase-section,
+    .recommendation-box,
+    .amazon-sentiment-box,
+    .reviews-header,
+    .review-box,
+    .price-history-section,
+    .reddit-box,
+    .youtube-box {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Reset all JS-applied min-height sync on mobile — each card is its own natural height */
+    .product-card .product-image-container,
+    .product-card .product-thumbnails,
+    .product-card .product-meta,
+    .product-card .tab-container,
+    .product-card .purchase-section,
+    .product-card .recommendation-text,
+    .product-card .strengths-section,
+    .product-card .weaknesses-section,
+    .product-card .recommendation-box,
+    .product-card .reviews-header,
+    .product-card .price-history-section {
+        min-height: 0 !important;
+    }
+
+    /* Price history: keep side-by-side layout, shrink text to fit on mobile */
+    .price-history-title {
+        font-size: 12px;
+    }
+
+    .price-history-idealo-btn {
+        font-size: 9px;
+    }
+
+    .price-history-updated {
+        font-size: 7px;
+    }
+}
+
 /* Responsive - Tablet */
 @media (min-width: 768px) {
     /* Show 2 cards side by side on tablet */
@@ -587,7 +933,6 @@ body {
 
 /* Responsive - Desktop */
 @media (min-width: 1024px) {
-    /* Disable scroll snap on desktop for smoother experience */
     .carousel-container {
         scroll-snap-type: none;
         max-width: 1400px;
@@ -598,12 +943,12 @@ body {
     .carousel-track {
         padding: 20px 40px;
         gap: 20px;
-        justify-content: flex-start; /* Align to left, allow scrolling */
+        justify-content: flex-start;
     }
 
     .product-card {
-        width: 500px; /* Even wider on desktop */
-        scroll-snap-align: none; /* Remove snap on desktop */
+        width: 500px;
+        scroll-snap-align: none;
     }
 
     /* Hide bottom nav on desktop, add more vertical space */
@@ -625,6 +970,52 @@ body {
         max-width: 1400px;
         padding: 0 0;
     }
+
+    /* Wrapper overflow visible so arrows positioned outside container edges are shown */
+    .carousel-wrapper {
+        overflow: visible;
+    }
+
+    /* Desktop carousel arrow buttons */
+    .carousel-arrow {
+        display: flex;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #0F172A;
+        line-height: 1;
+        transition: box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .carousel-arrow:hover {
+        background: #F8FAFC;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    }
+
+    .carousel-arrow:disabled {
+        opacity: 0.25;
+        cursor: default;
+        box-shadow: none;
+    }
+
+    .carousel-arrow-left  { left: 4px; }
+    .carousel-arrow-right { right: 4px; }
+
+    /* Hide dots on desktop — arrows handle navigation, dot count doesn't match scroll positions */
+    .carousel-dots {
+        display: none;
+    }
 }
 
 /* Responsive - Large Desktop */
@@ -634,7 +1025,7 @@ body {
     }
 
     .product-card {
-        width: 650px; /* Maximum width for very large screens */
+        width: 650px;
     }
 
     .carousel-track {
@@ -903,5 +1294,272 @@ body {
         width: 380px;
         height: 500px;
     }
+}
+
+/* ============================================================
+   Amazon Sentiment Widget
+   ============================================================ */
+
+.amazon-sentiment-box {
+    margin: 12px 0;
+    padding: 16px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+}
+
+/* Empty / no-data state */
+.sentiment-empty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #94A3B8;
+    font-size: 13px;
+}
+
+.sentiment-empty-icon {
+    font-size: 16px;
+    opacity: 0.5;
+}
+
+/* Header: title on top, score row below */
+.sentiment-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.sentiment-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0F172A;
+}
+
+.sentiment-score {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sentiment-stars {
+    font-size: 15px;
+    color: #F97316;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+.sentiment-rating-num {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0F172A;
+}
+
+.sentiment-count {
+    font-size: 11px;
+    color: #64748B;
+}
+
+.sentiment-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0F172A;
+    margin-left: 4px;
+}
+
+.sentiment-last-updated {
+    font-size: 9px;
+    color: #C4CADB;
+    margin-left: auto;
+}
+
+/* Summary sentence */
+.sentiment-summary {
+    font-size: 12px;
+    color: #475569;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+}
+
+/* Bars */
+.sentiment-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.sentiment-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sentiment-bar-label {
+    font-size: 11px;
+    color: #64748B;
+    width: 52px;
+    flex-shrink: 0;
+}
+
+.sentiment-bar-track {
+    flex: 1;
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.sentiment-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.sentiment-bar-pos  { background: #22C55E; }
+.sentiment-bar-neu  { background: #94A3B8; }
+.sentiment-bar-neg  { background: #EF4444; }
+
+.sentiment-bar-pct {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0F172A;
+    width: 30px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* Theme list */
+.sentiment-themes {
+    list-style: none;
+    margin: 0 0 12px 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sentiment-theme {
+    font-size: 12px;
+    color: #334155;
+    padding: 2px 0;
+}
+
+.sentiment-theme-pos { color: #16A34A; }
+.sentiment-theme-neg { color: #DC2626; }
+
+/* Amazon link */
+.sentiment-amazon-link {
+    display: block;
+    font-size: 12px;
+    color: #3B82F6;
+    text-decoration: none;
+    margin-top: 4px;
+}
+
+.sentiment-amazon-link:hover {
+    text-decoration: underline;
+}
+
+/* ========================================
+   Price History Section (Keepa + Idealo)
+   ======================================== */
+.price-history-section {
+    margin-bottom: 8px;
+    padding: 14px 16px 16px;
+    background: #F8FAFC;
+    border: 1.333px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.price-history-header {
+    margin-bottom: 12px;
+}
+
+.price-history-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+.price-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.price-history-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.price-change-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: -0.01em;
+}
+
+.price-change-down {
+    color: #059669;
+    background: #D1FAE5;
+}
+
+.price-change-up {
+    color: #DC2626;
+    background: #FEE2E2;
+}
+
+.price-history-idealo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #3B82F6;
+    text-decoration: none;
+}
+
+.price-history-idealo-btn:hover {
+    text-decoration: underline;
+}
+
+.price-history-idealo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.price-history-updated {
+    font-size: 9px;
+    color: #C4CADB;
+}
+
+.price-history-single {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0 4px;
+}
+
+.price-history-single-label {
+    font-size: 12px;
+    color: #94A3B8;
+}
+
+.price-history-single-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+.price-history-nodata {
+    font-size: 12px;
+    color: #94A3B8;
+    margin: 4px 0;
 }
 

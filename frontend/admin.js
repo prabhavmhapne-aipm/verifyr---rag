@@ -372,8 +372,321 @@ function showTab(tabName) {
         loadConversations();
     } else if (tabName === 'users') {
         loadUsers();
+    } else if (tabName === 'scraper') {
+        loadScraperProducts();
     }
 }
+
+// ============================================================
+// Web Scraper
+// ============================================================
+
+const _scraperProductMeta = {};
+
+async function loadScraperProducts() {
+    const select = document.getElementById('scraperProduct');
+    if (!select) return;
+    if (select.dataset.loaded === 'true') return;
+
+    try {
+        const token = localStorage.getItem('verifyr_access_token');
+        const res = await fetch(`${API_BASE_URL}/products/metadata`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (!res.ok) throw new Error('Failed to load products');
+        const data = await res.json();
+        // Also populate manual entry dropdown
+        const manualSelect = document.getElementById('manualProduct');
+        if (manualSelect) manualSelect.innerHTML = '<option value="">Select a product...</option>';
+
+        select.innerHTML = '<option value="">Select a product...</option>';
+        (data.products || []).forEach(p => {
+            _scraperProductMeta[p.id] = p;
+            const label = p.display_name?.de || p.display_name?.en || p.id;
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = label;
+            select.appendChild(opt);
+            // Mirror into manual entry dropdown
+            if (manualSelect) {
+                const mOpt = document.createElement('option');
+                mOpt.value = p.id;
+                mOpt.textContent = label;
+                manualSelect.appendChild(mOpt);
+            }
+        });
+        select.dataset.loaded = 'true';
+    } catch (e) {
+        select.innerHTML = '<option value="">Error loading products</option>';
+    }
+}
+
+function _getAsinForProduct(productId) {
+    const product = _scraperProductMeta[productId];
+    const amazonUrl = product?.amazon_url || '';
+    const match = amazonUrl.match(/\/dp\/([A-Z0-9]{10})/);
+    return match ? match[1] : null;
+}
+
+function onScraperProductChange() {
+    const productId = document.getElementById('scraperProduct').value;
+    const hintEl    = document.getElementById('scraperUrlHint');
+
+    if (!productId) {
+        document.getElementById('scraperUrl').value = '';
+        if (hintEl) hintEl.textContent = 'Select a product — URL is auto-filled for Amazon products.';
+        return;
+    }
+
+    _fillAmazonUrl();
+    onScraperUrlChange();
+}
+
+function onScraperEngineChange() {
+    // Re-fill Amazon URL when engine changes (review URL vs product page URL)
+    const productId = document.getElementById('scraperProduct').value;
+    if (productId && _getAsinForProduct(productId)) {
+        _fillAmazonUrl();
+    }
+    _updateScraperPagesAndHint();
+}
+
+function _fillAmazonUrl() {
+    const productId = document.getElementById('scraperProduct').value;
+    const urlInput  = document.getElementById('scraperUrl');
+    const hintEl    = document.getElementById('scraperUrlHint');
+    const engine    = document.getElementById('scraperEngine')?.value || 'auto';
+
+    const asin = _getAsinForProduct(productId);
+    if (!asin) {
+        urlInput.value = '';
+        if (hintEl) hintEl.textContent = 'No amazon_url found — enter a URL manually.';
+        return;
+    }
+
+    const usePlaywright = engine === 'playwright';
+    if (usePlaywright) {
+        // Product page: accessible without login, shows rating + top reviews
+        urlInput.value = `https://www.amazon.de/dp/${asin}`;
+        if (hintEl) hintEl.textContent = `ASIN ${asin} — product page (Playwright). Rating, specs & top reviews.`;
+    } else {
+        // Review page: Firecrawl (or auto)
+        urlInput.value = `https://www.amazon.de/product-reviews/${asin}`;
+        if (hintEl) hintEl.textContent = `ASIN ${asin} — review page (Firecrawl). 1 credit/page.`;
+    }
+
+    document.getElementById('scraperSource').value = 'Amazon.de';
+}
+
+function _scraperUsesFirecrawl() {
+    const engine = document.getElementById('scraperEngine')?.value || 'auto';
+    if (engine === 'firecrawl') return true;
+    if (engine === 'playwright') return false;
+    // auto: firecrawl only for amazon.de
+    try {
+        const url = document.getElementById('scraperUrl').value.trim();
+        const hostname = new URL(url).hostname.replace(/^www\./, '');
+        return hostname === 'amazon.de' || hostname.endsWith('.amazon.de');
+    } catch (_) { return false; }
+}
+
+function onScraperUrlChange() {
+    const url = document.getElementById('scraperUrl').value.trim();
+    const sourceInput = document.getElementById('scraperSource');
+    const pagesField  = document.getElementById('scraperPagesField');
+    const hintEl      = document.getElementById('scraperUrlHint');
+
+    if (!url) return;
+
+    try {
+        const hostname = new URL(url).hostname.replace(/^www\./, '');
+        const isAmazon = hostname === 'amazon.de' || hostname.endsWith('.amazon.de');
+
+        // Always auto-fill source name from domain
+        const domainLabel = hostname.split('.').slice(-2).join('.');
+        const capitalised = domainLabel.charAt(0).toUpperCase() + domainLabel.slice(1);
+        sourceInput.value = isAmazon ? 'Amazon.de' : capitalised;
+
+        // Update engine default for Amazon
+        const engineSelect = document.getElementById('scraperEngine');
+        if (engineSelect && engineSelect.value === 'auto') {
+            // keep auto — just update the display
+        }
+
+        _updateScraperPagesAndHint();
+    } catch (_) {
+        // Invalid URL while typing — ignore
+    }
+}
+
+function onScraperEngineChange() {
+    _updateScraperPagesAndHint();
+}
+
+function _updateScraperPagesAndHint() {
+    const pagesField = document.getElementById('scraperPagesField');
+    const hintEl     = document.getElementById('scraperUrlHint');
+    const usesFirecrawl = _scraperUsesFirecrawl();
+
+    if (pagesField) pagesField.style.display = usesFirecrawl ? '' : 'none';
+
+    if (hintEl) {
+        hintEl.textContent = usesFirecrawl
+            ? 'Scraper: Firecrawl (1 credit/page).'
+            : 'Scraper: Playwright — headless Chromium, 0 credits.';
+    }
+}
+
+async function handleScrape(event) {
+    event.preventDefault();
+
+    const url       = document.getElementById('scraperUrl').value.trim();
+    const productId = document.getElementById('scraperProduct').value;
+    const source    = document.getElementById('scraperSource').value.trim();
+    const maxPages  = parseInt(document.getElementById('scraperPages').value);
+    const force     = document.getElementById('scraperForce').checked;
+    const scraper   = document.getElementById('scraperEngine')?.value || 'auto';
+
+    const btn     = document.getElementById('scraperSubmitBtn');
+    const msgEl   = document.getElementById('scraperMessage');
+    const resultEl = document.getElementById('scraperResult');
+
+    // Reset UI
+    msgEl.className = 'form-message';
+    msgEl.style.display = 'none';
+    resultEl.style.display = 'none';
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    try {
+        const token = localStorage.getItem('verifyr_access_token');
+        const res = await fetch(`${API_BASE_URL}/admin/ingest-url`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({
+                url,
+                product_id: productId,
+                doc_type: 'review',
+                source_name: source,
+                max_pages: maxPages,
+                force,
+                scraper
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.detail || `Error ${res.status}`);
+        }
+
+        // Show result card
+        document.getElementById('scraperResultGrid').innerHTML = `
+            <div class="scraper-result-item"><span>File saved</span>${data.file_saved}</div>
+            <div class="scraper-result-item"><span>Scraper</span>${data.scraper_used}</div>
+            <div class="scraper-result-item"><span>Word count</span>${data.word_count.toLocaleString('de-DE')}</div>
+            <div class="scraper-result-item"><span>Credits used</span>${data.credits_used}</div>
+            ${data.amazon_rating != null ? `<div class="scraper-result-item"><span>Amazon rating</span>⭐ ${data.amazon_rating}</div>` : ''}
+            ${data.amazon_review_count != null ? `<div class="scraper-result-item"><span>Review count</span>${data.amazon_review_count.toLocaleString('de-DE')}</div>` : ''}
+            <div class="scraper-result-item"><span>Language detected</span>${data.language_detected}</div>
+        `;
+        resultEl.style.display = 'block';
+
+    } catch (e) {
+        msgEl.textContent = e.message;
+        msgEl.className = 'form-message error';
+        msgEl.style.display = 'block';
+    } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+    }
+}
+
+function updateManualWordCount() {
+    const text = document.getElementById('manualContent').value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    const el = document.getElementById('manualContentCount');
+    if (!el) return;
+    el.textContent = `${words.toLocaleString('de-DE')} words`;
+    el.style.color = words > 500 ? 'var(--warning, #f59e0b)' : 'var(--text-muted, #888)';
+    el.title = words > 500 ? 'Only the first 500 words are used for sentiment analysis' : '';
+}
+
+function clearManualForm() {
+    document.getElementById('manualIngestForm').reset();
+    updateManualWordCount();
+    document.getElementById('manualMessage').textContent = '';
+    document.getElementById('manualResult').style.display = 'none';
+}
+
+async function handleManualIngest(event) {
+    event.preventDefault();
+
+    const productId    = document.getElementById('manualProduct').value;
+    const source       = document.getElementById('manualSource').value.trim();
+    const rating       = parseFloat(document.getElementById('manualRating').value) || null;
+    const reviewCount  = parseInt(document.getElementById('manualReviewCount').value) || null;
+    const price        = document.getElementById('manualPrice').value.trim() || null;
+    const productUrl   = document.getElementById('manualProductUrl').value.trim() || null;
+    const content      = document.getElementById('manualContent').value.trim();
+    const force        = document.getElementById('manualForce').checked;
+
+    const btn      = document.getElementById('manualSubmitBtn');
+    const msgEl    = document.getElementById('manualMessage');
+    const resultEl = document.getElementById('manualResult');
+
+    msgEl.className = 'form-message';
+    msgEl.style.display = 'none';
+    resultEl.style.display = 'none';
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    try {
+        const token = localStorage.getItem('verifyr_access_token');
+        const res = await fetch(`${API_BASE_URL}/admin/ingest-manual`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                source_name: source,
+                content,
+                amazon_rating: rating,
+                amazon_review_count: reviewCount,
+                amazon_price: price,
+                product_url: productUrl,
+                force
+            })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `Error ${res.status}`);
+
+        const s = data.sentiment;
+        document.getElementById('manualResultGrid').innerHTML = `
+            <div class="scraper-result-item"><span>File saved</span>${data.file_saved}</div>
+            <div class="scraper-result-item"><span>Word count</span>${data.word_count.toLocaleString('de-DE')}</div>
+            <div class="scraper-result-item"><span>Language</span>${data.language_detected}</div>
+            ${s ? `<div class="scraper-result-item"><span>Sentiment</span>${s.positive_pct}% positive · ${s.neutral_pct}% neutral · ${s.negative_pct}% negative</div>` : ''}
+            ${s?.summary ? `<div class="scraper-result-item" style="grid-column:1/-1"><span>Summary</span>${s.summary}</div>` : ''}
+        `;
+        resultEl.style.display = 'block';
+
+    } catch (e) {
+        msgEl.textContent = e.message;
+        msgEl.className = 'form-message error';
+        msgEl.style.display = 'block';
+    } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+    }
+}
+
 
 /**
  * Handle logout

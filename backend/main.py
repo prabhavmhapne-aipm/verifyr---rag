@@ -179,6 +179,94 @@ class ProductRecommendationResponse(BaseModel):
     product: Dict[str, Any]
 
 
+class IngestUrlRequest(BaseModel):
+    """Request model for POST /admin/ingest-url"""
+    url: str = Field(..., description="URL to scrape")
+    product_id: str = Field(..., description="Product ID matching a folder in data/raw/")
+    doc_type: str = Field(default="review", description="Document type: review / specification / forum")
+    source_name: str = Field(..., description="Human-readable source name e.g. 'Amazon.de'")
+    language: Optional[str] = Field(default=None, description="Language override: 'de' or 'en'. Auto-detected if omitted.")
+    max_pages: int = Field(default=3, ge=1, le=10, description="Number of review pages to scrape (Firecrawl only, 1 credit each).")
+    force: bool = Field(default=False, description="Overwrite existing file if it already exists")
+    scraper: str = Field(default="auto", description="Scraper override: 'auto' (detect by URL), 'playwright', or 'firecrawl'")
+
+
+class IngestUrlResponse(BaseModel):
+    """Response model for POST /admin/ingest-url"""
+    status: str
+    file_saved: str
+    word_count: int
+    scraper_used: str
+    amazon_rating: Optional[float] = None
+    amazon_review_count: Optional[int] = None
+    language_detected: str
+    credits_used: int
+
+
+class ManualIngestRequest(BaseModel):
+    """Request model for POST /admin/ingest-manual"""
+    product_id: str = Field(..., description="Product ID matching a folder in data/raw/")
+    source_name: str = Field(..., description="Source label e.g. 'Amazon.de'")
+    content: str = Field(..., description="Raw review text pasted manually")
+    amazon_rating: Optional[float] = Field(default=None, description="Overall star rating e.g. 4.7")
+    amazon_review_count: Optional[int] = Field(default=None, description="Total number of ratings e.g. 424")
+    amazon_price: Optional[str] = Field(default=None, description="Product price e.g. '379,00 €'")
+    product_url: Optional[str] = Field(default=None, description="Link to the product page")
+    language: Optional[str] = Field(default=None, description="Language override: 'de' or 'en'. Auto-detected if omitted.")
+    force: bool = Field(default=False, description="Overwrite existing file if it already exists")
+
+
+class ManualIngestResponse(BaseModel):
+    """Response model for POST /admin/ingest-manual"""
+    status: str
+    file_saved: str
+    word_count: int
+    language_detected: str
+    sentiment: Optional[dict] = None
+
+
+class AmazonSentimentResponse(BaseModel):
+    """Response model for GET /products/{product_id}/amazon-sentiment"""
+    available: bool
+    product_id: str
+    amazon_rating: Optional[float] = None
+    amazon_review_count: Optional[int] = None
+    amazon_price: Optional[str] = None
+    product_url: Optional[str] = None
+    sentiment: Optional[Dict[str, Any]] = None
+    top_positives: Optional[List[str]] = None
+    top_positives_en: Optional[List[str]] = None
+    top_negatives: Optional[List[str]] = None
+    top_negatives_en: Optional[List[str]] = None
+    summary: Optional[str] = None
+    summary_en: Optional[str] = None
+    last_updated: Optional[str] = None
+
+
+class ReviewResult(BaseModel):
+    """A single expert review from review-results/"""
+    source_name: str
+    source_url: str
+    language: str
+    review_date: Optional[str] = None
+    scraped_date: Optional[str] = None
+    positive_pct: Optional[int] = None
+    neutral_pct: Optional[int] = None
+    negative_pct: Optional[int] = None
+    summary: Optional[str] = None
+    summary_en: Optional[str] = None
+    top_positives: Optional[List[str]] = None
+    top_positives_en: Optional[List[str]] = None
+    top_negatives: Optional[List[str]] = None
+    top_negatives_en: Optional[List[str]] = None
+
+
+class ProductReviewsResponse(BaseModel):
+    """Response model for GET /products/{product_id}/reviews"""
+    product_id: str
+    reviews: List[ReviewResult]
+
+
 class InviteUserRequest(BaseModel):
     """Request model for inviting a user."""
     email: str = Field(..., description="Email address of the user to invite")
@@ -1117,6 +1205,357 @@ async def get_product_recommendation(
         )
 
     return ProductRecommendationResponse(product=product)
+
+
+@app.post("/admin/ingest-url", response_model=IngestUrlResponse, tags=["Admin"])
+async def ingest_url(
+    request: IngestUrlRequest,
+    user: AuthUser = Depends(require_admin)
+):
+    """
+    Scrape an Amazon review page via Firecrawl and save as JSON.
+
+    - Detects scraper from URL (Amazon only in current phase)
+    - Saves to data/raw/<product_id>/reviews/<domain>_review_<date>.json
+    - Invalidates sentiment cache for the product
+    - Does NOT affect the existing RAG pipeline
+
+    Requires: admin JWT + FIRECRAWL_API_KEY in .env
+    """
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent / "ingestion"))
+    from web_scraper import ScraperRouter, AmazonScraper, PlaywrightScraper
+    from scraper_utils import JSONSaver
+
+    # Detect scraper type from URL (amazon.de → amazon, everything else → playwright)
+    # Determine which scraper to use: explicit override > auto-detect by URL
+    scraper_override = (request.scraper or "auto").lower()
+    if scraper_override == "firecrawl":
+        scraper_type = "amazon"
+    elif scraper_override == "playwright":
+        scraper_type = "playwright"
+    else:
+        scraper_type = ScraperRouter.detect(request.url)
+
+    # Validate product_id exists
+    data_root = Path(__file__).parent.parent / "data" / "raw"
+    product_dir = data_root / request.product_id
+    if not product_dir.exists():
+        raise HTTPException(
+            status_code=422,
+            detail=f"Product ID '{request.product_id}' not found in data/raw/. "
+                   f"Available: {[p.name for p in data_root.iterdir() if p.is_dir() and not p.name.startswith('.')] if data_root.exists() else []}"
+        )
+
+    # Run scraper
+    import asyncio
+    import concurrent.futures
+    try:
+        if scraper_type == "amazon":
+            scraper = AmazonScraper(max_pages=request.max_pages)
+            result = scraper.scrape(request.url, language_override=request.language)
+        else:
+            # Playwright uses sync_playwright which cannot run inside an asyncio loop.
+            # Run it in a thread pool executor to avoid blocking the event loop.
+            playwright_scraper = PlaywrightScraper()
+            loop = asyncio.get_event_loop()
+            with concurrent.futures.ThreadPoolExecutor() as pool:
+                result = await loop.run_in_executor(
+                    pool,
+                    lambda: playwright_scraper.scrape(request.url, language_override=request.language)
+                )
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Scraper error: {str(e)}")
+
+    # Run sentiment analysis at ingest time so results.html never has to wait
+    sentiment = None
+    try:
+        from openai import OpenAI
+        openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        content_for_sentiment = result["content"]
+        words = content_for_sentiment.split()
+        if len(words) > 500:
+            content_for_sentiment = " ".join(words[:500])
+
+        sentiment_prompt = f"""Analyse the following Amazon customer reviews and return a JSON object:
+{{
+  "positive_pct": <integer 0-100>,
+  "neutral_pct": <integer 0-100>,
+  "negative_pct": <integer 0-100>,
+  "top_positives": [<3 short phrases in the review language describing praised aspects>],
+  "top_negatives": [<up to 3 short phrases in the review language describing criticised aspects>],
+  "summary": "<3-4 sentence overall sentiment summary in the same language as the reviews — cover the general impression, key strengths, main criticisms, and who the product suits>"
+}}
+The three percentages must sum to 100. The reviews may be in German or English — detect the language and keep all phrases and the summary in that same language. Do not translate.
+
+Reviews:
+{content_for_sentiment}"""
+
+        sentiment_response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": sentiment_prompt}],
+            response_format={"type": "json_object"},
+            max_tokens=600,
+            temperature=0.1,
+        )
+        sentiment = json.loads(sentiment_response.choices[0].message.content)
+    except Exception:
+        pass  # Sentiment failure is non-fatal — file still saved without it
+
+    # Save JSON with raw_markdown + sentiment included
+    saver = JSONSaver(data_root=data_root)
+    try:
+        file_path = saver.save(
+            product_id=request.product_id,
+            source_url=request.url,
+            source_name=request.source_name,
+            doc_type=request.doc_type,
+            content=result["content"],
+            language=result["language"],
+            scraper_used="firecrawl",
+            title=result["title"],
+            amazon_rating=result.get("amazon_rating"),
+            amazon_review_count=result.get("amazon_review_count"),
+            raw_markdown=result.get("raw_markdown"),
+            sentiment=sentiment,
+            force=request.force,
+        )
+    except FileExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+    word_count = len(result["content"].split())
+
+    return IngestUrlResponse(
+        status="success",
+        file_saved=str(file_path.relative_to(Path(__file__).parent.parent)),
+        word_count=word_count,
+        scraper_used="firecrawl",
+        amazon_rating=result.get("amazon_rating"),
+        amazon_review_count=result.get("amazon_review_count"),
+        language_detected=result["language"],
+        credits_used=result.get("credits_used", 0),
+    )
+
+
+@app.post("/admin/ingest-manual", response_model=ManualIngestResponse, tags=["Admin"])
+async def ingest_manual(
+    request: ManualIngestRequest,
+    user: AuthUser = Depends(require_admin)
+):
+    """
+    Save manually pasted review text as a structured JSON with sentiment analysis.
+    Same output format as /admin/ingest-url — no scraping, no credits.
+    """
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent / "ingestion"))
+    from scraper_utils import ContentCleaner, JSONSaver, detect_language
+
+    # Clean and validate content
+    cleaner = ContentCleaner()
+    content = cleaner.clean(request.content)
+    try:
+        cleaner.validate(content)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Validate product_id exists
+    data_root = Path(__file__).parent.parent / "data" / "raw"
+    if not (data_root / request.product_id).exists():
+        raise HTTPException(status_code=422, detail=f"Product ID '{request.product_id}' not found in data/raw/")
+
+    language = request.language or detect_language(content)
+
+    # Run sentiment analysis
+    sentiment = None
+    try:
+        from openai import OpenAI
+        openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        words = content.split()
+        content_for_sentiment = " ".join(words[:500]) if len(words) > 500 else content
+
+        sentiment_prompt = f"""Analyse the following customer reviews and return a JSON object:
+{{
+  "positive_pct": <integer 0-100>,
+  "neutral_pct": <integer 0-100>,
+  "negative_pct": <integer 0-100>,
+  "top_positives": [<3 short phrases in the review language describing praised aspects>],
+  "top_negatives": [<up to 3 short phrases in the review language describing criticised aspects>],
+  "summary": "<3-4 sentence overall sentiment summary in the same language as the reviews — cover the general impression, key strengths, main criticisms, and who the product suits>"
+}}
+The three percentages must sum to 100. The reviews may be in German or English — keep all phrases in the original language.
+
+Reviews:
+{content_for_sentiment}"""
+
+        resp = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": sentiment_prompt}],
+            response_format={"type": "json_object"},
+            max_tokens=600,
+            temperature=0.1,
+        )
+        sentiment = json.loads(resp.choices[0].message.content)
+    except Exception:
+        pass
+
+    # Build a fake source URL from source_name for filename convention
+    domain = request.source_name.lower().replace(" ", "").replace(".", "")
+    fake_url = f"https://{request.source_name.lower().replace(' ', '')}.manual"
+
+    saver = JSONSaver(data_root=data_root)
+    try:
+        file_path = saver.save(
+            product_id=request.product_id,
+            source_url=fake_url,
+            source_name=request.source_name,
+            doc_type="review",
+            content=content,
+            language=language,
+            scraper_used="manual",
+            title=f"{request.source_name} — Manuelle Bewertungen",
+            amazon_rating=request.amazon_rating,
+            amazon_review_count=request.amazon_review_count,
+            amazon_price=request.amazon_price or None,
+            product_url=request.product_url or None,
+            raw_markdown=None,
+            sentiment=sentiment,
+            force=request.force,
+        )
+    except FileExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+    return ManualIngestResponse(
+        status="success",
+        file_saved=str(file_path.relative_to(Path(__file__).parent.parent)),
+        word_count=len(content.split()),
+        language_detected=language,
+        sentiment=sentiment,
+    )
+
+
+@app.get("/products/{product_id}/amazon-sentiment", response_model=AmazonSentimentResponse, tags=["Products"])
+async def get_amazon_sentiment(
+    product_id: str,
+    user: AuthUser = Depends(get_optional_user)
+):
+    """
+    Return Amazon sentiment analysis for a product.
+
+    - Reads the latest amazon*.json from data/raw/<product_id>/reviews/
+    - Sentiment is pre-computed at ingest time and stored in the JSON file
+    - Returns available=false if no Amazon review files exist yet
+    """
+    data_root = Path(__file__).parent.parent / "data" / "raw"
+    reviews_dir = data_root / product_id / "reviews"
+
+    if not reviews_dir.exists():
+        return AmazonSentimentResponse(available=False, product_id=product_id)
+
+    amazon_files = sorted([
+        f for f in reviews_dir.glob("amazon*.json")
+        if not f.name.startswith("_")
+    ])
+
+    if not amazon_files:
+        return AmazonSentimentResponse(available=False, product_id=product_id)
+
+    # Aggregate data across all scraped files (most recent wins for rating/count)
+    amazon_rating = None
+    amazon_review_count = None
+    amazon_price = None
+    product_url = None
+    sentiment = None
+    last_updated = None
+
+    for f in amazon_files:
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            if data.get("amazon_rating") is not None:
+                amazon_rating = float(data["amazon_rating"])
+            if data.get("amazon_review_count") is not None:
+                amazon_review_count = int(data["amazon_review_count"])
+            if data.get("amazon_price"):
+                amazon_price = data["amazon_price"]
+            if data.get("product_url"):
+                product_url = data["product_url"]
+            if data.get("sentiment"):
+                sentiment = data["sentiment"]
+            if data.get("scraped_date"):
+                last_updated = data["scraped_date"]
+        except Exception:
+            continue
+
+    if amazon_rating is None and sentiment is None:
+        return AmazonSentimentResponse(available=False, product_id=product_id)
+
+    return AmazonSentimentResponse(
+        available=True,
+        product_id=product_id,
+        amazon_rating=amazon_rating,
+        amazon_review_count=amazon_review_count,
+        amazon_price=amazon_price,
+        product_url=product_url,
+        sentiment={
+            "positive_pct": sentiment.get("positive_pct", 0),
+            "neutral_pct":  sentiment.get("neutral_pct", 0),
+            "negative_pct": sentiment.get("negative_pct", 0),
+        } if sentiment else None,
+        top_positives=sentiment.get("top_positives", []) if sentiment else None,
+        top_positives_en=sentiment.get("top_positives_en", []) if sentiment else None,
+        top_negatives=sentiment.get("top_negatives", []) if sentiment else None,
+        top_negatives_en=sentiment.get("top_negatives_en", []) if sentiment else None,
+        summary=sentiment.get("summary", "") if sentiment else None,
+        summary_en=sentiment.get("summary_en", "") if sentiment else None,
+        last_updated=last_updated,
+    )
+
+
+@app.get("/products/{product_id}/reviews", response_model=ProductReviewsResponse, tags=["Products"])
+async def get_product_reviews(
+    product_id: str,
+    user: AuthUser = Depends(get_optional_user)
+):
+    """
+    Return expert review summaries for a product.
+
+    - Reads all JSON files from data/raw/<product_id>/reviews/review-results/
+    - Returns source metadata and sentiment summary for each review
+    """
+    data_root = Path(__file__).parent.parent / "data" / "raw"
+    review_results_dir = data_root / product_id / "reviews" / "review-results"
+
+    if not review_results_dir.exists():
+        return ProductReviewsResponse(product_id=product_id, reviews=[])
+
+    reviews = []
+    for f in sorted(review_results_dir.glob("*.json")):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            sentiment = data.get("sentiment", {}) or {}
+            reviews.append(ReviewResult(
+                source_name=data.get("source_name", f.stem),
+                source_url=data.get("source_url", ""),
+                language=data.get("language", "de"),
+                review_date=data.get("review_date"),
+                scraped_date=data.get("scraped_date"),
+                positive_pct=sentiment.get("positive_pct"),
+                neutral_pct=sentiment.get("neutral_pct"),
+                negative_pct=sentiment.get("negative_pct"),
+                summary=sentiment.get("summary"),
+                summary_en=sentiment.get("summary_en"),
+                top_positives=sentiment.get("top_positives"),
+                top_positives_en=sentiment.get("top_positives_en"),
+                top_negatives=sentiment.get("top_negatives"),
+                top_negatives_en=sentiment.get("top_negatives_en"),
+            ))
+        except Exception:
+            continue
+
+    return ProductReviewsResponse(product_id=product_id, reviews=reviews)
 
 
 @app.get("/conversations", response_model=ConversationsListResponse, tags=["Conversations"])

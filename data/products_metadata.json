@@ -3,14 +3,90 @@
     {
       "id": "apple_watch_series11_2025",
       "display_name": {
-        "de": "Apple Watch Series 11",
-        "en": "Apple Watch Series 11"
+        "de": "Apple Watch Series 11 GPS 42mm",
+        "en": "Apple Watch Series 11 GPS 42mm"
       },
       "brand": "Apple",
       "category": "smartwatch_fitness",
-      "price": 449,
+      "price": 372,
       "release_year": 2025,
       "image_url": "/images/products/apple_watch_series 11_1.png",
+      "image_urls": [
+        "/images/products/apple_watch_series 11_1.png",
+        "/images/products/apple_watch_series 11_2.png",
+        "/images/products/apple_watch_series 11_3.png",
+        "/images/products/apple_watch_series 11_4.png",
+        "/images/products/apple_watch_series 11_5.png",
+        "/images/products/apple_watch_series 11_6.png"
+      ],
+      "amazon_url": "https://www.amazon.de/Apple-Aluminiumgeh%C3%A4use-Diamantschwarz-Fitnesstracker-Gesundheitstracking/dp/B0FQFRSQLR/ref=sr_1_1?crid=1LDMU9M82B82J&dib=eyJ2IjoiMSJ9.OTIAf7stbUQAfmRfM_7FsguE7gySn552fvtcewEkeuklr6URNXBvNegS7Jh2Z_BlRrnRjpdn_YprTPITAo32W77sWxXrJdmTa9pivl2DG8GuVavBQt2HlIYrntk9kTSwm7utPP9KuSHfRHTByYDePecCa7lYc3sfNR6H6d0Drpkgf_F8jOOV9UiMfeq1Xiub_k0Hu_qlupCTSL0zQKF6A5X-5Zp3tNyFf89aiqX-Nog.ld-zXpBzmHzxAiIGF21G0Vvs_mze0otnoSSWXdd2Jwc&dib_tag=se&keywords=apple%2Bwatch%2Bseries%2B11%2B42mm&qid=1774018522&sprefix=apple%2Bwatch%2Bseries%2B11%2B42%2Caps%2C128&sr=8-1&th=1",
+      "idealo_url": "https://www.idealo.de/preisvergleich/OffersOfProduct/207645365_-watch-series-11-apple.html",
+      "price_history": [
+        {
+          "date": "2025-10-01",
+          "price": 460
+        },
+        {
+          "date": "2025-10-10",
+          "price": 440
+        },
+        {
+          "date": "2025-10-20",
+          "price": 430
+        },
+        {
+          "date": "2025-11-01",
+          "price": 390
+        },
+        {
+          "date": "2025-11-10",
+          "price": 400
+        },
+        {
+          "date": "2025-11-25",
+          "price": 275
+        },
+        {
+          "date": "2025-12-01",
+          "price": 390
+        },
+        {
+          "date": "2025-12-15",
+          "price": 420
+        },
+        {
+          "date": "2025-12-25",
+          "price": 410
+        },
+        {
+          "date": "2026-01-01",
+          "price": 400
+        },
+        {
+          "date": "2026-01-15",
+          "price": 385
+        },
+        {
+          "date": "2026-01-26",
+          "price": 378
+        },
+        {
+          "date": "2026-02-01",
+          "price": 372
+        },
+        {
+          "date": "2026-02-10",
+          "price": 358
+        },
+        {
+          "date": "2026-02-20",
+          "price": 355
+        },
+        {
+          "date": "2026-03-22",
+          "price": 372
+        }
+      ],
       "manufacturer_link": {
         "de": "Mehr Info beim Hersteller",
         "en": "More info from manufacturer",
@@ -49,12 +125,26 @@
           "en": "watchOS (iOS), Apple S10",
           "name": "watchOS",
           "chip": "Apple S10",
-          "compatibility": ["iOS"]
+          "compatibility": [
+            "iOS"
+          ]
         },
         "sensors": {
           "de": "Beschleunigungssensor, Gyroskop, Lichtsensor, Barometer, Thermometer",
           "en": "Accelerometer, Gyroscope, Light sensor, Barometer, Thermometer",
-          "list": ["ecg", "blood_oxygen", "temperature", "crash_detection", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter", "light_sensor", "barometer"],
+          "list": [
+            "ecg",
+            "blood_oxygen",
+            "temperature",
+            "crash_detection",
+            "optical_heart_rate",
+            "gyroscope",
+            "accelerometer",
+            "compass",
+            "altimeter",
+            "light_sensor",
+            "barometer"
+          ],
           "detailed": {
             "de": "EKG, Blutsauerstoff, Temperatursensor, Unfallerkennung, optischer Herzsensor 3. Gen",
             "en": "ECG, Blood Oxygen, Temperature sensor, Crash Detection, 3rd gen optical heart rate"
@@ -71,7 +161,26 @@
         "measurement_functions": {
           "de": "Zeit, Stoppuhr, Countdown, Schrittzähler, Schwimmzüge, Geschwindigkeit, Distanz, Rundenzeiten, Kalorienverbrauch, Zyklusüberwachung, Herzfrequenz, Blutsauerstoff, Blutdruck (teilweise), Ruhepuls, Höhenmesser, Bewegungstrends, Temperatur (bis 5m), Luftdruck",
           "en": "Time, Stopwatch, Countdown, Step counter, Swim strokes, Speed, Distance, Lap times, Calorie burn, Cycle tracking, Heart rate, Blood oxygen, Blood pressure (partial), Resting heart rate, Altimeter, Activity trends, Temperature (up to 5m), Air pressure",
-          "list": ["time", "stopwatch", "countdown", "step_counter", "swim_strokes", "speed", "distance", "lap_times", "calories", "cycle_tracking", "heart_rate", "blood_oxygen", "blood_pressure_partial", "resting_heart_rate", "altimeter", "activity_trends", "temperature", "air_pressure"]
+          "list": [
+            "time",
+            "stopwatch",
+            "countdown",
+            "step_counter",
+            "swim_strokes",
+            "speed",
+            "distance",
+            "lap_times",
+            "calories",
+            "cycle_tracking",
+            "heart_rate",
+            "blood_oxygen",
+            "blood_pressure_partial",
+            "resting_heart_rate",
+            "altimeter",
+            "activity_trends",
+            "temperature",
+            "air_pressure"
+          ]
         },
         "health_status": {
           "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Blutsauerstoff App, Frauengesundheit, Schlafcoach",
@@ -81,14 +190,24 @@
           "skin_temperature": true,
           "ecg_app": true,
           "blood_oxygen_app": true,
-          "womens_health": true
+          "womens_health": true,
+          "blood_pressure_notifications": true,
+          "sleep_apnea_detection": true,
+          "sleep_index": true,
+          "vital_signs_app": true,
+          "crash_detection": true
         },
         "training": {
           "de": "Ja, Workouts, Multisport Trainings, Mitteilungen bei niedriger Cardiofitnss",
           "en": "Yes, Workouts, Multisport training, Low cardio fitness notifications",
           "workouts": true,
           "multisport": true,
-          "cardio_fitness_alerts": true
+          "cardio_fitness_alerts": true,
+          "training_load": true,
+          "custom_workouts": true,
+          "fitness_plus": true,
+          "activity_rings": true,
+          "pacer": true
         },
         "live_tracking": {
           "de": "Ja",
@@ -126,11 +245,17 @@
         "materials": {
           "de": "Aluminium oder Titan, Saphirglas (Titan) / Ion-X Glas (Aluminium)",
           "en": "Aluminum or Titanium, Sapphire glass (Titanium) / Ion-X glass (Aluminum)",
-          "case_options": ["aluminum", "titanium"],
-          "glass_type": ["ion-x", "sapphire"],
+          "case_options": [
+            "aluminum",
+            "titanium"
+          ],
+          "glass_type": [
+            "ion-x",
+            "sapphire"
+          ],
           "glass_description": {
-            "de": "Ultrastarkes (Ion-X)",
-            "en": "Ultra-strong (Ion-X)"
+            "de": "Ion-X Glas mit Keramikbeschichtung (2x kratzfester als Series 10) / Saphirglas (Titan-Modelle)",
+            "en": "Ion-X glass with ceramic coating (2x more scratch-resistant than Series 10) / Sapphire glass (Titanium models)"
           },
           "citation": "Apple Watch Series 11, Technische Daten, Seite 1"
         },
@@ -139,43 +264,90 @@
           "en": "M/L 13-18cm, Rubber",
           "size": "M/L 13-18cm",
           "material": "Kautschuk"
+        },
+        "quick_charge": {
+          "de": "15 Min. Laden → bis zu 8 Stunden Nutzung",
+          "en": "15 min charge → up to 8 hours use",
+          "enabled": true,
+          "minutes_to_8h": 15
         }
       },
       "use_cases": {
         "running": {
           "supported": true,
           "rating": 4,
-          "features": ["pace_tracking", "route_tracking", "stride_length", "auto_track_detection", "heart_rate_zones"],
+          "features": [
+            "pace_tracking",
+            "route_tracking",
+            "stride_length",
+            "auto_track_detection",
+            "heart_rate_zones"
+          ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 4"
         },
         "swimming": {
           "supported": true,
           "rating": 4,
-          "features": ["pool_swimming", "open_water", "auto_lap", "swolf", "stroke_detection"],
+          "features": [
+            "pool_swimming",
+            "open_water",
+            "auto_lap",
+            "swolf",
+            "stroke_detection"
+          ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 4-5"
         },
         "cycling": {
           "supported": true,
           "rating": 3,
-          "features": ["speed_tracking", "elevation", "bluetooth_accessories", "power_zones"],
+          "features": [
+            "speed_tracking",
+            "elevation",
+            "bluetooth_accessories",
+            "power_zones"
+          ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 4"
         },
         "hiking": {
           "supported": true,
           "rating": 4,
-          "features": ["compass", "elevation", "backtrack_gps", "offline_maps", "topographic_maps", "waypoints"],
+          "features": [
+            "compass",
+            "elevation",
+            "backtrack_gps",
+            "offline_maps",
+            "topographic_maps",
+            "waypoints"
+          ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 4"
         },
         "health_tracking": {
           "supported": true,
           "rating": 5,
-          "features": ["ecg", "blood_oxygen", "temperature", "sleep_tracking", "sleep_apnea", "blood_pressure_notifications", "cycle_tracking", "heart_rate_monitoring"],
+          "features": [
+            "ecg",
+            "blood_oxygen",
+            "temperature",
+            "sleep_tracking",
+            "sleep_apnea",
+            "blood_pressure_notifications",
+            "cycle_tracking",
+            "heart_rate_monitoring"
+          ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 2-3"
         },
         "daily_wear": {
           "supported": true,
           "rating": 5,
-          "features": ["notifications", "calls", "messaging", "apple_pay", "music_playback", "siri", "app_ecosystem"],
+          "features": [
+            "notifications",
+            "calls",
+            "messaging",
+            "apple_pay",
+            "music_playback",
+            "siri",
+            "app_ecosystem"
+          ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 6"
         }
       },
@@ -251,11 +423,30 @@
           "notes": "Good for hiking, US-focused"
         }
       },
+      "buy_links": [
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0FQFRSQLR/",
+          "price": 419
+        },
+        {
+          "shop": "Groupon",
+          "url": "https://www.groupon.de/deals/apple-watch-series11-gps-aluminiumgehaeuse-mit-sportband",
+          "price": 372
+        },
+        {
+          "shop": "kaufland.de",
+          "url": "https://www.kaufland.de/product/542700643/?search_value=apple+watch+11",
+          "price": 409
+        }
+      ],
       "ecosystem": "apple",
       "compatibility": {
         "de": "iPhone 11 oder neuer mit iOS 26 oder neuer",
         "en": "iPhone 11 or newer with iOS 26 or newer",
-        "platforms": ["iOS"]
+        "platforms": [
+          "iOS"
+        ]
       },
       "pros": {
         "de": [
@@ -263,28 +454,40 @@
           "Nahtlose Integration ins Apple-Ökosystem",
           "Premium Display mit 2.000 Nits Helligkeit",
           "Umfangreiche App-Auswahl über den App Store",
-          "Elegantes, modernes Design"
+          "Elegantes, modernes Design",
+          "Geringes Gewicht für hohen Tragekomfort (30–43 g je nach Modell)",
+          "5G-Konnektivität für unabhängige Nutzung ohne iPhone",
+          "Spürbar verbesserte Akkulaufzeit gegenüber älteren Apple-Generationen",
+          "Notruf SOS und Crash Detection — auch ohne iPhone in der Nähe"
         ],
         "en": [
           "Excellent health sensors (ECG, Blood Oxygen, Temperature, Blood Pressure detection)",
           "Seamless Apple ecosystem integration",
           "Premium display with 2,000 nits brightness",
           "Extensive app selection via App Store",
-          "Elegant, modern design"
+          "Elegant, modern design",
+          "Low weight for high wearing comfort (30–43 g depending on model)",
+          "5G connectivity for independent use without iPhone",
+          "Noticeably improved battery life compared to older Apple generations",
+          "Emergency SOS and Crash Detection — even without iPhone nearby"
         ]
       },
       "cons": {
         "de": [
-          "Begrenzte Akkulaufzeit (tägliches Laden erforderlich)",
+          "Begrenzte Akkulaufzeit 15-24 Stunden (tägliches Laden erforderlich)",
           "Nur mit iPhone kompatibel",
           "Höherer Preis im Vergleich zu Konkurrenten",
-          "Weniger fortgeschrittene Trainingsmetriken für Profi-Sportler"
+          "Weniger fortgeschrittene Trainingsmetriken für Profi-Sportler",
+          "Wenige Neuerungen im Vergleich zum Vorgänger (Series 10)",
+          "Für Outdoor-Einsatz und längere Aktivitäten (Trailrunning, lange Bike-Touren, Mehrtagesnutzung ohne Laden) nur eingeschränkt geeignet"
         ],
         "en": [
-          "Limited battery life (daily charging required)",
+          "Limited battery life 15-25 hours(daily charging required)",
           "Only compatible with iPhone",
           "Higher price compared to competitors",
-          "Fewer advanced training metrics for pro athletes"
+          "Fewer advanced training metrics for pro athletes",
+          "Few innovations compared to the predecessor (Series 10)",
+          "Limited suitability for outdoor use and longer activities (trail running, long bike tours, multi-day use without charging)"
         ]
       },
       "best_for": {
@@ -292,13 +495,15 @@
           "iPhone-Nutzer im Apple-Ökosystem",
           "Gesundheitsbewusste Nutzer",
           "Nutzer, die Wert auf Design und Smart-Features legen",
-          "Casual bis fortgeschrittene Sportler"
+          "Casual bis fortgeschrittene Sportler",
+          "Nutzer, die Sicherheitsfeatures schätzen (Notruf SOS, Sturzerkennung, Unfallerkennung)"
         ],
         "en": [
           "iPhone users in the Apple ecosystem",
           "Health-conscious users",
           "Users who value design and smart features",
-          "Casual to advanced athletes"
+          "Casual to advanced athletes",
+          "Users who value safety features (Emergency SOS, Fall Detection, Crash Detection)"
         ]
       }
     },
@@ -310,22 +515,133 @@
       },
       "brand": "Garmin",
       "category": "smartwatch_fitness",
-      "price": 649,
+      "price": 600,
       "manufacturer_link": {
         "de": "Mehr Info beim Hersteller",
         "en": "More info from manufacturer",
         "url": "https://www.garmin.com/de-DE/p/forerunner-970/"
       },
       "release_year": 2025,
+      "amazon_url": "https://www.amazon.de/Triathlon-Smartwatch-AMOLED-Display-LED-Taschenlampe-schwarz-durchscheinendem-Wei%C3%9Fstein-Band-Schwarz/dp/B0F8QZ7233/ref=sr_1_3?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=2RLS3N6BTP1WP&dib=eyJ2IjoiMSJ9.xh2iChjfxB6BhBynSVS-2JnC62F6TXBzsZaz9dpK-FizUlzlohR7832jlvhJewZtTmrVNk6yc6aCP7vKCv-Vs2c7PWW6CiXly4yvU8qN-jh625o5ryAs8vBOpnea6E_pyWNcw5u7AdihMPqzBzXA9u-gSu1xW1UQukBMczHcNJvkQOHQIPhs5q-BJStI8eqNDfIi6lQzDMBVTJWkNSktAfSDNmdV0uA6yu9-Mil7Ljo.AWsb61hS1TujfaEQZZFnT0xxMjBC_7xISw1Sy4EKfTs&dib_tag=se&keywords=garmin%2Bforerunner%2B970&qid=1774018708&sprefix=garmin%2Bforerunner%2B970%2Caps%2C162&sr=8-3&th=1",
+      "idealo_url": "https://www.idealo.de/preisvergleich/OffersOfProduct/206567361_-forerunner-970-garmin.html",
+      "price_history": [
+        {
+          "date": "2025-06-01",
+          "price": 750
+        },
+        {
+          "date": "2025-06-15",
+          "price": 755
+        },
+        {
+          "date": "2025-07-01",
+          "price": 700
+        },
+        {
+          "date": "2025-07-15",
+          "price": 690
+        },
+        {
+          "date": "2025-08-01",
+          "price": 690
+        },
+        {
+          "date": "2025-08-15",
+          "price": 685
+        },
+        {
+          "date": "2025-09-01",
+          "price": 690
+        },
+        {
+          "date": "2025-09-15",
+          "price": 685
+        },
+        {
+          "date": "2025-10-01",
+          "price": 680
+        },
+        {
+          "date": "2025-10-15",
+          "price": 660
+        },
+        {
+          "date": "2025-10-20",
+          "price": 610
+        },
+        {
+          "date": "2025-10-25",
+          "price": 660
+        },
+        {
+          "date": "2025-11-01",
+          "price": 655
+        },
+        {
+          "date": "2025-11-15",
+          "price": 600
+        },
+        {
+          "date": "2025-11-25",
+          "price": 655
+        },
+        {
+          "date": "2025-12-01",
+          "price": 655
+        },
+        {
+          "date": "2025-12-15",
+          "price": 650
+        },
+        {
+          "date": "2026-01-01",
+          "price": 640
+        },
+        {
+          "date": "2026-01-15",
+          "price": 635
+        },
+        {
+          "date": "2026-02-01",
+          "price": 630
+        },
+        {
+          "date": "2026-02-15",
+          "price": 625
+        },
+        {
+          "date": "2026-03-01",
+          "price": 615
+        },
+        {
+          "date": "2026-03-15",
+          "price": 605
+        },
+        {
+          "date": "2026-03-22",
+          "price": 600
+        }
+      ],
       "image_url": "/images/products/garmin_forerunner_970_1.png",
+      "image_urls": [
+        "/images/products/garmin_forerunner_970_1.png",
+        "/images/products/garmin_forerunner_970_2.png",
+        "/images/products/garmin_forerunner_970_3.png",
+        "/images/products/garmin_forerunner_970_4.png",
+        "/images/products/garmin_forerunner_970_5.png",
+        "/images/products/garmin_forerunner_970_6.png",
+        "/images/products/garmin_forerunner_970_7.png",
+        "/images/products/garmin_forerunner_970_8.png"
+      ],
       "key_specs": {
         "battery_life": {
-          "de": "Bis zu 15 Tage (Smartwatch), 26 Std. (GPS), 21 Std. (Multiband GPS)",
-          "en": "Up to 15 days (smartwatch), 26 hours (GPS), 21 hours (multiband GPS)",
+          "de": "Bis zu 15 Tage (Smartwatch), 8 Tage Always-on-Screen, ~24 Std. GPS, 26 Std. GPS-Modus",
+          "en": "Up to 15 days (smartwatch), 8 days always-on screen, ~24 hours GPS, 26 hours GPS mode",
           "smartwatch_mode_days": 15,
+          "always_on_days": 8,
           "gps_mode_hours": 26,
-          "typical_days": 2,
-          "typical_gps_hours": 28,
+          "typical_days": 15,
+          "typical_gps_hours": 24,
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1-2"
         },
         "water_resistance": {
@@ -350,12 +666,27 @@
         "os": {
           "de": "Android, iOS",
           "en": "Android, iOS",
-          "compatibility": ["Android", "iOS"]
+          "compatibility": [
+            "Android",
+            "iOS"
+          ]
         },
         "sensors": {
           "de": "Beschleunigungssensor, Gyroskop, Lichtsensor, Barometer, Thermometer",
           "en": "Accelerometer, Gyroscope, Light sensor, Barometer, Thermometer",
-          "list": ["ecg", "pulse_ox", "skin_temperature", "led_flashlight", "optical_heart_rate", "gyroscope", "accelerometer", "compass", "altimeter", "light_sensor", "barometer"],
+          "list": [
+            "ecg",
+            "pulse_ox",
+            "skin_temperature",
+            "led_flashlight",
+            "optical_heart_rate",
+            "gyroscope",
+            "accelerometer",
+            "compass",
+            "altimeter",
+            "light_sensor",
+            "barometer"
+          ],
           "detailed": {
             "de": "EKG, Pulse Ox, Hauttemperatur, LED-Taschenlampe, optischer Herzsensor, Höhenmesser",
             "en": "ECG, Pulse Ox, Skin Temperature, LED Flashlight, Optical heart rate, Altimeter"
@@ -373,7 +704,23 @@
         "measurement_functions": {
           "de": "Zeit, Stoppuhr, Countdown, Schrittzähler, Treppenzähler, Inaktivitätszeit, Schwimmzüge, Geschwindigkeit, Distanz, Rundenzeiten, Herzfrequenz/durchschnitt, Kalorienverbrauch, Temperatur, Höhenmesser, Blutsauerstoff",
           "en": "Time, Stopwatch, Countdown, Step counter, Stairs climbed, Inactivity time, Swim strokes, Speed, Distance, Lap times, Heart rate/average, Calorie burn, Temperature, Altimeter, Blood oxygen",
-          "list": ["time", "stopwatch", "countdown", "step_counter", "stairs_climbed", "inactivity_time", "swim_strokes", "speed", "distance", "lap_times", "heart_rate_avg", "calories", "temperature", "altimeter", "blood_oxygen"]
+          "list": [
+            "time",
+            "stopwatch",
+            "countdown",
+            "step_counter",
+            "stairs_climbed",
+            "inactivity_time",
+            "swim_strokes",
+            "speed",
+            "distance",
+            "lap_times",
+            "heart_rate_avg",
+            "calories",
+            "temperature",
+            "altimeter",
+            "blood_oxygen"
+          ]
         },
         "navigation": {
           "de": "Ja, Kompass, Multiband GNSS, GPS, GLONASS, BeiDou, Galileo, QZSS",
@@ -381,21 +728,31 @@
           "enabled": true,
           "compass": true,
           "multiband_gnss": true,
-          "systems": ["GPS", "GLONASS", "BeiDou", "Galileo", "QZSS"]
+          "systems": [
+            "GPS",
+            "GLONASS",
+            "BeiDou",
+            "Galileo",
+            "QZSS"
+          ]
         },
         "health_status": {
-          "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Atemfrequenzen, Verständnis des Atemmusters",
-          "en": "Yes, HRV, Sleep Coach, Skin temperature, ECG App, Respiration rate, Breathing pattern understanding",
+          "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Atemfrequenzen, Atemmuster, Body Battery™, Frauengesundheit, Nickerchen-Erkennung, Morning Report",
+          "en": "Yes, HRV, Sleep Coach, Skin temperature, ECG App, Respiration rate, Breathing patterns, Body Battery™, Women's health, Nap detection, Morning Report",
           "hrv": true,
           "sleep_coach": true,
           "skin_temperature": true,
           "ecg_app": true,
           "respiration_rate": true,
-          "breathing_patterns": true
+          "breathing_patterns": true,
+          "body_battery": true,
+          "womens_health": true,
+          "nap_detection": true,
+          "morning_report": true
         },
         "training": {
-          "de": "Ja, Workouts, Multisport Trainings-Einheiten, Erholungszeit, Laufzeit Prognose, Wettkampfvorbereitung, Ausdauerzustand, VO2 Max, Leistungszustand, VO2max, Stresslevelemessung, Pulse Ox Sensor",
-          "en": "Yes, Workouts, Multisport training sessions, Recovery time, Running time forecast, Race preparation, Endurance condition, VO2 Max, Performance condition, Stress level measurement, Pulse Ox sensor",
+          "de": "Ja, Garmin Coach, PacePro™, ClimbPro, Running Economy, Running Tolerance, Running Power, VO2max, Hill Score, Stamina, Workouts, Multisport, Erholungszeit, Laufzeit-Prognose, Wettkampfzeitprognose, Trainingsbereitschaft",
+          "en": "Yes, Garmin Coach, PacePro™, ClimbPro, Running Economy, Running Tolerance, Running Power, VO2max, Hill Score, Stamina, Workouts, Multisport, Recovery time, Race predictor, Race time forecast, Training readiness",
           "workouts": true,
           "multisport": true,
           "recovery_time": true,
@@ -405,7 +762,15 @@
           "vo2_max": true,
           "performance_condition": true,
           "stress_measurement": true,
-          "pulse_ox": true
+          "pulse_ox": true,
+          "garmin_coach": true,
+          "pacepro": true,
+          "climbpro": true,
+          "running_economy": true,
+          "running_tolerance": true,
+          "running_power": true,
+          "hill_score": true,
+          "stamina": true
         },
         "live_tracking": {
           "de": "Ja, Freunde/innen und Familie können deiner Echtezeitposition folgen und zuvor geplante Strecken ansehen",
@@ -421,13 +786,22 @@
           "provider": "Garmin Pay"
         },
         "connectivity": {
-          "de": "Multi-Frequenz GNSS (GPS, GLONASS, Galileo), Wi-Fi, Bluetooth, ANT+",
-          "en": "Multi-frequency GNSS (GPS, GLONASS, Galileo), Wi-Fi, Bluetooth, ANT+",
+          "de": "SatIQ™ Multi-Frequenz GNSS (GPS, GLONASS, Galileo, BeiDou, QZSS), Wi-Fi, Bluetooth, ANT+",
+          "en": "SatIQ™ Multi-frequency GNSS (GPS, GLONASS, Galileo, BeiDou, QZSS), Wi-Fi, Bluetooth, ANT+",
           "gps": true,
+          "satiq": true,
+          "multiband_gnss": true,
           "cellular": false,
           "wifi": true,
           "bluetooth": true,
           "nfc": true,
+          "satellite_systems": [
+            "GPS",
+            "GLONASS",
+            "Galileo",
+            "BeiDou",
+            "QZSS"
+          ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "storage": {
@@ -445,8 +819,13 @@
         "materials": {
           "de": "Kunststoff, Titan",
           "en": "Plastic, Titanium",
-          "case_options": ["plastic", "titanium"],
-          "glass_type": ["sapphire"],
+          "case_options": [
+            "plastic",
+            "titanium"
+          ],
+          "glass_type": [
+            "sapphire"
+          ],
           "glass_description": {
             "de": "Saphirglas",
             "en": "Sapphire glass"
@@ -468,37 +847,87 @@
         "running": {
           "supported": true,
           "rating": 5,
-          "features": ["advanced_running_metrics", "training_readiness", "vo2_max", "race_predictor", "running_power", "running_dynamics"],
+          "features": [
+            "advanced_running_metrics",
+            "training_readiness",
+            "vo2_max",
+            "race_predictor",
+            "running_power",
+            "running_dynamics",
+            "running_economy",
+            "running_tolerance",
+            "pacepro",
+            "climbpro",
+            "hill_score",
+            "stamina",
+            "laufbahn_training",
+            "auto_lap",
+            "automatic_finish_line"
+          ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "swimming": {
           "supported": true,
           "rating": 4,
-          "features": ["pool_swimming", "open_water", "stroke_detection", "swolf"],
+          "features": [
+            "pool_swimming",
+            "open_water",
+            "stroke_detection",
+            "swolf"
+          ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "cycling": {
           "supported": true,
           "rating": 4,
-          "features": ["power_meter_support", "cycling_dynamics", "vo2_max_cycling", "ftp"],
+          "features": [
+            "power_meter_support",
+            "cycling_dynamics",
+            "vo2_max_cycling",
+            "ftp"
+          ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "hiking": {
           "supported": true,
           "rating": 5,
-          "features": ["preloaded_maps", "compass", "altimeter", "led_flashlight", "multi_gnss"],
+          "features": [
+            "preloaded_maps",
+            "compass",
+            "altimeter",
+            "led_flashlight",
+            "multi_gnss"
+          ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "health_tracking": {
           "supported": true,
           "rating": 4,
-          "features": ["ecg", "pulse_ox", "skin_temperature", "sleep_score", "body_battery", "stress_tracking", "respiration_rate"],
+          "features": [
+            "ecg",
+            "pulse_ox",
+            "skin_temperature",
+            "sleep_score",
+            "body_battery",
+            "stress_tracking",
+            "respiration_rate"
+          ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 2-3"
         },
         "daily_wear": {
           "supported": true,
-          "rating": 3,
-          "features": ["notifications", "music_storage", "garmin_pay", "calls_via_bluetooth"],
+          "rating": 4,
+          "features": [
+            "notifications",
+            "music_storage",
+            "garmin_pay",
+            "calls_via_bluetooth",
+            "voice_assistant",
+            "whatsapp",
+            "speaker_mic",
+            "livetrack",
+            "safety_tracking"
+          ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         }
       },
@@ -539,19 +968,19 @@
           "notes": "Extremely durable, built for outdoor use"
         },
         "smart_features": {
-          "rating": 3,
-          "value": "Notifications, Garmin Pay, limited app ecosystem",
-          "notes": "Basic smart features, not a full smartwatch"
+          "rating": 4,
+          "value": "Telefonie, Sprachassistenz, WhatsApp, Garmin Pay, LiveTrack, Sicherheits-Tracking",
+          "notes": "Strong smart feature set including calls, voice assistant and WhatsApp; no cellular"
         },
         "design": {
-          "rating": 3,
-          "value": "Sporty, functional design",
-          "notes": "Less fashion-forward, more technical"
+          "rating": 4,
+          "value": "Titanium DLC Lünette, Sapphire Glass, helles AMOLED, 56 g",
+          "notes": "Premium athletic design — lightweight, high-quality materials"
         },
         "notifications": {
-          "rating": 3,
-          "value": "Basic notifications, calls via Bluetooth",
-          "notes": "Limited compared to full smartwatches"
+          "rating": 4,
+          "value": "E-Mail, SMS, WhatsApp, Anrufe, App-Benachrichtigungen",
+          "notes": "Full notification support including WhatsApp and calls via paired phone"
         },
         "training_metrics": {
           "rating": 5,
@@ -574,28 +1003,61 @@
           "notes": "Excellent for hiking and outdoor navigation"
         }
       },
+      "buy_links": [
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0F8QZ7233/",
+          "price": 759
+        },
+        {
+          "shop": "eBay.de",
+          "url": "https://www.sportokay.com/de_de/garmin-forerunner-970-gps-sportuhr.html#92=5840&178=5371",
+          "price": 599
+        },
+        {
+          "shop": "rosebikes.de",
+          "url": "https://www.rosebikes.de/p/garmin-forerunnerr-970-multisport-uhr-amoled-160927",
+          "price": 619
+        },
+        {
+          "shop": "Garmin Store",
+          "url": "https://www.garmin.com/de-DE/p/1462801/",
+          "price": 749
+        }
+      ],
       "ecosystem": "garmin",
       "compatibility": {
         "de": "iOS und Android",
         "en": "iOS and Android",
-        "platforms": ["iOS", "Android"]
+        "platforms": [
+          "iOS",
+          "Android"
+        ]
       },
       "pros": {
         "de": [
-          "Herausragende Akkulaufzeit (bis zu 15 Tage)",
+          "Herausragende Akkulaufzeit (bis zu 15 Tage, 8 Tage Always-on-Screen)",
           "Fortgeschrittene Trainingsmetriken für ernsthafte Sportler",
           "Multi-Band GNSS für präzise GPS-Genauigkeit",
           "Vorinstallierte Karten und LED-Taschenlampe",
           "Robustes Titanium-Design mit Saphirglas",
-          "Plattformübergreifend (iOS & Android)"
+          "Plattformübergreifend (iOS & Android)",
+          "Geringes Gewicht (56 g) für hohen Tragekomfort",
+          "Sehr gutes, helles AMOLED-Display mit Sapphire Glass",
+          "EKG, LED-Taschenlampe und Telefonie als neue Features vereint",
+          "Hervorragend akkurate Health-Metriken und anpassbare Datenanzeigen"
         ],
         "en": [
-          "Outstanding battery life (up to 15 days)",
+          "Outstanding battery life (up to 15 days, 8 days always-on screen)",
           "Advanced training metrics for serious athletes",
           "Multi-band GNSS for precise GPS accuracy",
           "Preloaded maps and LED flashlight",
           "Rugged titanium design with sapphire glass",
-          "Cross-platform (iOS & Android)"
+          "Cross-platform (iOS & Android)",
+          "Low weight (56g) for high wearing comfort",
+          "Excellent bright AMOLED display with sapphire glass",
+          "ECG, LED flashlight and phone calls combined as new features",
+          "Excellently accurate health metrics and customisable data displays"
         ]
       },
       "cons": {
@@ -603,13 +1065,25 @@
           "Begrenztes Smart-Feature-Ökosystem im Vergleich zu Apple Watch",
           "Weniger modisches Design",
           "Keine Mobilfunkverbindung",
-          "Komplexere Benutzeroberfläche für Anfänger"
+          "Komplexere Benutzeroberfläche für Anfänger",
+          "Nur eine Gehäusegröße verfügbar",
+          "Hoher Aufpreis im Vergleich zum Vorgänger",
+          "Geringere Akkulaufzeit als beim Vorgänger",
+          "Akkulaufzeit bei Trainings eher kurz (~24 Stunden GPS)",
+          "Zusätzliche Kosten für erweitertes Lauftracking (HRM 600 erforderlich)",
+          "Komplizierte UI und Menüstruktur der Garmin Connect App"
         ],
         "en": [
           "Limited smart feature ecosystem compared to Apple Watch",
           "Less fashionable design",
           "No cellular connectivity",
-          "More complex user interface for beginners"
+          "More complex user interface for beginners",
+          "Only one case size available",
+          "High price premium compared to predecessor",
+          "Shorter battery life than predecessor",
+          "GPS battery life relatively short during training (~24 hours)",
+          "Additional costs for advanced run tracking (HRM 600 required)",
+          "Complex UI and menu structure of the Garmin Connect app"
         ]
       },
       "best_for": {
@@ -626,6 +1100,544 @@
           "Users prioritizing battery life and GPS accuracy",
           "Android users",
           "Athletes requiring advanced training metrics"
+        ]
+      }
+    },
+    {
+      "id": "garmin_fenix_8_2024",
+      "display_name": {
+        "de": "Garmin Fēnix 8",
+        "en": "Garmin Fēnix 8"
+      },
+      "brand": "Garmin",
+      "category": "smartwatch_fitness",
+      "price": 659,
+      "release_year": 2024,
+      "image_url": "/images/products/garmin_fenix_8_2024_1.png",
+      "image_urls": [
+        "/images/products/garmin_fenix_8_2024_1.png",
+        "/images/products/garmin_fenix_8_2024_2.png",
+        "/images/products/garmin_fenix_8_2024_3.png",
+        "/images/products/garmin_fenix_8_2024_4.png",
+        "/images/products/garmin_fenix_8_2024_5.png",
+        "/images/products/garmin_fenix_8_2024_6.png",
+        "/images/products/garmin_fenix_8_2024_7.png",
+        "/images/products/garmin_fenix_8_2024_8.png"
+      ],
+      "amazon_url": "https://www.amazon.de/dp/B0DC6ZD31R",
+      "idealo_url": "https://www.idealo.de/preisvergleich/OffersOfProduct/204731269_-fenix-8-47mm-amoled-schwarz-schiefergrau-silikon-armband-garmin.html",
+      "price_history": [
+        {
+          "date": "2025-04-01",
+          "price": 800
+        },
+        {
+          "date": "2025-04-15",
+          "price": 840
+        },
+        {
+          "date": "2025-05-01",
+          "price": 800
+        },
+        {
+          "date": "2025-06-01",
+          "price": 800
+        },
+        {
+          "date": "2025-06-15",
+          "price": 760
+        },
+        {
+          "date": "2025-07-01",
+          "price": 800
+        },
+        {
+          "date": "2025-08-01",
+          "price": 800
+        },
+        {
+          "date": "2025-09-01",
+          "price": 800
+        },
+        {
+          "date": "2025-10-01",
+          "price": 780
+        },
+        {
+          "date": "2025-10-15",
+          "price": 700
+        },
+        {
+          "date": "2025-10-20",
+          "price": 660
+        },
+        {
+          "date": "2025-11-01",
+          "price": 725
+        },
+        {
+          "date": "2025-12-01",
+          "price": 710
+        },
+        {
+          "date": "2026-01-01",
+          "price": 695
+        },
+        {
+          "date": "2026-02-01",
+          "price": 679
+        },
+        {
+          "date": "2026-03-22",
+          "price": 659
+        }
+      ],
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://www.garmin.com/de-DE/p/1228429/pn/010-02904-21/"
+      },
+      "buy_links": [
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0DC6ZD31R/",
+          "price": 679
+        },
+        {
+          "shop": "cosse.de",
+          "url": "https://www.cosse.de/smart-wearables/smart-wearables/smartwatches/30533/garmin-fenix-8-47mm-mit-quickfit-silikon-armband-22mm-schwarz/schiefergrau?etcc_cmp=Idealo&etcc_med=Preisvergleich&etcc_par=&etcc_ctv=640484",
+          "price": 659
+        },
+        {
+          "shop": "Garmin Store",
+          "url": "https://www.garmin.com/de-DE/p/1228429/pn/010-02904-21/",
+          "price": 899
+        }
+      ],
+      "key_specs": {
+        "battery_life": {
+          "de": "Bis zu 16 Tage (Smartwatch-Modus), bis zu 35 Std. mit Multiband-GPS (AMOLED, 47mm)",
+          "en": "Up to 16 days (smartwatch mode), up to 35 hours with multiband GPS (AMOLED, 47mm)",
+          "smartwatch_mode_days": 16,
+          "gps_mode_hours": 35,
+          "typical_hours": 384,
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "water_resistance": {
+          "de": "Tauchzertifiziert bis 40 m, wasserdichte induktive Tasten",
+          "en": "Dive certified to 40m, waterproof inductive buttons",
+          "meters": 40,
+          "atm": 4,
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "display": {
+          "de": "1,4 Zoll AMOLED Touchdisplay (Standard: Ion-X Glas / Sapphire: Saphirglas)",
+          "en": "1.4 inch AMOLED touchscreen (Standard: Ion-X glass / Sapphire: Sapphire glass)",
+          "type": "AMOLED",
+          "size_inch": 1.4,
+          "resolution": "",
+          "shape": "rund",
+          "color_display": true,
+          "always_on": true,
+          "touchscreen": true,
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "os": {
+          "de": "Garmin OS, kompatibel mit iOS und Android",
+          "en": "Garmin OS, compatible with iOS and Android",
+          "name": "Garmin OS",
+          "compatibility": [
+            "iOS",
+            "Android"
+          ]
+        },
+        "sensors": {
+          "de": "Optischer Herzfrequenzsensor (24/7), EKG-App, Pulse Ox, Hauttemperatur, HFV, Atemfrequenz, Barometer, 3-Achsen-Kompass, Höhenmesser, ABC-Sensoren",
+          "en": "Optical heart rate (24/7), ECG app, Pulse Ox, skin temperature, HRV, breathing rate, barometer, 3-axis compass, altimeter, ABC sensors",
+          "list": [
+            "optical_heart_rate",
+            "ecg",
+            "blood_oxygen",
+            "skin_temperature",
+            "hrv",
+            "breathing_rate",
+            "barometer",
+            "compass",
+            "altimeter",
+            "gyroscope",
+            "accelerometer"
+          ],
+          "detailed": {
+            "de": "EKG (Klasse IIa Medizinprodukt), Blutsauerstoff, Hauttemperatur, HFV im Schlaf, Body Battery™, Stresslevel",
+            "en": "ECG (Class IIa medical device), blood oxygen, skin temperature, HRV during sleep, Body Battery™, stress level"
+          },
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "pulse_measurement": {
+          "de": "Integriert (optisch, 24/7), EKG-App, Brustgurt-kompatibel (HRM 600 für erweiterte Metriken)",
+          "en": "Integrated (optical, 24/7), ECG app, chest strap compatible (HRM 600 for advanced metrics)",
+          "optical": true,
+          "ecg": true,
+          "chest_strap_compatible": true
+        },
+        "measurement_functions": {
+          "de": "Zeit, Schrittfrequenz, Schrittlänge, Bodenkontaktzeit, Pace, Distanz, Höhe, Kalorienverbrauch, VO2max, Trainingsbelastung, Erholungszeit, Body Battery, Herzfrequenz, Blutsauerstoff, Schlafstadien, Stresslevel, Atemfrequenz, Hauttemperatur",
+          "en": "Time, cadence, stride length, ground contact time, pace, distance, elevation, calories, VO2max, training load, recovery time, Body Battery, heart rate, blood oxygen, sleep stages, stress level, breathing rate, skin temperature",
+          "list": [
+            "time",
+            "cadence",
+            "stride_length",
+            "ground_contact_time",
+            "pace",
+            "distance",
+            "elevation",
+            "calories",
+            "vo2max",
+            "training_load",
+            "recovery_time",
+            "body_battery",
+            "heart_rate",
+            "blood_oxygen",
+            "sleep_stages",
+            "stress",
+            "breathing_rate",
+            "skin_temperature"
+          ]
+        },
+        "health_status": {
+          "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Blutsauerstoff, Frauengesundheit, Body Battery™, Morning Report, Abendbericht, Jetlag Ratgeber",
+          "en": "Yes, HRV, sleep coach, skin temperature, ECG app, blood oxygen, women's health, Body Battery™, morning report, evening report, jet lag adviser",
+          "hrv": true,
+          "sleep_coach": true,
+          "skin_temperature": true,
+          "ecg_app": true,
+          "blood_oxygen_app": true,
+          "womens_health": true,
+          "body_battery": true
+        },
+        "training": {
+          "de": "Ja, Garmin Coach, PacePro™, ClimbPro, VO2max, Running Economy, Running Tolerance, Multisport Auto-Wechsel, 80+ Sport-Apps, HIIT, Kraft, Triathlon",
+          "en": "Yes, Garmin Coach, PacePro™, ClimbPro, VO2max, Running Economy, Running Tolerance, multisport auto-switch, 80+ sport apps, HIIT, strength, triathlon",
+          "workouts": true,
+          "multisport": true,
+          "vo2max": true,
+          "garmin_coach": true,
+          "pacepro": true
+        },
+        "live_tracking": {
+          "de": "Ja, Live-Tracking an Notfallkontakte, SOS-Funktion",
+          "en": "Yes, live tracking to emergency contacts, SOS function",
+          "enabled": true
+        },
+        "contactless_payment": {
+          "de": "Ja, Garmin Pay™",
+          "en": "Yes, Garmin Pay™",
+          "enabled": true,
+          "provider": "Garmin Pay"
+        },
+        "connectivity": {
+          "de": "GPS, GLONASS, Galileo, BeiDou (SatIQ™ Multiband), Wi-Fi, Bluetooth, NFC",
+          "en": "GPS, GLONASS, Galileo, BeiDou (SatIQ™ multiband), Wi-Fi, Bluetooth, NFC",
+          "gps": true,
+          "multiband_gps": true,
+          "cellular": false,
+          "wifi": true,
+          "bluetooth": true,
+          "nfc": true,
+          "satellite_systems": [
+            "GPS",
+            "GLONASS",
+            "Galileo",
+            "BeiDou"
+          ],
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "storage": {
+          "de": "Intern (Musik offline: Spotify, Deezer, Amazon Music, YouTube Music)",
+          "en": "Internal (offline music: Spotify, Deezer, Amazon Music, YouTube Music)",
+          "gb": null,
+          "music_streaming": [
+            "Spotify",
+            "Deezer",
+            "Amazon Music",
+            "YouTube Music"
+          ]
+        },
+        "weight": {
+          "de": "60–102 g (je nach Größe und Material)",
+          "en": "60–102 g (depending on size and material)",
+          "grams": 73,
+          "citation": "Bergzeit.de Testbericht (47mm Titan/Saphir)"
+        },
+        "materials": {
+          "de": "Verstärktes Polymergehäuse, Lünette: Titan oder Edelstahl, Glas: Ion-X oder Saphirglas, Metallschutz für Sensoren",
+          "en": "Reinforced polymer case, bezel: titanium or stainless steel, glass: Ion-X or sapphire, metal sensor protection",
+          "case_options": [
+            "polymer"
+          ],
+          "bezel_options": [
+            "titanium",
+            "stainless_steel"
+          ],
+          "glass_type": [
+            "ion-x",
+            "sapphire"
+          ],
+          "mil_spec": true
+        },
+        "strap": {
+          "de": "Schnellwechsel-Armband, 22 mm oder 26 mm (je nach Größe), Silikon",
+          "en": "Quick-release strap, 22mm or 26mm (depending on size), silicone",
+          "width": "22mm / 26mm",
+          "material": "Silikon"
+        }
+      },
+      "use_cases": {
+        "running": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "pacepro",
+            "climbpro",
+            "race_predictor",
+            "running_dynamics",
+            "vo2max",
+            "running_economy",
+            "running_tolerance",
+            "hill_score",
+            "auto_lap",
+            "heart_rate_zones",
+            "garmin_coach"
+          ],
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "swimming": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "pool_swimming",
+            "open_water",
+            "scuba_diving_40m",
+            "apnea_diving",
+            "surfing",
+            "swolf",
+            "stroke_detection",
+            "waterproof_buttons"
+          ],
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "cycling": {
+          "supported": true,
+          "rating": 4,
+          "features": [
+            "speed_tracking",
+            "elevation",
+            "climbpro",
+            "bluetooth_accessories",
+            "power_zones",
+            "mtb_dynamics"
+          ],
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "hiking": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "topoactive_maps",
+            "offline_maps",
+            "multiband_gps",
+            "compass",
+            "altimeter",
+            "barometer",
+            "round_trip_routing",
+            "nextfork",
+            "waypoints",
+            "climbpro",
+            "backtrack"
+          ],
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "health_tracking": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "ecg",
+            "blood_oxygen",
+            "skin_temperature",
+            "hrv",
+            "sleep_tracking",
+            "sleep_coach",
+            "body_battery",
+            "stress_tracking",
+            "breathing_rate",
+            "womens_health",
+            "health_snapshot",
+            "morning_report"
+          ],
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        },
+        "daily_wear": {
+          "supported": true,
+          "rating": 4,
+          "features": [
+            "calls",
+            "voice_assistant",
+            "siri_google_assistant",
+            "smart_notifications",
+            "whatsapp",
+            "garmin_pay",
+            "music_offline",
+            "led_flashlight",
+            "garmin_messenger"
+          ],
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+        }
+      },
+      "feature_priorities": {
+        "long_battery": {
+          "rating": 5,
+          "value": "Bis zu 16 Tage (Smartwatch) / 35 Std. Multiband-GPS",
+          "notes": "Industry-leading battery life for a feature-rich AMOLED watch"
+        },
+        "water_resistance": {
+          "rating": 5,
+          "value": "40 m Tauchzertifiziert",
+          "notes": "Full dive computer functionality, waterproof inductive buttons"
+        },
+        "gps_accuracy": {
+          "rating": 5,
+          "value": "SatIQ™ Multiband (GPS, GLONASS, Galileo, BeiDou)",
+          "notes": "Top-class GPS accuracy, dynamic mode switching for efficiency"
+        },
+        "health_sensors": {
+          "rating": 5,
+          "value": "EKG, Pulse Ox, HFV, Hauttemperatur, Body Battery™, Schlafcoach",
+          "notes": "Comprehensive health suite including ECG (Class IIa medical device)"
+        },
+        "music_storage": {
+          "rating": 4,
+          "value": "Offline Musik: Spotify, Deezer, Amazon Music, YouTube Music",
+          "notes": "Major streaming services supported offline; storage size not published"
+        },
+        "touchscreen": {
+          "rating": 4,
+          "value": "1,4 Zoll AMOLED Touchdisplay",
+          "notes": "Bright, vivid AMOLED; also usable with physical buttons for outdoor use"
+        },
+        "durability": {
+          "rating": 5,
+          "value": "MIL-STD getestet, Saphirglas, Titan-Lünette, Metallschutz für Sensoren",
+          "notes": "Built for extreme conditions — thermal, shock, and water resistance"
+        },
+        "smart_features": {
+          "rating": 4,
+          "value": "Telefonie, Sprachassistenz, WhatsApp, Garmin Pay, Garmin Messenger",
+          "notes": "Strong smart features; voice assistant requires paired smartphone"
+        },
+        "design": {
+          "rating": 4,
+          "value": "Robustes Outdoor-Design, Titan oder Edelstahl Lünette, mehrere Größen (43/47/51mm)",
+          "notes": "Premium rugged aesthetic; heavier than fashion-focused watches"
+        },
+        "notifications": {
+          "rating": 4,
+          "value": "E-Mail, SMS, WhatsApp, Anrufe, App-Benachrichtigungen",
+          "notes": "Full notification support; requires paired smartphone"
+        },
+        "training_metrics": {
+          "rating": 5,
+          "value": "VO2max, PacePro™, Running Economy, Running Tolerance, ClimbPro, Trainingsbelastung, Erholungszeit, Garmin Coach",
+          "notes": "Best-in-class advanced training analytics for serious athletes"
+        },
+        "sleep_tracking": {
+          "rating": 5,
+          "value": "Schlafphasen, Sleep Score, Schlafcoach, HFV, Hauttemperatur, Nickerchen-Erkennung",
+          "notes": "Highly detailed sleep analysis with personalised coaching"
+        },
+        "price_value": {
+          "rating": 3,
+          "value": "€659–€899 (je nach Variante)",
+          "notes": "Premium pricing; justified by feature depth for serious outdoor athletes"
+        },
+        "offline_maps": {
+          "rating": 5,
+          "value": "TopoActive-Karten (vorinstalliert Sapphire), SkiView™, Golf (43.000+ Plätze), Garmin Trails",
+          "notes": "Best offline mapping in class; full world topo maps downloadable via Wi-Fi"
+        }
+      },
+      "ecosystem": "garmin",
+      "compatibility": {
+        "de": "iOS und Android",
+        "en": "iOS and Android",
+        "platforms": [
+          "iOS",
+          "Android"
+        ]
+      },
+      "pros": {
+        "de": [
+          "Branchenführende Akkulaufzeit (bis zu 16 Tage im Smartwatch-Modus)",
+          "Tauchzertifiziert bis 40 m — vollständiger Tauchcomputer am Handgelenk",
+          "Umfassendste Trainingsmetriken auf dem Markt (PacePro, Running Economy, VO2max)",
+          "Hervorragendes GPS mit SatIQ™ Multiband (GPS, GLONASS, Galileo, BeiDou)",
+          "MIL-SPEC Robustheit — thermisch, stoß- und wasserfest",
+          "Offline-Karten weltweit (TopoActive, SkiView, Golf)",
+          "Umfassendes Gesundheits-Tracking inkl. EKG (Klasse IIa Medizinprodukt)",
+          "Geringes Gewicht für hohen Tragekomfort & sehr robuste Gesamtkonstruktion",
+          "Großes, hochauflösendes und reaktionsschnelles helles AMOLED-Display",
+          "Integrierte LED-Taschenlampe, Lautsprecher und Telefonie direkt am Handgelenk",
+          "In 3 Größen erhältlich mit Solar und MicroLED"
+        ],
+        "en": [
+          "Industry-leading battery life (up to 16 days in smartwatch mode)",
+          "Dive certified to 40m — full dive computer on your wrist",
+          "Most comprehensive training metrics available (PacePro, Running Economy, VO2max)",
+          "Excellent GPS with SatIQ™ multiband (GPS, GLONASS, Galileo, BeiDou)",
+          "MIL-SPEC durability — thermal, shock, and water resistant",
+          "Worldwide offline maps (TopoActive, SkiView, Golf)",
+          "Comprehensive health tracking including ECG (Class IIa medical device)",
+          "Low weight for high wearing comfort & very robust overall construction",
+          "Large, high-resolution and responsive bright AMOLED display",
+          "Integrated LED flashlight, speaker and phone call functions on your wrist",
+          "Available in 3 sizes with Solar and MicroLED"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Hoher Preis (ab €659 bis €899 je nach Variante)",
+          "Sprachassistenz und Telefonie erfordern gekoppeltes Smartphone",
+          "AMOLED-Display verkürzt Akkulaufzeit gegenüber MIP-Display-Modellen",
+          "Schwerer als modebewusste Smartwatches (60–102 g je nach Größe)",
+          "Menüführung kann für Einsteiger komplex wirken",
+          "Zusätzliche Kosten für erweitertes Lauftracking",
+          "Komplizierte UI und Menüstruktur der Garmin Connect App",
+          "Keine Version mit LTE-Modem erhältlich"
+        ],
+        "en": [
+          "High price (from €659 to €899 depending on variant)",
+          "Voice assistant and calls require a paired smartphone",
+          "AMOLED display reduces battery life compared to MIP display models",
+          "Heavier than fashion-focused smartwatches (60–102g depending on size)",
+          "Menu navigation can be complex for beginners",
+          "Additional costs for advanced run tracking",
+          "Complex UI and menu structure of the Garmin Connect app",
+          "No version with LTE modem available"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "Ambitionierte Ausdauersportler (Laufen, Radfahren, Triathlon)",
+          "Outdoor-Enthusiasten (Wandern, Bergsteigen, Skitouren)",
+          "Taucher und Wassersportler",
+          "Nutzer, die maximale GPS-Genauigkeit und lange Akkulaufzeit benötigen",
+          "Sportler, die detaillierte Trainingsanalysen schätzen"
+        ],
+        "en": [
+          "Ambitious endurance athletes (running, cycling, triathlon)",
+          "Outdoor enthusiasts (hiking, mountaineering, ski touring)",
+          "Divers and water sports athletes",
+          "Users requiring maximum GPS accuracy and long battery life",
+          "Athletes who value detailed training analytics"
         ]
       }
     }
@@ -646,7 +1658,11 @@
         "en": "Versatile all-rounders with smart features, fitness tracking, and notifications"
       },
       "icon": "/images/quiz/smartwatch.svg",
-      "products": ["apple_watch_series11_2025", "garmin_forerunner_970_2025"]
+      "products": [
+        "apple_watch_series11_2025",
+        "garmin_forerunner_970_2025",
+        "garmin_fenix_8_2024"
+      ]
     },
     "running_watch": {
       "id": "running_watch",
@@ -663,7 +1679,9 @@
         "en": "Specialized watches for runners with advanced running metrics"
       },
       "icon": "/images/quiz/running.svg",
-      "products": ["garmin_forerunner_970_2025"]
+      "products": [
+        "garmin_forerunner_970_2025"
+      ]
     },
     "recovery_sleep": {
       "id": "recovery_sleep",
@@ -975,7 +1993,7 @@
     }
   },
   "scoring_weights": {
-    "category": 0.40,
+    "category": 0.4,
     "use_cases": 0.35,
     "features": 0.25
   }

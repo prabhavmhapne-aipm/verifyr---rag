@@ -555,6 +555,118 @@
             display: block;
         }
 
+        /* Web Scraper Panel */
+        .scraper-body {
+            padding: var(--spacing-xl);
+            max-width: 640px;
+        }
+
+        .scraper-field {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .scraper-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .scraper-label {
+            display: block;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--dark);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .scraper-credit-hint {
+            font-weight: var(--font-weight-normal);
+            color: var(--gray);
+        }
+
+        .scraper-input {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-base);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-sm);
+            font-family: var(--font-primary);
+            color: var(--dark);
+            background: var(--white);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+        }
+
+        .scraper-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .scraper-hint {
+            font-size: var(--font-size-xs);
+            color: var(--gray);
+            margin: var(--spacing-xs) 0 0 0;
+        }
+
+        .scraper-hint code {
+            background: var(--light-gray);
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+
+        .scraper-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        .scraper-result {
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: var(--radius-md);
+        }
+
+        .scraper-result-title {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: #16A34A;
+            margin-bottom: var(--spacing-base);
+        }
+
+        .scraper-result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-sm);
+        }
+
+        .scraper-result-item {
+            font-size: var(--font-size-xs);
+            color: var(--dark);
+        }
+
+        .scraper-result-item span {
+            display: block;
+            color: var(--gray);
+            margin-bottom: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .scraper-row {
+                grid-template-columns: 1fr;
+            }
+            .scraper-result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Sidebar Styles */
         .admin-sidebar {
             position: fixed;
@@ -918,6 +1030,7 @@
         <div class="admin-tabs">
             <button class="admin-tab active" onclick="showTab('conversations')">Conversations</button>
             <button class="admin-tab" onclick="showTab('users')">Users</button>
+            <button class="admin-tab" onclick="showTab('scraper')">Web Scraper</button>
         </div>
 
         <!-- Conversations Panel -->
@@ -956,6 +1069,175 @@
                     <div class="loading-state">
                         <div class="loading-spinner"></div>
                         <p>Loading users...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Web Scraper Panel -->
+        <div id="scraperTab" class="tab-content">
+            <div class="data-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Web Scraper</div>
+                        <div class="panel-subtitle">Amazon.de &rarr; Firecrawl &nbsp;&middot;&nbsp; Any other review site &rarr; Playwright (headless Chromium, 0 credits)</div>
+                    </div>
+                </div>
+                <div class="scraper-body">
+                    <form id="scraperForm" onsubmit="handleScrape(event)">
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="scraperProduct">Product</label>
+                            <select id="scraperProduct" class="scraper-input" required onchange="onScraperProductChange()">
+                                <option value="">Loading products...</option>
+                            </select>
+                        </div>
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="scraperUrl">URL to Scrape</label>
+                            <input
+                                type="url"
+                                id="scraperUrl"
+                                class="scraper-input"
+                                placeholder="https://www.heise.de/... or auto-filled for Amazon"
+                                required
+                                oninput="onScraperUrlChange()"
+                            >
+                            <p class="scraper-hint" id="scraperUrlHint">Select a product — Amazon review URL is auto-filled. For other sites, enter any review URL manually.</p>
+                        </div>
+
+                        <div class="scraper-row">
+                            <div class="scraper-field">
+                                <label class="scraper-label" for="scraperSource">Source Name</label>
+                                <input
+                                    type="text"
+                                    id="scraperSource"
+                                    class="scraper-input"
+                                    placeholder="e.g. Heise.de"
+                                    required
+                                >
+                            </div>
+                            <div class="scraper-field">
+                                <label class="scraper-label" for="scraperEngine">Scraper Engine</label>
+                                <select id="scraperEngine" class="scraper-input" onchange="onScraperEngineChange()">
+                                    <option value="auto">Auto (detect by URL)</option>
+                                    <option value="playwright">Playwright — headless Chromium</option>
+                                    <option value="firecrawl">Firecrawl — markdown fetch</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="scraper-field" id="scraperPagesField">
+                            <label class="scraper-label" for="scraperPages">Pages to Scrape <span class="scraper-credit-hint">(1 credit each — Firecrawl only)</span></label>
+                            <select id="scraperPages" class="scraper-input">
+                                <option value="1">1 page — 1 credit (test)</option>
+                                <option value="2">2 pages — 2 credits</option>
+                                <option value="3" selected>3 pages — 3 credits (recommended)</option>
+                                <option value="5">5 pages — 5 credits</option>
+                            </select>
+                        </div>
+
+                        <div class="scraper-field">
+                            <label class="scraper-checkbox-label">
+                                <input type="checkbox" id="scraperForce">
+                                Force overwrite if file already exists
+                            </label>
+                        </div>
+
+                        <div class="form-message" id="scraperMessage"></div>
+
+                        <button type="submit" class="btn-primary" id="scraperSubmitBtn">
+                            <span class="btn-text">Scrape & Ingest</span>
+                            <span class="btn-loading"></span>
+                        </button>
+                    </form>
+
+                    <!-- Result card (shown after successful scrape) -->
+                    <div id="scraperResult" class="scraper-result" style="display:none;">
+                        <div class="scraper-result-title">Scrape successful</div>
+                        <div class="scraper-result-grid" id="scraperResultGrid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Review Entry -->
+            <div class="data-panel" style="margin-top:1.5rem;">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Manual Review Entry</div>
+                        <div class="panel-subtitle">Paste review text manually — sentiment is analysed automatically, no scraping needed</div>
+                    </div>
+                </div>
+                <div class="scraper-body">
+                    <form id="manualIngestForm" onsubmit="handleManualIngest(event)">
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="manualProduct">Product</label>
+                            <select id="manualProduct" class="scraper-input" required>
+                                <option value="">Select a product...</option>
+                            </select>
+                        </div>
+
+                        <div class="scraper-row">
+                            <div class="scraper-field">
+                                <label class="scraper-label" for="manualSource">Source Name</label>
+                                <input type="text" id="manualSource" class="scraper-input" value="Amazon.de" required>
+                            </div>
+                            <div class="scraper-field">
+                                <label class="scraper-label" for="manualRating">Overall Rating</label>
+                                <input type="number" id="manualRating" class="scraper-input" placeholder="e.g. 4.7" min="1" max="5" step="0.1">
+                            </div>
+                            <div class="scraper-field">
+                                <label class="scraper-label" for="manualReviewCount">Review Count</label>
+                                <input type="number" id="manualReviewCount" class="scraper-input" placeholder="e.g. 424" min="0">
+                            </div>
+                            <div class="scraper-field">
+                                <label class="scraper-label" for="manualPrice">Price</label>
+                                <input type="text" id="manualPrice" class="scraper-input" placeholder="e.g. 379,00 €">
+                            </div>
+                        </div>
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="manualProductUrl">Product Link (optional)</label>
+                            <input type="url" id="manualProductUrl" class="scraper-input" placeholder="https://www.amazon.de/dp/...">
+                        </div>
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="manualContent" style="display:flex;justify-content:space-between;align-items:baseline;">
+                                Review Text
+                                <span id="manualContentCount" style="font-weight:400;color:var(--text-muted,#888);font-size:0.8rem;">0 words</span>
+                            </label>
+                            <textarea
+                                id="manualContent"
+                                class="scraper-input"
+                                rows="10"
+                                placeholder="Paste review text here — copy from Amazon, forums, or any source. GPT-4o-mini will run sentiment analysis on this text."
+                                required
+                                style="resize:vertical; font-family:inherit; font-size:0.875rem;"
+                                oninput="updateManualWordCount()"
+                            ></textarea>
+                        </div>
+
+                        <div class="scraper-field">
+                            <label class="scraper-checkbox-label">
+                                <input type="checkbox" id="manualForce">
+                                Force overwrite if file already exists
+                            </label>
+                        </div>
+
+                        <div class="form-message" id="manualMessage"></div>
+
+                        <div style="display:flex;gap:10px;">
+                            <button type="submit" class="btn-primary" id="manualSubmitBtn">
+                                <span class="btn-text">Analyse & Save</span>
+                                <span class="btn-loading"></span>
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearManualForm()">Clear</button>
+                        </div>
+                    </form>
+
+                    <div id="manualResult" class="scraper-result" style="display:none;">
+                        <div class="scraper-result-title">Saved successfully</div>
+                        <div class="scraper-result-grid" id="manualResultGrid"></div>
                     </div>
                 </div>
             </div>

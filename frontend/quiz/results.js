@@ -18,10 +18,13 @@ class ResultsController {
         const isAuthenticated = await this.checkAuth();
 
         this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
+        this.sentimentCache = {};
         this.loadQuizResults();
         await this.loadProductsMetadata();
         this.renderCarousel();
         this.updateHeader();
+        this.loadSentimentForAllCards();
+        this.loadReviewsForAllCards();
 
         if (typeof gtag !== 'undefined') {
             gtag('event', 'quiz_results_viewed', {
@@ -61,6 +64,54 @@ class ResultsController {
             }
         });
         modal.show();
+    }
+
+    async loadSentimentForAllCards() {
+        if (!this.quizResults?.matched_products) return;
+        const token = localStorage.getItem('verifyr_access_token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        for (const match of this.quizResults.matched_products) {
+            try {
+                const res = await fetch(`/products/${match.product_id}/amazon-sentiment`, { headers });
+                if (!res.ok) continue;
+                const data = await res.json();
+                this.sentimentCache[match.product_id] = data;
+                this.updateCardSentiment(match.product_id, data);
+            } catch (e) {
+                // Non-fatal — card just keeps its empty state
+            }
+        }
+
+        // Re-sync after all async sentiment content has loaded (star ratings may affect product-meta height)
+        requestAnimationFrame(() => this.synchronizeSectionHeights());
+    }
+
+    updateCardSentiment(productId, data) {
+        const card = document.querySelector(`.product-card[data-product-id="${productId}"]`);
+        if (!card) return;
+
+        // Update top rating bar
+        if (data.available && data.amazon_rating != null) {
+            const starsEl = card.querySelector('.rating-stars');
+            const ratingEl = card.querySelector('.rating-number');
+            const reviewCountEl = card.querySelector('.review-count');
+            if (starsEl) starsEl.textContent = this._renderStars(data.amazon_rating);
+            if (ratingEl) ratingEl.textContent = data.amazon_rating.toFixed(1).replace('.', ',');
+            if (reviewCountEl) {
+                const t = this.currentLanguage === 'de' ? 'Bewertungen' : 'Reviews';
+                const count = data.amazon_review_count
+                    ? `(${data.amazon_review_count.toLocaleString('de-DE')} ${t})`
+                    : '';
+                reviewCountEl.textContent = count;
+            }
+        }
+
+        // Update amazon sentiment box
+        const sentimentBox = card.querySelector('.amazon-sentiment-box');
+        if (sentimentBox) {
+            sentimentBox.innerHTML = this.renderSentimentWidget(data, productId);
+        }
     }
 
     loadQuizResults() {
@@ -141,6 +192,95 @@ class ResultsController {
             const card = this.createProductCard(match, index);
             track.appendChild(card);
         });
+
+        this.renderDots(sortedProducts.length);
+
+        // Synchronize section heights across all cards so rows align horizontally
+        requestAnimationFrame(() => {
+            this.synchronizeSectionHeights();
+            this.setupCarouselNav();
+        });
+    }
+
+    renderDots(count) {
+        const dotsEl = document.getElementById('carouselDots');
+        if (!dotsEl) return;
+        dotsEl.innerHTML = Array.from({ length: count }, (_, i) =>
+            `<div class="carousel-dot${i === 0 ? ' active' : ''}" data-index="${i}"></div>`
+        ).join('');
+    }
+
+    setupCarouselNav() {
+        const container = document.getElementById('carouselContainer');
+        const prevBtn   = document.getElementById('carouselPrev');
+        const nextBtn   = document.getElementById('carouselNext');
+        if (!container) return;
+
+        const getCardWidth = () => {
+            const card = container.querySelector('.product-card');
+            return card ? card.offsetWidth + 2 : 305; // +2 for gap
+        };
+
+        const getCurrentIndex = () => {
+            return Math.round(container.scrollLeft / getCardWidth());
+        };
+
+        const totalCards = container.querySelectorAll('.product-card').length;
+
+        const updateNav = () => {
+            const idx = getCurrentIndex();
+            // Update dots
+            document.querySelectorAll('.carousel-dot').forEach((d, i) =>
+                d.classList.toggle('active', i === idx)
+            );
+            // Update arrow disabled states
+            if (prevBtn) prevBtn.disabled = idx === 0;
+            if (nextBtn) nextBtn.disabled = idx >= totalCards - 1;
+        };
+
+        container.addEventListener('scroll', updateNav, { passive: true });
+
+        const scrollToIndex = (idx) => {
+            const clamped = Math.max(0, Math.min(idx, totalCards - 1));
+            container.scrollTo({ left: clamped * getCardWidth(), behavior: 'smooth' });
+        };
+
+        if (prevBtn) {
+            prevBtn.disabled = true;
+            prevBtn.addEventListener('click', () => scrollToIndex(getCurrentIndex() - 1));
+        }
+        if (nextBtn) {
+            nextBtn.disabled = totalCards <= 1;
+            nextBtn.addEventListener('click', () => scrollToIndex(getCurrentIndex() + 1));
+        }
+
+        // Dot click to jump directly
+        document.querySelectorAll('.carousel-dot').forEach((dot, i) =>
+            dot.addEventListener('click', () => scrollToIndex(i))
+        );
+    }
+
+    synchronizeSectionHeights() {
+        const sections = [
+            '.product-image-container',
+            '.product-thumbnails',
+            '.product-meta',
+            '.tab-container',
+            '.purchase-section',
+            '.recommendation-text',
+            '.strengths-section',
+            '.weaknesses-section',
+            '.recommendation-box',
+            '.reviews-header',
+            '.price-history-section'
+        ];
+        sections.forEach(selector => {
+            const els = document.querySelectorAll(`#carouselTrack .product-card ${selector}`);
+            if (els.length < 2) return;
+            els.forEach(el => { el.style.minHeight = ''; });
+            const maxH = Math.max(...Array.from(els).map(el => el.offsetHeight));
+            els.forEach(el => { el.style.minHeight = `${maxH}px`; });
+        });
     }
 
     createProductCard(match, index) {
@@ -152,10 +292,17 @@ class ResultsController {
 
         const card = document.createElement('div');
         card.className = 'product-card';
+        card.dataset.productId = match.product_id;
 
         const displayName = product.display_name?.[this.currentLanguage] || product.display_name?.de || product.id;
         const category = this.formatLabel(product.category);
         const imageUrl = product.image_url || '/images/products/placeholder.jpg';
+        const imageUrls = product.image_urls || [imageUrl];
+        const thumbnailsHtml = imageUrls.length > 1
+            ? `<div class="product-thumbnails">${imageUrls.map((url, i) =>
+                `<img src="${url}" class="product-thumb${i === 0 ? ' active' : ''}" alt="${displayName} ${i+1}" onerror="this.style.display='none'">`
+              ).join('')}</div>`
+            : '';
         const matchScore = Math.round(match.match_score * 100);
 
         // Translation strings
@@ -168,31 +315,40 @@ class ResultsController {
             weaknesses: { de: 'Schwächen', en: 'Weaknesses' },
             verifiedTests: { de: 'Neutral Verifizierte Tests zusammengefasst', en: 'Neutral verified tests summarized' },
             forumDiscussion: { de: 'Forum Diskussion und Review', en: 'Forum discussion and review' },
-            amazonBtn: { de: 'Bei Amazon.de', en: 'Buy at Amazon.de' },
-            ebayBtn:   { de: 'Bei eBay.de',   en: 'Buy at eBay.de' },
-            mmBtn:     { de: 'Bei Media Markt', en: 'Buy at Media Markt' },
-            orderAt:   { de: 'Bestellen für', en: 'for' }
+            orderAt:   { de: 'Bestellen für', en: 'Order for' }
         };
 
+        const hasMultiple = imageUrls.length > 1;
         card.innerHTML = `
             <!-- 1. Product Image -->
             <div class="product-image-container">
-                <img src="${imageUrl}" alt="${displayName}" onerror="this.src='/images/products/placeholder.jpg'">
+                <img src="${imageUrl}" alt="${displayName}" class="product-main-image" onerror="this.src='/images/products/placeholder.jpg'">
+                ${hasMultiple ? `
+                <button class="img-nav img-nav-prev" aria-label="Previous image">&#8249;</button>
+                <button class="img-nav img-nav-next" aria-label="Next image">&#8250;</button>
+                ` : ''}
+                <button class="img-expand" aria-label="View full image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                        <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                    </svg>
+                </button>
                 <button class="favorite-button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
                 </button>
             </div>
+            ${thumbnailsHtml}
 
             <!-- 2. Product Meta -->
             <div class="product-meta">
                 <h2 class="product-name">${displayName}</h2>
                 <p class="product-category">${category}</p>
                 <div class="product-rating">
-                    <span class="star-icon">⭐</span>
-                    <span class="rating-number">4.5</span>
-                    <span class="review-count">(193 ${t.reviews[this.currentLanguage]})</span>
+                    <span class="rating-stars"></span>
+                    <span class="rating-number">—</span>
+                    <span class="review-count"></span>
                 </div>
             </div>
 
@@ -214,9 +370,35 @@ class ResultsController {
         `;
 
         // Add tab switching functionality
+        this.setupImageGallery(card);
         this.setupTabSwitching(card, index);
+        this.setupPriceChartHover(card);
 
         return card;
+    }
+
+    _renderBuyButtons(product, t) {
+        const lang = this.currentLanguage;
+        const links = (product.buy_links || [])
+            .filter(l => l.url)
+            .sort((a, b) => {
+                if (a.price == null && b.price == null) return 0;
+                if (a.price == null) return 1;
+                if (b.price == null) return -1;
+                return a.price - b.price;
+            })
+            .slice(0, 3);
+
+        if (!links.length) return `<span class="purchase-placeholder">${lang === 'de' ? 'Kauflinks folgen bald' : 'Buy links coming soon'}</span>`;
+
+        const colors = ['purchase-button-1', 'purchase-button-2', 'purchase-button-3'];
+        return links.map((l, i) => {
+            const priceStr = l.price != null ? `${l.price.toLocaleString('de-DE')} €` : '';
+            const line2 = priceStr ? `${t.orderAt[lang]} ${priceStr}` : l.shop;
+            return `<a href="${l.url}" target="_blank" rel="noopener" class="purchase-button ${colors[i]}">
+                ${l.shop}${priceStr ? `<br>${line2}` : ''}
+            </a>`;
+        }).join('');
     }
 
     renderEmpfehlungTab(match, product, t) {
@@ -226,15 +408,7 @@ class ResultsController {
             <!-- 4. Purchase Buttons -->
             <div class="purchase-section">
                 <div class="purchase-buttons">
-                    <a href="https://amazon.de" target="_blank" class="purchase-button purchase-button-1">
-                        ${t.amazonBtn[this.currentLanguage]}<br>${t.orderAt[this.currentLanguage]} 778€
-                    </a>
-                    <a href="https://ebay.de" target="_blank" class="purchase-button purchase-button-2">
-                        ${t.ebayBtn[this.currentLanguage]}<br>${t.orderAt[this.currentLanguage]} 799€
-                    </a>
-                    <a href="#" class="purchase-button purchase-button-3">
-                        ${t.mmBtn[this.currentLanguage]}<br>${t.orderAt[this.currentLanguage]} 849€
-                    </a>
+                    ${this._renderBuyButtons(product, t)}
                 </div>
             </div>
 
@@ -266,15 +440,23 @@ class ResultsController {
                 </div>
             </div>
 
-            <!-- 6. Reviews Header -->
+            <!-- 6. Price History -->
+            ${this.renderPriceHistorySection(product)}
+
+            <!-- 7. Amazon Sentiment Box -->
+            <div class="amazon-sentiment-box">
+                ${this.renderSentimentWidget(null, match.product_id)}
+            </div>
+
+            <!-- 8. Reviews Header -->
             <div class="reviews-header">
                 <p class="reviews-header-text">${t.verifiedTests[this.currentLanguage]}</p>
             </div>
 
-            <!-- 7. Review Boxes -->
+            <!-- 9. Review Boxes -->
             ${this.renderReviewBoxes(product)}
 
-            <!-- 8. Reddit Box -->
+            <!-- 9. Reddit Box -->
             <div class="reddit-box">
                 <div class="reddit-logo">📱</div>
                 <a href="https://reddit.com/r/Garmin" target="_blank" class="reddit-text">
@@ -282,22 +464,124 @@ class ResultsController {
                 </a>
             </div>
 
-            <!-- 9. YouTube Box -->
+            <!-- 10. YouTube Box -->
             <div class="youtube-box">
                 <div class="youtube-logo">▶️</div>
                 <span class="youtube-text">
                     ${product.display_name?.de || product.id} In-Depth Review: Brilliance at a Cost?
                 </span>
             </div>
-
-            <!-- 10. Amazon Ratings Box -->
-            <div class="amazon-box">
-                <div class="amazon-rating-graphic">⭐⭐⭐⭐⭐ 4.5/5</div>
-                <a href="https://amazon.de" target="_blank" class="amazon-link">
-                    193 Bewertungen bei Amazon.de lesen
-                </a>
-            </div>
         `;
+    }
+
+    _renderStars(rating) {
+        if (rating == null) return '';
+        const full  = Math.floor(rating);
+        const half  = rating - full >= 0.25 && rating - full < 0.75;
+        const empty = 5 - full - (half ? 1 : 0);
+        return (
+            '★'.repeat(full) +
+            (half ? '½' : '') +
+            '☆'.repeat(empty)
+        );
+    }
+
+    renderSentimentWidget(data, productId) {
+        const lang = this.currentLanguage;
+        const t = {
+            title:       { de: 'Amazon Kundenmeinungen', en: 'Amazon Customer Reviews' },
+            noData:      { de: 'Noch keine Amazon-Daten verfügbar', en: 'No Amazon data available yet' },
+            positive:    { de: 'Positiv', en: 'Positive' },
+            neutral:     { de: 'Neutral', en: 'Neutral' },
+            negative:    { de: 'Negativ', en: 'Negative' },
+            readAll:     { de: 'Alle Bewertungen bei Amazon.de lesen', en: 'Read all reviews on Amazon.de' },
+            reviews:     { de: 'Bewertungen', en: 'Reviews' },
+        };
+
+        if (!data || !data.available) {
+            return `
+                <div class="sentiment-empty">
+                    <span class="sentiment-empty-icon">⭐</span>
+                    <span class="sentiment-empty-text">${t.noData[lang]}</span>
+                </div>`;
+        }
+
+        const { amazon_rating, amazon_review_count, amazon_price, product_url, sentiment, top_positives, top_positives_en, top_negatives, top_negatives_en, summary, summary_en, last_updated: last_updated_raw } = data;
+        const last_updated = last_updated_raw
+            ? new Date(last_updated_raw).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+            : null;
+        const pos = sentiment?.positive_pct ?? 0;
+        const neu = sentiment?.neutral_pct ?? 0;
+        const neg = sentiment?.negative_pct ?? 0;
+
+        // Pick localised text based on current language
+        const activeSummary   = lang === 'en' && summary_en   ? summary_en   : summary;
+        const activePositives = lang === 'en' && top_positives_en?.length ? top_positives_en : top_positives;
+        const activeNegatives = lang === 'en' && top_negatives_en?.length ? top_negatives_en : top_negatives;
+
+        const ratingStr  = amazon_rating != null ? amazon_rating.toFixed(1).replace('.', ',') : '—';
+        const starsHtml  = amazon_rating != null
+            ? `<span class="sentiment-stars">${this._renderStars(amazon_rating)}</span><span class="sentiment-rating-num">${ratingStr} von 5</span>`
+            : '';
+        const countStr  = amazon_review_count != null
+            ? `${amazon_review_count.toLocaleString('de-DE')} ${t.reviews[lang]}`
+            : '';
+
+        // Use stored product_url first, then fall back to ASIN-derived URL
+        const product = this.productsMetadata[productId];
+        const metaUrl = product?.amazon_url || '';
+        const asinMatch = metaUrl.match(/\/dp\/([A-Z0-9]{10})/);
+        const amazonUrl = product_url
+            || (asinMatch ? `https://www.amazon.de/product-reviews/${asinMatch[1]}` : 'https://www.amazon.de');
+
+        const positivesHtml = (activePositives || []).map(p =>
+            `<li class="sentiment-theme sentiment-theme-pos">+ ${p}</li>`
+        ).join('');
+        const negativesHtml = (activeNegatives || []).map(n =>
+            `<li class="sentiment-theme sentiment-theme-neg">− ${n}</li>`
+        ).join('');
+
+        return `
+            <div class="sentiment-header">
+                <span class="sentiment-title">${t.title[lang]}</span>
+                <div class="sentiment-score">
+                    ${starsHtml}
+                    ${countStr ? `<span class="sentiment-count">${countStr}</span>` : ''}
+                    ${last_updated ? `<span class="sentiment-last-updated">${lang === 'de' ? 'Zuletzt aktualisiert' : 'Last updated'}: ${last_updated}</span>` : ''}
+                </div>
+            </div>
+            ${activeSummary ? `<p class="sentiment-summary">${activeSummary}</p>` : ''}
+            <div class="sentiment-bars">
+                <div class="sentiment-bar-row">
+                    <span class="sentiment-bar-label">${t.positive[lang]}</span>
+                    <div class="sentiment-bar-track">
+                        <div class="sentiment-bar-fill sentiment-bar-pos" style="width:${pos}%"></div>
+                    </div>
+                    <span class="sentiment-bar-pct">${pos}%</span>
+                </div>
+                <div class="sentiment-bar-row">
+                    <span class="sentiment-bar-label">${t.neutral[lang]}</span>
+                    <div class="sentiment-bar-track">
+                        <div class="sentiment-bar-fill sentiment-bar-neu" style="width:${neu}%"></div>
+                    </div>
+                    <span class="sentiment-bar-pct">${neu}%</span>
+                </div>
+                <div class="sentiment-bar-row">
+                    <span class="sentiment-bar-label">${t.negative[lang]}</span>
+                    <div class="sentiment-bar-track">
+                        <div class="sentiment-bar-fill sentiment-bar-neg" style="width:${neg}%"></div>
+                    </div>
+                    <span class="sentiment-bar-pct">${neg}%</span>
+                </div>
+            </div>
+            ${(positivesHtml || negativesHtml) ? `
+            <ul class="sentiment-themes">
+                ${positivesHtml}
+                ${negativesHtml}
+            </ul>` : ''}
+            <a href="${amazonUrl}" target="_blank" class="sentiment-amazon-link">
+                ${countStr ? `${countStr} ` : ''}${t.readAll[lang]}
+            </a>`;
     }
 
     renderProduktdatenTab(product) {
@@ -582,22 +866,429 @@ class ResultsController {
         return weaknesses.length > 0 ? weaknesses : [texts.default[this.currentLanguage]];
     }
 
-    renderReviewBoxes(product) {
-        const reviews = [
-            { source: 'Trusted Reviews', rating: '1,5', link: `${product.display_name?.en || product.id} Review` },
-            { source: 'heise online', rating: '1,0', link: `${product.display_name?.de || product.id} im Test` },
-            { source: 'Outdoor Gear Lab', rating: '1,4', link: 'Detailed Review' }
+    renderPriceHistorySection(product) {
+        const lang = this.currentLanguage;
+        const idealoUrl = product.idealo_url || null;
+        const history = (product.price_history || []).filter(e => e.price != null);
+
+        if (!history.length && !idealoUrl) return '';
+
+        const t = {
+            title:      { de: 'Preisverlauf', en: 'Price History' },
+            idealoBtn:  { de: 'Auf Idealo.de ansehen', en: 'View on Idealo.de' },
+            currentLbl: { de: 'Aktuell', en: 'Current' },
+            noData:     { de: 'Noch keine Verlaufsdaten', en: 'No history data yet' }
+        };
+
+        // Price change badge (#4)
+        let changeBadge = '';
+        if (history.length >= 2) {
+            const sortedH = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const first = sortedH[0].price;
+            const last  = sortedH[sortedH.length - 1].price;
+            const pct   = ((last - first) / first * 100);
+            const isDown = pct <= 0;
+            const arrow  = isDown ? '↓' : '↑';
+            const pctStr = `${arrow} ${Math.abs(pct).toFixed(1).replace('.', ',')}%`;
+            changeBadge = `<span class="price-change-badge ${isDown ? 'price-change-down' : 'price-change-up'}">${pctStr}</span>`;
+        }
+
+        const lastEntry = history.length
+            ? [...history].sort((a, b) => new Date(a.date) - new Date(b.date)).at(-1)
+            : null;
+        const lastUpdated = lastEntry
+            ? new Date(lastEntry.date).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+            : null;
+
+        const idealoLink = idealoUrl ? `
+            <div class="price-history-idealo-wrap">
+                <a href="${idealoUrl}" target="_blank" rel="noopener" class="price-history-idealo-btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    ${t.idealoBtn[lang]}
+                </a>
+                ${lastUpdated ? `<span class="price-history-updated">${lang === 'de' ? 'Zuletzt aktualisiert' : 'Last updated'}: ${lastUpdated}</span>` : ''}
+            </div>` : '';
+
+        const chartHtml = history.length >= 2
+            ? this._renderPriceChart(history, product.id, lang)
+            : history.length === 1
+                ? `<div class="price-history-single">
+                       <span class="price-history-single-label">${t.currentLbl[lang]}</span>
+                       <span class="price-history-single-value">${history[0].price.toLocaleString('de-DE')} €</span>
+                   </div>`
+                : `<p class="price-history-nodata">${t.noData[lang]}</p>`;
+
+        return `
+            <div class="price-history-section">
+                <div class="price-history-header">
+                    <div class="price-history-header-left">
+                        <span class="price-history-title">${t.title[lang]}</span>
+                        ${changeBadge}
+                    </div>
+                    ${idealoLink}
+                </div>
+                ${chartHtml}
+            </div>`;
+    }
+
+    // Catmull-Rom → cubic bezier smooth curve (#1)
+    _smoothCurve(pts) {
+        if (pts.length < 2) return `M${pts[0].x},${pts[0].y}`;
+        const t = 0.35;
+        let d = `M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+        for (let i = 0; i < pts.length - 1; i++) {
+            const p0 = pts[Math.max(0, i - 1)];
+            const p1 = pts[i];
+            const p2 = pts[i + 1];
+            const p3 = pts[Math.min(pts.length - 1, i + 2)];
+            const cp1x = p1.x + (p2.x - p0.x) * t;
+            const cp1y = p1.y + (p2.y - p0.y) * t;
+            const cp2x = p2.x - (p3.x - p1.x) * t;
+            const cp2y = p2.y - (p3.y - p1.y) * t;
+            d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+        }
+        return d;
+    }
+
+    _renderPriceChart(history, productId, lang) {
+        const sorted = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const prices = sorted.map(e => e.price);
+        const minP = Math.min(...prices);
+        const maxP = Math.max(...prices);
+        const range = maxP - minP || 1;
+
+        const W = 300, H = 116;
+        const PAD = { top: 14, right: 40, bottom: 28, left: 22 };
+        const cW = W - PAD.left - PAD.right;
+        const cH = H - PAD.top - PAD.bottom;
+        const chartLeft   = PAD.left;
+        const chartRight  = W - PAD.right;
+        const chartTop    = PAD.top;
+        const chartBottom = PAD.top + cH;
+
+        const pts = sorted.map((e, i) => ({
+            x: PAD.left + (sorted.length === 1 ? cW / 2 : (i / (sorted.length - 1)) * cW),
+            y: PAD.top + cH - ((e.price - minP) / range) * cH,
+            price: e.price,
+            date: e.date,
+            isMin: e.price === minP,
+            isMax: e.price === maxP
+        }));
+
+        // Smooth paths (#1)
+        const linePath = `M ${pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')}`;
+        const areaPath = `M${pts[0].x.toFixed(1)},${chartBottom} L${pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L')} L${pts[pts.length-1].x.toFixed(1)},${chartBottom} Z`;
+
+        const fmtDate = d => new Date(d).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', { month: 'short', year: '2-digit' });
+        const last = pts[pts.length - 1];
+
+        // Min/max price points (#5)
+        const minPt = pts.find(p => p.isMin);
+
+        // Y axis: min, mid, max
+        const yTicks = [minP, Math.round((minP + maxP) / 2), maxP];
+        const yLabels = yTicks.map(v => ({
+            y: PAD.top + cH - ((v - minP) / range) * cH,
+            label: `${v}€`
+        }));
+
+        // X axis: first + last
+        const xLabels = [
+            { x: pts[0].x, label: fmtDate(sorted[0].date) },
+            { x: pts[pts.length - 1].x, label: fmtDate(sorted[sorted.length - 1].date) }
         ];
 
-        return reviews.map(review => `
+        const gradId = `pg_${productId}`;
+
+        return `
+        <svg class="price-chart-svg" viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible;cursor:crosshair">
+            <defs>
+                <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stop-color="#3B82F6" stop-opacity="0.28"/>
+                    <stop offset="70%"  stop-color="#3B82F6" stop-opacity="0.06"/>
+                    <stop offset="100%" stop-color="#3B82F6" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+
+            <!-- Grid lines -->
+            ${yLabels.map(l => `<line x1="${chartLeft}" y1="${l.y.toFixed(1)}" x2="${chartRight}" y2="${l.y.toFixed(1)}" stroke="#EFF2F6" stroke-width="1"/>`).join('')}
+
+            <!-- Area + line -->
+            <path d="${areaPath}" fill="url(#${gradId})"/>
+            <path d="${linePath}" fill="none" stroke="#3B82F6" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- Invisible data points for hover detection (no dots = #2) -->
+            ${pts.map(p => `<circle class="chart-data-point" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="0" fill="none" data-x="${p.x.toFixed(1)}" data-y="${p.y.toFixed(1)}" data-price="${p.price}" data-date="${p.date}" data-ismin="${p.isMin}" data-ismax="${p.isMax}"/>`).join('')}
+
+
+            <!-- Last point highlight -->
+            <circle cx="${last.x.toFixed(1)}" cy="${last.y.toFixed(1)}" r="3.5" fill="#3B82F6" stroke="#fff" stroke-width="1.5"/>
+
+            <!-- Y axis labels -->
+            ${yLabels.map(l => `<text x="${(chartLeft - 4).toFixed(1)}" y="${(l.y + 3.5).toFixed(1)}" text-anchor="end" font-size="7" fill="#C4CADB" font-family="Inter,sans-serif">${l.label}</text>`).join('')}
+            <!-- X axis labels -->
+            ${xLabels.map(l => `<text x="${l.x.toFixed(1)}" y="${H - 3}" text-anchor="middle" font-size="7" fill="#C4CADB" font-family="Inter,sans-serif">${l.label}</text>`).join('')}
+
+            <!-- Current price callout -->
+            <text x="${(last.x + 6).toFixed(1)}" y="${(last.y + 3.5).toFixed(1)}" font-size="9" fill="#3B82F6" font-weight="700" font-family="Inter,sans-serif">${last.price}€</text>
+
+            <!-- Cursor group — smooth CSS transform (#7) -->
+            <g class="chart-cursor-group" style="display:none;pointer-events:none">
+                <line class="chart-crosshair" x1="0" x2="0" y1="${chartTop}" y2="${chartBottom}" stroke="#3B82F6" stroke-width="1" stroke-dasharray="3,2" opacity="0.45"/>
+                <circle class="chart-hover-point" cx="0" r="3.5" fill="#3B82F6" stroke="#fff" stroke-width="1.5"/>
+            </g>
+
+            <!-- Tooltip group — positioned separately -->
+            <g class="chart-tooltip-group" style="display:none;pointer-events:none">
+                <rect class="chart-tooltip-bg" rx="5" fill="#1E293B" opacity="0.92"/>
+                <text class="chart-tooltip-price" text-anchor="middle" font-size="9" fill="#fff" font-weight="700" font-family="Inter,sans-serif"/>
+                <text class="chart-tooltip-date"  text-anchor="middle" font-size="7" fill="#94A3B8" font-family="Inter,sans-serif"/>
+                <text class="chart-tooltip-badge" text-anchor="middle" font-size="7" font-weight="600" font-family="Inter,sans-serif"/>
+            </g>
+
+            <!-- Transparent overlay for mouse capture -->
+            <rect class="chart-overlay" x="${chartLeft}" y="${chartTop}" width="${cW}" height="${cH}" fill="transparent"/>
+        </svg>`;
+    }
+
+    renderReviewBoxes(product) {
+        return `<div class="review-boxes-container" data-product-id="${product.id}"></div>`;
+    }
+
+    async loadReviewsForAllCards() {
+        if (!this.quizResults?.matched_products) return;
+        const token = localStorage.getItem('verifyr_access_token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        for (const match of this.quizResults.matched_products) {
+            try {
+                const res = await fetch(`/products/${match.product_id}/reviews`, { headers });
+                if (!res.ok) continue;
+                const data = await res.json();
+                this.updateCardReviews(match.product_id, data.reviews || []);
+            } catch (e) {
+                // Non-fatal
+            }
+        }
+        requestAnimationFrame(() => this.synchronizeSectionHeights());
+    }
+
+    updateCardReviews(productId, reviews) {
+        const container = document.querySelector(`.review-boxes-container[data-product-id="${productId}"]`);
+        if (!container) return;
+        const lang = this.currentLanguage;
+        const linkLabel = lang === 'de' ? 'Vollständigen Test lesen' : 'Read full review';
+
+        container.innerHTML = reviews.map(r => {
+            const summary = (lang === 'en' && r.summary_en) ? r.summary_en : r.summary;
+            const reviewDate = r.review_date
+                ? new Date(r.review_date).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                : null;
+            const hasPct = r.positive_pct != null;
+            const pctHtml = hasPct ? `
+                <span class="review-pct review-pct-pos">${r.positive_pct}%</span>
+                <span class="review-pct review-pct-neu">${r.neutral_pct}%</span>
+                <span class="review-pct review-pct-neg">${r.negative_pct}%</span>` : '';
+            return `
             <div class="review-box">
                 <div class="review-left">
-                    <div class="review-logo" style="font-weight: 600; font-size: 12px;">${review.source}</div>
-                    <a href="#" class="review-link">${review.link}</a>
+                    <div class="review-logo">
+                        ${r.source_name}
+                        ${pctHtml}
+                    </div>
+                    ${summary ? `<p class="review-summary">${summary}</p>` : ''}
+                    <div class="review-footer">
+                        <a href="${r.source_url}" target="_blank" rel="noopener" class="review-link">${linkLabel} ↗</a>
+                        ${reviewDate ? `<span class="review-date">${reviewDate}</span>` : ''}
+                    </div>
                 </div>
-                <div class="review-rating">${review.rating}</div>
+            </div>`;
+        }).join('');
+    }
+
+    setupPriceChartHover(card) {
+        const svg = card.querySelector('.price-chart-svg');
+        if (!svg) return;
+
+        const dataPointEls = svg.querySelectorAll('.chart-data-point');
+        if (!dataPointEls.length) return;
+
+        const points = Array.from(dataPointEls).map(el => ({
+            x:     parseFloat(el.getAttribute('data-x')),
+            y:     parseFloat(el.getAttribute('data-y')),
+            price: parseFloat(el.getAttribute('data-price')),
+            date:  el.getAttribute('data-date'),
+            isMin: el.getAttribute('data-ismin') === 'true',
+            isMax: el.getAttribute('data-ismax') === 'true'
+        }));
+
+        const cursorGroup  = svg.querySelector('.chart-cursor-group');
+        const hoverPoint   = svg.querySelector('.chart-hover-point');
+        const tooltipGroup = svg.querySelector('.chart-tooltip-group');
+        const tooltipBg    = svg.querySelector('.chart-tooltip-bg');
+        const tooltipPrice = svg.querySelector('.chart-tooltip-price');
+        const tooltipDate  = svg.querySelector('.chart-tooltip-date');
+        const tooltipBadge = svg.querySelector('.chart-tooltip-badge');
+        const overlay      = svg.querySelector('.chart-overlay');
+
+        const W = 300, PAD_LEFT = 22, PAD_TOP = 14, H = 116;
+        const lang = this.currentLanguage;
+
+        // Enable smooth CSS transform transition on cursor (#7)
+        cursorGroup.style.transition = 'transform 0.08s cubic-bezier(0.4,0,0.2,1)';
+
+        let lastNearest = null;
+
+        overlay.addEventListener('mousemove', (e) => {
+            const pt = svg.createSVGPoint();
+            pt.x = e.clientX; pt.y = e.clientY;
+            const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+            // Snap to nearest data point by X
+            let nearest = points[0], minDist = Infinity;
+            for (const p of points) {
+                const d = Math.abs(p.x - svgPt.x);
+                if (d < minDist) { minDist = d; nearest = p; }
+            }
+            if (nearest === lastNearest) return;
+            lastNearest = nearest;
+
+            // Show cursor — smooth translateX (#7)
+            cursorGroup.style.display = '';
+            cursorGroup.style.transform = `translateX(${nearest.x}px)`;
+            hoverPoint.setAttribute('cy', nearest.y);
+
+            // Tooltip content
+            const priceText = nearest.price.toLocaleString('de-DE') + ' €';
+            const dateText  = new Date(nearest.date).toLocaleDateString(
+                lang === 'de' ? 'de-DE' : 'en-GB',
+                { day: 'numeric', month: 'short', year: '2-digit' }
+            );
+            tooltipPrice.textContent = priceText;
+            tooltipDate.textContent  = dateText;
+
+            // Min/max badge (#8)
+            let badgeText = '', badgeColor = '#10B981';
+            if (nearest.isMin) {
+                badgeText  = lang === 'de' ? '🏷 Tiefstpreis' : '🏷 Lowest price';
+                badgeColor = '#10B981';
+            } else if (nearest.isMax) {
+                badgeText  = lang === 'de' ? '↑ Höchstpreis' : '↑ Highest price';
+                badgeColor = '#F59E0B';
+            }
+            tooltipBadge.textContent = badgeText;
+            tooltipBadge.setAttribute('fill', badgeColor);
+
+            const hasBadge = !!badgeText;
+            const ttW = hasBadge ? 70 : 54;
+            const ttH = hasBadge ? 36 : 26;
+
+            // Position tooltip within SVG bounds
+            let ttX = nearest.x - ttW / 2;
+            if (ttX < PAD_LEFT) ttX = PAD_LEFT;
+            if (ttX + ttW > W - 8) ttX = W - 8 - ttW;
+            let ttY = nearest.y - ttH - 7;
+            if (ttY < PAD_TOP) ttY = nearest.y + 8;
+
+            tooltipGroup.style.display = '';
+            tooltipBg.setAttribute('x', ttX);
+            tooltipBg.setAttribute('y', ttY);
+            tooltipBg.setAttribute('width', ttW);
+            tooltipBg.setAttribute('height', ttH);
+            tooltipPrice.setAttribute('x', ttX + ttW / 2);
+            tooltipPrice.setAttribute('y', ttY + 11);
+            tooltipDate.setAttribute('x', ttX + ttW / 2);
+            tooltipDate.setAttribute('y', ttY + 21);
+            tooltipBadge.setAttribute('x', ttX + ttW / 2);
+            tooltipBadge.setAttribute('y', ttY + 31);
+        });
+
+        overlay.addEventListener('mouseleave', () => {
+            cursorGroup.style.display  = 'none';
+            tooltipGroup.style.display = 'none';
+            lastNearest = null;
+        });
+    }
+
+    setupImageGallery(card) {
+        const mainImg = card.querySelector('.product-main-image');
+        if (!mainImg) return;
+
+        const thumbs = Array.from(card.querySelectorAll('.product-thumb'));
+        const urls = thumbs.length ? thumbs.map(t => t.src) : [mainImg.src];
+        let current = 0;
+
+        const goTo = (index) => {
+            current = (index + urls.length) % urls.length;
+            mainImg.src = urls[current];
+            thumbs.forEach((t, i) => t.classList.toggle('active', i === current));
+        };
+
+        // Thumbnail clicks
+        thumbs.forEach((thumb, i) => {
+            thumb.addEventListener('click', () => goTo(i));
+        });
+
+        // Prev / Next arrows
+        const prevBtn = card.querySelector('.img-nav-prev');
+        const nextBtn = card.querySelector('.img-nav-next');
+        if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+
+        // Expand / lightbox
+        const expandBtn = card.querySelector('.img-expand');
+        if (expandBtn) {
+            expandBtn.addEventListener('click', () => {
+                this._openLightbox(urls, current, (i) => { current = i; goTo(i); });
+            });
+        }
+    }
+
+    _ensureLightbox() {
+        if (document.getElementById('img-lightbox')) return;
+        const lb = document.createElement('div');
+        lb.id = 'img-lightbox';
+        lb.innerHTML = `
+            <div class="lb-backdrop"></div>
+            <div class="lb-content">
+                <button class="lb-close" aria-label="Close">&#10005;</button>
+                <button class="lb-nav lb-prev" aria-label="Previous">&#8249;</button>
+                <img class="lb-img" src="" alt="">
+                <button class="lb-nav lb-next" aria-label="Next">&#8250;</button>
+                <div class="lb-dots"></div>
             </div>
-        `).join('');
+        `;
+        document.body.appendChild(lb);
+
+        lb.querySelector('.lb-backdrop').addEventListener('click', () => lb.classList.remove('open'));
+        lb.querySelector('.lb-close').addEventListener('click', () => lb.classList.remove('open'));
+        document.addEventListener('keydown', (e) => {
+            if (!lb.classList.contains('open')) return;
+            if (e.key === 'Escape') lb.classList.remove('open');
+            if (e.key === 'ArrowLeft') lb.querySelector('.lb-prev').click();
+            if (e.key === 'ArrowRight') lb.querySelector('.lb-next').click();
+        });
+    }
+
+    _openLightbox(urls, startIndex, onNavigate) {
+        this._ensureLightbox();
+        const lb = document.getElementById('img-lightbox');
+        const img = lb.querySelector('.lb-img');
+        const dots = lb.querySelector('.lb-dots');
+        let cur = startIndex;
+
+        const render = () => {
+            img.src = urls[cur];
+            dots.innerHTML = urls.map((_, i) =>
+                `<span class="lb-dot${i === cur ? ' active' : ''}"></span>`
+            ).join('');
+        };
+
+        lb.querySelector('.lb-prev').onclick = () => { cur = (cur - 1 + urls.length) % urls.length; render(); onNavigate(cur); };
+        lb.querySelector('.lb-next').onclick = () => { cur = (cur + 1) % urls.length; render(); onNavigate(cur); };
+
+        render();
+        lb.classList.add('open');
     }
 
     setupTabSwitching(card, cardIndex) {

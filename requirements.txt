@@ -34,3 +34,8 @@ PyJWT>=2.8.0  # JWT token verification
 # Utilities
 tqdm>=4.66.0  # Progress bars
 pydantic>=2.0.0  # Data validation
+
+# Web Scraping — Amazon / Firecrawl (Phase: Web Scraping)
+firecrawl-py>=1.0.0  # Firecrawl API client for Amazon review scraping
+langdetect>=1.0.9    # Language detection (de/en) for scraped content
+playwright>=1.40.0   # Headless Chromium for scraping any review/article site

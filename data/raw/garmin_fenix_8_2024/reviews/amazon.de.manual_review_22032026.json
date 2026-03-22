@@ -1,0 +1,40 @@
+{
+  "product_id": "garmin_fenix_8_2024",
+  "source_url": "https://amazon.de.manual",
+  "source_name": "Amazon.de",
+  "doc_type": "review",
+  "language": "de",
+  "scraped_date": "2026-03-22",
+  "scraper_used": "manual",
+  "title": "Amazon.de — Manuelle Bewertungen",
+  "content": "Die Kunden sagen\nDie Kunden sind mit der Qualität, Akkulaufzeit und Sportfähigkeit der Garmin Fenix 8 sehr zufrieden. Sie beschreiben sie als großartig, super und absolut gute Multisport-Smartwatch. Die Akkulaufzeit wird als beeindruckend und die Body-Battery-Funktion als hilfreich empfunden. Die umfangreichen Sport- und Gesundheitsfunktionen werden gelobt. Das Display wird als gut sichtbar, klar und übersichtlich beschrieben. Die Genauigkeit, Zuverlässigkeit, Preis-Leistung und Konnektivität werden unterschiedlich bewertet.\n\nQualität: Kunden sind mit der Qualität der Garmin Fenix 8 zufrieden. Sie beschreiben sie als großartige, super Sportuhr und Multisport-Smartwatch. Einige finden sie stylisch und beeindruckend. Andere bezeichnen sie als hochwertig, robust und leistungsfähig. Insgesamt wird die Uhr als sehr gutes Werkzeug für Sportler wahrgenommen.\n\nAkkulaufzeit: Kunden sind mit der Akkulaufzeit der Uhr zufrieden. Sie beschreiben sie als beeindruckend und loben die lange Laufzeit. Die Body-Battery-Funktion liefert hilfreiche Einblicke in den eigenen Energiezustand. Einige Kunden berichten, dass das erste Laden nach gut 14 Tagen erfolgte.\n\nDisplayqualität: Kunden sind mit der Displayqualität des Produkts zufrieden. Sie beschreiben es als gut ablesbar, übersichtlich und anschaulich dargestellt. Das Display wird als klar und schön wahrgenommen, auch bei direkter Sonneneinstrahlung.\n\nPreis-Leistung: Kunden haben unterschiedliche Meinungen zum Preis-Leistungs-Verhältnis der Uhr. Einige finden sie jeden Euro wert und loben die enorme Ausstattung. Andere bemängeln jedoch, dass die Software teilweise Probleme für den hohen Preis nicht akzeptabel ist.\n\nSportfähigkeit: Kunden sind mit der Sportfähigkeit der Uhr zufrieden. Sie loben die umfangreichen Sport- und Gesundheitsfunktionen sowie die vielseitigen Fitnessprogramme. Die Uhr wird als idealer Trainings- und Alltagsbegleiter beschrieben, der sowohl für den Alltag als auch für Outdoor-Abenteuer geeignet ist.\n\nGenauigkeit: Kunden sind mit der Genauigkeit der Uhr zufrieden. Sie berichten, dass alle wichtigen Werte erfasst und ausgewertet werden. Die Vitalwertüberwachung und Schlafanalyse werden als spitze beschrieben. Die Uhr zeichnet die Übungen sehr genau auf und erkennt sogar automatisch die trainierten. Die Trainingsanalysen werden als zuverlässig empfunden.",
+  "amazon_rating": 4.4,
+  "amazon_review_count": 929,
+  "amazon_price": "679",
+  "product_url": "https://www.amazon.de/dp/B0DC6ZD31R/",
+  "sentiment": {
+    "positive_pct": 80,
+    "neutral_pct": 10,
+    "negative_pct": 10,
+    "top_positives": [
+      "großartige Multisport-Smartwatch",
+      "beeindruckende Akkulaufzeit",
+      "gute Displayqualität"
+    ],
+    "top_positives_en": [
+      "great multisport smartwatch",
+      "impressive battery life",
+      "good display quality"
+    ],
+    "top_negatives": [
+      "teilweise Softwareprobleme",
+      "Preis-Leistungs-Verhältnis umstritten"
+    ],
+    "top_negatives_en": [
+      "occasional software issues",
+      "value for money debated"
+    ],
+    "summary": "Die Garmin Fenix 8 wird von den Kunden überwiegend positiv bewertet, insbesondere für ihre Qualität, Akkulaufzeit und Sportfähigkeit. Die Uhr wird als großartige Multisport-Smartwatch mit einem klaren und gut ablesbaren Display beschrieben. Kritisiert werden jedoch einige Softwareprobleme und das umstrittene Preis-Leistungs-Verhältnis. Insgesamt eignet sich die Uhr hervorragend für Sportler und Fitnessbegeisterte, die eine zuverlässige und vielseitige Smartwatch suchen.",
+    "summary_en": "The Garmin Fenix 8 is rated overwhelmingly positively by customers, particularly for its quality, battery life, and sports capabilities. The watch is described as a great multisport smartwatch with a clear, easy-to-read display. However, some software issues and debated value for money are criticised. Overall, the watch is excellent for athletes and fitness enthusiasts looking for a reliable and versatile smartwatch."
+  }
+}

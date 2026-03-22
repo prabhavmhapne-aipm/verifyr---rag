@@ -1,6 +1,40 @@
 {
   "_comment": "This is an example sources.json file. Copy this to sources.json and update with your actual URLs.",
   "_instructions": "For each product, map PDF filenames to their source URLs and names. Use forward slashes for paths.",
+  "garmin_fenix_8_2024": {
+    "user_manual.pdf": {
+      "source_url": "https://www.garmin.com/de-DE/p/735542/",
+      "source_name": "Garmin Official"
+    },
+    "specification.pdf": {
+      "source_url": "https://www.garmin.com/de-DE/p/735542/",
+      "source_name": "Garmin Official"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/bergzeit_review_22092024.pdf": {
+      "source_url": "https://www.bergzeit.de/magazin/garmin-fenix-8-test-multisport-smartwatch/",
+      "source_name": "Bergzeit.de"
+    },
+    "reviews/computerbild_review_10022025.pdf": {
+      "source_url": "https://www.computerbild.de/artikel/cb-Tests-Wearables-Garmin-Fenix-8-Test-AMOLED-Review-2025-38816155.html",
+      "source_name": "Computerbild.de"
+    },
+    "reviews/dcrainmaker_review_27082024.pdf": {
+      "source_url": "https://www.dcrainmaker.com/2024/08/garmin-fenix-8-in-depth-review.html",
+      "source_name": "DC Rainmaker"
+    },
+    "reviews/heise.de_review_19012025.pdf": {
+      "source_url": "https://www.heise.de/bestenlisten/testbericht/garmin-fenix-8-mit-oled-im-test-eine-der-besten-sportuhren-hat-jetzt-ekg/w6jgjdg",
+      "source_name": "Heise.de"
+    },
+    "reviews/imtest_review_15022026.pdf": {
+      "source_url": "https://www.imtest.de/sport-freizeit/garmin-fenix-8-im-test-smartwatch-navigation-tracking-tauchen-funktionen/529581",
+      "source_name": "Imtest.de"
+    }
+  },
   "garmin_forerunner_970_2025": {
     "user_manual.pdf": {
       "source_url": "https://www.garmin.com/de-DE/p/1462801/",
@@ -51,6 +85,10 @@
     "reviews/techradar_review_16092025.pdf": {
       "source_url": "https://www.techradar.com/health-fitness/smartwatches/apple-watch-series-11-review",
       "source_name": "Techradar"
+    },
+    "reviews/heise.de_review_27102025.pdf": {
+      "source_url": "https://www.heise.de/bestenlisten/testbericht/apple-watch-series-11-im-test-die-beste-smartwatch-fuer-das-iphone/05wchg8",
+      "source_name": "Heise.de"
     }
   }
 }

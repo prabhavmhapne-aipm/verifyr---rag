@@ -1,0 +1,42 @@
+{
+  "product_id": "apple_watch_series11_2025",
+  "source_url": "https://amazon.de.manual",
+  "source_name": "Amazon.de",
+  "doc_type": "review",
+  "language": "de",
+  "scraped_date": "2026-03-21",
+  "scraper_used": "manual",
+  "title": "Amazon.de — Manuelle Bewertungen",
+  "content": "Die Kunden sind mit der Qualität, den Funktionen und dem Design der Smartwatch zufrieden. Sie beschreiben sie als hochwertig, elegant und stylisch. Die Funktionen werden als einwandfrei, übersichtlich und harmonisch beschrieben. Das Design wird als schön, edel und nicht klobig am Handgelenk wahrgenommen. Die Passform, die Bedienung und die Displayqualität werden ebenfalls gelobt. Einige Kunden haben jedoch gemischte Meinungen zur Akkulaufzeit und zum Preis-Leistungs-Verhältnis.\n\nAlles in allem ist die Apple Watch 11 eine großartige Smartwatch für alle, die Wert auf Funktionalität, Design und ein perfekt abgestimmtes System legen. Wer allerdings primär eine Uhr mit langer Akkulaufzeit sucht, sollte sich auch Alternativen ansehen.\nAkkulaufzeit: Batteriezeit unter 16 Stunden! Man kann damit seinen Tag überhaupt nicht verfolgen!!! Mein Kauf war also völlig sinnlos.\n\nPreis-Leistung: Kunden haben unterschiedliche Meinungen zur Preis-Leistung des Produkts. Einige finden es ihr Geld wert und loben den stolzen Preis. Andere empfinden es als günstiges Original und sagen, dass es jedes Upgrade wert ist. Es wird als Smartwatch für alle, die Wert auf Funktionalität und Design legen.\nBattery on the Apple Watch lasts two days then charge my phone tells me when it's charged then it last two days I'm not happy\nAkkulaufzeit im Vergleich zu Konkurrenzprodukten nach wie vor enttäuschend\n\nDisplayqualität: Kunden sind mit der Displayqualität des Produkts zufrieden. Sie beschreiben es als heller, gestochen scharf und optisch sehr Apple. Die Auflösung wird als der Hammer bezeichnet und die Verbesserungen sind kristallklar. Das Display wird als echtes Highlight am Handgelenk wahrgenommen\n\nPreis-Leistung: Einige finden es ihr Geld wert und loben den stolzen Preis. Andere empfinden es als günstiges Original und sagen, dass es jedes Upgrade wert ist. Es wird als Smartwatch für alle, die Wert auf Funktionalität und Design legen.\n\nQualität: Kunden sind mit der Qualität der Smartwatch zufrieden. Sie beschreiben sie als hochwertig, elegant und perfekt. Die Optik wird ebenfalls gelobt.\n\nBedienung: Kunden sind mit der Bedienung des Produkts zufrieden. Sie berichten, dass die Verbindung mit dem iPhone reibungslos läuft und die Bedienung jederzeit reaktionsschnell läuft. Die Leistung im Alltag wird als sehr flüssig beschrieben, ohne Ruckeln oder Lag. Das Telefonieren, Nachrichten lesen oder kurz antworten klappt problemlos. Außerdem lässt sich über HomeKit schnell ein Licht ein oder ausschalten.",
+  "amazon_rating": 4.7,
+  "amazon_review_count": 1001,
+  "amazon_price": "419",
+  "product_url": "https://www.amazon.de/dp/B0FQFRSQLR/",
+  "sentiment": {
+    "positive_pct": 70,
+    "neutral_pct": 20,
+    "negative_pct": 10,
+    "top_positives": [
+      "hochwertig, elegant und stylisch",
+      "Displayqualität als heller und gestochen scharf",
+      "Bedienung reibungslos und reaktionsschnell"
+    ],
+    "top_positives_en": [
+      "premium quality, elegant and stylish",
+      "display bright and razor-sharp",
+      "seamless and responsive operation"
+    ],
+    "top_negatives": [
+      "Akkulaufzeit unter 16 Stunden",
+      "gemischte Meinungen zur Preis-Leistungs-Verhältnis",
+      "Akkulaufzeit im Vergleich zu Konkurrenzprodukten enttäuschend"
+    ],
+    "top_negatives_en": [
+      "battery life under 16 hours",
+      "mixed opinions on value for money",
+      "battery life disappointing compared to competitors"
+    ],
+    "summary": "Die Apple Watch 11 erhält überwiegend positive Bewertungen, insbesondere für ihre hochwertige Verarbeitung, das elegante Design und die exzellente Displayqualität. Kunden schätzen die reibungslose Bedienung und die Funktionalität im Alltag. Kritisiert wird jedoch die kurze Akkulaufzeit und die unterschiedlichen Meinungen zum Preis-Leistungs-Verhältnis. Diese Smartwatch eignet sich besonders für Nutzer, die Wert auf Design und Funktionalität legen, jedoch weniger für diejenigen, die eine lange Akkulaufzeit erwarten.",
+    "summary_en": "The Apple Watch Series 11 receives predominantly positive reviews, particularly for its premium build quality, elegant design, and excellent display. Customers appreciate the seamless operation and everyday functionality. However, the short battery life and mixed opinions on value for money are criticised. This smartwatch is especially suited for users who value design and functionality, but less so for those expecting long battery life."
+  }
+}
