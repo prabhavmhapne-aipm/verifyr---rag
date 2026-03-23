@@ -182,6 +182,17 @@
             "air_pressure"
           ]
         },
+        "navigation": {
+          "de": "GPS (L1), GLONASS, Galileo, Kompass, Höhenmesser, Offline-Karten, topografische Karten (US-Parks), Wegpunkte, Backtrack",
+          "en": "GPS (L1), GLONASS, Galileo, Compass, Altimeter, Offline maps, Topographic maps (US parks), Waypoints, Backtrack",
+          "enabled": true,
+          "compass": true,
+          "systems": [
+            "GPS",
+            "GLONASS",
+            "Galileo"
+          ]
+        },
         "health_status": {
           "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Blutsauerstoff App, Frauengesundheit, Schlafcoach",
           "en": "Yes, HRV, Sleep Coach, Skin temperature, ECG App, Blood oxygen App, Women's health, Sleep coach",
@@ -273,7 +284,7 @@
         }
       },
       "use_cases": {
-        "running": {
+        "running_cycling": {
           "supported": true,
           "rating": 4,
           "features": [
@@ -297,7 +308,7 @@
           ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 4-5"
         },
-        "cycling": {
+        "competition_performance": {
           "supported": true,
           "rating": 3,
           "features": [
@@ -321,7 +332,7 @@
           ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 4"
         },
-        "health_tracking": {
+        "health_wellbeing": {
           "supported": true,
           "rating": 5,
           "features": [
@@ -336,7 +347,7 @@
           ],
           "citation": "Apple Watch Series 11, Technische Daten, Seite 2-3"
         },
-        "daily_wear": {
+        "lifestyle_fitness": {
           "supported": true,
           "rating": 5,
           "features": [
@@ -367,32 +378,32 @@
           "value": "Multi-GNSS (GPS, GLONASS, Galileo, QZSS, BeiDou)",
           "notes": "Excellent accuracy for outdoor activities"
         },
-        "health_sensors": {
+        "ecg_hrv": {
           "rating": 5,
           "value": "ECG, Blood Oxygen, Temperature, Sleep Apnea, Blood Pressure",
           "notes": "Industry-leading health monitoring"
         },
-        "music_storage": {
+        "smartphone_independent": {
           "rating": 5,
           "value": "64 GB storage",
           "notes": "Extensive music storage, Apple Music integration"
         },
-        "touchscreen": {
+        "with_display": {
           "rating": 5,
           "value": "Always-On Retina OLED touchscreen",
           "notes": "Premium display with 2,000 nits brightness"
         },
-        "durability": {
+        "light_comfortable": {
           "rating": 4,
           "value": "IP6X dust-proof, 50m water resistance",
           "notes": "Durable for daily use, not rugged"
         },
-        "smart_features": {
+        "app_ecosystem": {
           "rating": 5,
           "value": "Full iOS integration, App Store, Apple Pay, Siri",
           "notes": "Best-in-class smart features for iPhone users"
         },
-        "design": {
+        "design_modern": {
           "rating": 5,
           "value": "Premium aluminum/titanium, multiple colors",
           "notes": "Elegant, fashion-forward design"
@@ -402,15 +413,20 @@
           "value": "Full iOS notification support, calls, messages",
           "notes": "Seamless iPhone integration"
         },
-        "training_metrics": {
+        "vo2_max": {
           "rating": 3,
           "value": "Basic training metrics, heart rate zones",
           "notes": "Good for casual athletes, limited advanced metrics"
         },
-        "sleep_tracking": {
+        "sleep_monitor": {
           "rating": 4,
           "value": "Sleep stages, Sleep Score, Sleep Apnea detection",
           "notes": "Comprehensive sleep tracking"
+        },
+        "stress_monitor": {
+          "rating": 3,
+          "value": "Mindfulness app, HRV-based stress indicator",
+          "notes": "No dedicated stress score or Body Battery; stress reflected via HRV trends"
         },
         "price_value": {
           "rating": 3,
@@ -421,6 +437,16 @@
           "rating": 4,
           "value": "Offline maps, topographic maps (US parks)",
           "notes": "Good for hiking, US-focused"
+        },
+        "design_classic": {
+          "rating": 0,
+          "value": "Digital touchscreen only",
+          "notes": "No analog or classic watch face design; fully digital OLED display"
+        },
+        "no_display": {
+          "rating": 0,
+          "value": "Always-On Retina display",
+          "notes": "Display is a core feature; no displayless mode available"
         }
       },
       "buy_links": [
@@ -505,7 +531,24 @@
           "Casual to advanced athletes",
           "Users who value safety features (Emergency SOS, Fall Detection, Crash Detection)"
         ]
-      }
+      },
+      "youtube_videos": [
+        {
+          "title": "Apple Watch Series 11 Review (Watch BEFORE You Upgrade!)",
+          "channel": "Dave2D",
+          "video_id": "7r5ix8Ou6hU"
+        },
+        {
+          "title": "Is The Apple Watch Series 11 WORTH The Upgrade? Full Review",
+          "channel": "MrMobile",
+          "video_id": "rjwSOvYQMEw"
+        },
+        {
+          "title": "Apple Watch Series 11 Hands-On: 11 New Things To Know!",
+          "channel": "DC Rainmaker",
+          "video_id": "bgB55pLTd3E"
+        }
+      ]
     },
     {
       "id": "garmin_forerunner_970_2025",
@@ -516,12 +559,18 @@
       "brand": "Garmin",
       "category": "smartwatch_fitness",
       "price": 600,
-      "manufacturer_link": {
-        "de": "Mehr Info beim Hersteller",
-        "en": "More info from manufacturer",
-        "url": "https://www.garmin.com/de-DE/p/forerunner-970/"
-      },
       "release_year": 2025,
+      "image_url": "/images/products/garmin_forerunner_970_1.png",
+      "image_urls": [
+        "/images/products/garmin_forerunner_970_1.png",
+        "/images/products/garmin_forerunner_970_2.png",
+        "/images/products/garmin_forerunner_970_3.png",
+        "/images/products/garmin_forerunner_970_4.png",
+        "/images/products/garmin_forerunner_970_5.png",
+        "/images/products/garmin_forerunner_970_6.png",
+        "/images/products/garmin_forerunner_970_7.png",
+        "/images/products/garmin_forerunner_970_8.png"
+      ],
       "amazon_url": "https://www.amazon.de/Triathlon-Smartwatch-AMOLED-Display-LED-Taschenlampe-schwarz-durchscheinendem-Wei%C3%9Fstein-Band-Schwarz/dp/B0F8QZ7233/ref=sr_1_3?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=2RLS3N6BTP1WP&dib=eyJ2IjoiMSJ9.xh2iChjfxB6BhBynSVS-2JnC62F6TXBzsZaz9dpK-FizUlzlohR7832jlvhJewZtTmrVNk6yc6aCP7vKCv-Vs2c7PWW6CiXly4yvU8qN-jh625o5ryAs8vBOpnea6E_pyWNcw5u7AdihMPqzBzXA9u-gSu1xW1UQukBMczHcNJvkQOHQIPhs5q-BJStI8eqNDfIi6lQzDMBVTJWkNSktAfSDNmdV0uA6yu9-Mil7Ljo.AWsb61hS1TujfaEQZZFnT0xxMjBC_7xISw1Sy4EKfTs&dib_tag=se&keywords=garmin%2Bforerunner%2B970&qid=1774018708&sprefix=garmin%2Bforerunner%2B970%2Caps%2C162&sr=8-3&th=1",
       "idealo_url": "https://www.idealo.de/preisvergleich/OffersOfProduct/206567361_-forerunner-970-garmin.html",
       "price_history": [
@@ -622,17 +671,11 @@
           "price": 600
         }
       ],
-      "image_url": "/images/products/garmin_forerunner_970_1.png",
-      "image_urls": [
-        "/images/products/garmin_forerunner_970_1.png",
-        "/images/products/garmin_forerunner_970_2.png",
-        "/images/products/garmin_forerunner_970_3.png",
-        "/images/products/garmin_forerunner_970_4.png",
-        "/images/products/garmin_forerunner_970_5.png",
-        "/images/products/garmin_forerunner_970_6.png",
-        "/images/products/garmin_forerunner_970_7.png",
-        "/images/products/garmin_forerunner_970_8.png"
-      ],
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://www.garmin.com/de-DE/p/forerunner-970/"
+      },
       "key_specs": {
         "battery_life": {
           "de": "Bis zu 15 Tage (Smartwatch), 8 Tage Always-on-Screen, ~24 Std. GPS, 26 Std. GPS-Modus",
@@ -780,8 +823,8 @@
           "share_routes": true
         },
         "contactless_payment": {
-          "de": "Ja, Garmin Pay",
-          "en": "Yes, Garmin Pay",
+          "de": "Ja, Garmin Pay™",
+          "en": "Yes, Garmin Pay™",
           "enabled": true,
           "provider": "Garmin Pay"
         },
@@ -817,10 +860,10 @@
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
         "materials": {
-          "de": "Kunststoff, Titan",
-          "en": "Plastic, Titanium",
+          "de": "Fiber-verstärkter Kunststoff, Titan",
+          "en": "Fiber-reinforced polymer, Titanium",
           "case_options": [
-            "plastic",
+            "fiber-reinforced polymer",
             "titanium"
           ],
           "glass_type": [
@@ -844,7 +887,7 @@
         }
       },
       "use_cases": {
-        "running": {
+        "running_cycling": {
           "supported": true,
           "rating": 5,
           "features": [
@@ -877,7 +920,7 @@
           ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
-        "cycling": {
+        "competition_performance": {
           "supported": true,
           "rating": 4,
           "features": [
@@ -900,7 +943,7 @@
           ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 1"
         },
-        "health_tracking": {
+        "health_wellbeing": {
           "supported": true,
           "rating": 4,
           "features": [
@@ -914,7 +957,7 @@
           ],
           "citation": "Garmin Forerunner 970, Technische Daten, Seite 2-3"
         },
-        "daily_wear": {
+        "lifestyle_fitness": {
           "supported": true,
           "rating": 4,
           "features": [
@@ -947,32 +990,32 @@
           "value": "Multi-band GNSS (GPS, GLONASS, Galileo)",
           "notes": "Best-in-class GPS accuracy with multi-frequency support"
         },
-        "health_sensors": {
+        "ecg_hrv": {
           "rating": 4,
           "value": "ECG, Pulse Ox, Skin Temperature, Body Battery",
           "notes": "Comprehensive health tracking, slightly behind Apple"
         },
-        "music_storage": {
+        "smartphone_independent": {
           "rating": 4,
           "value": "32 GB storage",
           "notes": "Ample music storage"
         },
-        "touchscreen": {
+        "with_display": {
           "rating": 4,
           "value": "1.4\" AMOLED touchscreen with buttons",
           "notes": "Hybrid touch + button interface"
         },
-        "durability": {
+        "light_comfortable": {
           "rating": 5,
           "value": "Titanium DLC, Sapphire glass, 50m water resistance",
           "notes": "Extremely durable, built for outdoor use"
         },
-        "smart_features": {
+        "app_ecosystem": {
           "rating": 4,
           "value": "Telefonie, Sprachassistenz, WhatsApp, Garmin Pay, LiveTrack, Sicherheits-Tracking",
           "notes": "Strong smart feature set including calls, voice assistant and WhatsApp; no cellular"
         },
-        "design": {
+        "design_modern": {
           "rating": 4,
           "value": "Titanium DLC Lünette, Sapphire Glass, helles AMOLED, 56 g",
           "notes": "Premium athletic design — lightweight, high-quality materials"
@@ -982,15 +1025,20 @@
           "value": "E-Mail, SMS, WhatsApp, Anrufe, App-Benachrichtigungen",
           "notes": "Full notification support including WhatsApp and calls via paired phone"
         },
-        "training_metrics": {
+        "vo2_max": {
           "rating": 5,
           "value": "Advanced running dynamics, VO2 Max, Training Readiness, Race Predictor, Power Metrics",
           "notes": "Best-in-class for serious athletes"
         },
-        "sleep_tracking": {
+        "sleep_monitor": {
           "rating": 4,
           "value": "Sleep Score, Sleep Coach, advanced sleep stages",
           "notes": "Comprehensive sleep analysis"
+        },
+        "stress_monitor": {
+          "rating": 5,
+          "value": "HRV Status, Body Battery, Stress Score (continuous)",
+          "notes": "Full stress monitoring suite: HRV tracking, Body Battery energy levels, and dedicated Stress Score updated throughout the day"
         },
         "price_value": {
           "rating": 4,
@@ -1001,6 +1049,16 @@
           "rating": 5,
           "value": "Preloaded topographic maps",
           "notes": "Excellent for hiking and outdoor navigation"
+        },
+        "design_classic": {
+          "rating": 0,
+          "value": "Digital touchscreen only",
+          "notes": "Sports-focused digital design; no analog or classic watch aesthetics"
+        },
+        "no_display": {
+          "rating": 0,
+          "value": "AMOLED touchscreen display",
+          "notes": "Display is a core feature; no displayless mode available"
         }
       },
       "buy_links": [
@@ -1101,7 +1159,24 @@
           "Android users",
           "Athletes requiring advanced training metrics"
         ]
-      }
+      },
+      "youtube_videos": [
+        {
+          "title": "Garmin Forerunner 970 In-Depth Review: Brilliance at a Cost?",
+          "channel": "DC Rainmaker",
+          "video_id": "yWSWu9CnP0k"
+        },
+        {
+          "title": "Garmin Forerunner 970 Review (The Fenix 8 Killer?)",
+          "channel": "The Quantified Scientist",
+          "video_id": "UFvl9EGsTBM"
+        },
+        {
+          "title": "Garmin Forerunner 970 Testbericht: Garmins Beste Sportuhr?",
+          "channel": "TechnikNews",
+          "video_id": "WvfO5P2tJVc"
+        }
+      ]
     },
     {
       "id": "garmin_fenix_8_2024",
@@ -1197,30 +1272,13 @@
         "en": "More info from manufacturer",
         "url": "https://www.garmin.com/de-DE/p/1228429/pn/010-02904-21/"
       },
-      "buy_links": [
-        {
-          "shop": "Amazon.de",
-          "url": "https://www.amazon.de/dp/B0DC6ZD31R/",
-          "price": 679
-        },
-        {
-          "shop": "cosse.de",
-          "url": "https://www.cosse.de/smart-wearables/smart-wearables/smartwatches/30533/garmin-fenix-8-47mm-mit-quickfit-silikon-armband-22mm-schwarz/schiefergrau?etcc_cmp=Idealo&etcc_med=Preisvergleich&etcc_par=&etcc_ctv=640484",
-          "price": 659
-        },
-        {
-          "shop": "Garmin Store",
-          "url": "https://www.garmin.com/de-DE/p/1228429/pn/010-02904-21/",
-          "price": 899
-        }
-      ],
       "key_specs": {
         "battery_life": {
           "de": "Bis zu 16 Tage (Smartwatch-Modus), bis zu 35 Std. mit Multiband-GPS (AMOLED, 47mm)",
           "en": "Up to 16 days (smartwatch mode), up to 35 hours with multiband GPS (AMOLED, 47mm)",
           "smartwatch_mode_days": 16,
           "gps_mode_hours": 35,
-          "typical_hours": 384,
+          "typical_days": 16,
           "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
         },
         "water_resistance": {
@@ -1304,6 +1362,19 @@
             "skin_temperature"
           ]
         },
+        "navigation": {
+          "de": "SatIQ™ Multiband GNSS (GPS, GLONASS, Galileo, BeiDou), Kompass, Barometer, Höhenmesser, TopoActive-Karten, Offline-Karten, SkiView, Golf (43.000+ Plätze), Round-Trip-Routing, Wegpunkte, ClimbPro, Backtrack",
+          "en": "SatIQ™ Multiband GNSS (GPS, GLONASS, Galileo, BeiDou), Compass, Barometer, Altimeter, TopoActive maps, Offline maps, SkiView, Golf (43,000+ courses), Round-trip routing, Waypoints, ClimbPro, Backtrack",
+          "enabled": true,
+          "compass": true,
+          "multiband_gnss": true,
+          "systems": [
+            "GPS",
+            "GLONASS",
+            "Galileo",
+            "BeiDou"
+          ]
+        },
         "health_status": {
           "de": "Ja, HFV, Schlafcoach, Hauttemperatur, EKG-App, Blutsauerstoff, Frauengesundheit, Body Battery™, Morning Report, Abendbericht, Jetlag Ratgeber",
           "en": "Yes, HRV, sleep coach, skin temperature, ECG app, blood oxygen, women's health, Body Battery™, morning report, evening report, jet lag adviser",
@@ -1373,16 +1444,18 @@
           "de": "Verstärktes Polymergehäuse, Lünette: Titan oder Edelstahl, Glas: Ion-X oder Saphirglas, Metallschutz für Sensoren",
           "en": "Reinforced polymer case, bezel: titanium or stainless steel, glass: Ion-X or sapphire, metal sensor protection",
           "case_options": [
-            "polymer"
-          ],
-          "bezel_options": [
+            "fiber-reinforced polymer",
             "titanium",
-            "stainless_steel"
+            "stainless steel"
           ],
           "glass_type": [
             "ion-x",
             "sapphire"
           ],
+          "glass_description": {
+            "de": "Ion-X Glas (Standard-Variante) / Saphirglas (Sapphire-Variante)",
+            "en": "Ion-X glass (standard variant) / Sapphire glass (Sapphire variant)"
+          },
           "mil_spec": true
         },
         "strap": {
@@ -1393,7 +1466,7 @@
         }
       },
       "use_cases": {
-        "running": {
+        "running_cycling": {
           "supported": true,
           "rating": 5,
           "features": [
@@ -1426,7 +1499,7 @@
           ],
           "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
         },
-        "cycling": {
+        "competition_performance": {
           "supported": true,
           "rating": 4,
           "features": [
@@ -1457,7 +1530,7 @@
           ],
           "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
         },
-        "health_tracking": {
+        "health_wellbeing": {
           "supported": true,
           "rating": 5,
           "features": [
@@ -1476,7 +1549,7 @@
           ],
           "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
         },
-        "daily_wear": {
+        "lifestyle_fitness": {
           "supported": true,
           "rating": 4,
           "features": [
@@ -1509,32 +1582,32 @@
           "value": "SatIQ™ Multiband (GPS, GLONASS, Galileo, BeiDou)",
           "notes": "Top-class GPS accuracy, dynamic mode switching for efficiency"
         },
-        "health_sensors": {
+        "ecg_hrv": {
           "rating": 5,
           "value": "EKG, Pulse Ox, HFV, Hauttemperatur, Body Battery™, Schlafcoach",
           "notes": "Comprehensive health suite including ECG (Class IIa medical device)"
         },
-        "music_storage": {
+        "smartphone_independent": {
           "rating": 4,
           "value": "Offline Musik: Spotify, Deezer, Amazon Music, YouTube Music",
           "notes": "Major streaming services supported offline; storage size not published"
         },
-        "touchscreen": {
+        "with_display": {
           "rating": 4,
           "value": "1,4 Zoll AMOLED Touchdisplay",
           "notes": "Bright, vivid AMOLED; also usable with physical buttons for outdoor use"
         },
-        "durability": {
+        "light_comfortable": {
           "rating": 5,
           "value": "MIL-STD getestet, Saphirglas, Titan-Lünette, Metallschutz für Sensoren",
           "notes": "Built for extreme conditions — thermal, shock, and water resistance"
         },
-        "smart_features": {
+        "app_ecosystem": {
           "rating": 4,
           "value": "Telefonie, Sprachassistenz, WhatsApp, Garmin Pay, Garmin Messenger",
           "notes": "Strong smart features; voice assistant requires paired smartphone"
         },
-        "design": {
+        "design_modern": {
           "rating": 4,
           "value": "Robustes Outdoor-Design, Titan oder Edelstahl Lünette, mehrere Größen (43/47/51mm)",
           "notes": "Premium rugged aesthetic; heavier than fashion-focused watches"
@@ -1544,15 +1617,20 @@
           "value": "E-Mail, SMS, WhatsApp, Anrufe, App-Benachrichtigungen",
           "notes": "Full notification support; requires paired smartphone"
         },
-        "training_metrics": {
+        "vo2_max": {
           "rating": 5,
           "value": "VO2max, PacePro™, Running Economy, Running Tolerance, ClimbPro, Trainingsbelastung, Erholungszeit, Garmin Coach",
           "notes": "Best-in-class advanced training analytics for serious athletes"
         },
-        "sleep_tracking": {
+        "sleep_monitor": {
           "rating": 5,
           "value": "Schlafphasen, Sleep Score, Schlafcoach, HFV, Hauttemperatur, Nickerchen-Erkennung",
           "notes": "Highly detailed sleep analysis with personalised coaching"
+        },
+        "stress_monitor": {
+          "rating": 5,
+          "value": "HRV Status, Body Battery, Stress Score (continuous)",
+          "notes": "Full stress monitoring suite: HRV tracking, Body Battery energy levels, and dedicated Stress Score updated throughout the day"
         },
         "price_value": {
           "rating": 3,
@@ -1563,8 +1641,35 @@
           "rating": 5,
           "value": "TopoActive-Karten (vorinstalliert Sapphire), SkiView™, Golf (43.000+ Plätze), Garmin Trails",
           "notes": "Best offline mapping in class; full world topo maps downloadable via Wi-Fi"
+        },
+        "design_classic": {
+          "rating": 0,
+          "value": "Digital touchscreen only",
+          "notes": "Rugged outdoor design but fully digital; no analog watch face"
+        },
+        "no_display": {
+          "rating": 0,
+          "value": "AMOLED or MIP display",
+          "notes": "Display is a core feature; no displayless mode available"
         }
       },
+      "buy_links": [
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0DC6ZD31R/",
+          "price": 679
+        },
+        {
+          "shop": "cosse.de",
+          "url": "https://www.cosse.de/smart-wearables/smart-wearables/smartwatches/30533/garmin-fenix-8-47mm-mit-quickfit-silikon-armband-22mm-schwarz/schiefergrau?etcc_cmp=Idealo&etcc_med=Preisvergleich&etcc_par=&etcc_ctv=640484",
+          "price": 659
+        },
+        {
+          "shop": "Garmin Store",
+          "url": "https://www.garmin.com/de-DE/p/1228429/pn/010-02904-21/",
+          "price": 899
+        }
+      ],
       "ecosystem": "garmin",
       "compatibility": {
         "de": "iOS und Android",
@@ -1639,7 +1744,415 @@
           "Users requiring maximum GPS accuracy and long battery life",
           "Athletes who value detailed training analytics"
         ]
-      }
+      },
+      "youtube_videos": [
+        {
+          "title": "Garmin Fenix 8 In-Depth Review: 23 Things You Should Know!",
+          "channel": "DC Rainmaker",
+          "video_id": "M8kR2A_3n0A"
+        },
+        {
+          "title": "After 100 Days, Is the Garmin Fenix 8 Worth It?",
+          "channel": "The Quantified Scientist",
+          "video_id": "8y78TxG4fgM"
+        },
+        {
+          "title": "Garmin Fenix 8 Hands-On Review - More Options, More Features, More Expensive!",
+          "channel": "Chase the Summit",
+          "video_id": "WmMwfXL_SeI"
+        }
+      ]
+    },
+    {
+      "id": "whoop_5_0_peak_2025",
+      "display_name": {
+        "de": "WHOOP 5.0 Peak",
+        "en": "WHOOP 5.0 Peak"
+      },
+      "brand": "WHOOP",
+      "category": "smartwatch_fitness",
+      "price": 279,
+      "release_year": 2025,
+      "image_url": "/images/products/whoop_5_0_peak_2025_1.png",
+      "image_urls": [
+        "/images/products/whoop_5_0_peak_2025_1.png",
+        "/images/products/whoop_5_0_peak_2025_2.png",
+        "/images/products/whoop_5_0_peak_2025_3.png",
+        "/images/products/whoop_5_0_peak_2025_4.png",
+        "/images/products/whoop_5_0_peak_2025_5.png",
+        "/images/products/whoop_5_0_peak_2025_6.png",
+        "/images/products/whoop_5_0_peak_2025_7.png",
+        "/images/products/whoop_5_0_peak_2025_8.png",
+        "/images/products/whoop_5_0_peak_2025_9.png",
+        "/images/products/whoop_5_0_peak_2025_10.png"
+      ],
+      "amazon_url": "https://www.amazon.de/s?k=whoop+5.0",
+      "idealo_url": "https://www.idealo.de/preisvergleich/MainSearchProductCategory.html?q=whoop+5.0",
+      "price_history": [
+        { "date": "2025-12-01", "price": 265 },
+        { "date": "2025-12-10", "price": 225 },
+        { "date": "2025-12-20", "price": 265 },
+        { "date": "2026-01-15", "price": 265 },
+        { "date": "2026-02-05", "price": 265 },
+        { "date": "2026-02-12", "price": 205 },
+        { "date": "2026-02-18", "price": 265 },
+        { "date": "2026-03-01", "price": 265 },
+        { "date": "2026-03-10", "price": 230 },
+        { "date": "2026-03-23", "price": 264 }
+      ],
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://www.whoop.com/de/de/peak/"
+      },
+      "key_specs": {
+        "battery_life": {
+          "de": "4–5 Tage (mit mitgeliefertem Akku-Pack während des Tragens ladbar)",
+          "en": "4–5 days (rechargeable via included battery pack while wearing)",
+          "typical_days": 5,
+          "citation": "WHOOP 5.0 Technical Specifications"
+        },
+        "water_resistance": {
+          "de": "IP68, bis 10m Wassertiefe",
+          "en": "IP68, up to 10m water depth",
+          "meters": 10,
+          "citation": "WHOOP 5.0 Technical Specifications"
+        },
+        "display": {
+          "de": "Kein Display — LED-Statusanzeige",
+          "en": "No display — LED status indicator only",
+          "type": "none",
+          "color_display": false,
+          "touchscreen": false,
+          "always_on": false
+        },
+        "os": {
+          "de": "WHOOP App (iOS & Android), kein eigenständiges OS",
+          "en": "WHOOP App (iOS & Android), no standalone OS",
+          "name": "WHOOP App",
+          "compatibility": ["iOS", "Android"]
+        },
+        "sensors": {
+          "de": "Optischer Herzfrequenzsensor (5 LEDs), Pulsoxymetrie (SpO2), Hauttemperatur, Beschleunigungssensor, Gyroskop",
+          "en": "Optical heart rate sensor (5 LEDs), Pulse oximetry (SpO2), Skin temperature, Accelerometer, Gyroscope",
+          "list": [
+            "optical_heart_rate",
+            "blood_oxygen",
+            "skin_temperature",
+            "accelerometer",
+            "gyroscope"
+          ]
+        },
+        "pulse_measurement": {
+          "de": "Kontinuierlich (optisch, 5-LED), kein EKG",
+          "en": "Continuous (optical, 5-LED), no ECG",
+          "optical": true,
+          "ecg": false,
+          "chest_strap_compatible": false
+        },
+        "measurement_functions": {
+          "de": "Recovery Score, Strain Score, Schlaf, HFV, SpO2, Hauttemperatur, Atemfrequenz, Schrittzähler, Kalorienzähler",
+          "en": "Recovery Score, Strain Score, Sleep, HRV, SpO2, Skin temperature, Respiratory rate, Step counter, Calorie burn"
+        },
+        "navigation": {
+          "de": "Kein GPS — Standort über verbundenes Smartphone",
+          "en": "No GPS — location via connected smartphone only",
+          "enabled": false,
+          "compass": false,
+          "systems": []
+        },
+        "health_status": {
+          "de": "Ja — Recovery Score, HFV, Body Battery (Strain), Schlafcoach, Hauttemperatur, SpO2",
+          "en": "Yes — Recovery Score, HRV, Body Strain, Sleep Coach, Skin temperature, SpO2",
+          "hrv": true,
+          "sleep_coach": true,
+          "skin_temperature": true,
+          "ecg_app": false,
+          "blood_oxygen_app": true,
+          "recovery_score": true,
+          "strain_score": true
+        },
+        "training": {
+          "de": "Ja — Strain-Tracking, automatische Sport-Erkennung, 50+ Sportarten",
+          "en": "Yes — Strain tracking, automatic sport detection, 50+ sports",
+          "workouts": true,
+          "auto_detect": true,
+          "strain_tracking": true
+        },
+        "live_tracking": {
+          "de": "Ja (via WHOOP App)",
+          "en": "Yes (via WHOOP App)",
+          "enabled": true
+        },
+        "contactless_payment": {
+          "de": "Nein",
+          "en": "No",
+          "enabled": false
+        },
+        "connectivity": {
+          "de": "Bluetooth 5.0, kein GPS, kein WLAN",
+          "en": "Bluetooth 5.0, no GPS, no Wi-Fi",
+          "gps": false,
+          "cellular": false,
+          "wifi": false,
+          "bluetooth": "5.0",
+          "nfc": false
+        },
+        "storage": {
+          "de": "Kein lokaler Speicher — alle Daten in der WHOOP App",
+          "en": "No local storage — all data in the WHOOP App"
+        },
+        "weight": {
+          "de": "ca. 21 g (Gerät), ca. 74 g mit Armband",
+          "en": "approx. 21 g (device), approx. 74 g with band",
+          "grams": 21
+        },
+        "materials": {
+          "de": "Faserverstärkter Kunststoff, veganes Leder- oder SuperKnit-Armband",
+          "en": "Fiber-reinforced polymer, vegan leather or SuperKnit band",
+          "case_options": ["fiber-reinforced polymer"],
+          "glass_description": {
+            "de": "Kein Display",
+            "en": "No display"
+          }
+        },
+        "strap": {
+          "de": "SuperKnit oder veganes Leder, One-Size-Fits-Most",
+          "en": "SuperKnit or vegan leather, one-size-fits-most",
+          "material": "SuperKnit / vegan leather"
+        },
+        "quick_charge": {
+          "de": "Laden während des Tragens via Akku-Pack (kein Abnehmen erforderlich)",
+          "en": "Charge while wearing via battery pack (no removal needed)",
+          "enabled": true
+        }
+      },
+      "use_cases": {
+        "lifestyle_fitness": {
+          "supported": true,
+          "rating": 3,
+          "features": ["daily_wear", "step_tracking", "calorie_tracking", "recovery_score"],
+          "notes": "Great for 24/7 health tracking, but no display for notifications or payments"
+        },
+        "running_cycling": {
+          "supported": true,
+          "rating": 2,
+          "features": ["strain_tracking", "heart_rate_zones", "auto_sport_detection"],
+          "notes": "Tracks strain and heart rate but lacks GPS — needs phone for route data"
+        },
+        "hiking": {
+          "supported": false,
+          "rating": 1,
+          "features": ["step_tracking", "calorie_tracking"],
+          "notes": "No GPS, no altimeter, no offline maps — not suited for hiking"
+        },
+        "swimming": {
+          "supported": true,
+          "rating": 4,
+          "features": ["pool_swimming", "open_water", "stroke_detection", "ip68_waterproof"],
+          "notes": "IP68 waterproof to 10m, swim tracking with stroke detection"
+        },
+        "health_wellbeing": {
+          "supported": true,
+          "rating": 5,
+          "features": ["hrv", "recovery_score", "sleep_coach", "skin_temperature", "spo2", "respiratory_rate"],
+          "notes": "Core WHOOP strength: industry-leading recovery, HRV, and sleep coaching"
+        },
+        "competition_performance": {
+          "supported": true,
+          "rating": 4,
+          "features": ["strain_score", "hrv_status", "training_readiness", "load_management"],
+          "notes": "Widely used by pro athletes for recovery and load management; limited real-time GPS metrics"
+        }
+      },
+      "feature_priorities": {
+        "light_comfortable": {
+          "rating": 5,
+          "value": "21 g (device), designed for 24/7 wear",
+          "notes": "Lightest device in class; no hard edges, sits flush on the wrist"
+        },
+        "long_battery": {
+          "rating": 4,
+          "value": "4–5 days; charge while wearing",
+          "notes": "Battery pack clips on without removing the device — no charging downtime"
+        },
+        "water_resistance": {
+          "rating": 4,
+          "value": "IP68, 10m",
+          "notes": "Swim-proof; suitable for pool, open water, and showering"
+        },
+        "gps_accuracy": {
+          "rating": 0,
+          "value": "No GPS",
+          "notes": "No onboard GPS; relies on smartphone GPS for route tracking"
+        },
+        "smartphone_independent": {
+          "rating": 1,
+          "value": "Requires WHOOP App for all data",
+          "notes": "No display and no standalone functionality; phone required to view any metrics"
+        },
+        "app_ecosystem": {
+          "rating": 3,
+          "value": "WHOOP App (iOS & Android), API access, integrations with Strava, Apple Health, Google Fit",
+          "notes": "Excellent proprietary app; limited third-party app ecosystem compared to smartwatches"
+        },
+        "design_modern": {
+          "rating": 3,
+          "value": "Minimalist, displayless band",
+          "notes": "Sleek and discreet; not a traditional smartwatch aesthetic"
+        },
+        "design_classic": {
+          "rating": 0,
+          "value": "No display, no watch face",
+          "notes": "Not analog or classic; purely a health tracking band"
+        },
+        "with_display": {
+          "rating": 0,
+          "value": "No display",
+          "notes": "Intentionally displayless — all data viewed in the WHOOP App"
+        },
+        "no_display": {
+          "rating": 5,
+          "value": "Displayless by design — LED status only",
+          "notes": "The defining WHOOP feature: discreet 24/7 wearable with no screen distractions"
+        },
+        "sleep_monitor": {
+          "rating": 5,
+          "value": "Sleep stages, Sleep Score, Sleep Coach, sleep debt tracking, optimal bedtime suggestions",
+          "notes": "Best-in-class sleep analysis; Sleep Coach provides personalized recommendations"
+        },
+        "stress_monitor": {
+          "rating": 5,
+          "value": "HRV Status, Recovery Score, Strain Score (continuous)",
+          "notes": "Full stress and recovery suite: continuous HRV, daily Recovery Score, and Strain Score replacing traditional Body Battery"
+        },
+        "ecg_hrv": {
+          "rating": 4,
+          "value": "Continuous HRV monitoring (no ECG)",
+          "notes": "Industry-leading HRV tracking; no ECG feature"
+        },
+        "vo2_max": {
+          "rating": 3,
+          "value": "Basic VO2 max estimation via heart rate data",
+          "notes": "Estimates VO2 max but lacks GPS-based precision of Garmin devices"
+        },
+        "price_value": {
+          "rating": 3,
+          "value": "€279/year (12-month membership incl. device)",
+          "notes": "Subscription model — ongoing cost; no one-time purchase option"
+        },
+        "offline_maps": {
+          "rating": 0,
+          "value": "No maps",
+          "notes": "No GPS or mapping capability"
+        },
+        "notifications": {
+          "rating": 0,
+          "value": "No display — no notifications",
+          "notes": "Cannot display smartphone notifications"
+        }
+      },
+      "buy_links": [
+        {
+          "shop": "WHOOP.com",
+          "url": "https://www.whoop.com/de-de/membership/",
+          "price": 264
+        },
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0DY2SWV16/?th=1",
+          "price": 264
+        },
+        {
+          "shop": "Coolblue.de",
+          "url": "https://www.coolblue.de/produkt/976514/whoop-5-0-peak-schwarz.html?cmt=c_p%2Cr_idealo.de&utm_source=idealo.de&utm_medium=pricecomparison&utm_content=24137",
+          "price": 264
+        }
+      ],
+      "ecosystem": "whoop",
+      "compatibility": {
+        "de": "iOS 16+ oder Android 9.0+",
+        "en": "iOS 16+ or Android 9.0+",
+        "platforms": ["iOS", "Android"]
+      },
+      "pros": {
+        "de": [
+          "Akkulaufzeit von 14 Tagen",
+          "Wasserdicht nach IP68 für Schwimmen und Duschen bis 10m",
+          "Leichtes Gewicht von nur 26,4 g (mit Band)",
+          "Kein Display — ultraleicht und diskret (21 g), ideal für 24/7-Tragen",
+          "Laden während des Tragens — kein Abnehmen erforderlich",
+          "Hervorragender Schlafcoach mit personalisierten Empfehlungen",
+          "Kompatibel mit iOS und Android"
+        ],
+        "en": [
+          "14-day battery life",
+          "IP68 waterproof for swimming and showering up to 10m",
+          "Lightweight at only 26.4 g (with band)",
+          "No display — ultralight and discreet (21 g), ideal for 24/7 wear",
+          "Charge while wearing — no removal needed",
+          "Excellent Sleep Coach with personalised recommendations",
+          "Compatible with iOS and Android"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Membership-Abo-Modell (~€264/Jahr) — keine Einmalzahlung möglich",
+          "Erweiterte Funktionen nur in höheren Membership-Stufen",
+          "Kein Display — keine Benachrichtigungen oder kontaktloses Bezahlen",
+          "Kein GPS — Standortverfolgung nur über verbundenes Smartphone",
+          "Nicht geeignet für Navigation, Wandern oder Outdoor-Sport",
+          "Eingeschränktes App-Ökosystem im Vergleich zu Smartwatches",
+          "Kein EKG"
+        ],
+        "en": [
+          "Membership subscription model (~€264/year) — no one-time purchase",
+          "Advanced features only available in higher membership tiers",
+          "No display — no notifications or contactless payments",
+          "No GPS — location tracking only via connected smartphone",
+          "Not suited for navigation, hiking, or outdoor sports",
+          "Limited app ecosystem compared to smartwatches",
+          "No ECG"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "Nutzer mit Fokus auf Recovery und Schlaf",
+          "Profi- und Hobbyathleten zur Trainingssteuerung",
+          "Nutzer die ein diskretes Wearable ohne Display bevorzugen",
+          "iOS- und Android-Nutzer",
+          "Nutzer die HFV und Stressmanagement priorisieren"
+        ],
+        "en": [
+          "Users focused on recovery and sleep",
+          "Professional and hobby athletes for training load management",
+          "Users who prefer a discreet wearable without a display",
+          "iOS and Android users",
+          "Users who prioritise HRV and stress management"
+        ]
+      },
+      "youtube_videos": [
+        {
+          "title": "WHOOP Band 5.0 / MG - 1 Month Review (Don't Make THIS Mistake!)",
+          "channel": "Chase the Summit",
+          "video_id": "ah4f9D_20sM"
+        },
+        {
+          "title": "6 Months with WHOOP - Is It Worth It? (HONEST review, NOT sponsored)",
+          "channel": "Laura Try",
+          "video_id": "HW9BE8m4pRU"
+        },
+        {
+          "title": "The Whoop 5.0 MG is a disappointment.",
+          "channel": "Switch and Click",
+          "video_id": "q6dgNcLxf1U"
+        },
+        {
+          "title": "WHOOP 5.0 Review: My Experience With the WHOOP Band After 1 Month",
+          "channel": "Healthnews",
+          "video_id": "JMeC_vZo19w"
+        }
+      ]
     }
   ],
   "categories": {
@@ -1753,7 +2266,7 @@
     }
   },
   "use_cases_metadata": {
-    "running": {
+    "running_cycling": {
       "id": "running",
       "name": {
         "de": "Laufen & Joggen",
@@ -1771,7 +2284,7 @@
       "icon": "🏊",
       "weight": 4
     },
-    "cycling": {
+    "competition_performance": {
       "id": "cycling",
       "name": {
         "de": "Radfahren",
@@ -1789,7 +2302,7 @@
       "icon": "🥾",
       "weight": 4
     },
-    "health_tracking": {
+    "health_wellbeing": {
       "id": "health_tracking",
       "name": {
         "de": "Gesundheits-Tracking",
@@ -1798,7 +2311,7 @@
       "icon": "❤️",
       "weight": 5
     },
-    "daily_wear": {
+    "lifestyle_fitness": {
       "id": "daily_wear",
       "name": {
         "de": "Alltag & Smart-Features",
@@ -1848,7 +2361,7 @@
       "image": "/images/quiz/gps_accuracy.jpg",
       "weight": 4
     },
-    "health_sensors": {
+    "ecg_hrv": {
       "id": "health_sensors",
       "name": {
         "de": "EKG / HRV Monitor",
@@ -1861,7 +2374,7 @@
       "image": "/images/quiz/health_sensors.jpg",
       "weight": 5
     },
-    "music_storage": {
+    "smartphone_independent": {
       "id": "music_storage",
       "name": {
         "de": "Smartphone unabhängig",
@@ -1874,7 +2387,7 @@
       "image": "/images/quiz/music_storage.jpg",
       "weight": 2
     },
-    "touchscreen": {
+    "with_display": {
       "id": "touchscreen",
       "name": {
         "de": "Mit Display",
@@ -1887,7 +2400,7 @@
       "image": "/images/quiz/touchscreen.jpg",
       "weight": 3
     },
-    "durability": {
+    "light_comfortable": {
       "id": "durability",
       "name": {
         "de": "Leicht & Komfortabel",
@@ -1900,7 +2413,7 @@
       "image": "/images/quiz/durability.jpg",
       "weight": 3
     },
-    "smart_features": {
+    "app_ecosystem": {
       "id": "smart_features",
       "name": {
         "de": "App Integration & Ecosystem",
@@ -1913,7 +2426,7 @@
       "image": "/images/quiz/smart_features.jpg",
       "weight": 4
     },
-    "design": {
+    "design_modern": {
       "id": "design",
       "name": {
         "de": "Digital, Smart & Modern",
@@ -1952,7 +2465,7 @@
       "image": "/images/quiz/no_display.jpg",
       "weight": 2
     },
-    "sleep_tracking": {
+    "sleep_monitor": {
       "id": "sleep_tracking",
       "name": {
         "de": "Sleep Monitor",
@@ -1965,7 +2478,7 @@
       "image": "/images/quiz/sleep_monitor.jpg",
       "weight": 4
     },
-    "stress_tracking": {
+    "stress_monitor": {
       "id": "stress_tracking",
       "name": {
         "de": "Body / Stress Monitor",
@@ -1978,7 +2491,7 @@
       "image": "/images/quiz/stress_monitor.jpg",
       "weight": 3
     },
-    "training_metrics": {
+    "vo2_max": {
       "id": "training_metrics",
       "name": {
         "de": "VO2 Max Tracker",

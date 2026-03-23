@@ -25,6 +25,7 @@ class ResultsController {
         this.updateHeader();
         this.loadSentimentForAllCards();
         this.loadReviewsForAllCards();
+        this.setupYoutubeModal();
 
         if (typeof gtag !== 'undefined') {
             gtag('event', 'quiz_results_viewed', {
@@ -271,8 +272,8 @@ class ResultsController {
             '.strengths-section',
             '.weaknesses-section',
             '.recommendation-box',
-            '.reviews-header',
-            '.price-history-section'
+            '.price-history-section',
+            '.produktdaten-content'
         ];
         sections.forEach(selector => {
             const els = document.querySelectorAll(`#carouselTrack .product-card ${selector}`);
@@ -280,6 +281,20 @@ class ResultsController {
             els.forEach(el => { el.style.minHeight = ''; });
             const maxH = Math.max(...Array.from(els).map(el => el.offsetHeight));
             els.forEach(el => { el.style.minHeight = `${maxH}px`; });
+        });
+        this.synchronizeSpecRows();
+    }
+
+    synchronizeSpecRows() {
+        const allRows = document.querySelectorAll('#carouselTrack .product-card [data-spec-row]');
+        const rowKeys = new Set();
+        allRows.forEach(r => rowKeys.add(r.dataset.specRow));
+        rowKeys.forEach(key => {
+            const rows = document.querySelectorAll(`#carouselTrack .product-card [data-spec-row="${key}"]`);
+            if (rows.length < 2) return;
+            rows.forEach(r => { r.style.minHeight = ''; });
+            const maxH = Math.max(...Array.from(rows).map(r => r.offsetHeight));
+            rows.forEach(r => { r.style.minHeight = `${maxH}px`; });
         });
     }
 
@@ -449,28 +464,13 @@ class ResultsController {
             </div>
 
             <!-- 8. Reviews Header -->
-            <div class="reviews-header">
-                <p class="reviews-header-text">${t.verifiedTests[this.currentLanguage]}</p>
-            </div>
+            <p class="section-label">${t.verifiedTests[this.currentLanguage]}</p>
 
             <!-- 9. Review Boxes -->
             ${this.renderReviewBoxes(product)}
 
-            <!-- 9. Reddit Box -->
-            <div class="reddit-box">
-                <div class="reddit-logo">📱</div>
-                <a href="https://reddit.com/r/Garmin" target="_blank" class="reddit-text">
-                    ${displayName} ${t.forumDiscussion[this.currentLanguage]}
-                </a>
-            </div>
-
-            <!-- 10. YouTube Box -->
-            <div class="youtube-box">
-                <div class="youtube-logo">▶️</div>
-                <span class="youtube-text">
-                    ${product.display_name?.de || product.id} In-Depth Review: Brilliance at a Cost?
-                </span>
-            </div>
+            <!-- 10. YouTube Video Reviews -->
+            ${this.renderYoutubeSection(product)}
         `;
     }
 
@@ -598,19 +598,20 @@ class ResultsController {
             return fallback;
         };
 
-        // Helper to render a spec row
+        // Helper to render a spec row — always renders, shows — when no value
         const renderRow = (label, value) => {
-            if (!value || value === 'null' || value === 'undefined') return '';
+            const display = (!value || value === 'null' || value === 'undefined') ? '—' : value;
+            const rowKey = label.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             return `
-                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F1F5F9;">
-                    <div style="font-size: 13px; color: #64748B; font-weight: 500;">${label}</div>
-                    <div style="font-size: 13px; color: #0F172A; font-weight: 600; text-align: right; max-width: 60%;">${value}</div>
+                <div data-spec-row="${rowKey}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #F1F5F9; min-height: 40px;">
+                    <div style="font-size: 12px; color: #64748B; font-weight: 500; flex-shrink: 0; margin-right: 12px;">${label}</div>
+                    <div style="font-size: 12px; color: #0F172A; font-weight: 600; text-align: right; max-width: 60%;">${display}</div>
                 </div>
             `;
         };
 
         return `
-            <div style="padding: 16px; background: white;">
+            <div class="produktdaten-content" style="padding: 16px; background: white;">
                 <!-- Header with manufacturer link -->
                 ${product.manufacturer_link ? `
                     <div style="margin-bottom: 20px;">
@@ -643,10 +644,10 @@ class ResultsController {
                 )}
 
                 <!-- OS -->
-                ${specs.os ? renderRow(
+                ${renderRow(
                     'OS',
-                    getValue(specs.os) || (specs.os.compatibility ? specs.os.compatibility.join(', ') : '')
-                ) : ''}
+                    getValue(specs.os) || specs.os?.compatibility?.join(', ')
+                )}
 
                 <!-- Storage -->
                 ${renderRow(
@@ -655,22 +656,22 @@ class ResultsController {
                 )}
 
                 <!-- Glass Type -->
-                ${specs.materials?.glass_description ? renderRow(
+                ${renderRow(
                     lang === 'de' ? 'Glastype' : 'Glass type',
-                    getValue(specs.materials.glass_description)
-                ) : ''}
+                    getValue(specs.materials?.glass_description)
+                )}
 
                 <!-- Case Material -->
-                ${specs.materials ? renderRow(
+                ${renderRow(
                     lang === 'de' ? 'Gehäuse' : 'Case',
-                    specs.materials.case_options ? specs.materials.case_options.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ') : getValue(specs.materials)
-                ) : ''}
+                    specs.materials?.case_options ? specs.materials.case_options.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ') : getValue(specs.materials)
+                )}
 
                 <!-- Strap -->
-                ${specs.strap ? renderRow(
+                ${renderRow(
                     lang === 'de' ? 'Armband' : 'Strap',
                     getValue(specs.strap)
-                ) : ''}
+                )}
 
                 <!-- Weight -->
                 ${renderRow(
@@ -686,53 +687,59 @@ class ResultsController {
                     getValue(specs.battery_life)
                 )}
 
+                <!-- Quick Charge -->
+                ${renderRow(
+                    lang === 'de' ? 'Schnellladen' : 'Quick charge',
+                    getValue(specs.quick_charge)
+                )}
+
                 <!-- Pulse Measurement -->
-                ${specs.pulse_measurement ? renderRow(
+                ${renderRow(
                     lang === 'de' ? 'Pulsmessung' : 'Pulse measurement',
                     getValue(specs.pulse_measurement)
-                ) : ''}
+                )}
 
                 <!-- Sensors -->
-                ${specs.sensors ? renderRow(
+                ${renderRow(
                     lang === 'de' ? 'Sensoren' : 'Sensors',
                     getValue(specs.sensors)
-                ) : ''}
+                )}
 
                 <!-- Measurement Functions -->
-                ${specs.measurement_functions ? renderRow(
+                ${renderRow(
                     lang === 'de' ? 'Messfunk.' : 'Measurement func.',
                     getValue(specs.measurement_functions)
-                ) : ''}
+                )}
 
                 <!-- Navigation -->
-                ${specs.navigation ? renderRow(
+                ${renderRow(
                     'Navigation',
                     getValue(specs.navigation)
-                ) : ''}
+                )}
 
                 <!-- Health Status -->
-                ${specs.health_status ? renderRow(
-                    lang === 'de' ? 'Health Status' : 'Health Status',
+                ${renderRow(
+                    'Health Status',
                     getValue(specs.health_status)
-                ) : ''}
+                )}
 
                 <!-- Training -->
-                ${specs.training ? renderRow(
+                ${renderRow(
                     'Training',
                     getValue(specs.training)
-                ) : ''}
+                )}
 
                 <!-- Live Tracking -->
-                ${specs.live_tracking ? renderRow(
+                ${renderRow(
                     'Live Tracking',
                     getValue(specs.live_tracking)
-                ) : ''}
+                )}
 
                 <!-- Contactless Payment -->
-                ${specs.contactless_payment ? renderRow(
+                ${renderRow(
                     lang === 'de' ? 'Bargeldlos' : 'Contactless',
                     getValue(specs.contactless_payment)
-                ) : ''}
+                )}
 
                 <!-- Water Resistance -->
                 ${renderRow(
@@ -1055,6 +1062,84 @@ class ResultsController {
         return `<div class="review-boxes-container" data-product-id="${product.id}"></div>`;
     }
 
+    renderYoutubeSection(product) {
+        const videos = product.youtube_videos;
+        if (!videos || videos.length === 0) return '';
+        const lang = this.currentLanguage;
+        const heading = lang === 'de' ? 'Video Reviews' : 'Video Reviews';
+
+        const cards = videos.map(v => `
+            <div class="yt-video-card" data-video-id="${v.video_id}" role="button" tabindex="0" aria-label="Play: ${v.title}">
+                <div class="yt-thumbnail-wrap">
+                    <img class="yt-thumbnail" src="https://img.youtube.com/vi/${v.video_id}/hqdefault.jpg" alt="${v.title}" loading="lazy">
+                    <div class="yt-play-btn" aria-hidden="true">
+                        <svg viewBox="0 0 68 48" width="48" height="34"><path class="yt-play-bg" d="M66.52 7.74A8.54 8.54 0 0 0 60.71 1.9C55.4.5 34 .5 34 .5S12.6.5 7.29 1.9A8.54 8.54 0 0 0 1.48 7.74C.1 13.08.1 24 .1 24s0 10.92 1.38 16.26a8.54 8.54 0 0 0 5.81 5.84C12.6 47.5 34 47.5 34 47.5s21.4 0 26.71-1.4a8.54 8.54 0 0 0 5.81-5.84C67.9 34.92 67.9 24 67.9 24s0-10.92-1.38-16.26z"/><path class="yt-play-arrow" d="M27 33.5 45 24 27 14.5z"/></svg>
+                    </div>
+                </div>
+                <div class="yt-video-info">
+                    <p class="yt-video-title">${v.title}</p>
+                    <p class="yt-video-channel">${v.channel}</p>
+                </div>
+            </div>`).join('');
+
+        return `
+            <div class="youtube-section">
+                <p class="youtube-section-heading">${heading}</p>
+                <div class="youtube-cards-row">${cards}</div>
+            </div>`;
+    }
+
+    setupYoutubeModal() {
+        // Inject modal HTML once
+        if (!document.getElementById('yt-modal')) {
+            document.body.insertAdjacentHTML('beforeend', `
+                <div id="yt-modal" class="yt-modal-overlay" role="dialog" aria-modal="true" aria-label="Video player" hidden>
+                    <div class="yt-modal-inner">
+                        <button class="yt-modal-close" aria-label="Close video">&times;</button>
+                        <div class="yt-modal-frame-wrap">
+                            <iframe id="yt-modal-iframe" class="yt-modal-iframe"
+                                frameborder="0"
+                                allow="autoplay; encrypted-media; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                </div>`);
+        }
+
+        const modal = document.getElementById('yt-modal');
+        const iframe = document.getElementById('yt-modal-iframe');
+
+        const openModal = (videoId) => {
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            modal.hidden = false;
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeModal = () => {
+            modal.hidden = true;
+            iframe.src = '';
+            document.body.style.overflow = '';
+        };
+
+        // Close on button or backdrop click
+        modal.querySelector('.yt-modal-close').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+        // Delegate clicks on video cards (cards are rendered later)
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.yt-video-card');
+            if (card) openModal(card.dataset.videoId);
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const card = e.target.closest('.yt-video-card');
+                if (card) { e.preventDefault(); openModal(card.dataset.videoId); }
+            }
+        });
+    }
+
     async loadReviewsForAllCards() {
         if (!this.quizResults?.matched_products) return;
         const token = localStorage.getItem('verifyr_access_token');
@@ -1319,6 +1404,11 @@ class ResultsController {
                         targetContent.classList.add('active');
                     }
                 });
+
+                // Sync spec row heights when Produktdaten tab becomes visible
+                if (tabName === 'produktdaten') {
+                    requestAnimationFrame(() => this.synchronizeSpecRows());
+                }
             });
         });
     }

@@ -159,6 +159,10 @@ class FeaturesController {
     handleCardClick(card) {
         const featureId = card.dataset.featureId;
 
+        // Clear any existing results when selection changes
+        localStorage.removeItem('verifyr_quiz_completed');
+        localStorage.removeItem('verifyr_quiz_results');
+
         // Check if already selected
         if (card.classList.contains('selected')) {
             // Deselect

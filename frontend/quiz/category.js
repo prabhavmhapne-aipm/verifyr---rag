@@ -135,6 +135,12 @@ class CategoryController {
 
         const categoryId = card.dataset.categoryId;
 
+        // Clear any existing results when selection changes
+        if (this.selectedCategory !== categoryId) {
+            localStorage.removeItem('verifyr_quiz_completed');
+            localStorage.removeItem('verifyr_quiz_results');
+        }
+
         // Single-select: remove selection from all other cards
         document.querySelectorAll('.selection-card').forEach(c => {
             c.classList.remove('selected');

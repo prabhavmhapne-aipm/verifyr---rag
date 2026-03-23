@@ -91,10 +91,20 @@ function updateSlider() {
     qa.budget_min = lo;
     qa.budget_max = hi;
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+
 }
 
-sliderMin.addEventListener('input', updateSlider);
-sliderMax.addEventListener('input', updateSlider);
+function clearResultsOnChange() {
+    if (localStorage.getItem('verifyr_quiz_completed') === 'true') {
+        localStorage.removeItem('verifyr_quiz_completed');
+        localStorage.removeItem('verifyr_quiz_results');
+        const ctaText = document.getElementById('ctaText');
+        if (ctaText) ctaText.textContent = t.cta;
+    }
+}
+
+sliderMin.addEventListener('input', function() { updateSlider.call(this); clearResultsOnChange(); });
+sliderMax.addEventListener('input', function() { updateSlider.call(this); clearResultsOnChange(); });
 
 // Restore saved budget from previous visit
 const _saved = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
@@ -129,6 +139,8 @@ textarea.addEventListener('input', () => {
     const qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
     qa.special_request = textarea.value.trim() || null;
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
+
+    clearResultsOnChange();
 });
 
 // ── Reset icons (bottom nav + top subtitle) ──

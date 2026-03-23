@@ -135,6 +135,10 @@ class UseCaseController {
     handleCardClick(card) {
         const useCaseId = card.dataset.useCaseId;
 
+        // Clear any existing results when selection changes
+        localStorage.removeItem('verifyr_quiz_completed');
+        localStorage.removeItem('verifyr_quiz_results');
+
         // Multi-select: toggle selection
         if (card.classList.contains('selected')) {
             // Deselect

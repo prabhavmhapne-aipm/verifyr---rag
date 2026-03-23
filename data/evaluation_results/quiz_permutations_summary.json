@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "total_combinations": 5292,
+    "category": "smartwatch_fitness",
+    "use_case_count": 6,
+    "feature_count": 14,
+    "budget_tiers": [
+      "no_budget",
+      "under_200",
+      "under_350",
+      "under_500",
+      "under_650",
+      "unlimited"
+    ],
+    "scope": "all 63 use-case subsets x 14 single features x 6 budget tiers"
+  },
+  "win_counts": {
+    "apple_watch_series11_2025": 1674,
+    "whoop_5_0_peak_2025": 1227,
+    "garmin_forerunner_970_2025": 807,
+    "garmin_fenix_8_2024": 1584
+  },
+  "win_percentage": {
+    "apple_watch_series11_2025": 31.63,
+    "whoop_5_0_peak_2025": 23.19,
+    "garmin_forerunner_970_2025": 15.25,
+    "garmin_fenix_8_2024": 29.93
+  },
+  "avg_winning_score": {
+    "apple_watch_series11_2025": 0.8753,
+    "whoop_5_0_peak_2025": 0.8192,
+    "garmin_forerunner_970_2025": 0.8787,
+    "garmin_fenix_8_2024": 0.8531
+  },
+  "best_combo_per_product": {
+    "apple_watch_series11_2025": {
+      "score": 1.0,
+      "use_cases": "lifestyle_fitness",
+      "features": "smartphone_independent",
+      "budget": "no_budget"
+    },
+    "whoop_5_0_peak_2025": {
+      "score": 1.0,
+      "use_cases": "health_wellbeing",
+      "features": "light_comfortable",
+      "budget": "under_350"
+    },
+    "garmin_forerunner_970_2025": {
+      "score": 1.0,
+      "use_cases": "running_cycling",
+      "features": "light_comfortable",
+      "budget": "no_budget"
+    },
+    "garmin_fenix_8_2024": {
+      "score": 1.0,
+      "use_cases": "running_cycling",
+      "features": "water_resistance",
+      "budget": "no_budget"
+    }
+  },
+  "product_score_breakdown": {
+    "apple_watch_series11_2025": {
+      "price": 372,
+      "category_score": 1.0,
+      "use_case_ratings": {
+        "lifestyle_fitness": 5,
+        "running_cycling": 4,
+        "hiking": 4,
+        "swimming": 4,
+        "health_wellbeing": 5,
+        "competition_performance": 3
+      },
+      "feature_ratings": {
+        "light_comfortable": 4,
+        "long_battery": 2,
+        "water_resistance": 4,
+        "gps_accuracy": 4,
+        "smartphone_independent": 5,
+        "app_ecosystem": 5,
+        "design_modern": 5,
+        "design_classic": 0,
+        "with_display": 5,
+        "no_display": 0,
+        "sleep_monitor": 4,
+        "stress_monitor": 3,
+        "ecg_hrv": 5,
+        "vo2_max": 3
+      }
+    },
+    "garmin_forerunner_970_2025": {
+      "price": 600,
+      "category_score": 1.0,
+      "use_case_ratings": {
+        "lifestyle_fitness": 4,
+        "running_cycling": 5,
+        "hiking": 5,
+        "swimming": 4,
+        "health_wellbeing": 4,
+        "competition_performance": 4
+      },
+      "feature_ratings": {
+        "light_comfortable": 5,
+        "long_battery": 5,
+        "water_resistance": 4,
+        "gps_accuracy": 5,
+        "smartphone_independent": 4,
+        "app_ecosystem": 4,
+        "design_modern": 4,
+        "design_classic": 0,
+        "with_display": 4,
+        "no_display": 0,
+        "sleep_monitor": 4,
+        "stress_monitor": 5,
+        "ecg_hrv": 4,
+        "vo2_max": 5
+      }
+    },
+    "garmin_fenix_8_2024": {
+      "price": 659,
+      "category_score": 1.0,
+      "use_case_ratings": {
+        "lifestyle_fitness": 4,
+        "running_cycling": 5,
+        "hiking": 5,
+        "swimming": 5,
+        "health_wellbeing": 5,
+        "competition_performance": 4
+      },
+      "feature_ratings": {
+        "light_comfortable": 5,
+        "long_battery": 5,
+        "water_resistance": 5,
+        "gps_accuracy": 5,
+        "smartphone_independent": 4,
+        "app_ecosystem": 4,
+        "design_modern": 4,
+        "design_classic": 0,
+        "with_display": 4,
+        "no_display": 0,
+        "sleep_monitor": 5,
+        "stress_monitor": 5,
+        "ecg_hrv": 5,
+        "vo2_max": 5
+      }
+    },
+    "whoop_5_0_peak_2025": {
+      "price": 279,
+      "category_score": 1.0,
+      "use_case_ratings": {
+        "lifestyle_fitness": 3,
+        "running_cycling": 2,
+        "hiking": 1,
+        "swimming": 4,
+        "health_wellbeing": 5,
+        "competition_performance": 4
+      },
+      "feature_ratings": {
+        "light_comfortable": 5,
+        "long_battery": 4,
+        "water_resistance": 4,
+        "gps_accuracy": 0,
+        "smartphone_independent": 1,
+        "app_ecosystem": 3,
+        "design_modern": 3,
+        "design_classic": 0,
+        "with_display": 0,
+        "no_display": 5,
+        "sleep_monitor": 5,
+        "stress_monitor": 5,
+        "ecg_hrv": 4,
+        "vo2_max": 3
+      }
+    }
+  }
+}

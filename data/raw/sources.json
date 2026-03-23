@@ -90,5 +90,35 @@
       "source_url": "https://www.heise.de/bestenlisten/testbericht/apple-watch-series-11-im-test-die-beste-smartwatch-fuer-das-iphone/05wchg8",
       "source_name": "Heise.de"
     }
+  },
+  "whoop_5_0_peak_2025": {
+    "specification.pdf": {
+      "source_url": "https://www.whoop.com/de/de/peak/",
+      "source_name": "WHOOP Official"
+    },
+    "user-manual.pdf": {
+      "source_url": "https://support.whoop.com/s/article/Setting-Up-Your-WHOOP-4-0?language=en_US",
+      "source_name": "WHOOP Support"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/au.pcmag.com_review_11022026.pdf": {
+      "source_url": "https://au.pcmag.com/fitness-trackers/115825/whoop-50",
+      "source_name": "PCMag Australia"
+    },
+    "reviews/computerbild.de_review_14052025.pdf": {
+      "source_url": "https://www.computerbild.de/artikel/cb-Tests-Wearables-Whoop-5.0-Praxis-Test-Fitnesstracker-39679161.html",
+      "source_name": "Computerbild.de"
+    },
+    "reviews/gq-magazin.de_review_19072025.pdf": {
+      "source_url": "https://www.gq-magazin.de/artikel/whoop-5-0-im-test-der-fitness-tracker-ohne-display",
+      "source_name": "GQ Magazin"
+    },
+    "reviews/techgearlab.com_review_13082025.pdf": {
+      "source_url": "https://www.techgearlab.com/reviews/health-fitness/fitness-tracker/whoop-5-0",
+      "source_name": "TechGearLab"
+    }
   }
 }

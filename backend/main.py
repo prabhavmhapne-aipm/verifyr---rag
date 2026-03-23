@@ -1555,6 +1555,7 @@ async def get_product_reviews(
         except Exception:
             continue
 
+    reviews.sort(key=lambda r: r.review_date or '', reverse=True)
     return ProductReviewsResponse(product_id=product_id, reviews=reviews)
 
 
