@@ -310,7 +310,8 @@ class ResultsController {
         card.dataset.productId = match.product_id;
 
         const displayName = product.display_name?.[this.currentLanguage] || product.display_name?.de || product.id;
-        const category = this.formatLabel(product.category);
+        const categoryArr = Array.isArray(product.category) ? product.category : [product.category];
+        const category = categoryArr.map(c => this.formatCategoryLabel(c)).join(' · ');
         const imageUrl = product.image_url || '/images/products/placeholder.jpg';
         const imageUrls = product.image_urls || [imageUrl];
         const thumbnailsHtml = imageUrls.length > 1
@@ -1417,6 +1418,20 @@ class ResultsController {
         return key.split('_').map(word =>
             word.charAt(0).toUpperCase() + word.slice(1)
         ).join(' ');
+    }
+
+    formatCategoryLabel(key) {
+        const labels = {
+            smartwatch_fitness:   { de: 'Smartwatch & Fitnesstrackers', en: 'Smartwatch & Fitness Trackers' },
+            recovery_sleep:       { de: 'Recovery & Sleep',             en: 'Recovery & Sleep' },
+            heart_rate_monitors:  { de: 'Herzfrequenzmesser',           en: 'Heart Rate Monitors' },
+            sport_earbuds:        { de: 'Sport Earbuds',                en: 'Sport Earbuds' },
+            metabolic_monitors:   { de: 'Metabolische Monitore',        en: 'Metabolic Monitors' },
+            womens_health:        { de: 'Frauen Health Tech',           en: "Women's Health Tech" },
+        };
+        const entry = labels[key];
+        if (entry) return entry[this.currentLanguage] || entry.de;
+        return this.formatLabel(key);
     }
 }
 

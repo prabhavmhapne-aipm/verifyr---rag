@@ -91,6 +91,32 @@
       "source_name": "Heise.de"
     }
   },
+  "amazfit_helio_strap_2025": {
+    "specification.pdf": {
+      "source_url": "https://de.amazfit.com/products/helio-strap",
+      "source_name": "Amazfit Official"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/dcrainmaker.com_review_24062025.pdf": {
+      "source_url": "https://www.dcrainmaker.com/2025/06/amazfit-helio-band-in-depth-review-99-no-sub-fee-but-worth-it.html",
+      "source_name": "DC Rainmaker"
+    },
+    "reviews/heise.de_review_22102025.pdf": {
+      "source_url": "https://www.heise.de/bestenlisten/testbericht/fitness-tracker-amazfit-helio-strap-im-test-guenstige-alternative-zum-whoop-band/gtrkxfp",
+      "source_name": "Heise.de"
+    },
+    "reviews/techradar.com_review_22012026.pdf": {
+      "source_url": "https://www.techradar.com/health-fitness/fitness-trackers/amazfit-helio-strap-review",
+      "source_name": "TechRadar"
+    },
+    "reviews/trustedreviews.com_review_15092025.pdf": {
+      "source_url": "https://www.trustedreviews.com/reviews/amazfit-helio-strap",
+      "source_name": "Trusted Reviews"
+    }
+  },
   "whoop_5_0_peak_2025": {
     "specification.pdf": {
       "source_url": "https://www.whoop.com/de/de/peak/",

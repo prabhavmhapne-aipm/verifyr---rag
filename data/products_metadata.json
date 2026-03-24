@@ -1770,7 +1770,7 @@
         "en": "WHOOP 5.0 Peak"
       },
       "brand": "WHOOP",
-      "category": "smartwatch_fitness",
+      "category": ["smartwatch_fitness", "heart_rate_monitors", "recovery_sleep"],
       "price": 279,
       "release_year": 2025,
       "image_url": "/images/products/whoop_5_0_peak_2025_1.png",
@@ -2153,6 +2153,361 @@
           "video_id": "JMeC_vZo19w"
         }
       ]
+    },
+    {
+      "id": "amazfit_helio_strap_2025",
+      "display_name": {
+        "de": "Amazfit Helio Strap",
+        "en": "Amazfit Helio Strap"
+      },
+      "brand": "Amazfit",
+      "category": ["smartwatch_fitness", "heart_rate_monitors", "recovery_sleep"],
+      "price": 99.90,
+      "release_year": 2025,
+      "image_url": "/images/products/amazfit_helio_strap_2025_1.png",
+      "image_urls": [
+        "/images/products/amazfit_helio_strap_2025_1.png",
+        "/images/products/amazfit_helio_strap_2025_2.png",
+        "/images/products/amazfit_helio_strap_2025_3.png",
+        "/images/products/amazfit_helio_strap_2025_4.png",
+        "/images/products/amazfit_helio_strap_2025_5.png"
+      ],
+      "amazon_url": "https://www.amazon.de/dp/B0F8HJCB47",
+      "idealo_url": "https://www.idealo.de/preisvergleich/OffersOfProduct/206940112_-helio-strap-amazfit.html",
+      "price_history": [
+        { "date": "2025-06-24", "price": 99.90 },
+        { "date": "2025-08-01", "price": 99.90 },
+        { "date": "2025-10-01", "price": 99.90 },
+        { "date": "2025-12-01", "price": 99.90 },
+        { "date": "2026-02-04", "price": 99.90 },
+        { "date": "2026-03-24", "price": 99.90 }
+      ],
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://de.amazfit.com/products/helio-strap"
+      },
+      "buy_links": [
+        {
+          "shop": "Amazfit.com",
+          "url": "https://de.amazfit.com/products/helio-strap",
+          "price": 99.90
+        }
+      ],
+      "key_specs": {
+        "display": {
+          "de": "Kein Display — reine Sensor-Einheit",
+          "en": "No display — sensor unit only",
+          "type": "none",
+          "color_display": false,
+          "touchscreen": false,
+          "always_on": false
+        },
+        "battery_life": {
+          "de": "Bis zu 10 Tage",
+          "en": "Up to 10 days",
+          "typical_days": 10,
+          "citation": "Amazfit Helio Strap Produktseite"
+        },
+        "water_resistance": {
+          "de": "5 ATM wasserdicht",
+          "en": "5 ATM water resistant",
+          "meters": 50,
+          "citation": "Amazfit Helio Strap Produktseite"
+        },
+        "weight": {
+          "de": "20 g",
+          "en": "20 g",
+          "grams": 20
+        },
+        "navigation": {
+          "de": "Kein GPS",
+          "en": "No GPS",
+          "enabled": false,
+          "compass": false,
+          "systems": []
+        },
+        "connectivity": {
+          "de": "Bluetooth, kein GPS, kein WLAN",
+          "en": "Bluetooth, no GPS, no Wi-Fi",
+          "gps": false,
+          "cellular": false,
+          "wifi": false,
+          "bluetooth": true,
+          "nfc": false
+        },
+        "sensors": {
+          "de": "BioTracker™ PPG-Herzfrequenzsensor, Blutsauerstoff (SpO2), HRV, Stressmessung, Schlafüberwachung, Beschleunigungssensor",
+          "en": "BioTracker™ PPG heart rate sensor, Blood oxygen (SpO2), HRV, Stress monitoring, Sleep tracking, Accelerometer",
+          "list": [
+            "optical_heart_rate",
+            "blood_oxygen",
+            "hrv",
+            "stress",
+            "sleep",
+            "accelerometer"
+          ]
+        },
+        "pulse_measurement": {
+          "de": "Kontinuierlich (optisch, BioTracker™ PPG), kein EKG",
+          "en": "Continuous (optical, BioTracker™ PPG), no ECG",
+          "optical": true,
+          "ecg": false,
+          "chest_strap_compatible": false
+        },
+        "measurement_functions": {
+          "de": "BioCharge™ Energieniveau, Herzfrequenz (sekündlich), HRV, SpO2, Stressmessung, Schlafphasen, VO₂ max, Trainingsbelastung, Erholungszeit",
+          "en": "BioCharge™ energy level, Heart rate (per second), HRV, SpO2, Stress, Sleep stages, VO₂ max, Training load, Recovery time"
+        },
+        "health_status": {
+          "de": "Ja — BioCharge™, HRV, Schlafcoach, SpO2, Stress, VO₂ max",
+          "en": "Yes — BioCharge™, HRV, Sleep coach, SpO2, Stress, VO₂ max",
+          "hrv": true,
+          "sleep_coach": true,
+          "skin_temperature": false,
+          "ecg_app": false,
+          "blood_oxygen_app": true,
+          "recovery_score": true,
+          "strain_score": false
+        },
+        "training": {
+          "de": "50+ Sportmodi, HYROX Race-Modus, Krafttraining mit Wiederholungs-/Satzerkennung",
+          "en": "50+ sport modes, HYROX Race mode, Strength training with rep/set detection",
+          "workouts": true,
+          "auto_detect": false,
+          "strain_tracking": true
+        },
+        "materials": {
+          "de": "Faserverstärkter Kunststoff (Gehäuse), Nylon 22 mm Klettverschluss-Armband",
+          "en": "Fiber-reinforced plastic (housing), Nylon 22 mm velcro band",
+          "case_options": ["fiber-reinforced plastic"],
+          "glass_description": {
+            "de": "Kein Display",
+            "en": "No display"
+          }
+        },
+        "strap": {
+          "de": "Nylon, 22 mm, Klettverschluss, Handgelenkmaße 145–205 mm; optional Armbandsverlängerung für Oberarmtragen",
+          "en": "Nylon, 22 mm, velcro closure, wrist size 145–205 mm; optional extension for upper arm wear",
+          "material": "Nylon"
+        },
+        "os": {
+          "de": "Zepp App (iOS & Android), kein eigenständiges OS",
+          "en": "Zepp App (iOS & Android), no standalone OS",
+          "name": "Zepp App",
+          "compatibility": ["iOS", "Android"]
+        },
+        "contactless_payment": {
+          "de": "Nein",
+          "en": "No",
+          "enabled": false
+        },
+        "live_tracking": {
+          "de": "Ja — Echtzeit-HF-Übertragung an Amazfit-Uhren, Fahrradcomputer und Fitness-Apps",
+          "en": "Yes — real-time HR broadcast to Amazfit watches, bike computers, and fitness apps",
+          "enabled": true
+        }
+      },
+      "use_cases": {
+        "lifestyle_fitness": {
+          "supported": true,
+          "rating": 4,
+          "features": ["daily_wear", "biocharge_energy", "stress_tracking", "sleep_tracking", "spo2"],
+          "notes": "Ideal für 24/7-Gesundheitsüberwachung und Erholungsoptimierung dank BioCharge™ und kontinuierlichem HF-Tracking"
+        },
+        "running_cycling": {
+          "supported": true,
+          "rating": 3,
+          "features": ["heart_rate_zones", "real_time_hr_broadcast", "50_sport_modes", "post_workout_analysis"],
+          "notes": "Präzise HF-Übertragung an Fahrradcomputer und Lauf-Apps; kein eigenes GPS — Smartphone oder Uhr erforderlich"
+        },
+        "competition_performance": {
+          "supported": true,
+          "rating": 4,
+          "features": ["hyrox_race_mode", "strength_training", "rep_set_tracking", "vo2_max", "recovery_time"],
+          "notes": "Exklusiver HYROX Race-Modus; detaillierte Krafttrainingserkennung; Echtzeit-HF für Wettkämpfe ohne Uhr"
+        },
+        "hiking": {
+          "supported": false,
+          "rating": 2,
+          "features": ["step_tracking", "heart_rate"],
+          "notes": "Kein GPS, kein Altimeter — nicht für Navigation oder Outdoor-Touren geeignet"
+        },
+        "swimming": {
+          "supported": true,
+          "rating": 3,
+          "features": ["5atm_waterproof"],
+          "notes": "5 ATM wasserdicht; kein dediziertes Schwimmtracking; Klettverschluss kann im Wasser nachgeben"
+        },
+        "health_wellbeing": {
+          "supported": true,
+          "rating": 5,
+          "features": ["hrv", "sleep_stages", "spo2", "stress", "biocharge", "vo2_max", "recovery_time"],
+          "notes": "Stärkstes Einsatzgebiet: umfassende Gesundheitsüberwachung rund um die Uhr mit BioCharge™ und kontinuierlichem HRV"
+        }
+      },
+      "feature_priorities": {
+        "light_comfortable": {
+          "rating": 5,
+          "value": "20 g, Nylon-Klettverschluss, optionale Oberarmtrageoption",
+          "notes": "Eines der leichtesten Tracking-Geräte; liegt dank Klettverschluss sicher auch beim Sport"
+        },
+        "long_battery": {
+          "rating": 4,
+          "value": "Bis zu 10 Tage",
+          "notes": "Deutlich längere Laufzeit als WHOOP (4–5 Tage); kein Laden während des Tragens möglich"
+        },
+        "water_resistance": {
+          "rating": 4,
+          "value": "5 ATM (ca. 50 m)",
+          "notes": "Geeignet für Schwimmen, Duschen und Wassersport; kein Taucheinsatz"
+        },
+        "gps_accuracy": {
+          "rating": 0,
+          "value": "Kein GPS",
+          "notes": "Kein integriertes GPS; Routendaten nur über verbundene Amazfit-Uhr oder Smartphone"
+        },
+        "smartphone_independent": {
+          "rating": 2,
+          "value": "Zepp-App für alle Auswertungen erforderlich",
+          "notes": "Zeichnet Daten ohne Smartphone auf und synchronisiert später; Auswertung und Einblicke nur in der Zepp-App"
+        },
+        "app_ecosystem": {
+          "rating": 3,
+          "value": "Zepp-App (kostenlos), Strava, TrainingPeaks, adidas Running, komoot",
+          "notes": "Kein Abo-Modell; gute Drittanbieter-Integration; weniger Ökosystem als Garmin oder Apple"
+        },
+        "design_modern": {
+          "rating": 3,
+          "value": "Minimalistisches Sport-Design, kein Display, Schwarz",
+          "notes": "Unauffällig und sportlich; kein Lifestyle-Look; Oberarmvariante für Wettkämpfe geeignet"
+        },
+        "design_classic": {
+          "rating": 0,
+          "value": "Kein Display, kein klassisches Uhrendesign",
+          "notes": "Rein funktionales Sport-Tool; nicht für klassisches oder elegantes Erscheinungsbild geeignet"
+        },
+        "with_display": {
+          "rating": 0,
+          "value": "Kein Display",
+          "notes": "Bewusst displaylos — alle Daten ausschließlich in der Zepp-App"
+        },
+        "no_display": {
+          "rating": 5,
+          "value": "Displaylos by Design",
+          "notes": "Ideal für Nutzer, die ein diskretes 24/7-Gesundheitstool ohne Bildschirmablenkung suchen"
+        },
+        "sleep_monitor": {
+          "rating": 4,
+          "value": "Schlafphasen, SpO2, HRV, Erholungsbewertung via BioCharge™",
+          "notes": "Kontinuierliches Schlaf-Tracking mit detaillierten Phasen; kein aktiver Schlafcoach wie bei WHOOP"
+        },
+        "stress_monitor": {
+          "rating": 4,
+          "value": "Echtzeit-Stressmessung via HRV",
+          "notes": "Kontinuierliche Stressmessung auf Basis von HRV-Daten; kein dedizierter Stressscore wie bei Garmin"
+        },
+        "ecg_hrv": {
+          "rating": 4,
+          "value": "Kontinuierliche HRV-Messung; kein EKG",
+          "notes": "BioTracker™ liefert hochwertige HRV-Daten; kein EKG-Feature vorhanden"
+        },
+        "vo2_max": {
+          "rating": 4,
+          "value": "VO₂ max-Schätzung via BioTracker™",
+          "notes": "Berechnet VO₂ max auf Basis von HF-Daten; ohne GPS weniger präzise als bei GPS-Uhren"
+        }
+      },
+      "pros": {
+        "de": [
+          "Überragende Herzfrequenzgenauigkeit (Überarmmessung)",
+          "Nahtlose Integration ins Amazfit-Ökosystem",
+          "Bis zu 10 Tage Akkulaufzeit",
+          "Kein Abo-Modell – Zepp-App kostenlos",
+          "Leicht (20 g) und bequem für 24/7-Tragen",
+          "50+ Sportmodi inkl. exklusivem HYROX-Modus",
+          "Echtzeit-Herzfrequenzübertragung an andere Geräte",
+          "Kompatibel mit iOS und Android"
+        ],
+        "en": [
+          "Outstanding heart rate accuracy (upper arm measurement)",
+          "Seamless integration into the Amazfit ecosystem",
+          "Up to 10-day battery life",
+          "No subscription model – Zepp App is free",
+          "Lightweight (20 g) and comfortable for 24/7 wear",
+          "50+ sport modes including exclusive HYROX mode",
+          "Real-time heart rate broadcast to other devices",
+          "Compatible with iOS and Android"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Kein Display – keine Benachrichtigungen oder kontaktloses Bezahlen",
+          "Hoher Preis (€99,90) für einen Strap ohne Display",
+          "Kein USB-C-Kabel im Lieferumfang",
+          "Nicht für alle Sportarten optimal geeignet",
+          "Nicht geeignet für Navigation, Wandern oder Outdoor-Sport",
+          "Abhängig von Zepp-App für alle Daten",
+          "Kein EKG und kein GPS"
+        ],
+        "en": [
+          "No display – no notifications or contactless payments",
+          "High price (€99.90) for a strap without a display",
+          "No USB-C cable included",
+          "Not ideal for all sports",
+          "Not suitable for navigation, hiking, or outdoor sports",
+          "Dependent on the Zepp App for all data",
+          "No ECG and no GPS"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "HYROX-Athleten und Kraftsportler",
+          "Amazfit-Ökosystem-Nutzer (Balance 2, Helio Ring)",
+          "Sportler, die präzise Herzfrequenzdaten ohne Uhr am Handgelenk benötigen",
+          "Ausdauersportler mit kompatiblen Fahrradcomputern oder Lauf-Apps",
+          "Nutzer, die 24/7-Gesundheitsüberwachung ohne Abo-Kosten suchen"
+        ],
+        "en": [
+          "HYROX athletes and strength training enthusiasts",
+          "Amazfit ecosystem users (Balance 2, Helio Ring)",
+          "Athletes who need precise heart rate data without a wrist watch",
+          "Endurance athletes with compatible bike computers or running apps",
+          "Users looking for 24/7 health monitoring without subscription fees"
+        ]
+      },
+      "ecosystem": "amazfit",
+      "compatibility": {
+        "de": "iOS & Android via Zepp-App; Amazfit-Smartwatches; kompatible Fahrradcomputer und Fitness-Apps",
+        "en": "iOS & Android via Zepp App; Amazfit smartwatches; compatible bike computers and fitness apps",
+        "platforms": ["iOS", "Android"]
+      },
+      "youtube_videos": [
+        {
+          "video_id": "xoyZlu3PeYY",
+          "title": "Amazfit Helio Strap 2 Months Later (It Keeps Getting Better!)",
+          "channel": "Chase the Summit",
+          "language": "en"
+        },
+        {
+          "video_id": "8eWnBjso40s",
+          "title": "Amazfit Helio Band Review: Cutting Through the Clickbait",
+          "channel": "DC Rainmaker",
+          "language": "en"
+        },
+        {
+          "video_id": "dsYsSaS0qBU",
+          "title": "Amazfit Helio Strap Testbericht: Eine Echte Whoop-Alternative?",
+          "channel": "Sport Technik",
+          "language": "de"
+        },
+        {
+          "video_id": "UYjBzO2RYKc",
+          "title": "Whoop-Killer, für 99€?! Amazfit Helio Band (review)",
+          "channel": "iKnowReview",
+          "language": "de"
+        }
+      ]
     }
   ],
   "categories": {
@@ -2174,7 +2529,9 @@
       "products": [
         "apple_watch_series11_2025",
         "garmin_forerunner_970_2025",
-        "garmin_fenix_8_2024"
+        "garmin_fenix_8_2024",
+        "whoop_5_0_peak_2025",
+        "amazfit_helio_strap_2025"
       ]
     },
     "running_watch": {
@@ -2211,7 +2568,7 @@
         "en": "Devices focused on sleep tracking and recovery"
       },
       "icon": "/images/quiz/sleep.svg",
-      "products": []
+      "products": ["whoop_5_0_peak_2025","amazfit_helio_strap_2025"]
     },
     "heart_rate_monitors": {
       "id": "heart_rate_monitors",
@@ -2228,7 +2585,7 @@
         "en": "Chest straps and armbands for precise heart rate measurement"
       },
       "icon": "/images/quiz/heart.svg",
-      "products": []
+      "products": ["whoop_5_0_peak_2025", "amazfit_helio_strap_2025"]
     },
     "sport_earbuds": {
       "id": "sport_earbuds",

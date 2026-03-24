@@ -928,11 +928,12 @@ async def score_quiz(
 
         # 1. Category Match (40% weight)
         product_category = product["category"]
+        product_categories = product_category if isinstance(product_category, list) else [product_category]
         # Check if product's category matches OR if product is in the selected category's products list
         category_data = products_metadata.get("categories", {}).get(quiz_answers.category, {})
         category_products = category_data.get("products", [])
 
-        if product_category == quiz_answers.category or product_id in category_products:
+        if quiz_answers.category in product_categories or product_id in category_products:
             scores["category"] = 1.0
             reasons.append(f"Matches your selected category: {category_data.get('name', {}).get('en', quiz_answers.category)}")
         else:
@@ -944,7 +945,7 @@ async def score_quiz(
         for use_case_id in quiz_answers.useCases:
             if use_case_id in product.get("use_cases", {}):
                 use_case_data = product["use_cases"][use_case_id]
-                rating = use_case_data.get("rating", 0)
+                rating = use_case_data.get("rating") or 0
                 use_case_ratings.append(rating / 5.0)  # Normalize to 0-1
 
                 # Add reason if rating is high (4 or 5)
@@ -966,7 +967,7 @@ async def score_quiz(
         for feature_id in quiz_answers.features:
             if feature_id in product.get("feature_priorities", {}):
                 feature_data = product["feature_priorities"][feature_id]
-                rating = feature_data.get("rating", 0)
+                rating = feature_data.get("rating") or 0
                 feature_ratings.append(rating / 5.0)  # Normalize to 0-1
 
                 feature_name = products_metadata.get("features_metadata", {}).get(feature_id, {}).get("name", {}).get("en", feature_id)
@@ -1065,7 +1066,8 @@ async def score_quiz_with_rag(
         # Category match (40%)
         category_data = products_metadata.get("categories", {}).get(quiz_answers.category, {})
         category_products = category_data.get("products", [])
-        if product["category"] == quiz_answers.category or product_id in category_products:
+        product_cats = product["category"] if isinstance(product["category"], list) else [product["category"]]
+        if quiz_answers.category in product_cats or product_id in category_products:
             scores["category"] = 1.0
             reasons.append(f"Matches your selected category: {category_data.get('name', {}).get('en', quiz_answers.category)}")
 
@@ -1073,7 +1075,7 @@ async def score_quiz_with_rag(
         uc_ratings, uc_details = [], []
         for uc_id in quiz_answers.useCases:
             if uc_id in product.get("use_cases", {}):
-                rating = product["use_cases"][uc_id].get("rating", 0)
+                rating = product["use_cases"][uc_id].get("rating") or 0
                 uc_ratings.append(rating / 5.0)
                 if rating >= 4:
                     uc_name = products_metadata.get("use_cases_metadata", {}).get(uc_id, {}).get("name", {}).get("en", uc_id)
@@ -1090,7 +1092,7 @@ async def score_quiz_with_rag(
         for feat_id in quiz_answers.features:
             if feat_id in product.get("feature_priorities", {}):
                 feat_data = product["feature_priorities"][feat_id]
-                rating = feat_data.get("rating", 0)
+                rating = feat_data.get("rating") or 0
                 feat_ratings.append(rating / 5.0)
                 feat_name = products_metadata.get("features_metadata", {}).get(feat_id, {}).get("name", {}).get("en", feat_id)
                 if rating >= 4:
