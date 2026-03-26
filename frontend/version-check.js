@@ -2,8 +2,8 @@
     'use strict';
 
     var POLL_INTERVAL_MS = 60000; // 60 seconds
+    var INIT_RETRY_MS = 10000;    // retry baseline fetch every 10s until it succeeds
     var currentVersion = null;
-    var bannerShown = false;
 
     function injectStyles() {
         var style = document.createElement('style');
@@ -61,8 +61,7 @@
     }
 
     function showBanner() {
-        if (bannerShown) return;
-        bannerShown = true;
+        if (document.getElementById('vc-banner')) return;
 
         var banner = document.createElement('div');
         banner.id = 'vc-banner';
@@ -83,31 +82,42 @@
         });
     }
 
-    function checkVersion() {
+    function pollVersion() {
         fetch('/version', { cache: 'no-store' })
             .then(function (res) { return res.json(); })
             .then(function (data) {
-                if (!data.version) return;
-                if (currentVersion === null) {
-                    currentVersion = data.version;
-                } else if (data.version !== currentVersion) {
+                if (data.version && data.version !== currentVersion) {
                     showBanner();
                 }
             })
             .catch(function () {
-                // Silently ignore network errors — don't disrupt the user
+                // Silently ignore — don't disrupt the user
+            });
+    }
+
+    // Fetch baseline version first. Only start polling after baseline is captured.
+    // Retries every INIT_RETRY_MS until the server responds.
+    function initBaseline() {
+        fetch('/version', { cache: 'no-store' })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (!data.version) throw new Error('no version');
+                currentVersion = data.version;
+                setInterval(pollVersion, POLL_INTERVAL_MS);
+            })
+            .catch(function () {
+                // Server not ready yet — retry
+                setTimeout(initBaseline, INIT_RETRY_MS);
             });
     }
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
             injectStyles();
-            checkVersion();
-            setInterval(checkVersion, POLL_INTERVAL_MS);
+            initBaseline();
         });
     } else {
         injectStyles();
-        checkVersion();
-        setInterval(checkVersion, POLL_INTERVAL_MS);
+        initBaseline();
     }
 }());
