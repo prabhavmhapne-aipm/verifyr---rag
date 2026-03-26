@@ -213,6 +213,7 @@ Markdown content:
             "amazon_review_count": int(review_count) if review_count is not None else None,
             "language": language,
             "credits_used": credits_used,
+            "review_date": None,   # Amazon pages have no single publish date
         }
 
     # ------------------------------------------------------------------
@@ -391,6 +392,7 @@ class PlaywrightScraper:
                 page.wait_for_timeout(2000)
 
                 title = page.title() or ""
+                review_date = self._extract_publish_date(page)
 
                 # Try known per-site selectors first
                 known = SITE_SELECTORS.get(domain, [])
@@ -419,6 +421,10 @@ class PlaywrightScraper:
 
         language = language_override or detect_language(content)
 
+        # If meta-tag extraction didn't find a date, try regex on the cleaned content
+        if not review_date:
+            review_date = self._regex_date(content[:3000])
+
         return {
             "title": title,
             "content": content,
@@ -427,6 +433,7 @@ class PlaywrightScraper:
             "amazon_review_count": None,
             "language": language,
             "credits_used": 0,
+            "review_date": review_date,
         }
 
     def _extract_largest_block(self, page) -> str:
@@ -451,3 +458,127 @@ class PlaywrightScraper:
             return best
         # Last resort — full body
         return page.locator("body").inner_text()
+
+    def _extract_publish_date(self, page) -> Optional[str]:
+        """Try to extract the article's publish date from HTML meta tags or <time> elements."""
+        meta_selectors = [
+            ("meta[property='article:published_time']", "content"),
+            ("meta[name='date']", "content"),
+            ("meta[name='publish-date']", "content"),
+            ("meta[name='pubdate']", "content"),
+            ("meta[property='og:updated_time']", "content"),
+            ("meta[itemprop='datePublished']", "content"),
+        ]
+        for selector, attr in meta_selectors:
+            try:
+                el = page.locator(selector).first
+                val = el.get_attribute(attr, timeout=500)
+                if val:
+                    parsed = self._parse_date_str(val.strip())
+                    if parsed:
+                        return parsed
+            except Exception:
+                continue
+
+        # Try <time datetime="...">
+        try:
+            el = page.locator("time[datetime]").first
+            val = el.get_attribute("datetime", timeout=500)
+            if val:
+                parsed = self._parse_date_str(val.strip())
+                if parsed:
+                    return parsed
+        except Exception:
+            pass
+
+        # Fallback: regex on first 3000 chars of page text
+        try:
+            text = page.locator("body").inner_text()[:3000]
+            return self._regex_date(text)
+        except Exception:
+            pass
+
+        return None
+
+    def _parse_date_str(self, val: str) -> Optional[str]:
+        """Parse a date string (ISO, slash, or common EN formats) to YYYY-MM-DD."""
+        from datetime import datetime as _dt
+        # ISO: 2025-10-22T... or 2025-10-22
+        m = re.match(r'(\d{4}-\d{2}-\d{2})', val)
+        if m:
+            return m.group(1)
+        # Slash: 2025/10/22
+        m = re.match(r'(\d{4})/(\d{2})/(\d{2})', val)
+        if m:
+            return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+        # Common formats
+        for fmt in ('%B %d, %Y', '%b %d, %Y', '%d %B %Y', '%d %b %Y', '%d/%m/%Y', '%m/%d/%Y'):
+            try:
+                return _dt.strptime(val[:20], fmt).strftime('%Y-%m-%d')
+            except ValueError:
+                continue
+        return None
+
+    def _regex_date(self, text: str) -> Optional[str]:
+        """Try regex patterns to extract a publish date from article text."""
+        # ISO-like: 2025-10-22
+        m = re.search(r'\b(20\d\d-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01]))\b', text)
+        if m:
+            return m.group(1)
+
+        # English: January 22, 2026  /  Jan 22, 2026  /  22 January 2026
+        months_en = {
+            'january': '01', 'february': '02', 'march': '03', 'april': '04',
+            'may': '05', 'june': '06', 'july': '07', 'august': '08',
+            'september': '09', 'october': '10', 'november': '11', 'december': '12',
+            'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04',
+            'jun': '06', 'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10',
+            'nov': '11', 'dec': '12',
+        }
+        # Month Day, Year
+        m = re.search(
+            r'\b(january|february|march|april|may|june|july|august|september|october|november|december'
+            r'|jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)'
+            r'\.?\s+(\d{1,2}),?\s+(20\d\d)\b',
+            text, re.IGNORECASE,
+        )
+        if m:
+            month = months_en.get(m.group(1).lower())
+            day = m.group(2).zfill(2)
+            year = m.group(3)
+            if month:
+                return f'{year}-{month}-{day}'
+
+        # Day Month Year (English)
+        m = re.search(
+            r'\b(\d{1,2})\s+(january|february|march|april|may|june|july|august|september|october|november|december'
+            r'|jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)'
+            r'\.?\s+(20\d\d)\b',
+            text, re.IGNORECASE,
+        )
+        if m:
+            month = months_en.get(m.group(2).lower())
+            day = m.group(1).zfill(2)
+            year = m.group(3)
+            if month:
+                return f'{year}-{month}-{day}'
+
+        # German: 22. Oktober 2025
+        months_de = {
+            'januar': '01', 'februar': '02', 'märz': '03', 'april': '04',
+            'mai': '05', 'juni': '06', 'juli': '07', 'august': '08',
+            'september': '09', 'oktober': '10', 'november': '11', 'dezember': '12',
+        }
+        m = re.search(
+            r'\b(\d{1,2})\.\s*(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)'
+            r'\s+(20\d\d)\b',
+            text, re.IGNORECASE,
+        )
+        if m:
+            day = m.group(1).zfill(2)
+            month = months_de.get(m.group(2).lower())
+            year = m.group(3)
+            if month:
+                return f'{year}-{month}-{day}'
+
+        return None

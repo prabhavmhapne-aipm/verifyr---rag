@@ -1,0 +1,30 @@
+{
+  "product_id": "ringconn_gen2_2024",
+  "source_url": "https://amazon.de.manual",
+  "source_name": "Amazon.de",
+  "doc_type": "review",
+  "language": "de",
+  "scraped_date": "2026-03-26",
+  "title": "Amazon.de — Manuelle Bewertungen",
+  "content": "Die Kunden sagen\nDie Kunden sind mit der Qualität, Optik und dem Preis-Leistungs-Verhältnis des Smart Rings zufrieden. Sie beschreiben ihn als wunderbar und netter als andere rings. Einige loben auch den Tragekomfort. Bezüglich der Funktionalität, Akkulaufzeit, Schlaftracking und Genauigkeit gibt es jedoch gemischte Meinungen.\n\nQualität: Kunden sind mit der Qualität des Produkts zufrieden. Sie beschreiben es als sehr gut, wunderbar und perfekt. Einige empfinden es als nettes, entbehrliches Spielzeug mit vielen Eventualitäten. Andere finden die Software verbesserungswürdig und auch an der Optik sollte gearbeitet werden.\n\nOptik: Kunden sind mit der Optik des Produkts zufrieden. Sie sagen, dass es optisch gut aussieht.\n\nPreis-Leistung: Kunden sind mit dem Preis-Leistungs-Verhältnis des Produkts zufrieden. Sie erwähnen, dass der Mitgliedschaft/Abo kostenlos ist.\n\nTragekomfort: Kunden sind mit dem Tragekomfort des Produkts zufrieden. Sie sagen, dass es sehr angenehm zu tragen ist.\n\nFunktionalität: Kunden haben unterschiedliche Erfahrungen mit der Funktionalität des Produkts gemacht. Einige berichten, dass es insgesamt ganz gut funktioniert und alle Anforderungen erfüllt. Andere erwähnen jedoch, dass der Schrittzähler von Anfang an eher schlecht funktionierte und der Ring plötzlich nicht mehr funktionierte. Manche empfinden den Funktionsumfang für Sport als zu gering.\n\nAkkulaifzeit: Kunden haben unterschiedliche Meinungen zur Akkulaufzeit des Produkts. Einige berichten, dass der Akku ca. 10 Tage hält, während andere sagen, dass er nach einem Jahr Nutzung deutlich nachlässt und nur noch 5 Tage im Schnitt hält. Manche Kunden erwähnen, dass sich der Akku innerhalb von 20 Stunden komplett entlädt und die Berechnung des Energielevels fragwürdig ist.\n\nSchlaftracking: Kunden haben unterschiedliche Erfahrungen mit dem Schlaftracking gemacht. Einige berichten, dass die Schlaferkennung nicht sehr zuverlässig war. Andere bemängeln jedoch Ungenauigkeiten in der Schlafaufzeichnung und sagen, dass tatsächliche Wachzeiten nicht gut erkannt wurden.\n\nGenauigkeit: Kunden haben unterschiedliche Meinungen zur Genauigkeit des Produkts. Einige finden die Messdaten sehr genau und nachvollziehbar, auch mit kleinen Abweichungen. Andere bemängeln jedoch, dass der Schrittzähler an manchen Tagen alles andere als realistisch ist und die Schritterkennung miserabel is\n\nDas Schlafapnoe-Monitoring des RingConn Gen 2 ist leider nicht zuverlässig - das zeigen die Kundenerfahrungen sehr deutlich:\n\nDie Realität bei Schlafapnoe-Erkennung: Ein Kunde mit diagnostizierter schwerer obstruktiver Schlafapnoe berichtet: Der Ring zählte in der ersten Nacht weniger als die Hälfte der tatsächlichen Atemaussetzer, in der zweiten Nacht sogar weniger als ein Drittel im Vergleich zu Schlaflabor-Messungen\nDer Ring misst nur SpO2 und Herzfrequenz - genau wie andere Fitness-Tracker auch Ein einfacher Algorithmus \"errechnet\" daraus die Wahrscheinlichkeit von Atemaussetzern, kann sie aber nicht tatsächlich messen\nIm Schlaflabor werden dagegen ein Dutzend Sensoren, Kameras und Mikrofone verwendet, um Atemaussetzer präzise zu erfassen",
+  "amazon_rating": 4.0,
+  "amazon_review_count": 631,
+  "amazon_price": "339",
+  "product_url": "https://www.amazon.de/dp/B0DG2QS49T/",
+  "sentiment": {
+    "positive_pct": 50,
+    "neutral_pct": 30,
+    "negative_pct": 20,
+    "top_positives": [
+      "Qualität des Produkts",
+      "Optik sieht gut aus",
+      "Preis-Leistungs-Verhältnis"
+    ],
+    "top_negatives": [
+      "Funktionalität ist gemischt",
+      "Akkulaufzeit lässt nach",
+      "Schlaftracking unzuverlässig"
+    ],
+    "summary": "Die Kundenbewertungen für den Smart Ring sind überwiegend positiv, insbesondere in Bezug auf die Qualität, Optik und das Preis-Leistungs-Verhältnis. Viele Nutzer schätzen den Tragekomfort, während die Funktionalität, Akkulaufzeit und Schlaftracking gemischte Erfahrungen hervorrufen. Kritiken konzentrieren sich auf die ungenauen Messungen und die Zuverlässigkeit der Schlafapnoe-Erkennung. Der Ring eignet sich gut für Nutzer, die Wert auf Design und Komfort legen, jedoch sollten potenzielle Käufer die gemeldeten funktionalen Einschränkungen berücksichtigen."
+  }
+}

@@ -117,6 +117,78 @@
       "source_name": "Trusted Reviews"
     }
   },
+  "oura_ring_4_2024": {
+    "specification.pdf": {
+      "source_url": "https://ouraring.com/de/store/rings/oura-ring-4",
+      "source_name": "Oura Official"
+    },
+    "user-manual.pdf": {
+      "source_url": "https://support.ouraring.com/hc/en-us/articles/360025451233",
+      "source_name": "Oura Support"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/chip.de_review_13052025.pdf": {
+      "source_url": "https://www.chip.de/test/Oura-Ring-4-im-Test_185959963.html",
+      "source_name": "Chip.de"
+    },
+    "reviews/computerbild.de_review_26022025.pdf": {
+      "source_url": "https://www.computerbild.de/artikel/cb-Tests-Wearables-Oura-Ring-4-Test-smart-39477651.html",
+      "source_name": "Computerbild.de"
+    },
+    "reviews/gq-magazin.de_review_03102025.pdf": {
+      "source_url": "https://www.gq-magazin.de/artikel/oura-ring-4-test",
+      "source_name": "GQ Magazin"
+    },
+    "reviews/heise.de_review_26112025.pdf": {
+      "source_url": "https://www.heise.de/bestenlisten/testbericht/oura-ring-4-im-test-smart-ring-mit-hervorragendem-schlaf-tracking/nf5grfs",
+      "source_name": "Heise.de"
+    },
+    "reviews/imtest.de_review_27022026.pdf": {
+      "source_url": "https://www.imtest.de/sport-freizeit/oura-ring-4-smart-ring-test-analyse-funktionen-platzhirsch/537489",
+      "source_name": "Imtest.de"
+    },
+    "reviews/zdfheute.de_review_20082025.pdf": {
+      "source_url": "https://www.zdfheute.de/ratgeber/stiftung-warentest-smart-ringe-100.html",
+      "source_name": "ZDF Heute / Stiftung Warentest"
+    }
+  },
+  "ringconn_gen2_2024": {
+    "specification.pdf": {
+      "source_url": "https://de.ringconn.com/products/ringconn-gen2-smart-ring",
+      "source_name": "RingConn Official"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/chip.de_review_12122024.pdf": {
+      "source_url": "https://www.chip.de/test/RingConn-Gen-2-Smart-Ring-im-Test_185669410.html",
+      "source_name": "Chip.de"
+    },
+    "reviews/computerbild.de_review_24022025.pdf": {
+      "source_url": "https://www.computerbild.de/artikel/cb-Tests-Wearables-RingConn-2-Test-Review-Schlafapnoe-39029977.html",
+      "source_name": "Computerbild.de"
+    },
+    "reviews/heise.de_review_13032025.pdf": {
+      "source_url": "https://www.heise.de/bestenlisten/testbericht/ringconn-gen-2-im-test-richtig-guter-smart-ring-laeuft-10-tage/7w8smym",
+      "source_name": "Heise.de"
+    },
+    "reviews/imtest.de_review_21072025.pdf": {
+      "source_url": "https://www.imtest.de/einzeltests/smart-ring-ringconn-gen-2-test-fitness-review/518209",
+      "source_name": "Imtest.de"
+    },
+    "reviews/imtest.de_review_24032026.pdf": {
+      "source_url": "https://www.imtest.de/sport-freizeit/smart-ring-test-oura-samsung-geschlagen-schlaegt-schlaegt-schlaue/478201",
+      "source_name": "Imtest.de"
+    },
+    "reviews/techradar.com_review_27102024.pdf": {
+      "source_url": "https://www.techradar.com/health-fitness/smartwatches/ringconn-gen-2-smart-ring-review-the-best-cheap-smart-ring-gets-an-upgrade",
+      "source_name": "TechRadar"
+    }
+  },
   "whoop_5_0_peak_2025": {
     "specification.pdf": {
       "source_url": "https://www.whoop.com/de/de/peak/",

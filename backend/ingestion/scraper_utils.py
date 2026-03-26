@@ -104,11 +104,18 @@ class JSONSaver:
             data_root = Path(__file__).parent.parent.parent / "data" / "raw"
         self.data_root = data_root
 
-    def _build_filename(self, source_url: str, doc_type: str) -> str:
+    def _build_filename(self, source_url: str, doc_type: str, review_date: Optional[str] = None) -> str:
         domain = urlparse(source_url).netloc.lower()
         # Strip www. prefix
         domain = re.sub(r"^www\.", "", domain)
-        date_str = datetime.now().strftime("%d%m%Y")
+        if review_date:
+            try:
+                dt = datetime.strptime(review_date, "%Y-%m-%d")
+                date_str = dt.strftime("%d%m%Y")
+            except ValueError:
+                date_str = datetime.now().strftime("%d%m%Y")
+        else:
+            date_str = datetime.now().strftime("%d%m%Y")
         return f"{domain}_{doc_type}_{date_str}.json"
 
     def _reviews_dir(self, product_id: str) -> Path:
@@ -124,6 +131,7 @@ class JSONSaver:
         language: str,
         scraper_used: str,
         title: str = "",
+        review_date: Optional[str] = None,
         amazon_rating: Optional[float] = None,
         amazon_review_count: Optional[int] = None,
         amazon_price: Optional[str] = None,
@@ -139,7 +147,7 @@ class JSONSaver:
         reviews_dir = self._reviews_dir(product_id)
         reviews_dir.mkdir(parents=True, exist_ok=True)
 
-        filename = self._build_filename(source_url, doc_type)
+        filename = self._build_filename(source_url, doc_type, review_date)
         file_path = reviews_dir / filename
 
         if file_path.exists() and not force:
@@ -154,10 +162,12 @@ class JSONSaver:
             "doc_type": doc_type,
             "language": language,
             "scraped_date": datetime.now().strftime("%Y-%m-%d"),
-            "scraper_used": scraper_used,
             "title": title,
             "content": content,
         }
+
+        if review_date is not None:
+            payload["review_date"] = review_date
 
         if amazon_rating is not None:
             payload["amazon_rating"] = amazon_rating

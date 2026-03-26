@@ -922,7 +922,7 @@
         },
         "competition_performance": {
           "supported": true,
-          "rating": 4,
+          "rating": 5,
           "features": [
             "power_meter_support",
             "cycling_dynamics",
@@ -1006,7 +1006,7 @@
           "notes": "Hybrid touch + button interface"
         },
         "light_comfortable": {
-          "rating": 5,
+          "rating": 3,
           "value": "Titanium DLC, Sapphire glass, 50m water resistance",
           "notes": "Extremely durable, built for outdoor use"
         },
@@ -1501,7 +1501,7 @@
         },
         "competition_performance": {
           "supported": true,
-          "rating": 4,
+          "rating": 5,
           "features": [
             "speed_tracking",
             "elevation",
@@ -1598,7 +1598,7 @@
           "notes": "Bright, vivid AMOLED; also usable with physical buttons for outdoor use"
         },
         "light_comfortable": {
-          "rating": 5,
+          "rating": 3,
           "value": "MIL-STD getestet, Saphirglas, Titan-Lünette, Metallschutz für Sensoren",
           "notes": "Built for extreme conditions — thermal, shock, and water resistance"
         },
@@ -1948,7 +1948,7 @@
         },
         "swimming": {
           "supported": true,
-          "rating": 4,
+          "rating": 2,
           "features": ["pool_swimming", "open_water", "stroke_detection", "ip68_waterproof"],
           "notes": "IP68 waterproof to 10m, swim tracking with stroke detection"
         },
@@ -1960,7 +1960,7 @@
         },
         "competition_performance": {
           "supported": true,
-          "rating": 4,
+          "rating": 2,
           "features": ["strain_score", "hrv_status", "training_readiness", "load_management"],
           "notes": "Widely used by pro athletes for recovery and load management; limited real-time GPS metrics"
         }
@@ -2151,6 +2151,192 @@
           "title": "WHOOP 5.0 Review: My Experience With the WHOOP Band After 1 Month",
           "channel": "Healthnews",
           "video_id": "JMeC_vZo19w"
+        }
+      ]
+    },
+    {
+      "id": "oura_ring_4_2024",
+      "display_name": {
+        "de": "Oura Ring 4",
+        "en": "Oura Ring 4"
+      },
+      "brand": "Oura",
+      "category": ["recovery_sleep", "smartwatch_fitness"],
+      "price": 378,
+      "release_year": 2024,
+      "image_url": "/images/products/oura_ring_4_2024_1.png",
+      "image_urls": [
+        "/images/products/oura_ring_4_2024_1.png",
+        "/images/products/oura_ring_4_2024_2.png",
+        "/images/products/oura_ring_4_2024_3.png",
+        "/images/products/oura_ring_4_2024_4.png",
+        "/images/products/oura_ring_4_2024_5.png",
+        "/images/products/oura_ring_4_2024_6.png",
+        "/images/products/oura_ring_4_2024_7.png",
+        "/images/products/oura_ring_4_2024_8.png",
+        "/images/products/oura_ring_4_2024_9.png",
+        "/images/products/oura_ring_4_2024_10.png"
+      ],
+      "amazon_url": "https://www.amazon.de/dp/B0D9WVSZ56/",
+      "idealo_url": "https://www.idealo.de/preisvergleich/OffersOfProduct/205452226_-4-oura-ring.html",
+      "price_history": [
+        { "date": "2025-03-27", "price": 399 },
+        { "date": "2025-05-26", "price": 360 },
+        { "date": "2025-06-10", "price": 399 },
+        { "date": "2025-07-10", "price": 285 },
+        { "date": "2025-07-25", "price": 399 },
+        { "date": "2025-08-24", "price": 380 },
+        { "date": "2025-09-08", "price": 285 },
+        { "date": "2025-09-23", "price": 399 },
+        { "date": "2025-10-23", "price": 350 },
+        { "date": "2025-11-22", "price": 280 },
+        { "date": "2025-12-22", "price": 350 },
+        { "date": "2026-01-06", "price": 280 },
+        { "date": "2026-01-21", "price": 350 },
+        { "date": "2026-02-05", "price": 335 },
+        { "date": "2026-02-20", "price": 325 },
+        { "date": "2026-03-07", "price": 300 },
+        { "date": "2026-03-22", "price": 399 }
+      ],
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://ouraring.com/de/product/rings/oura-ring-4"
+      },
+      "buy_links": [
+        {
+          "shop": "Oura Official",
+          "url": "https://ouraring.com/de/store/rings/oura-ring-4/silver",
+          "price": 399
+        },
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0D9WVSZ56/",
+          "price": 378
+        }
+      ],
+      "key_specs": {
+        "display": "Kein Display",
+        "battery_life": "5–8 Tage",
+        "weight": "3,3–5,2 g (je nach Ringgröße)",
+        "water_resistance": "100 m (Sauna und Wassersport, nicht zum Tauchen)",
+        "gps": "Nein",
+        "connectivity": "Bluetooth Low Energy (BLE)",
+        "case_material": "Titan (PVD-Beschichtung; DLC-Beschichtung bei Stealth)",
+        "band_material": null,
+        "sensors": "Rote/Infrarote LEDs (SpO2), Grüne/Infrarote PPG-Sensoren (Herzfrequenz, HFV, Atemfrequenz), Digitaler Temperatursensor, Beschleunigungsmesser",
+        "compatibility": "iOS, Android, 40+ App-Integrationen"
+      },
+      "use_cases": {
+        "lifestyle_fitness":        { "rating": 3, "notes": "Umfassendes Gesundheits-Tracking: Aktivitätsziele, Stress, Schlaf, HFV, Temperatur, 40+ App-Integrationen" },
+        "running_cycling":          { "rating": 2, "notes": "Kein GPS, kein Display – eingeschränkte Nutzung für aktive Sportarten" },
+        "competition_performance":  { "rating": 2, "notes": "Kein GPS, kein Display – nicht geeignet für Leistungssport" },
+        "hiking":                   { "rating": 2, "notes": "Kein GPS vorhanden" },
+        "swimming":                 { "rating": 3, "notes": "100 m Wasserbeständigkeit, geeignet für Wassersport, nicht zum Tauchen" },
+        "health_wellbeing":         { "rating": 5, "notes": "Detaillierter Schlaf, HFV, SpO2, Stress, Temperatur, VO2max, Frauengesundheit, Metabolische Gesundheit" }
+      },
+      "feature_priorities": {
+        "light_comfortable":      { "rating": 5, "value": "3,3–5,2 g", "notes": "Sehr leicht, vollständig aus Titan, antiallergene Innenfläche mit medizinischer Einstufung, Ringform für 24/7-Tragekomfort" },
+        "long_battery":           { "rating": 4, "value": "5–8 Tage", "notes": "Ladezeit 20–80 Minuten je nach Ladezustand" },
+        "water_resistance":       { "rating": 4, "value": "100 m", "notes": "Geeignet für Sauna und Wassersport, nicht zum Tauchen" },
+        "gps_accuracy":           { "rating": 0, "value": "Kein GPS", "notes": "Kein integriertes GPS" },
+        "smartphone_independent": { "rating": 1, "value": null, "notes": "Benötigt Oura-App auf iOS oder Android" },
+        "app_ecosystem":          { "rating": 4, "value": null, "notes": "Integration mit mehr als 40 Apps, KI-basierter Oura Advisor, Oura Labs" },
+        "design_modern":          { "rating": 5, "value": null, "notes": "Minimalistisches Ring-Design, 6 Titan-Ausführungen + 4 Keramik-Ausführungen" },
+        "design_classic":         { "rating": 3, "value": null, "notes": "Schlichtes, zeitloses Ringdesign" },
+        "with_display":           { "rating": 0, "value": null, "notes": "Kein Display vorhanden" },
+        "no_display":             { "rating": 5, "value": null, "notes": "Displayfreier Ring für unauffälliges 24/7-Tragen" },
+        "sleep_monitor":          { "rating": 5, "value": null, "notes": "Detaillierte Schlafphasen (Tiefschlaf, REM, Leichtschlaf), SpO2, Schlafzeitenkonstanz, Empfehlungen zur Schlafenszeit" },
+        "stress_monitor":         { "rating": 4, "value": null, "notes": "Stress tagsüber, Resilienz-Tracking auf Basis von HFV" },
+        "ecg_hrv":                { "rating": 4, "value": null, "notes": "Herzfrequenzvariabilität (HFV) rund um die Uhr – kein EKG" },
+        "vo2_max":                { "rating": 3, "value": null, "notes": "Ausdauerleistungsfähigkeit (VO2max) unter Herzgesundheit" }
+      },
+      "pros": {
+        "de": [
+          "Bis zu 8 Tage Akkulaufzeit",
+          "Detaillierte Schlafanalyse: Tiefschlaf, REM, Leichtschlaf, SpO2 und Schlafzeitenkonstanz",
+          "100 m Wasserbeständigkeit – geeignet für Sauna (80–90 °C)",
+          "Sehr leicht und komfortabel (3,3–5,2 g), vollständig aus Titan, antiallergene Innenfläche",
+          "Integration mit mehr als 40 Apps (iOS und Android)",
+          "Kein Display – ideal für diskretes, unauffälliges Tragen rund um die Uhr",
+          "Ohne Abo verfügbare Features: Grundlegende Schlaf-, Aktivitäts- und Herzfrequenzdaten, einfache Tageswerte in der App, Synchronisation mit anderen Health-Apps",
+          "Temperaturmessung nur im Schlaf"
+        ],
+        "en": [
+          "Up to 8 days battery life",
+          "Detailed sleep analysis: deep sleep, REM, light sleep, SpO2 and sleep consistency",
+          "100 m water resistance – suitable for sauna (80–90 °C)",
+          "Very light and comfortable (3.3–5.2 g), full titanium, hypoallergenic inner surface",
+          "Integration with 40+ apps (iOS and Android)",
+          "No display – ideal for discreet, unobtrusive 24/7 wear",
+          "Features available without subscription: basic sleep, activity and heart rate data, simple daily scores in the app, sync with other health apps",
+          "Temperature measurement during sleep only"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Teuer und monatliche Mitgliedschaft erforderlich (5,99 €/Monat oder 69,99 €/Jahr)",
+          "Volle Funktionen nur mit Abo: Detaillierte Schlafanalysen und Schlafphasen, personalisierte Empfehlungen und Insights, Stresstracking und Erholungsmetriken, Temperaturtrends und Zyklustracking, Langzeit-Datenanalysen, Readiness Score",
+          "Nicht geeignet für Navigation, Wandern oder Outdoor-Sport",
+          "Kein EKG, kein Display – keine Benachrichtigungen oder kontaktloses Bezahlen",
+          "Minimal schwerer als Mitbewerber-Modelle"
+        ],
+        "en": [
+          "Expensive and monthly membership required (€5.99/month or €69.99/year)",
+          "Full features only with subscription: detailed sleep analysis and sleep stages, personalised recommendations and insights, stress tracking and recovery metrics, temperature trends and cycle tracking, long-term data analysis, Readiness Score",
+          "Not suitable for navigation, hiking or outdoor sports",
+          "No ECG, no display – no notifications or contactless payments",
+          "Slightly heavier than competing models"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "Schlaf-Tracking und Erholungsoptimierung",
+          "Ganzheitliches Gesundheits-Tracking rund um die Uhr",
+          "Nutzer, die ein diskretes, displayfreies Wearable bevorzugen"
+        ],
+        "en": [
+          "Sleep tracking and recovery optimisation",
+          "Holistic 24/7 health tracking",
+          "Users who prefer a discreet, display-free wearable"
+        ]
+      },
+      "ecosystem": "oura",
+      "compatibility": {
+        "de": "Verfügbar für iOS und Android, Integration mit mehr als 40 Apps",
+        "en": "Available for iOS and Android, integration with 40+ apps",
+        "platforms": ["iOS", "Android"]
+      },
+      "youtube_videos": [
+        {
+          "title": "6 Monate mit Hightech-Ring: Lohnt sich das?",
+          "channel": "iKnowReview",
+          "video_id": "fGQ5tj9Kdj4"
+        },
+        {
+          "title": "Oura Ring 4 | 10 Things to Know Before You Buy It",
+          "channel": "Noah Banks",
+          "video_id": "SrjpiyRscS4"
+        },
+        {
+          "title": "Oura Ring 4 Ultimate Scientific Review",
+          "channel": "The Quantified Scientist",
+          "video_id": "MhMKtqY6CmM"
+        },
+        {
+          "title": "Oura Ring 4 Review (Watch Before You Buy!)",
+          "channel": "Chase the Summit",
+          "video_id": "xGBDEcGY0a4"
+        },
+        {
+          "title": "OURA RING: is it worth it? my honest review of the pros + cons",
+          "channel": "Michel Janse",
+          "video_id": "96Npco6GsC0"
+        },
+        {
+          "title": "I Wore the Oura Ring 4 For a Week: First Impressions",
+          "channel": "CNET",
+          "video_id": "TOf_YgLlvn8"
         }
       ]
     },
@@ -2508,6 +2694,203 @@
           "language": "de"
         }
       ]
+    },
+    {
+      "id": "ringconn_gen2_2024",
+      "display_name": {
+        "de": "RingConn Gen 2",
+        "en": "RingConn Gen 2"
+      },
+      "brand": "RingConn",
+      "category": ["recovery_sleep", "smartwatch_fitness"],
+      "price": 308,
+      "release_year": 2024,
+      "image_url": "/images/products/ringconn_gen2_2024_1.png",
+      "image_urls": [
+        "/images/products/ringconn_gen2_2024_1.png",
+        "/images/products/ringconn_gen2_2024_2.png",
+        "/images/products/ringconn_gen2_2024_3.png",
+        "/images/products/ringconn_gen2_2024_4.png",
+        "/images/products/ringconn_gen2_2024_5.png",
+        "/images/products/ringconn_gen2_2024_6.png",
+        "/images/products/ringconn_gen2_2024_7.png",
+        "/images/products/ringconn_gen2_2024_8.png",
+        "/images/products/ringconn_gen2_2024_9.png",
+        "/images/products/ringconn_gen2_2024_10.png"
+      ],
+      "amazon_url": "https://www.amazon.de/dp/B0DG2QS49T/",
+      "idealo_url": "https://www.idealo.de/preisvergleich/OffersOfProduct/205790328_-gen2-ringconn.html",
+      "price_history": [
+        { "date": "2025-04-01", "price": 350 },
+        { "date": "2025-04-25", "price": 350 },
+        { "date": "2025-05-25", "price": 352 },
+        { "date": "2025-06-10", "price": 355 },
+        { "date": "2025-06-25", "price": 300 },
+        { "date": "2025-07-10", "price": 265 },
+        { "date": "2025-07-25", "price": 265 },
+        { "date": "2025-08-10", "price": 300 },
+        { "date": "2025-08-25", "price": 340 },
+        { "date": "2025-09-10", "price": 338 },
+        { "date": "2025-09-25", "price": 340 },
+        { "date": "2025-10-10", "price": 340 },
+        { "date": "2025-10-25", "price": 325 },
+        { "date": "2025-11-10", "price": 260 },
+        { "date": "2025-11-25", "price": 257 },
+        { "date": "2025-12-10", "price": 260 },
+        { "date": "2025-12-25", "price": 262 },
+        { "date": "2026-01-10", "price": 270 },
+        { "date": "2026-01-26", "price": 285 },
+        { "date": "2026-02-05", "price": 318 },
+        { "date": "2026-02-15", "price": 280 },
+        { "date": "2026-03-01", "price": 295 },
+        { "date": "2026-03-15", "price": 318 },
+        { "date": "2026-03-26", "price": 300 }
+      ],
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://de.ringconn.com/products/ringconn-gen-2"
+      },
+      "buy_links": [
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0DG2QS49T/",
+          "price": 339
+        },
+        {
+          "shop": "RingConn Official",
+          "url": "https://de.ringconn.com/products/ringconn-gen-2?variant=43083356569711",
+          "price": 339
+        },
+        {
+          "shop": "Kaufland.de",
+          "url": "https://www.kaufland.de/product/535665775/",
+          "price": 308
+        }
+      ],
+      "key_specs": {
+        "display": "Kein Display",
+        "battery_life": "10–12 Tage (bis zu 150 Tage mit Ladeetui)",
+        "weight": "2–3 g (je nach Ringgröße)",
+        "water_resistance": "IP68 (100 m)",
+        "gps": "Nein",
+        "connectivity": "Bluetooth 5.0",
+        "case_material": "Titanlegierung in Luft- und Raumfahrtqualität, PVD-Beschichtung, Epoxidharz",
+        "band_material": null,
+        "sensors": "PPG (Herzfrequenz, SpO₂, HRV), Hauttemperatursensor, Atemfrequenzsensor, Beschleunigungsmesser",
+        "compatibility": "iOS 14.0+, Android 8.0+, Bluetooth 4.0+"
+      },
+      "use_cases": {
+        "lifestyle_fitness":        { "rating": 4, "notes": "24/7-Tracking von Herzfrequenz, SpO₂, HRV, Temperatur, Schritten, Kalorien und Training; kein Abonnement erforderlich" },
+        "running_cycling":          { "rating": 2, "notes": "Kein GPS, kein Display – eingeschränkte Nutzung für aktive Sportarten" },
+        "competition_performance":  { "rating": 1, "notes": "Kein GPS, kein Display – nicht geeignet für Leistungssport" },
+        "hiking":                   { "rating": 1, "notes": "Kein GPS vorhanden" },
+        "swimming":                 { "rating": 3, "notes": "IP68-zertifiziert bis 100 m – geeignet für Schwimmen und Wassersport" },
+        "health_wellbeing":         { "rating": 5, "notes": "Schlafapnoe-Überwachung (90,7 %), Schlafphasen, HRV, SpO₂, Stress, Temperatur, Menstruationsmanagement – alles 24/7 ohne Abo" }
+      },
+      "feature_priorities": {
+        "light_comfortable":      { "rating": 5, "value": "2–3 g, 2 mm Dicke", "notes": "Dünnster und leichtester Smart Ring; Titanlegierung in Luft- und Raumfahrtqualität; 6,8 mm Breite" },
+        "long_battery":           { "rating": 5, "value": "10–12 Tage", "notes": "Bis zu 150 Tage mit Ladeetui; ca. 90 Minuten Ladezeit; Offline-Speicher 5–7 Tage" },
+        "water_resistance":       { "rating": 4, "value": "IP68 (100 m)", "notes": "Geeignet für Schwimmen und Wassersport" },
+        "gps_accuracy":           { "rating": 0, "value": "Kein GPS", "notes": "Kein integriertes GPS" },
+        "smartphone_independent": { "rating": 2, "value": null, "notes": "Benötigt RingConn App (iOS 14.0+ / Android 8.0+); Offline-Speicher für 5–7 Tage" },
+        "app_ecosystem":          { "rating": 3, "value": null, "notes": "RingConn App für iOS und Android; keine Drittanbieter-Integrationen in der Spezifikation erwähnt" },
+        "design_modern":          { "rating": 4, "value": null, "notes": "Minimalistisches Ring-Design; 4 Farboptionen: Zukunftssilber, Matt-Schwarz, Königsgold, Roségold" },
+        "design_classic":         { "rating": 3, "value": null, "notes": "Schlichtes, zeitloses Ringdesign" },
+        "with_display":           { "rating": 0, "value": null, "notes": "Kein Display vorhanden" },
+        "no_display":             { "rating": 5, "value": null, "notes": "Displayfreier Ring für unauffälliges 24/7-Tragen" },
+        "sleep_monitor":          { "rating": 5, "value": null, "notes": "Schlafapnoe-Überwachung (90,7 % Genauigkeit), Schlafphasen (REM, Leicht-, Tiefschlaf), Atemqualität, Herzaktivität, Temperatur" },
+        "stress_monitor":         { "rating": 4, "value": null, "notes": "Stresswert und Trends in Echtzeit; Einfluss von Routinen auf Stressmuster" },
+        "ecg_hrv":                { "rating": 3, "value": null, "notes": "HRV 24/7 überwacht – kein EKG" },
+        "vo2_max":                { "rating": 1, "value": null, "notes": "Nicht in der Spezifikation erwähnt" }
+      },
+      "pros": {
+        "de": [
+          "Kein Abo nötig: Einmaliger Kauf ohne monatliche Zusatzkosten",
+          "Herausragende Akkulaufzeit bis zu 12 Tage",
+          "Umfassende Gesundheitsdaten: Herzfrequenz, Stress, Blutsauerstoff, Frauengesundheit, HRV",
+          "Wasserdicht (IP68): Bis 1,5 Meter Tiefe, ideal für den Alltag",
+          "Robustes Titan, bequeme Passform, leicht und beim Tragen kaum zu spüren",
+          "Magnetisches Ladeetui erweitert Nutzung auf bis zu 150 Tage"
+        ],
+        "en": [
+          "No subscription needed: one-time purchase with no monthly fees",
+          "Outstanding battery life up to 12 days",
+          "Comprehensive health data: heart rate, stress, blood oxygen, women's health, HRV",
+          "Water resistant (IP68): up to 1.5 metres depth, ideal for everyday use",
+          "Robust titanium, comfortable fit, lightweight and barely noticeable when worn",
+          "Magnetic charging case extends usage to up to 150 days"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Kein EKG, kein GPS",
+          "Kein Display – keine Benachrichtigungen oder kontaktloses Bezahlen",
+          "Unzuverlässiger Schrittzähler: Zählt oft zu viele Schritte (sogar im Auto sitzend)",
+          "Schlaftracking-Probleme: Erkennt Wachphasen nicht immer korrekt, verwechselt Lesen mit Schlaf",
+          "Größenprobleme: Proberinge und Originalring können unterschiedlich ausfallen",
+          "Herzfrequenz bei hoher Belastung ungenau",
+          "Keine neuen Funktionen gegenüber der 1. Generation",
+          "Limitiertes Sport-Tracking, nicht so detailliert wie bei Smartwatches",
+          "Bei dunklen Titanringmodellen können im täglichen Gebrauch sichtbare Kratzer entstehen"
+        ],
+        "en": [
+          "No ECG, no GPS",
+          "No display – no notifications or contactless payments",
+          "Unreliable step counter: often counts too many steps (even while sitting in a car)",
+          "Sleep tracking issues: does not always correctly detect wake phases, confuses reading with sleep",
+          "Sizing issues: trial rings and actual ring can fit differently",
+          "Heart rate inaccurate at high intensity",
+          "No new features compared to the 1st generation",
+          "Limited sport tracking, not as detailed as smartwatches",
+          "Visible scratches can appear on dark titanium models with daily use"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "Schlaf-Tracking und Schlafapnoe-Früherkennung",
+          "Ganzheitliches 24/7-Gesundheits-Tracking ohne Abonnement",
+          "Nutzer, die ein ultraleichtes, displayfreies Wearable bevorzugen"
+        ],
+        "en": [
+          "Sleep tracking and early sleep apnea detection",
+          "Holistic 24/7 health tracking without subscription",
+          "Users who prefer an ultra-light, display-free wearable"
+        ]
+      },
+      "ecosystem": "ringconn",
+      "compatibility": {
+        "de": "iOS 14.0+ und Android 8.0+; Bluetooth 4.0 und höher erforderlich",
+        "en": "iOS 14.0+ and Android 8.0+; Bluetooth 4.0 or higher required",
+        "platforms": ["iOS", "Android"]
+      },
+      "youtube_videos": [
+        {
+          "title": "RingConn Gen 2 Smart Ring - Initial Scientific Review",
+          "channel": "The Quantified Scientist",
+          "video_id": "Zrk6F806lwk"
+        },
+        {
+          "title": "RingConn Gen 2 Review: Why It's Better Than Oura or Ultrahuman",
+          "channel": "WellnessPulse",
+          "video_id": "xD39eL16vWs"
+        },
+        {
+          "title": "The Smart Ring That Detects Sleep Apnea – RingConn Gen 2 Hands-On Review",
+          "channel": "Momentum Productions",
+          "video_id": "fCsAuNRj2Dg"
+        },
+        {
+          "title": "RingConn Gen 2 Long-Term Review: My Honest Opinion After Nearly a Year",
+          "channel": "Brains techKnowlogy",
+          "video_id": "FFWC2JGA3Ho"
+        },
+        {
+          "title": "This CHEAPER Oura Ring Alternative is Actually Better - RingConn Review",
+          "channel": "Gemini Connect",
+          "video_id": "XhrCnA2HdSg"
+        }
+      ]
     }
   ],
   "categories": {
@@ -2531,7 +2914,9 @@
         "garmin_forerunner_970_2025",
         "garmin_fenix_8_2024",
         "whoop_5_0_peak_2025",
-        "amazfit_helio_strap_2025"
+        "amazfit_helio_strap_2025",
+        "oura_ring_4_2024",
+        "ringconn_gen2_2024"
       ]
     },
     "running_watch": {
@@ -2568,7 +2953,7 @@
         "en": "Devices focused on sleep tracking and recovery"
       },
       "icon": "/images/quiz/sleep.svg",
-      "products": ["whoop_5_0_peak_2025","amazfit_helio_strap_2025"]
+      "products": ["whoop_5_0_peak_2025", "amazfit_helio_strap_2025", "oura_ring_4_2024", "ringconn_gen2_2024"]
     },
     "heart_rate_monitors": {
       "id": "heart_rate_monitors",
@@ -2863,8 +3248,8 @@
     }
   },
   "scoring_weights": {
-    "category": 0.4,
-    "use_cases": 0.35,
-    "features": 0.25
+    "category": 0.15,
+    "use_cases": 0.45,
+    "features": 0.40
   }
 }

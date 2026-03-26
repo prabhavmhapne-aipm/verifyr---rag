@@ -208,6 +208,7 @@ class IngestUrlRequest(BaseModel):
     max_pages: int = Field(default=3, ge=1, le=10, description="Number of review pages to scrape (Firecrawl only, 1 credit each).")
     force: bool = Field(default=False, description="Overwrite existing file if it already exists")
     scraper: str = Field(default="auto", description="Scraper override: 'auto' (detect by URL), 'playwright', or 'firecrawl'")
+    review_date: Optional[str] = Field(default=None, description="Override publish date YYYY-MM-DD (auto-detected if omitted)")
 
 
 class IngestUrlResponse(BaseModel):
@@ -233,6 +234,7 @@ class ManualIngestRequest(BaseModel):
     product_url: Optional[str] = Field(default=None, description="Link to the product page")
     language: Optional[str] = Field(default=None, description="Language override: 'de' or 'en'. Auto-detected if omitted.")
     force: bool = Field(default=False, description="Overwrite existing file if it already exists")
+    review_date: Optional[str] = Field(default=None, description="Override publish date YYYY-MM-DD (used in filename and JSON)")
 
 
 class ManualIngestResponse(BaseModel):
@@ -938,9 +940,9 @@ async def score_quiz(
 
     # Get scoring weights
     weights = products_metadata.get("scoring_weights", {
-        "category": 0.40,
-        "use_cases": 0.35,
-        "features": 0.25
+        "category": 0.15,
+        "use_cases": 0.45,
+        "features": 0.40
     })
 
     matched_products = []
@@ -1079,7 +1081,7 @@ async def score_quiz_with_rag(
 
     # --- Step 1: Metadata scoring (identical to /quiz/score) ---
     weights = products_metadata.get("scoring_weights", {
-        "category": 0.40, "use_cases": 0.35, "features": 0.25
+        "category": 0.15, "use_cases": 0.45, "features": 0.40
     })
 
     scored = []
@@ -1345,6 +1347,7 @@ Reviews:
             language=result["language"],
             scraper_used="firecrawl",
             title=result["title"],
+            review_date=request.review_date or result.get("review_date"),
             amazon_rating=result.get("amazon_rating"),
             amazon_review_count=result.get("amazon_review_count"),
             raw_markdown=result.get("raw_markdown"),
@@ -1444,6 +1447,7 @@ Reviews:
             language=language,
             scraper_used="manual",
             title=f"{request.source_name} — Manuelle Bewertungen",
+            review_date=request.review_date or None,
             amazon_rating=request.amazon_rating,
             amazon_review_count=request.amazon_review_count,
             amazon_price=request.amazon_price or None,

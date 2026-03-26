@@ -34,17 +34,24 @@
             '}',
             '#vc-banner-text { flex: 1; }',
             '#vc-reload-btn {',
-            '  background: #6366f1;',
+            '  background: #3B82F6;',
             '  color: #fff;',
             '  border: none;',
             '  border-radius: 8px;',
-            '  padding: 6px 14px;',
+            '  padding: 6px 16px;',
             '  font-size: 13px;',
-            '  font-weight: 600;',
+            '  font-weight: 700;',
             '  cursor: pointer;',
-            '  transition: background 0.2s;',
+            '  transition: background 0.2s, transform 0.1s;',
+            '  animation: vc-pulse 2s ease-in-out infinite;',
+            '  box-shadow: 0 0 0 0 rgba(59,130,246,0.7);',
             '}',
-            '#vc-reload-btn:hover { background: #4f46e5; }',
+            '#vc-reload-btn:hover { background: #1E40AF; transform: scale(1.04); animation: none; }',
+            '@keyframes vc-pulse {',
+            '  0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.7); }',
+            '  70%  { box-shadow: 0 0 0 8px rgba(59,130,246,0); }',
+            '  100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }',
+            '}',
             '#vc-dismiss-btn {',
             '  background: none;',
             '  border: none;',
@@ -63,18 +70,24 @@
     function showBanner() {
         if (document.getElementById('vc-banner')) return;
 
+        var lang = localStorage.getItem('verifyr-lang') || 'de';
+        var isEN = lang === 'en';
+        var text   = isEN ? 'A new version is available.' : 'Eine neue Version ist verfügbar.';
+        var btnTxt = isEN ? 'Reload now' : 'Jetzt neu laden';
+        var dismiss = isEN ? 'Close' : 'Schließen';
+
         var banner = document.createElement('div');
         banner.id = 'vc-banner';
         banner.innerHTML = [
-            '<span id="vc-banner-text">Eine neue Version ist verfügbar.</span>',
-            '<button id="vc-reload-btn">Jetzt neu laden</button>',
-            '<button id="vc-dismiss-btn" title="Schließen">&#x2715;</button>',
+            '<span id="vc-banner-text">' + text + '</span>',
+            '<button id="vc-reload-btn">' + btnTxt + '</button>',
+            '<button id="vc-dismiss-btn" title="' + dismiss + '">&#x2715;</button>',
         ].join('');
 
         document.body.appendChild(banner);
 
         document.getElementById('vc-reload-btn').addEventListener('click', function () {
-            window.location.reload();
+            window.location.reload(true);
         });
 
         document.getElementById('vc-dismiss-btn').addEventListener('click', function () {
