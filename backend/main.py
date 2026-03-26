@@ -10,6 +10,7 @@ import uuid
 import time
 import json
 import os
+import subprocess
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
@@ -48,6 +49,23 @@ except (ImportError, Exception) as e:
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Capture deploy version (git SHA) once at startup
+def _get_deploy_version() -> str:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True,
+            cwd=Path(__file__).parent.parent
+        )
+        sha = result.stdout.strip()
+        if sha:
+            return sha
+    except Exception:
+        pass
+    return str(int(time.time()))
+
+DEPLOY_VERSION = _get_deploy_version()
 
 from retrieval.hybrid_search import HybridSearcher
 from generation.llm_client import RAGGenerator
@@ -543,6 +561,12 @@ async def health_check():
         status="healthy" if indexes_loaded else "degraded",
         indexes_loaded=indexes_loaded
     )
+
+
+@app.get("/version", tags=["Health"])
+async def get_version():
+    """Returns the current deploy version (git SHA). Used by the frontend to detect new deployments."""
+    return {"version": DEPLOY_VERSION}
 
 
 @app.post("/query", response_model=QueryResponse, tags=["Query"])
