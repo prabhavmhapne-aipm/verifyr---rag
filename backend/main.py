@@ -3,6 +3,7 @@ FastAPI Backend - Phase 6
 
 REST API for the RAG system.
 Provides endpoints for health checks, queries, and product information.
+Last reviewed: 2026-03-26
 """
 
 import sys
