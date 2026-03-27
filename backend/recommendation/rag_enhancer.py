@@ -49,6 +49,54 @@ class RAGEnhancer:
     # Public API
     # -------------------------------------------------------------------------
 
+    def enhance_reasoning_only(
+        self,
+        products: List[Dict[str, Any]],
+        quiz_inputs: Dict[str, Any],
+        top_n_offset: int = 3,
+        language: str = "en",
+        special_request: str = "",
+    ) -> List[Dict[str, Any]]:
+        """
+        Generate reasoning text only (no RAG bullets) for products beyond the top-N.
+        Used for products 4+ where full RAG enhancement is skipped.
+        """
+        use_cases = quiz_inputs.get("useCases", [])
+        features = quiz_inputs.get("features", [])
+        total = top_n_offset + len(products)
+        result = []
+
+        for i, product_match in enumerate(products):
+            rank = top_n_offset + i + 1
+            product_id = product_match["product_id"]
+            product_name = self._get_display_name(product_id)
+
+            try:
+                reasoning = self._generate_reasoning(
+                    product_id=product_id,
+                    product_name=product_name,
+                    rank=rank,
+                    total=total,
+                    match_score=product_match["match_score"],
+                    match_reasons=product_match.get("match_reasons", []),
+                    use_cases=use_cases,
+                    features=features,
+                    special_request=special_request,
+                    language=language,
+                )
+            except Exception as e:
+                print(f"WARNING: Reasoning generation failed for {product_name}: {e}")
+                reasoning = ""
+
+            result.append({
+                **product_match,
+                "dynamic_strength": "",
+                "dynamic_weakness": "",
+                "reasoning": reasoning,
+            })
+
+        return result
+
     def enhance_recommendations(
         self,
         top_products: List[Dict[str, Any]],

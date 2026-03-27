@@ -918,6 +918,30 @@ async def get_products_metadata(
     )
 
 
+def _save_special_request(
+    special_request: str,
+    user_id: Optional[str],
+    quiz_answers: "QuizAnswers",
+    top_product_id: Optional[str],
+) -> None:
+    """Fire-and-forget: persist a non-empty special request to Supabase."""
+    try:
+        supabase = get_supabase_admin_client()
+        if not supabase:
+            return
+        supabase.table("quiz_special_requests").insert({
+            "user_id": user_id,
+            "special_request": special_request,
+            "category": quiz_answers.category,
+            "language": quiz_answers.language,
+            "budget_min": quiz_answers.budget_min,
+            "budget_max": quiz_answers.budget_max,
+            "top_product_id": top_product_id,
+        }).execute()
+    except Exception as e:
+        print(f"WARNING: Failed to save special request to Supabase: {e}")
+
+
 @app.post("/quiz/score", response_model=QuizResultsResponse, tags=["Quiz"])
 async def score_quiz(
     quiz_answers: QuizAnswers,
@@ -1064,6 +1088,14 @@ async def score_quiz(
     # Sort by match score (highest first)
     matched_products.sort(key=lambda x: x["match_score"], reverse=True)
 
+    if quiz_answers.special_request:
+        _save_special_request(
+            special_request=quiz_answers.special_request,
+            user_id=user.id if user else None,
+            quiz_answers=quiz_answers,
+            top_product_id=matched_products[0]["product_id"] if matched_products else None,
+        )
+
     # Create quiz summary
     quiz_summary = {
         "category": quiz_answers.category,
@@ -1184,6 +1216,14 @@ async def score_quiz_with_rag(
 
     scored.sort(key=lambda x: x["match_score"], reverse=True)
 
+    if quiz_answers.special_request:
+        _save_special_request(
+            special_request=quiz_answers.special_request,
+            user_id=user.id if user else None,
+            quiz_answers=quiz_answers,
+            top_product_id=scored[0]["product_id"] if scored else None,
+        )
+
     quiz_summary = {
         "category": quiz_answers.category,
         "use_cases": quiz_answers.useCases,
@@ -1213,10 +1253,23 @@ async def score_quiz_with_rag(
     else:
         enhanced_top = [{**p, "dynamic_strength": "", "dynamic_weakness": ""} for p in top_3]
 
-    # Non-top products get no RAG bullets
-    all_products = enhanced_top + [
-        {**p, "dynamic_strength": "", "dynamic_weakness": ""} for p in remaining
-    ]
+    # Remaining products get reasoning only (no RAG bullets)
+    if rag_enhancer and remaining:
+        try:
+            enhanced_remaining = rag_enhancer.enhance_reasoning_only(
+                products=remaining,
+                quiz_inputs=quiz_answers.dict(),
+                top_n_offset=3,
+                language=quiz_answers.language or "de",
+                special_request=quiz_answers.special_request or "",
+            )
+        except Exception as e:
+            print(f"WARNING: Reasoning-only enhancement failed, falling back: {e}")
+            enhanced_remaining = [{**p, "dynamic_strength": "", "dynamic_weakness": "", "reasoning": ""} for p in remaining]
+    else:
+        enhanced_remaining = [{**p, "dynamic_strength": "", "dynamic_weakness": "", "reasoning": ""} for p in remaining]
+
+    all_products = enhanced_top + enhanced_remaining
 
     return EnhancedQuizResultsResponse(
         matched_products=[EnhancedMatchedProduct(**p) for p in all_products],
