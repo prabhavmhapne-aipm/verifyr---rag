@@ -1,0 +1,110 @@
+{
+  "product_id": "amazfit_helio_strap_2025",
+  "product_name": "Helio Strap",
+  "scraped_date": "2026-03-27T10:55:30.584166",
+  "post_count": 50,
+  "searched_subreddits": [
+    "r/amazfit"
+  ],
+  "subreddits_found": [
+    "r/amazfit"
+  ],
+  "top_posts": [
+    {
+      "title": "It’s finally here: The PREMIUM METAL version of my Amazfit Helio Strap adapter! (CNC Aluminum)",
+      "url": "https://www.reddit.com/r/amazfit/comments/1pdasx8/its_finally_here_the_premium_metal_version_of_my/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 270,
+      "num_comments": 137
+    },
+    {
+      "title": "Conclusion: Polar Loop vs Helio Strap (after 9 days)",
+      "url": "https://www.reddit.com/r/amazfit/comments/1nmpe45/conclusion_polar_loop_vs_helio_strap_after_9_days/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 226,
+      "num_comments": 38
+    },
+    {
+      "title": "Helios Strap vs Polar Loop",
+      "url": "https://www.reddit.com/r/amazfit/comments/1nf9ofb/helios_strap_vs_polar_loop/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 204,
+      "num_comments": 99
+    },
+    {
+      "title": "Original Amazfit Helio Strap Whoop 4.0 Adapter - V2",
+      "url": "https://www.reddit.com/r/amazfit/comments/1o3wh99/original_amazfit_helio_strap_whoop_40_adapter_v2/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 153,
+      "num_comments": 225
+    },
+    {
+      "title": "Helio strap noticed illness 7 days before symptoms.",
+      "url": "https://www.reddit.com/r/amazfit/comments/1o2u0e2/helio_strap_noticed_illness_7_days_before_symptoms/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 152,
+      "num_comments": 31
+    },
+    {
+      "title": "[Review] Amazfit Helio Strap – after ~3 weeks of use",
+      "url": "https://www.reddit.com/r/amazfit/comments/1nl2tzj/review_amazfit_helio_strap_after_3_weeks_of_use/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 146,
+      "num_comments": 80
+    },
+    {
+      "title": "Helio strap Loop adapter",
+      "url": "https://www.reddit.com/r/amazfit/comments/1oggl48/helio_strap_loop_adapter/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 128,
+      "num_comments": 48
+    },
+    {
+      "title": "Amazfit Helio Strap White/Grey Band",
+      "url": "https://www.reddit.com/r/amazfit/comments/1njt8hi/amazfit_helio_strap_whitegrey_band/",
+      "subreddit": "r/amazfit",
+      "subreddit_url": "https://www.reddit.com/r/amazfit/",
+      "score": 119,
+      "num_comments": 57
+    }
+  ],
+  "sentiment": {
+    "positive_pct": 75,
+    "neutral_pct": 15,
+    "negative_pct": 10,
+    "summary": "Die Reddit-Community zeigt insgesamt eine positive Einstellung gegenüber dem Helio Strap, hebt jedoch einige Verbesserungsmöglichkeiten hervor.",
+    "summary_en": "The Reddit community shows an overall positive attitude towards the Helio Strap, but highlights some areas for improvement.",
+    "pros": [
+      "Gute Genauigkeit beim Tracking",
+      "Bequemer Sitz",
+      "Vielseitige Anpassungsmöglichkeiten"
+    ],
+    "pros_en": [
+      "Good accuracy in tracking",
+      "Comfortable fit",
+      "Versatile customization options"
+    ],
+    "cons": [
+      "Design ist nicht modisch",
+      "Probleme mit der Workout-Erkennung",
+      "Einige Benutzer berichten von ungenauen Daten"
+    ],
+    "cons_en": [
+      "Design is not fashionable",
+      "Issues with workout detection",
+      "Some users report inaccurate data"
+    ],
+    "common_topics": [
+      "Vergleich mit anderen Fitness-Trackern",
+      "Tracking-Genauigkeit",
+      "Design und Anpassungsmöglichkeiten"
+    ]
+  }
+}

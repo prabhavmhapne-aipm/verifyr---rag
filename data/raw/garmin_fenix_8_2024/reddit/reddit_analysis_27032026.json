@@ -1,0 +1,110 @@
+{
+  "product_id": "garmin_fenix_8_2024",
+  "product_name": "Fenix 8",
+  "scraped_date": "2026-03-27T10:52:47.285686",
+  "post_count": 50,
+  "searched_subreddits": [
+    "r/Garmin"
+  ],
+  "subreddits_found": [
+    "r/Garmin"
+  ],
+  "top_posts": [
+    {
+      "title": "My Fenix 8 saved my life",
+      "url": "https://www.reddit.com/r/Garmin/comments/1mj7gln/my_fenix_8_saved_my_life/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 1854,
+      "num_comments": 113
+    },
+    {
+      "title": "Everyone share which Garmin you got for Christmas!",
+      "url": "https://www.reddit.com/r/Garmin/comments/1pvil32/everyone_share_which_garmin_you_got_for_christmas/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 930,
+      "num_comments": 292
+    },
+    {
+      "title": "Garmin are shooting themselves in the foot so bad it's not even funny",
+      "url": "https://www.reddit.com/r/Garmin/comments/1n7fi0e/garmin_are_shooting_themselves_in_the_foot_so_bad/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 842,
+      "num_comments": 679
+    },
+    {
+      "title": "So my Fenix 8 Solar kinda saved my life?",
+      "url": "https://www.reddit.com/r/Garmin/comments/1llbw04/so_my_fenix_8_solar_kinda_saved_my_life/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 396,
+      "num_comments": 34
+    },
+    {
+      "title": "RIP fenix 8",
+      "url": "https://www.reddit.com/r/Garmin/comments/1rrcjic/rip_fenix_8/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 387,
+      "num_comments": 87
+    },
+    {
+      "title": "Fenix 8 pro inreach is dangerous",
+      "url": "https://www.reddit.com/r/Garmin/comments/1reh7y6/fenix_8_pro_inreach_is_dangerous/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 379,
+      "num_comments": 82
+    },
+    {
+      "title": "How my Garmin Fenix 8 helped during my bike crash – stress graph included",
+      "url": "https://www.reddit.com/r/Garmin/comments/1m27xfa/how_my_garmin_fenix_8_helped_during_my_bike_crash/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 363,
+      "num_comments": 18
+    },
+    {
+      "title": "Thoughts on owning Fenix 8 and Connect+",
+      "url": "https://www.reddit.com/r/Garmin/comments/1judebr/thoughts_on_owning_fenix_8_and_connect/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 326,
+      "num_comments": 169
+    }
+  ],
+  "sentiment": {
+    "positive_pct": 45,
+    "neutral_pct": 30,
+    "negative_pct": 25,
+    "summary": "Die Reddit-Community hat gemischte Meinungen zur Fenix 8, wobei einige Nutzer die Funktionen loben, während andere über Probleme und hohe Preise klagen.",
+    "summary_en": "The Reddit community has mixed opinions about the Fenix 8, with some users praising its features while others complain about issues and high prices.",
+    "pros": [
+      "Hilfreiche Gesundheitsdaten",
+      "Gute Benutzererfahrung",
+      "Schönes Design"
+    ],
+    "pros_en": [
+      "Helpful health data",
+      "Good user experience",
+      "Nice design"
+    ],
+    "cons": [
+      "Hoher Preis",
+      "Technische Probleme",
+      "Zwang zu Abonnements"
+    ],
+    "cons_en": [
+      "High price",
+      "Technical issues",
+      "Subscription pressure"
+    ],
+    "common_topics": [
+      "Gesundheitsfunktionen",
+      "Preis-Leistungs-Verhältnis",
+      "Technische Probleme"
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "product_id": "garmin_forerunner_970_2025",
+  "product_name": "Forerunner 970",
+  "scraped_date": "2026-03-27T10:52:18.992039",
+  "post_count": 50,
+  "searched_subreddits": [
+    "r/Garmin"
+  ],
+  "subreddits_found": [
+    "r/Garmin"
+  ],
+  "top_posts": [
+    {
+      "title": "my cat stood on my wifi scale and my fitness age decreased by 5 years on my forerunner 970.",
+      "url": "https://www.reddit.com/r/Garmin/comments/1ns8stg/my_cat_stood_on_my_wifi_scale_and_my_fitness_age/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 353,
+      "num_comments": 32
+    },
+    {
+      "title": "Forerunner 970",
+      "url": "https://www.reddit.com/r/Garmin/comments/1kw1mkk/forerunner_970/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 293,
+      "num_comments": 66
+    },
+    {
+      "title": "Forerunner 970",
+      "url": "https://www.reddit.com/r/Garmin/comments/1kn60us/forerunner_970/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 244,
+      "num_comments": 360
+    },
+    {
+      "title": "Garmin Clarifies Which Existing Features Watches Will Get New Forerunner 970 Features",
+      "url": "https://www.reddit.com/r/Garmin/comments/1ksksbo/garmin_clarifies_which_existing_features_watches/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 198,
+      "num_comments": 92
+    },
+    {
+      "title": "My new Forerunner 970",
+      "url": "https://www.reddit.com/r/Garmin/comments/1m1efv0/my_new_forerunner_970/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 144,
+      "num_comments": 21
+    },
+    {
+      "title": "Bye Bye Venu 2 - Hi Forerunner 970 🤩",
+      "url": "https://www.reddit.com/r/Garmin/comments/1ktiti7/bye_bye_venu_2_hi_forerunner_970/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 139,
+      "num_comments": 31
+    },
+    {
+      "title": "ForeRunner 970 Comparison &amp; Review + Lime Green Logo Removal",
+      "url": "https://www.reddit.com/r/Garmin/comments/1moq5so/forerunner_970_comparison_review_lime_green_logo/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 103,
+      "num_comments": 58
+    },
+    {
+      "title": "Enduro 3 vs Forerunner 970",
+      "url": "https://www.reddit.com/r/Garmin/comments/1ob1u9l/enduro_3_vs_forerunner_970/",
+      "subreddit": "r/Garmin",
+      "subreddit_url": "https://www.reddit.com/r/Garmin/",
+      "score": 73,
+      "num_comments": 39
+    }
+  ],
+  "sentiment": {
+    "positive_pct": 70,
+    "neutral_pct": 20,
+    "negative_pct": 10,
+    "summary": "Die Reddit-Community zeigt insgesamt eine positive Einstellung gegenüber dem Forerunner 970, hebt jedoch einige technische Probleme hervor.",
+    "summary_en": "The Reddit community shows an overall positive attitude towards the Forerunner 970, but highlights some technical issues.",
+    "pros": [
+      "Hervorragende Bildschirmhelligkeit",
+      "Schöne Benutzeroberfläche",
+      "Erweiterte Sportmetriken",
+      "Lange Akkulaufzeit",
+      "Schöne Designmerkmale wie Titanrand und Saphirglas"
+    ],
+    "pros_en": [
+      "Excellent screen brightness",
+      "Beautiful user interface",
+      "Advanced sports metrics",
+      "Long battery life",
+      "Nice design features like titanium bezel and sapphire glass"
+    ],
+    "cons": [
+      "Technische Probleme wie Bildschirmflackern",
+      "Einige Bugs bei der Einrichtung",
+      "Klangprobleme im Vergleich zum Vorgängermodell"
+    ],
+    "cons_en": [
+      "Technical issues like screen glitching",
+      "Some bugs during setup",
+      "Sound issues compared to the previous model"
+    ],
+    "common_topics": [
+      "Bildschirmhelligkeit",
+      "Sportmetriken",
+      "Technische Probleme",
+      "Vergleich mit Vorgängermodellen",
+      "Designmerkmale"
+    ]
+  }
+}

@@ -1031,6 +1031,7 @@
             <button class="admin-tab active" onclick="showTab('conversations')">Conversations</button>
             <button class="admin-tab" onclick="showTab('users')">Users</button>
             <button class="admin-tab" onclick="showTab('scraper')">Web Scraper</button>
+            <button class="admin-tab" onclick="showTab('reddit')">Reddit Analysis</button>
         </div>
 
         <!-- Conversations Panel -->
@@ -1243,6 +1244,63 @@
             </div>
         </div>
     </div>
+
+        <!-- Reddit Analysis Panel -->
+        <div id="redditTab" class="tab-content">
+            <div class="data-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Reddit Analysis</div>
+                        <div class="panel-subtitle">Fetch Reddit community sentiment per product &rarr; LLM summary &rarr; shown on results page</div>
+                    </div>
+                </div>
+                <div class="scraper-body">
+                    <form id="redditScrapeForm" onsubmit="handleRedditScrape(event)">
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="redditProduct">Product</label>
+                            <select id="redditProduct" class="scraper-input" required onchange="onRedditProductChange()">
+                                <option value="">Loading products...</option>
+                            </select>
+                        </div>
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="redditSearchTerm">Search Term <span class="scraper-credit-hint">(auto-filled from product name)</span></label>
+                            <input
+                                type="text"
+                                id="redditSearchTerm"
+                                class="scraper-input"
+                                placeholder="e.g. Apple Watch Series 11"
+                                required
+                            >
+                            <p class="scraper-hint" id="redditSearchHint">Select a product to auto-fill the search term.</p>
+                        </div>
+
+                        <div class="scraper-field">
+                            <label class="scraper-label" for="redditMaxPosts">Max Posts to Fetch</label>
+                            <select id="redditMaxPosts" class="scraper-input">
+                                <option value="15">15 posts (fast)</option>
+                                <option value="30" selected>30 posts (recommended)</option>
+                                <option value="50">50 posts (thorough)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-message" id="redditMessage"></div>
+
+                        <button type="submit" class="btn-primary" id="redditSubmitBtn">
+                            <span class="btn-text">Scrape Reddit</span>
+                            <span class="btn-loading"></span>
+                        </button>
+                    </form>
+
+                    <!-- Result card -->
+                    <div id="redditResult" class="scraper-result" style="display:none;">
+                        <div class="scraper-result-title">Reddit scrape successful</div>
+                        <div class="scraper-result-grid" id="redditResultGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <!-- Invite User Modal -->
     <div id="inviteUserModal" class="invite-modal">

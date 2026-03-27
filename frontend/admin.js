@@ -374,6 +374,8 @@ function showTab(tabName) {
         loadUsers();
     } else if (tabName === 'scraper') {
         loadScraperProducts();
+    } else if (tabName === 'reddit') {
+        loadRedditProducts();
     }
 }
 
@@ -687,6 +689,131 @@ async function handleManualIngest(event) {
     }
 }
 
+
+// ============================================================
+// Reddit Analysis
+// ============================================================
+
+const _redditProductMeta = {};
+
+async function loadRedditProducts() {
+    const select = document.getElementById('redditProduct');
+    if (!select) return;
+    if (select.dataset.loaded === 'true') return;
+
+    try {
+        const token = localStorage.getItem('verifyr_access_token');
+        const res = await fetch(`${API_BASE_URL}/products/metadata`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (!res.ok) throw new Error('Failed to load products');
+        const data = await res.json();
+
+        select.innerHTML = '<option value="">Select a product...</option>';
+        (data.products || []).forEach(p => {
+            _redditProductMeta[p.id] = p;
+            const label = p.display_name?.en || p.display_name?.de || p.id;
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = label;
+            select.appendChild(opt);
+        });
+        select.dataset.loaded = 'true';
+    } catch (e) {
+        select.innerHTML = '<option value="">Error loading products</option>';
+    }
+}
+
+function onRedditProductChange() {
+    const productId = document.getElementById('redditProduct').value;
+    const searchInput = document.getElementById('redditSearchTerm');
+    const hintEl = document.getElementById('redditSearchHint');
+
+    if (!productId) {
+        searchInput.value = '';
+        if (hintEl) hintEl.textContent = 'Select a product to auto-fill the search term.';
+        return;
+    }
+
+    const product = _redditProductMeta[productId];
+    const name = product?.reddit_search_term
+        || product?.display_name?.en
+        || product?.display_name?.de
+        || productId;
+    searchInput.value = name;
+
+    if (hintEl) {
+        const subreddits = product?.reddit_subreddits || [];
+        const hint = subreddits.length
+            ? subreddits.map(s => `r/${s}`).join(', ')
+            : _getSubredditHint(productId);
+        hintEl.textContent = `Will search: ${hint}`;
+    }
+}
+
+function _getSubredditHint(productId) {
+    const pid = productId.toLowerCase();
+    if (pid.includes('apple_watch')) return 'r/AppleWatch';
+    if (pid.includes('garmin')) return 'r/Garmin';
+    if (pid.includes('oura_ring')) return 'r/ouraring';
+    if (pid.includes('whoop')) return 'r/whoop';
+    if (pid.includes('ringconn')) return 'r/RingConn';
+    if (pid.includes('amazfit')) return 'r/amazfit';
+    return 'r/AppleWatch, r/Garmin, r/ouraring, r/whoop, r/RingConn, r/amazfit';
+}
+
+async function handleRedditScrape(event) {
+    event.preventDefault();
+
+    const productId = document.getElementById('redditProduct').value;
+    const searchTerm = document.getElementById('redditSearchTerm').value.trim();
+    const maxPosts = parseInt(document.getElementById('redditMaxPosts').value);
+
+    const btn = document.getElementById('redditSubmitBtn');
+    const msgEl = document.getElementById('redditMessage');
+    const resultEl = document.getElementById('redditResult');
+
+    msgEl.className = 'form-message';
+    msgEl.style.display = 'none';
+    resultEl.style.display = 'none';
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    try {
+        const token = localStorage.getItem('verifyr_access_token');
+        const res = await fetch(`${API_BASE_URL}/admin/scrape-reddit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                product_name: searchTerm,
+                max_posts: maxPosts
+            })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `Error ${res.status}`);
+
+        document.getElementById('redditResultGrid').innerHTML = `
+            <div class="scraper-result-item"><span>Product</span>${escapeHtml(productId)}</div>
+            <div class="scraper-result-item"><span>Posts fetched</span>${data.post_count}</div>
+            <div class="scraper-result-item" style="grid-column:1/-1"><span>Subreddits found</span>${data.subreddits_found.join(', ') || '—'}</div>
+            ${data.sentiment_summary ? `<div class="scraper-result-item" style="grid-column:1/-1"><span>Sentiment summary</span>${escapeHtml(data.sentiment_summary)}</div>` : ''}
+        `;
+        resultEl.style.display = 'block';
+
+    } catch (e) {
+        msgEl.textContent = e.message;
+        msgEl.className = 'form-message error';
+        msgEl.style.display = 'block';
+    } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+    }
+}
 
 /**
  * Handle logout

@@ -6,6 +6,8 @@
         "de": "Apple Watch Series 11 GPS 42mm",
         "en": "Apple Watch Series 11 GPS 42mm"
       },
+      "reddit_search_term": "Series 11",
+      "reddit_subreddits": ["AppleWatch"],
       "brand": "Apple",
       "category": "smartwatch_fitness",
       "price": 372,
@@ -556,6 +558,8 @@
         "de": "Garmin Forerunner 970",
         "en": "Garmin Forerunner 970"
       },
+      "reddit_search_term": "Forerunner 970",
+      "reddit_subreddits": ["Garmin"],
       "brand": "Garmin",
       "category": "smartwatch_fitness",
       "price": 600,
@@ -1184,6 +1188,8 @@
         "de": "Garmin Fēnix 8",
         "en": "Garmin Fēnix 8"
       },
+      "reddit_search_term": "Fenix 8",
+      "reddit_subreddits": ["Garmin"],
       "brand": "Garmin",
       "category": "smartwatch_fitness",
       "price": 659,
@@ -1769,6 +1775,8 @@
         "de": "WHOOP 5.0 Peak",
         "en": "WHOOP 5.0 Peak"
       },
+      "reddit_search_term": "5.0",
+      "reddit_subreddits": ["whoop"],
       "brand": "WHOOP",
       "category": ["smartwatch_fitness", "heart_rate_monitors", "recovery_sleep"],
       "price": 279,
@@ -2160,6 +2168,8 @@
         "de": "Oura Ring 4",
         "en": "Oura Ring 4"
       },
+      "reddit_search_term": "Ring 4",
+      "reddit_subreddits": ["ouraring"],
       "brand": "Oura",
       "category": ["recovery_sleep", "smartwatch_fitness"],
       "price": 378,
@@ -2346,6 +2356,8 @@
         "de": "Amazfit Helio Strap",
         "en": "Amazfit Helio Strap"
       },
+      "reddit_search_term": "Helio Strap",
+      "reddit_subreddits": ["amazfit"],
       "brand": "Amazfit",
       "category": ["smartwatch_fitness", "heart_rate_monitors", "recovery_sleep"],
       "price": 99.90,
@@ -2701,6 +2713,8 @@
         "de": "RingConn Gen 2",
         "en": "RingConn Gen 2"
       },
+      "reddit_search_term": "Gen 2",
+      "reddit_subreddits": ["RingConn"],
       "brand": "RingConn",
       "category": ["recovery_sleep", "smartwatch_fitness"],
       "price": 308,

@@ -1,0 +1,110 @@
+{
+  "product_id": "whoop_5_0_peak_2025",
+  "product_name": "5.0",
+  "scraped_date": "2026-03-27T10:53:47.994923",
+  "post_count": 50,
+  "searched_subreddits": [
+    "r/whoop"
+  ],
+  "subreddits_found": [
+    "r/whoop"
+  ],
+  "top_posts": [
+    {
+      "title": "Whoopgate — The receipts",
+      "url": "https://www.reddit.com/r/whoop/comments/1ki1v9b/whoopgate_the_receipts/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 1977,
+      "num_comments": 357
+    },
+    {
+      "title": "Thoughts on 5.0 Upgrade from Ben Foster, former Chief Product Officer at Whoop",
+      "url": "https://www.reddit.com/r/whoop/comments/1kkfg8a/thoughts_on_50_upgrade_from_ben_foster_former/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 1871,
+      "num_comments": 565
+    },
+    {
+      "title": "1 Upvote = 1 member not renewing their subscription if they choose to charge us for the 5.0",
+      "url": "https://www.reddit.com/r/whoop/comments/1ki09pw/1_upvote_1_member_not_renewing_their_subscription/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 1810,
+      "num_comments": 42
+    },
+    {
+      "title": "You asked for it – so I made it happen. The Whoop 4.0 Band to 5.0 Device Adapter is now available!",
+      "url": "https://www.reddit.com/r/whoop/comments/1kxsmkv/you_asked_for_it_so_i_made_it_happen_the_whoop_40/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 782,
+      "num_comments": 116
+    },
+    {
+      "title": "I built a 4.0 Band to 5.0 Device Adapter – because WHOOP’s greed pushed me to",
+      "url": "https://www.reddit.com/r/whoop/comments/1ku91w8/i_built_a_40_band_to_50_device_adapter_because/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 677,
+      "num_comments": 97
+    },
+    {
+      "title": "Whoop 5.0, so all this to the garbage then ?",
+      "url": "https://www.reddit.com/r/whoop/comments/1kifimr/whoop_50_so_all_this_to_the_garbage_then/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 548,
+      "num_comments": 165
+    },
+    {
+      "title": "Whoop 4.0 band for 5.0",
+      "url": "https://www.reddit.com/r/whoop/comments/1km4efz/whoop_40_band_for_50/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 534,
+      "num_comments": 97
+    },
+    {
+      "title": "Whoop 5.0 Milestone Box",
+      "url": "https://www.reddit.com/r/whoop/comments/1kmbfxn/whoop_50_milestone_box/",
+      "subreddit": "r/whoop",
+      "subreddit_url": "https://www.reddit.com/r/whoop/",
+      "score": 357,
+      "num_comments": 115
+    }
+  ],
+  "sentiment": {
+    "positive_pct": 35,
+    "neutral_pct": 25,
+    "negative_pct": 40,
+    "summary": "Die Reddit-Community ist gespalten über das 5.0-Upgrade von Whoop. Während einige die neuen Funktionen schätzen, gibt es erhebliche Frustration über die Kosten und die Kompatibilität mit älteren Bändern.",
+    "summary_en": "The Reddit community is divided over the Whoop 5.0 upgrade. While some appreciate the new features, there is significant frustration regarding the costs and compatibility with older bands.",
+    "pros": [
+      "Zwei Wochen Akkulaufzeit",
+      "Neue Funktionen wie EKG und Blutdruckmessung",
+      "Verbesserte Design- und Verpackungsqualität"
+    ],
+    "pros_en": [
+      "Two-week battery life",
+      "New features like ECG and blood pressure monitoring",
+      "Improved design and packaging quality"
+    ],
+    "cons": [
+      "Kostenpflichtiges Upgrade von 4.0 auf 5.0",
+      "Inkompatibilität mit alten Bändern",
+      "Gefühl, dass die Qualität nachgelassen hat"
+    ],
+    "cons_en": [
+      "Paid upgrade from 4.0 to 5.0",
+      "Incompatibility with old bands",
+      "Feeling that quality has decreased"
+    ],
+    "common_topics": [
+      "Kosten des Upgrades",
+      "Kompatibilität der Bänder",
+      "Neue Funktionen und deren Nutzen"
+    ]
+  }
+}

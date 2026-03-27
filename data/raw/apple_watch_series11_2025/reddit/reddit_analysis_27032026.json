@@ -1,0 +1,110 @@
+{
+  "product_id": "apple_watch_series11_2025",
+  "product_name": "Series 11",
+  "scraped_date": "2026-03-27T10:48:47.081540",
+  "post_count": 50,
+  "searched_subreddits": [
+    "r/AppleWatch"
+  ],
+  "subreddits_found": [
+    "r/AppleWatch"
+  ],
+  "top_posts": [
+    {
+      "title": "Thank you, Apple.",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1rg57kz/thank_you_apple/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 1810,
+      "num_comments": 169
+    },
+    {
+      "title": "Apple finagled the numbers, 6hr longer battery life on Series 11 is a scam.",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1ncz7hs/apple_finagled_the_numbers_6hr_longer_battery/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 1130,
+      "num_comments": 224
+    },
+    {
+      "title": "Passed an exam recently. Thought I treat myself. From Series 2 to Series 11.",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1oqrcah/passed_an_exam_recently_thought_i_treat_myself/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 1038,
+      "num_comments": 71
+    },
+    {
+      "title": "my series 0 still working great! all day battery, never replaced. sapphire display, no scratches, and pairs with my iphone 16. don't need no series 11 lol",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1ne56pp/my_series_0_still_working_great_all_day_battery/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 631,
+      "num_comments": 139
+    },
+    {
+      "title": "Apple Says iPhone 11 Pro Max and Apple Watch Series 3 Now 'Vintage'",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1nugywm/apple_says_iphone_11_pro_max_and_apple_watch/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 535,
+      "num_comments": 112
+    },
+    {
+      "title": "My experience so far with Ultra 3 vs. Series 11",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1ojqbmg/my_experience_so_far_with_ultra_3_vs_series_11/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 357,
+      "num_comments": 187
+    },
+    {
+      "title": "Went from the Series 7 45mm to the Series 11 42mm",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1oymczz/went_from_the_series_7_45mm_to_the_series_11_42mm/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 353,
+      "num_comments": 85
+    },
+    {
+      "title": "If the Series 10 &amp; 11 have the same processor, how does the S11 have that much power battery life?",
+      "url": "https://www.reddit.com/r/AppleWatch/comments/1o5y773/if_the_series_10_11_have_the_same_processor_how/",
+      "subreddit": "r/AppleWatch",
+      "subreddit_url": "https://www.reddit.com/r/AppleWatch/",
+      "score": 327,
+      "num_comments": 111
+    }
+  ],
+  "sentiment": {
+    "positive_pct": 60,
+    "neutral_pct": 20,
+    "negative_pct": 20,
+    "summary": "Die Reddit-Community hat gemischte Gefühle zur Series 11, wobei viele die Verbesserungen loben, während einige Bedenken hinsichtlich der Haltbarkeit und des Preis-Leistungs-Verhältnisses äußern.",
+    "summary_en": "The Reddit community has mixed feelings about the Series 11, with many praising the improvements while some express concerns about durability and value for money.",
+    "pros": [
+      "Verbesserte Batterielaufzeit",
+      "Kompakteres und komfortableres Design",
+      "Höhere Verarbeitungsqualität"
+    ],
+    "pros_en": [
+      "Improved battery life",
+      "More compact and comfortable design",
+      "Higher build quality"
+    ],
+    "cons": [
+      "Haltbarkeit der Materialien fraglich",
+      "Preiserhöhung im Vergleich zu Vorgängermodellen",
+      "Kritik an der Akkulaufzeit-Werbung"
+    ],
+    "cons_en": [
+      "Durability of materials questionable",
+      "Price increase compared to previous models",
+      "Criticism of battery life advertising"
+    ],
+    "common_topics": [
+      "Batterielaufzeit",
+      "Design und Komfort",
+      "Haltbarkeit und Kratzer"
+    ]
+  }
+}

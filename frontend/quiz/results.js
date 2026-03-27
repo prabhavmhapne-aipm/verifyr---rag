@@ -19,12 +19,14 @@ class ResultsController {
 
         this.currentLanguage = localStorage.getItem('verifyr-lang') || 'de';
         this.sentimentCache = {};
+        this.redditCache = {};
         this.loadQuizResults();
         await this.loadProductsMetadata();
         this.renderCarousel();
         this.updateHeader();
         this.loadSentimentForAllCards();
         this.loadReviewsForAllCards();
+        this.loadRedditSentimentForAllCards();
         this.setupYoutubeModal();
 
         if (typeof gtag !== 'undefined') {
@@ -472,6 +474,11 @@ class ResultsController {
 
             <!-- 10. YouTube Video Reviews -->
             ${this.renderYoutubeSection(product)}
+
+            <!-- 11. Reddit Community -->
+            <div class="reddit-sentiment-box" data-product-id="${match.product_id}">
+                ${this.renderRedditWidget(null, match.product_id)}
+            </div>
         `;
     }
 
@@ -1190,6 +1197,140 @@ class ResultsController {
                 </div>
             </div>`;
         }).join('');
+    }
+
+    async loadRedditSentimentForAllCards() {
+        if (!this.quizResults?.matched_products) return;
+        const token = localStorage.getItem('verifyr_access_token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        for (const match of this.quizResults.matched_products) {
+            try {
+                const res = await fetch(`/products/${match.product_id}/reddit-sentiment`, { headers });
+                if (!res.ok) continue;
+                const data = await res.json();
+                this.redditCache[match.product_id] = data;
+                this.updateCardRedditSentiment(match.product_id, data);
+            } catch (e) {
+                // Non-fatal
+            }
+        }
+        requestAnimationFrame(() => this.synchronizeSectionHeights());
+    }
+
+    updateCardRedditSentiment(productId, data) {
+        const box = document.querySelector(`.reddit-sentiment-box[data-product-id="${productId}"]`);
+        if (!box) return;
+        box.innerHTML = this.renderRedditWidget(data, productId);
+    }
+
+    renderRedditWidget(data, productId) {
+        const lang = this.currentLanguage;
+        const t = {
+            title:     { de: 'Reddit Community', en: 'Reddit Community' },
+            noData:    { de: 'Noch keine Reddit-Daten verfügbar', en: 'No Reddit data available yet' },
+            posts:     { de: 'Beiträge', en: 'posts' },
+            positive:  { de: 'Positiv', en: 'Positive' },
+            neutral:   { de: 'Neutral', en: 'Neutral' },
+            negative:  { de: 'Negativ', en: 'Negative' },
+            pros:      { de: 'Häufig gelobt', en: 'Frequently praised' },
+            cons:      { de: 'Häufig kritisiert', en: 'Frequently criticized' },
+            topPosts:  { de: 'Top Diskussionen', en: 'Top Discussions' },
+            comments:  { de: 'Kommentare', en: 'comments' },
+        };
+
+        if (!data || !data.available) {
+            return `
+                <div class="sentiment-empty">
+                    <span class="sentiment-empty-icon">🗨️</span>
+                    <span class="sentiment-empty-text">${t.noData[lang]}</span>
+                </div>`;
+        }
+
+        const s = data.sentiment || {};
+        const pos = s.positive_pct ?? 0;
+        const neu = s.neutral_pct ?? 0;
+        const neg = s.negative_pct ?? 0;
+
+        const summary = lang === 'en' && s.summary_en ? s.summary_en : s.summary;
+        const pros    = lang === 'en' && s.pros_en?.length ? s.pros_en : (s.pros || []);
+        const cons    = lang === 'en' && s.cons_en?.length ? s.cons_en : (s.cons || []);
+
+        // Subreddit pills — use searched_subreddits (the known community subs) so pills
+        // always show the dedicated communities, even if a sub had 0 posts.
+        const pillSources = (data.searched_subreddits && data.searched_subreddits.length)
+            ? data.searched_subreddits
+            : (data.subreddits_found || []);
+        const subredditPills = pillSources
+            .map(sr => {
+                const name = sr.startsWith('r/') ? sr : `r/${sr}`;
+                const url = `https://www.reddit.com/${name}/`;
+                return `<a href="${url}" target="_blank" rel="noopener" class="reddit-subreddit-pill">${name}</a>`;
+            }).join('');
+
+        // Top posts
+        const topPostsHtml = (data.top_posts || []).slice(0, 4).map(p => `
+            <a href="${p.url}" target="_blank" rel="noopener" class="reddit-post-link">
+                <span class="reddit-post-sub">${p.subreddit}</span>
+                <span class="reddit-post-title">${this._escapeHtml(p.title)}</span>
+                <span class="reddit-post-meta">▲${p.score} · ${p.num_comments} ${t.comments[lang]}</span>
+            </a>`).join('');
+
+        const postCountBadge = data.post_count
+            ? `<span class="reddit-post-count">${data.post_count} ${t.posts[lang]}</span>`
+            : '';
+
+        return `
+            <div class="reddit-widget">
+                <div class="reddit-widget-header">
+                    <span class="reddit-widget-icon">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="#FF4500" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="10" cy="10" r="10"/>
+                            <path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101.06-1 1 1 0 00-.96.68l-2.38-.5a.27.27 0 00-.32.2l-.73 3.44a7.14 7.14 0 00-3.82 1.23 1.46 1.46 0 10-1.61 2.39 2.87 2.87 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.87 2.87 0 000-.44 1.46 1.46 0 00.55-1.58zM7.27 11a1 1 0 111 1 1 1 0 01-1-1zm5.58 2.65a3.59 3.59 0 01-2.85.77 3.59 3.59 0 01-2.85-.77.27.27 0 01.38-.38 3.08 3.08 0 002.47.6 3.08 3.08 0 002.47-.6.27.27 0 01.38.38zm-.17-1.65a1 1 0 111-1 1 1 0 01-1 1z" fill="white"/>
+                        </svg>
+                    </span>
+                    <span class="reddit-widget-title">${t.title[lang]}</span>
+                    ${postCountBadge}
+                </div>
+
+                ${subredditPills ? `<div class="reddit-subreddit-pills">${subredditPills}</div>` : ''}
+
+                ${summary ? `<p class="reddit-summary">${summary}</p>` : ''}
+
+                <div class="reddit-sentiment-bar">
+                    <div class="reddit-bar-segment reddit-bar-pos" style="width:${pos}%" title="${t.positive[lang]}: ${pos}%"></div>
+                    <div class="reddit-bar-segment reddit-bar-neu" style="width:${neu}%" title="${t.neutral[lang]}: ${neu}%"></div>
+                    <div class="reddit-bar-segment reddit-bar-neg" style="width:${neg}%" title="${t.negative[lang]}: ${neg}%"></div>
+                </div>
+                <div class="reddit-sentiment-labels">
+                    <span class="reddit-label-pos">${t.positive[lang]} ${pos}%</span>
+                    <span class="reddit-label-neg">${t.negative[lang]} ${neg}%</span>
+                </div>
+
+                ${pros.length ? `
+                <div class="reddit-pros-cons">
+                    <div class="reddit-pros">
+                        <span class="reddit-pros-label">${t.pros[lang]}</span>
+                        <ul>${pros.map(p => `<li>${this._escapeHtml(p)}</li>`).join('')}</ul>
+                    </div>
+                    ${cons.length ? `
+                    <div class="reddit-cons">
+                        <span class="reddit-cons-label">${t.cons[lang]}</span>
+                        <ul>${cons.map(c => `<li>${this._escapeHtml(c)}</li>`).join('')}</ul>
+                    </div>` : ''}
+                </div>` : ''}
+
+                ${topPostsHtml ? `
+                <div class="reddit-top-posts">
+                    <span class="reddit-top-posts-label">${t.topPosts[lang]}</span>
+                    ${topPostsHtml}
+                </div>` : ''}
+            </div>`;
+    }
+
+    _escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     setupPriceChartHover(card) {

@@ -288,6 +288,35 @@ class ProductReviewsResponse(BaseModel):
     reviews: List[ReviewResult]
 
 
+class RedditScrapeRequest(BaseModel):
+    """Request model for POST /admin/scrape-reddit"""
+    product_id: str = Field(..., description="Product ID matching a folder in data/raw/")
+    product_name: str = Field(..., description="Human-readable product name used as Reddit search term")
+    max_posts: int = Field(default=30, ge=5, le=100, description="Max Reddit posts to fetch")
+
+
+class RedditScrapeResponse(BaseModel):
+    """Response model for POST /admin/scrape-reddit"""
+    status: str
+    product_id: str
+    file_saved: str
+    post_count: int
+    subreddits_found: List[str]
+    sentiment_summary: Optional[str] = None
+
+
+class RedditSentimentResponse(BaseModel):
+    """Response model for GET /products/{product_id}/reddit-sentiment"""
+    available: bool
+    product_id: str
+    post_count: Optional[int] = None
+    searched_subreddits: Optional[List[str]] = None
+    subreddits_found: Optional[List[str]] = None
+    top_posts: Optional[List[Dict[str, Any]]] = None
+    sentiment: Optional[Dict[str, Any]] = None
+    scraped_date: Optional[str] = None
+
+
 class InviteUserRequest(BaseModel):
     """Request model for inviting a user."""
     email: str = Field(..., description="Email address of the user to invite")
@@ -1938,6 +1967,123 @@ async def admin_get_stats(user: AuthUser = Depends(require_admin)):
             status_code=500,
             detail=f"Error getting stats: {str(e)}"
         )
+
+
+# ============================================================================
+# Reddit Sentiment Endpoints
+# ============================================================================
+
+@app.post("/admin/scrape-reddit", response_model=RedditScrapeResponse, tags=["Admin"])
+async def scrape_reddit(
+    request: RedditScrapeRequest,
+    user: AuthUser = Depends(require_admin)
+):
+    """
+    Trigger Reddit scraping for a product.
+
+    - Fetches posts from relevant subreddits using Reddit's public JSON API
+    - Runs LLM sentiment analysis (gpt-4o-mini)
+    - Saves to data/raw/<product_id>/reddit/reddit_analysis_<DDMMYYYY>.json
+
+    Requires: admin JWT + OPENAI_API_KEY in .env
+    """
+    import sys
+    import asyncio
+    import concurrent.futures
+    sys.path.insert(0, str(Path(__file__).parent / "ingestion"))
+    from reddit_scraper import scrape_reddit_for_product
+
+    data_root = Path(__file__).parent.parent / "data" / "raw"
+    product_dir = data_root / request.product_id
+    if not product_dir.exists():
+        raise HTTPException(
+            status_code=422,
+            detail=f"Product ID '{request.product_id}' not found in data/raw/. "
+                   f"Available: {[p.name for p in data_root.iterdir() if p.is_dir() and not p.name.startswith('.')] if data_root.exists() else []}"
+        )
+
+    openai_key = os.environ.get("OPENAI_API_KEY")
+
+    # Read reddit_subreddits from products_metadata.json (data-driven, no hardcoding)
+    reddit_subreddits = None
+    if products_metadata:
+        product_meta = next(
+            (p for p in products_metadata.get("products", []) if p["id"] == request.product_id),
+            None
+        )
+        reddit_subreddits = product_meta.get("reddit_subreddits") if product_meta else None
+
+    try:
+        loop = asyncio.get_event_loop()
+        with concurrent.futures.ThreadPoolExecutor() as pool:
+            result = await loop.run_in_executor(
+                pool,
+                lambda: scrape_reddit_for_product(
+                    product_id=request.product_id,
+                    product_name=request.product_name,
+                    data_root=data_root,
+                    openai_api_key=openai_key,
+                    max_posts=request.max_posts,
+                    subreddits=reddit_subreddits
+                )
+            )
+    except RuntimeError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Reddit scraper error: {str(e)}")
+
+    reddit_dir = data_root / request.product_id / "reddit"
+    today = datetime.now().strftime("%d%m%Y")
+    file_saved = str(reddit_dir / f"reddit_analysis_{today}.json")
+
+    return RedditScrapeResponse(
+        status="ok",
+        product_id=request.product_id,
+        file_saved=file_saved,
+        post_count=result.get("post_count", 0),
+        subreddits_found=result.get("subreddits_found", []),
+        sentiment_summary=result.get("sentiment", {}).get("summary")
+    )
+
+
+@app.get("/products/{product_id}/reddit-sentiment", response_model=RedditSentimentResponse, tags=["Products"])
+async def get_reddit_sentiment(
+    product_id: str,
+    user: AuthUser = Depends(get_optional_user)
+):
+    """
+    Return Reddit community sentiment for a product.
+
+    - Reads the latest reddit_analysis_*.json from data/raw/<product_id>/reddit/
+    - Returns available=false if no Reddit data has been scraped yet
+    """
+    data_root = Path(__file__).parent.parent / "data" / "raw"
+    reddit_dir = data_root / product_id / "reddit"
+
+    if not reddit_dir.exists():
+        return RedditSentimentResponse(available=False, product_id=product_id)
+
+    reddit_files = sorted(reddit_dir.glob("reddit_analysis_*.json"))
+    if not reddit_files:
+        return RedditSentimentResponse(available=False, product_id=product_id)
+
+    # Use the most recent file
+    latest = reddit_files[-1]
+    try:
+        data = json.loads(latest.read_text(encoding="utf-8"))
+    except Exception:
+        return RedditSentimentResponse(available=False, product_id=product_id)
+
+    return RedditSentimentResponse(
+        available=True,
+        product_id=product_id,
+        post_count=data.get("post_count"),
+        searched_subreddits=data.get("searched_subreddits", []),
+        subreddits_found=data.get("subreddits_found", []),
+        top_posts=data.get("top_posts", []),
+        sentiment=data.get("sentiment"),
+        scraped_date=data.get("scraped_date")
+    )
 
 
 # ============================================================================

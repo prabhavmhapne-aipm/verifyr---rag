@@ -1,0 +1,110 @@
+{
+  "product_id": "ringconn_gen2_2024",
+  "product_name": "Gen 2",
+  "scraped_date": "2026-03-27T10:56:13.715329",
+  "post_count": 50,
+  "searched_subreddits": [
+    "r/RingConn"
+  ],
+  "subreddits_found": [
+    "r/RingConn"
+  ],
+  "top_posts": [
+    {
+      "title": "My RingConn Gen 2 just exploded on finger",
+      "url": "https://www.reddit.com/r/RingConn/comments/1r5eqo6/my_ringconn_gen_2_just_exploded_on_finger/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 104,
+      "num_comments": 58
+    },
+    {
+      "title": "Painted my gen 2! What do you guys think?",
+      "url": "https://www.reddit.com/r/RingConn/comments/1qr4vps/painted_my_gen_2_what_do_you_guys_think/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 94,
+      "num_comments": 28
+    },
+    {
+      "title": "Clinical In-Lab Sleep Study Vs Ringconn Gen 2 (with Apnea Monitoring)",
+      "url": "https://www.reddit.com/r/RingConn/comments/1rjx33r/clinical_inlab_sleep_study_vs_ringconn_gen_2_with/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 62,
+      "num_comments": 13
+    },
+    {
+      "title": "decorated my gen 2 case!",
+      "url": "https://www.reddit.com/r/RingConn/comments/1ovbxxz/decorated_my_gen_2_case/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 55,
+      "num_comments": 15
+    },
+    {
+      "title": "I'll mail you my Gen 2 sizer kit",
+      "url": "https://www.reddit.com/r/RingConn/comments/1qm5hky/ill_mail_you_my_gen_2_sizer_kit/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 53,
+      "num_comments": 59
+    },
+    {
+      "title": "Gen 2 Prime Day",
+      "url": "https://www.reddit.com/r/RingConn/comments/1lun3s7/gen_2_prime_day/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 41,
+      "num_comments": 28
+    },
+    {
+      "title": "Me looking at the Gen 2 waiting for the Gen 3",
+      "url": "https://www.reddit.com/r/RingConn/comments/1ryvepw/me_looking_at_the_gen_2_waiting_for_the_gen_3/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 39,
+      "num_comments": 9
+    },
+    {
+      "title": "Show off of my new stacking ring with ringconn Gen 2 in gold",
+      "url": "https://www.reddit.com/r/RingConn/comments/1rhemcr/show_off_of_my_new_stacking_ring_with_ringconn/",
+      "subreddit": "r/RingConn",
+      "subreddit_url": "https://www.reddit.com/r/RingConn/",
+      "score": 24,
+      "num_comments": 5
+    }
+  ],
+  "sentiment": {
+    "positive_pct": 40,
+    "neutral_pct": 30,
+    "negative_pct": 30,
+    "summary": "Die Reddit-Community hat gemischte Gefühle über die Gen 2, mit einigen positiven Erfahrungen, aber auch vielen Bedenken und Beschwerden.",
+    "summary_en": "The Reddit community has mixed feelings about the Gen 2, with some positive experiences but also many concerns and complaints.",
+    "pros": [
+      "Gutes Preis-Leistungs-Verhältnis während Verkaufsaktionen",
+      "Ästhetisch ansprechend mit Möglichkeiten zur Personalisierung",
+      "Nützliche Funktionen wie Schlafüberwachung"
+    ],
+    "pros_en": [
+      "Good value for money during sales",
+      "Aesthetically pleasing with personalization options",
+      "Useful features like sleep monitoring"
+    ],
+    "cons": [
+      "Batterieprobleme und plötzliche Ausfälle",
+      "Negative Erfahrungen und Bedenken über die Genauigkeit",
+      "Schwierigkeiten bei der Synchronisation mit Apple Health"
+    ],
+    "cons_en": [
+      "Battery issues and sudden failures",
+      "Negative experiences and concerns about accuracy",
+      "Difficulties syncing with Apple Health"
+    ],
+    "common_topics": [
+      "Batterielebensdauer und -probleme",
+      "Synchronisation mit Gesundheits-Apps",
+      "Kundenerfahrungen und Bewertungen"
+    ]
+  }
+}
