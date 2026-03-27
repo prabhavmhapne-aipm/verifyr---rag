@@ -15,6 +15,7 @@ from typing import List, Dict, Any, Tuple
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from openai import OpenAI
+from generation.llm_client import MODEL_CONFIGS
 
 
 SYSTEM_PROMPT = """You are a product recommendation expert. Generate concise, evidence-based bullet points based strictly on the provided document excerpts.
@@ -56,15 +57,19 @@ class RAGEnhancer:
         top_n_offset: int = 3,
         language: str = "en",
         special_request: str = "",
-    ) -> List[Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         """
         Generate reasoning text only (no RAG bullets) for products beyond the top-N.
         Used for products 4+ where full RAG enhancement is skipped.
+
+        Returns:
+            (enhanced_products, usage) where usage = {"input": N, "output": N, "cost_usd": N}
         """
         use_cases = quiz_inputs.get("useCases", [])
         features = quiz_inputs.get("features", [])
         total = top_n_offset + len(products)
         result = []
+        total_input, total_output, total_cost = 0, 0, 0.0
 
         for i, product_match in enumerate(products):
             rank = top_n_offset + i + 1
@@ -72,7 +77,7 @@ class RAGEnhancer:
             product_name = self._get_display_name(product_id)
 
             try:
-                reasoning = self._generate_reasoning(
+                reasoning, tokens, cost = self._generate_reasoning(
                     product_id=product_id,
                     product_name=product_name,
                     rank=rank,
@@ -84,6 +89,9 @@ class RAGEnhancer:
                     special_request=special_request,
                     language=language,
                 )
+                total_input += tokens["input"]
+                total_output += tokens["output"]
+                total_cost += cost
             except Exception as e:
                 print(f"WARNING: Reasoning generation failed for {product_name}: {e}")
                 reasoning = ""
@@ -95,7 +103,7 @@ class RAGEnhancer:
                 "reasoning": reasoning,
             })
 
-        return result
+        return result, {"input": total_input, "output": total_output, "cost_usd": round(total_cost, 6)}
 
     def enhance_recommendations(
         self,
@@ -103,23 +111,18 @@ class RAGEnhancer:
         quiz_inputs: Dict[str, Any],
         language: str = "en",
         special_request: str = "",
-    ) -> List[Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         """
         Enhance top products with RAG-generated dynamic bullets.
 
-        Args:
-            top_products: List of scored product dicts (product_id, match_score, match_reasons)
-            quiz_inputs: Dict with keys: category, useCases, features
-            language: "en" or "de"
-
         Returns:
-            Same list with added dynamic_strength and dynamic_weakness fields.
-            Falls back to empty strings if RAG step fails for any product.
+            (enhanced_products, usage) where usage = {"input": N, "output": N, "cost_usd": N}
         """
         use_cases = quiz_inputs.get("useCases", [])
         features = quiz_inputs.get("features", [])
         total = len(top_products)
         enhanced = []
+        total_input, total_output, total_cost = 0, 0, 0.0
 
         for rank, product_match in enumerate(top_products, start=1):
             product_id = product_match["product_id"]
@@ -128,7 +131,7 @@ class RAGEnhancer:
             try:
                 query = self._build_query(product_name, use_cases, features)
                 chunks = self._retrieve_chunks(query, product_name)
-                strength, weakness = self._generate_bullets(
+                strength, weakness, b_tokens, b_cost = self._generate_bullets(
                     product_id=product_id,
                     product_name=product_name,
                     chunks=chunks,
@@ -137,12 +140,15 @@ class RAGEnhancer:
                     language=language,
                     special_request=special_request,
                 )
+                total_input += b_tokens["input"]
+                total_output += b_tokens["output"]
+                total_cost += b_cost
             except Exception as e:
                 print(f"WARNING: RAG enhancement failed for {product_name}: {e}")
                 strength, weakness = "", ""
 
             try:
-                reasoning = self._generate_reasoning(
+                reasoning, r_tokens, r_cost = self._generate_reasoning(
                     product_id=product_id,
                     product_name=product_name,
                     rank=rank,
@@ -154,6 +160,9 @@ class RAGEnhancer:
                     special_request=special_request,
                     language=language,
                 )
+                total_input += r_tokens["input"]
+                total_output += r_tokens["output"]
+                total_cost += r_cost
             except Exception as e:
                 print(f"WARNING: Reasoning generation failed for {product_name}: {e}")
                 reasoning = ""
@@ -165,7 +174,7 @@ class RAGEnhancer:
                 "reasoning": reasoning,
             })
 
-        return enhanced
+        return enhanced, {"input": total_input, "output": total_output, "cost_usd": round(total_cost, 6)}
 
     # -------------------------------------------------------------------------
     # Private helpers
@@ -277,7 +286,11 @@ Output as JSON only:
             content = content.split("```")[1].split("```")[0].strip()
 
         bullets = json.loads(content)
-        return bullets.get("strength", "").strip(), bullets.get("weakness", "").strip()
+        usage = response.usage
+        tokens = {"input": usage.prompt_tokens if usage else 0, "output": usage.completion_tokens if usage else 0}
+        cfg = MODEL_CONFIGS.get("gpt-5-mini", {})
+        cost = (tokens["input"] / 1000 * cfg.get("cost_per_1k_input", 0)) + (tokens["output"] / 1000 * cfg.get("cost_per_1k_output", 0))
+        return bullets.get("strength", "").strip(), bullets.get("weakness", "").strip(), tokens, cost
 
     def _generate_reasoning(
         self,
@@ -346,7 +359,11 @@ Scoring summary:
             ]
         )
 
-        return (response.choices[0].message.content or "").strip()
+        usage = response.usage
+        tokens = {"input": usage.prompt_tokens if usage else 0, "output": usage.completion_tokens if usage else 0}
+        cfg = MODEL_CONFIGS.get("gpt-4o-mini", {})
+        cost = (tokens["input"] / 1000 * cfg.get("cost_per_1k_input", 0)) + (tokens["output"] / 1000 * cfg.get("cost_per_1k_output", 0))
+        return (response.choices[0].message.content or "").strip(), tokens, cost
 
     def _get_product_context(self, product_id: str) -> str:
         """Extract pros, cons and key specs in English for use in the reasoning prompt."""

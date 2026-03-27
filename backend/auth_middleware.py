@@ -45,6 +45,10 @@ ENABLE_SIGNUP = os.getenv("ENABLE_SIGNUP", "true").lower() == "true"
 # Legacy JWT secret (for backward compatibility)
 SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET", "")
 
+# Eval bypass token — allows evaluator/test scripts to call authenticated endpoints
+# Set EVAL_API_TOKEN in .env to any secret string; leave unset to disable bypass
+EVAL_API_TOKEN = os.getenv("EVAL_API_TOKEN", "")
+
 # Security scheme for Bearer token
 security = HTTPBearer(auto_error=False)
 
@@ -126,6 +130,10 @@ async def get_current_user(
         )
 
     token = credentials.credentials
+
+    # Eval bypass: allow evaluator/test scripts using the EVAL_API_TOKEN
+    if EVAL_API_TOKEN and token == EVAL_API_TOKEN:
+        return AuthUser(id="eval-user", email="eval@verifyr.internal", is_admin=False)
 
     # Try to verify the token using different methods
     payload = None

@@ -631,27 +631,25 @@ async def query(
             detail="Service unavailable: RAG components not loaded"
         )
 
-    # Initialize Langfuse trace if available
-    # Skip trace creation if called from evaluator (trace will be created by item.run())
-    trace = None
+    # Initialize Langfuse root span if available (v3 SDK: start_span replaces trace())
+    # Skip if called from evaluator — @observe handles tracing there
+    root_span = None
     retrieval_span = None
     generation_span = None
 
     try:
         if langfuse_client and not request.skip_langfuse_trace:
-            trace_metadata = {
-                "conversation_id": request.conversation_id,
-                "has_history": len(request.conversation_history) > 0
-            }
-            
-            trace = langfuse_client.trace(
+            root_span = langfuse_client.start_span(
                 name="rag_query",
                 input={"question": request.question, "model": request.model, "language": request.language},
-                metadata=trace_metadata
+                metadata={
+                    "conversation_id": request.conversation_id,
+                    "has_history": len(request.conversation_history) > 0
+                }
             )
     except Exception as e:
-        print(f"⚠️  Langfuse trace creation failed: {e}")
-        trace = None
+        print(f"⚠️  Langfuse span creation failed: {e}")
+        root_span = None
 
     try:
         # Step 0: Analyze query to determine retrieval strategy
@@ -672,8 +670,8 @@ async def query(
         retrieval_start = time.time()
 
         try:
-            if trace:
-                retrieval_span = trace.span(
+            if root_span:
+                retrieval_span = root_span.start_span(
                     name="hybrid_search",
                     input={"query": request.question, "top_k": top_k, "target_products": target_products}
                 )
@@ -696,10 +694,11 @@ async def query(
 
         try:
             if retrieval_span:
-                retrieval_span.end(
+                retrieval_span.update(
                     output={"chunks_retrieved": len(retrieved_chunks), "retrieval_time_ms": retrieval_time_ms},
                     metadata={"top_scores": [r.get("rrf_score", 0) for r in search_results[:3]]}
                 )
+                retrieval_span.end()
         except Exception as e:
             print(f"⚠️  Langfuse retrieval span end failed: {e}")
 
@@ -707,10 +706,11 @@ async def query(
         generation_start = time.time()
 
         try:
-            if trace:
-                generation_span = trace.span(
+            if root_span:
+                generation_span = root_span.start_generation(
                     name="llm_generation",
-                    input={"question": request.question, "chunks_count": len(retrieved_chunks), "model": request.model}
+                    input={"question": request.question, "chunks_count": len(retrieved_chunks)},
+                    model=request.model or "gpt-5-mini"
                 )
         except Exception as e:
             print(f"⚠️  Langfuse generation span creation failed: {e}")
@@ -734,16 +734,18 @@ async def query(
 
         try:
             if generation_span:
-                generation_span.end(
-                    output={"answer": llm_result["answer"], "sources_count": len(llm_result["sources"])},
-                    metadata={
-                        "model_used": llm_result["model_used"],
-                        "provider": llm_result["provider"],
-                        "tokens_used": llm_result["tokens_used"],
-                        "cost_usd": llm_result["cost_usd"],
-                        "generation_time_ms": generation_time_ms
-                    }
+                tokens = llm_result.get("tokens_used", {})
+                generation_span.update(
+                    output=llm_result["answer"],
+                    model=llm_result["model_used"],
+                    usage_details={
+                        "input": tokens.get("input", 0),
+                        "output": tokens.get("output", 0)
+                    },
+                    cost_details={"total": llm_result.get("cost_usd", 0)},
+                    metadata={"provider": llm_result["provider"], "generation_time_ms": generation_time_ms}
                 )
+                generation_span.end()
         except Exception as e:
             print(f"⚠️  Langfuse generation span end failed: {e}")
 
@@ -767,13 +769,13 @@ async def query(
         # Generate query ID
         query_id = str(uuid.uuid4())
 
-        # Complete Langfuse trace
+        # Complete Langfuse root span and flush to cloud
         try:
-            if trace:
-                trace.update(
+            if root_span:
+                root_span.update(
                     output={
                         "answer": llm_result["answer"],
-                        "sources": [s for s in llm_result["sources"]],
+                        "sources_count": len(llm_result["sources"]),
                         "query_id": query_id
                     },
                     metadata={
@@ -785,8 +787,10 @@ async def query(
                         "cost_usd": llm_result["cost_usd"]
                     }
                 )
+                root_span.end()
+                langfuse_client.flush()
         except Exception as e:
-            print(f"⚠️  Langfuse trace update failed: {e}")
+            print(f"⚠️  Langfuse span end failed: {e}")
 
         # Step 4: Save conversation to disk (if conversation_id provided)
         if request.conversation_id:
@@ -1128,6 +1132,26 @@ async def score_quiz_with_rag(
     user_id = user.id if user else "anonymous"
     print(f"RAG quiz submission from user: {user_id}")
 
+    start_time = time.time()
+    quiz_span = None
+    try:
+        if langfuse_client:
+            quiz_span = langfuse_client.start_span(
+                name="quiz_score_with_rag",
+                input={
+                    "category": quiz_answers.category,
+                    "use_cases": quiz_answers.useCases,
+                    "features": quiz_answers.features,
+                    "budget_min": quiz_answers.budget_min,
+                    "budget_max": quiz_answers.budget_max,
+                    "language": quiz_answers.language,
+                    "has_special_request": bool(quiz_answers.special_request),
+                },
+                metadata={"user_id": user_id}
+            )
+    except Exception as e:
+        print(f"⚠️  Langfuse quiz_rag span creation failed: {e}")
+
     if products_metadata is None:
         raise HTTPException(status_code=503, detail="Service unavailable: Products metadata not loaded")
 
@@ -1241,35 +1265,110 @@ async def score_quiz_with_rag(
 
     if rag_enhancer:
         try:
-            enhanced_top = rag_enhancer.enhance_recommendations(
+            rag_start = time.time()
+            rag_gen_span = None
+            try:
+                if quiz_span:
+                    rag_gen_span = quiz_span.start_generation(
+                        name="rag_enhancement",
+                        input={"top_products": [p["product_id"] for p in top_3], "language": quiz_answers.language},
+                        model="gpt-5-mini",
+                        metadata={"provider": "openai", "secondary_model": "gpt-4o-mini"}
+                    )
+            except Exception:
+                pass
+
+            enhanced_top, top_usage = rag_enhancer.enhance_recommendations(
                 top_products=top_3,
                 quiz_inputs=quiz_answers.dict(),
                 language=quiz_answers.language or "de",
                 special_request=quiz_answers.special_request or "",
             )
+
+            try:
+                if rag_gen_span:
+                    rag_gen_span.update(
+                        output={"enhanced_count": len(enhanced_top)},
+                        usage_details={"input": top_usage["input"], "output": top_usage["output"]},
+                        cost_details={"total": top_usage["cost_usd"]},
+                        metadata={"time_ms": int((time.time() - rag_start) * 1000)}
+                    )
+                    rag_gen_span.end()
+            except Exception:
+                pass
         except Exception as e:
             print(f"WARNING: RAG enhancement failed, falling back to static: {e}")
             enhanced_top = [{**p, "dynamic_strength": "", "dynamic_weakness": ""} for p in top_3]
+            top_usage = {"input": 0, "output": 0, "cost_usd": 0}
     else:
         enhanced_top = [{**p, "dynamic_strength": "", "dynamic_weakness": ""} for p in top_3]
+        top_usage = {"input": 0, "output": 0, "cost_usd": 0}
 
     # Remaining products get reasoning only (no RAG bullets)
     if rag_enhancer and remaining:
         try:
-            enhanced_remaining = rag_enhancer.enhance_reasoning_only(
+            reasoning_start = time.time()
+            reasoning_span = None
+            try:
+                if quiz_span:
+                    reasoning_span = quiz_span.start_generation(
+                        name="reasoning_enhancement",
+                        input={"remaining_count": len(remaining), "language": quiz_answers.language},
+                        model="gpt-4o-mini",
+                        metadata={"provider": "openai"}
+                    )
+            except Exception:
+                pass
+
+            enhanced_remaining, remaining_usage = rag_enhancer.enhance_reasoning_only(
                 products=remaining,
                 quiz_inputs=quiz_answers.dict(),
                 top_n_offset=3,
                 language=quiz_answers.language or "de",
                 special_request=quiz_answers.special_request or "",
             )
+
+            try:
+                if reasoning_span:
+                    reasoning_span.update(
+                        output={"enhanced_count": len(enhanced_remaining)},
+                        usage_details={"input": remaining_usage["input"], "output": remaining_usage["output"]},
+                        cost_details={"total": remaining_usage["cost_usd"]},
+                        metadata={"time_ms": int((time.time() - reasoning_start) * 1000)}
+                    )
+                    reasoning_span.end()
+            except Exception:
+                pass
         except Exception as e:
             print(f"WARNING: Reasoning-only enhancement failed, falling back: {e}")
             enhanced_remaining = [{**p, "dynamic_strength": "", "dynamic_weakness": "", "reasoning": ""} for p in remaining]
+            remaining_usage = {"input": 0, "output": 0, "cost_usd": 0}
     else:
         enhanced_remaining = [{**p, "dynamic_strength": "", "dynamic_weakness": "", "reasoning": ""} for p in remaining]
+        remaining_usage = {"input": 0, "output": 0, "cost_usd": 0}
 
     all_products = enhanced_top + enhanced_remaining
+
+    total_tokens = {"input": top_usage["input"] + remaining_usage["input"], "output": top_usage["output"] + remaining_usage["output"]}
+    total_cost = round(top_usage["cost_usd"] + remaining_usage["cost_usd"], 6)
+
+    try:
+        if quiz_span:
+            quiz_span.update(
+                output={
+                    "products_matched": len(scored),
+                    "top_products": [{"id": p["product_id"], "score": p["match_score"]} for p in scored[:3]],
+                },
+                metadata={
+                    "response_time_ms": int((time.time() - start_time) * 1000),
+                    "tokens_used": total_tokens,
+                    "cost_usd": total_cost
+                }
+            )
+            quiz_span.end()
+            langfuse_client.flush()
+    except Exception as e:
+        print(f"⚠️  Langfuse quiz_rag span end failed: {e}")
 
     return EnhancedQuizResultsResponse(
         matched_products=[EnhancedMatchedProduct(**p) for p in all_products],

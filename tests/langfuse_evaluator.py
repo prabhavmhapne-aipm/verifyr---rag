@@ -60,6 +60,8 @@ langfuse = get_client()
 API_BASE_URL = "http://localhost:8000"
 QUERY_ENDPOINT = f"{API_BASE_URL}/query"
 RESULTS_DIR = Path(__file__).parent.parent / "data" / "evaluation_results"
+EVAL_API_TOKEN = os.getenv("EVAL_API_TOKEN", "")
+AUTH_HEADERS = {"Authorization": f"Bearer {EVAL_API_TOKEN}"} if EVAL_API_TOKEN else {}
 
 
 # ============================================================================
@@ -97,6 +99,7 @@ def rag_task(*, item, **kwargs):
                 "language": language,
                 "skip_langfuse_trace": True  # Skip backend trace since @observe handles it
             },
+            headers=AUTH_HEADERS,
             timeout=30
         )
         elapsed_time = time.time() - start_time
