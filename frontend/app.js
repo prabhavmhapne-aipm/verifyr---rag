@@ -17,6 +17,9 @@ let currentSession = null;
 let SUPABASE_URL = '';
 let SUPABASE_ANON_KEY = '';
 
+// Langfuse feedback — track the last trace ID for feedback submission
+let lastQueryId = null;
+
 // Quiz label maps — mirrors frontend/quiz/data/categories.json, use-cases.json, features.json, budget.js
 const QUIZ_CATEGORY_LABELS = {
     "smartwatch_fitness": { en: "Smartwatch & Fitness Trackers", de: "Smartwatch & Fitnesstrackers" },
@@ -275,6 +278,7 @@ async function checkAuth() {
             const config = await configResponse.json();
             SUPABASE_URL = config.supabase_url;
             SUPABASE_ANON_KEY = config.supabase_anon_key;
+
         }
 
         // Initialize Supabase client if available
@@ -716,14 +720,23 @@ async function loadConversation(conversationId) {
         quickReplies.style.display = 'none';
     }
 
-    // Display all messages
-    conversation.messages.forEach(msg => {
+    // Display all messages, restoring sources and metadata from saved state
+    conversation.messages.forEach((msg, i) => {
         if (msg.role === 'user') {
             displayUserMessage(msg.content);
         } else if (msg.role === 'assistant') {
-            displayAssistantMessage(msg.content, [], null);
+            displayAssistantMessage(msg.content, msg.sources || [], msg.metadata || null);
+            // Restore lastQueryId from the final assistant message for feedback
+            if (i === conversation.messages.length - 1 && msg.metadata?.query_id) {
+                lastQueryId = msg.metadata.query_id;
+            }
         }
     });
+
+    // Append feedback widget on the last assistant message if we have a trace ID
+    if (lastQueryId) {
+        appendChatFeedbackWidget(lastQueryId);
+    }
 
     // Save as active conversation
     localStorage.setItem('verifyr_active_conversation_id', conversationId);
@@ -803,7 +816,8 @@ async function deleteConversation(event, conversationId) {
  * Toggle sidebar visibility
  */
 function toggleSidebar() {
-    conversationSidebar.classList.toggle('active');
+    const isOpen = conversationSidebar.classList.toggle('active');
+    document.querySelector('.chat-container')?.classList.toggle('sidebar-open', isOpen);
 }
 
 /**
@@ -925,7 +939,7 @@ async function handleSend() {
                 question,
                 model: selectedModel,
                 language: currentLanguage,
-                conversation_history: conversationHistory.slice(0, -1), // Exclude current message (already sent as question)
+                conversation_history: conversationHistory.slice(0, -1).map(m => ({ role: m.role, content: m.content })), // Strip sources/metadata — backend expects Dict[str, str]
                 conversation_id: currentConversationId,
                 quiz_profile: getQuizProfileString()
             })
@@ -950,11 +964,20 @@ async function handleSend() {
         // Add assistant response to conversation history
         conversationHistory.push({
             role: 'assistant',
-            content: data.answer
+            content: data.answer,
+            sources: data.sources || [],
+            metadata: { query_id: data.query_id, model_used: data.model_used, response_time_ms: data.response_time_ms, chunks_retrieved: data.chunks_retrieved }
         });
 
         // Save conversation to localStorage
         saveConversationToStorage();
+
+        // Track query ID for feedback (now equals the Langfuse trace_id)
+        lastQueryId = data.query_id || null;
+
+        // Remove feedback widget from previous last message (it's no longer the last)
+        const prevFeedback = document.querySelector('.chat-feedback-widget');
+        if (prevFeedback) prevFeedback.remove();
 
         // Display assistant response
         displayAssistantMessage(data.answer, data.sources, data);
@@ -1046,7 +1069,152 @@ function displayAssistantMessage(answer, sources, metadata) {
     `;
 
     chatMessages.appendChild(messageDiv);
+
+    // Append feedback widget after the message (only if we have a trace ID)
+    if (lastQueryId) {
+        appendChatFeedbackWidget(lastQueryId);
+    }
+
     scrollToBottom();
+}
+
+/**
+ * Append thumbs up/down feedback widget after the last assistant message.
+ * Linked to the Langfuse trace via traceId.
+ */
+function appendChatFeedbackWidget(traceId) {
+    const widget = document.createElement('div');
+    widget.className = 'chat-feedback-widget';
+    widget.dataset.traceId = traceId;
+    widget.innerHTML = `
+        <div class="feedback-row">
+            <span class="feedback-label">War das hilfreich?</span>
+            <button class="feedback-copy-btn" title="Antwort kopieren">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+            </button>
+            <button class="feedback-thumb feedback-thumb-up" title="Ja, hilfreich">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                    <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                </svg>
+            </button>
+            <button class="feedback-thumb feedback-thumb-down" title="Nein, nicht hilfreich">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
+                    <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+                </svg>
+            </button>
+            <span class="feedback-sent" style="display:none">&#10003; Danke!</span>
+        </div>
+        <div class="feedback-comment-row" style="display:none">
+            <textarea class="feedback-comment-input" placeholder="Was hätten wir besser machen können? (optional)" rows="2"></textarea>
+            <button class="feedback-comment-submit">Senden</button>
+        </div>
+    `;
+
+    const thumbUp = widget.querySelector('.feedback-thumb-up');
+    const thumbDown = widget.querySelector('.feedback-thumb-down');
+    const sent = widget.querySelector('.feedback-sent');
+    const commentRow = widget.querySelector('.feedback-comment-row');
+    const commentInput = widget.querySelector('.feedback-comment-input');
+    const commentSubmit = widget.querySelector('.feedback-comment-submit');
+    const copyBtn = widget.querySelector('.feedback-copy-btn');
+
+    function lockThumbs() {
+        thumbUp.disabled = true;
+        thumbDown.disabled = true;
+        thumbUp.classList.add('feedback-submitted');
+        thumbDown.classList.add('feedback-submitted');
+    }
+
+    function sendScore(value, comment) {
+        sent.style.display = 'inline';
+        if (!traceId) return;
+        const token = localStorage.getItem('verifyr_access_token');
+        fetch(`${API_BASE_URL}/feedback`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({ trace_id: traceId, name: 'chat_feedback', value, comment: comment || undefined })
+        }).catch(e => console.warn('Feedback submission failed:', e));
+    }
+
+    thumbUp.addEventListener('click', () => {
+        lockThumbs();
+        sendScore(1);
+    });
+
+    thumbDown.addEventListener('click', () => {
+        lockThumbs();
+        commentRow.style.display = 'flex';
+        commentInput.focus();
+    });
+
+    commentSubmit.addEventListener('click', () => {
+        const comment = commentInput.value.trim();
+        commentRow.style.display = 'none';
+        sendScore(0, comment);
+    });
+
+    // Allow submitting with Ctrl+Enter
+    commentInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) commentSubmit.click();
+    });
+
+    // Copy answer text — linked to the same RAG query trace
+    const copyOriginalHTML = copyBtn.innerHTML;
+    copyBtn.addEventListener('click', () => {
+        // Grab text from the preceding assistant message div
+        const msgDiv = widget.previousElementSibling;
+        const text = msgDiv?.querySelector('.message-content')?.innerText?.trim() || '';
+
+        const onSuccess = () => {
+            copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+            copyBtn.style.color = '#16A34A';
+            copyBtn.style.borderColor = '#16A34A';
+            setTimeout(() => { copyBtn.innerHTML = copyOriginalHTML; copyBtn.style.color = ''; copyBtn.style.borderColor = ''; }, 2000);
+
+            if (traceId) {
+                const token = localStorage.getItem('verifyr_access_token');
+                fetch(`${API_BASE_URL}/feedback`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ trace_id: traceId, name: 'copy_chat_response', value: 1 })
+                }).catch(() => {});
+            }
+        };
+
+        const onFail = () => {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                onSuccess();
+            } catch (_) { /* silent */ }
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(onSuccess).catch(onFail);
+        } else {
+            onFail();
+        }
+    });
+
+    chatMessages.appendChild(widget);
 }
 
 /**

@@ -295,7 +295,9 @@ def get_config() -> dict:
     return {
         "supabase_url": SUPABASE_URL,
         "supabase_anon_key": SUPABASE_ANON_KEY,
-        "enable_signup": ENABLE_SIGNUP
+        "enable_signup": ENABLE_SIGNUP,
+        "langfuse_public_key": os.getenv("LANGFUSE_PUBLIC_KEY", ""),
+        "langfuse_host": os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
     }
 
 

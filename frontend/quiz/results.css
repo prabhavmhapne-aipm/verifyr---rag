@@ -1840,3 +1840,96 @@ body {
     font-size: 10px;
     color: #94A3B8;
 }
+
+/* ============================================================
+   Per-Product Feedback & Copy — inside product card
+   ============================================================ */
+
+.product-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0 4px;
+    margin-top: 12px;
+    border-top: 1px solid #E5E7EB;
+}
+
+.product-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 10px;
+    color: #6A7282;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.product-copy-btn svg {
+    flex-shrink: 0;
+}
+
+.product-copy-btn:hover {
+    background: #F5F3FF;
+    border-color: #6366F1;
+    color: #6366F1;
+}
+
+.product-feedback {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.product-feedback-thumb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 5px 8px;
+    color: #6A7282;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.product-feedback-thumb:hover:not(:disabled) {
+    background: #F9FAFB;
+    border-color: #6366F1;
+    color: #6366F1;
+}
+
+.product-feedback-thumb[data-value="1"]:hover:not(:disabled) {
+    background: #F0FDF4;
+    border-color: #16A34A;
+    color: #16A34A;
+}
+
+.product-feedback-thumb[data-value="0"]:hover:not(:disabled) {
+    background: #FFF1F2;
+    border-color: #E11D48;
+    color: #E11D48;
+}
+
+.product-feedback-thumb:disabled {
+    cursor: default;
+}
+
+.product-feedback-thumb.feedback-submitted {
+    opacity: 0.35;
+}
+
+.product-feedback-sent {
+    font-size: 11px;
+    font-weight: 600;
+    color: #16A34A;
+    letter-spacing: 0.01em;
+}
+

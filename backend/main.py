@@ -191,6 +191,7 @@ class EnhancedQuizResultsResponse(BaseModel):
     """Response model for /quiz/score-with-rag endpoint."""
     matched_products: List[EnhancedMatchedProduct]
     quiz_summary: Dict[str, Any]
+    trace_id: Optional[str] = None  # Langfuse trace ID for feedback submission
 
 
 class ProductRecommendationResponse(BaseModel):
@@ -766,8 +767,8 @@ async def query(
         # Calculate total response time
         response_time_ms = int((time.time() - start_time) * 1000)
 
-        # Generate query ID
-        query_id = str(uuid.uuid4())
+        # Generate query ID — use Langfuse trace_id when available so frontend can submit feedback
+        query_id = root_span.trace_id if root_span else str(uuid.uuid4())
 
         # Complete Langfuse root span and flush to cloud
         try:
@@ -1372,8 +1373,43 @@ async def score_quiz_with_rag(
 
     return EnhancedQuizResultsResponse(
         matched_products=[EnhancedMatchedProduct(**p) for p in all_products],
-        quiz_summary=quiz_summary
+        quiz_summary=quiz_summary,
+        trace_id=quiz_span.trace_id if quiz_span else None
     )
+
+
+@app.post("/feedback", tags=["Feedback"])
+async def submit_feedback(
+    payload: Dict[str, Any],
+    user: AuthUser = Depends(get_current_user)
+):
+    """
+    Submit user feedback (thumbs up/down) linked to a Langfuse trace.
+
+    Accepts: { trace_id, name, value (0 or 1), comment (optional) }
+    Routes the score to Langfuse via the server-side SDK.
+    """
+    trace_id = payload.get("trace_id", "")
+    name = payload.get("name", "")
+    value = payload.get("value")
+    comment = payload.get("comment")
+
+    if not trace_id or not name or value is None:
+        raise HTTPException(status_code=400, detail="trace_id, name, and value are required")
+
+    if langfuse_client:
+        try:
+            langfuse_client.create_score(
+                trace_id=trace_id,
+                name=name,
+                value=float(value),
+                comment=comment or None,
+            )
+            langfuse_client.flush()
+        except Exception as e:
+            print(f"⚠️  Langfuse score creation failed: {e}")
+
+    return {"status": "ok"}
 
 
 @app.get("/products/recommendations/{product_id}", response_model=ProductRecommendationResponse, tags=["Products"])

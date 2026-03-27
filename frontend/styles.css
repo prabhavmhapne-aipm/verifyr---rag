@@ -18,13 +18,18 @@ body {
 }
 
 .chat-container {
-    max-width: 1000px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-lg) 72px;
     position: relative;
+    transition: padding-left 0.3s ease;
+}
+
+.chat-container.sidebar-open {
+    padding-left: 316px;
 }
 
 /* ============================================================================
@@ -397,7 +402,7 @@ body {
    ============================================================================ */
 
 .chat-header {
-    padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-base);
+    padding: 6px var(--spacing-xl) 0px;
     border-bottom: 1px solid var(--border-light);
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(16px);
@@ -413,7 +418,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0;
 }
 
 .header-logo-section {
@@ -440,6 +445,7 @@ body {
 .hero-badge-container {
     text-align: center;
     margin-top: 0;
+    margin-bottom: 0;
 }
 
 .hero-badge {
@@ -450,7 +456,7 @@ body {
     background-clip: text;
     border: 1.5px solid transparent;
     background-origin: border-box;
-    padding: 0.4rem 1.1rem;
+    padding: 0.15rem 1.1rem;
     border-radius: 50px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -538,7 +544,7 @@ body {
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: var(--spacing-xl);
+    padding: 8px var(--spacing-xl) var(--spacing-xl);
     background: var(--white);
     display: flex;
     flex-direction: column;
@@ -570,7 +576,7 @@ body {
    ============================================================================ */
 
 .message {
-    max-width: 75%;
+    max-width: 90%;
     animation: slideUp 0.3s ease-out;
 }
 
@@ -608,7 +614,7 @@ body {
 
 /* Welcome Message */
 .welcome-message {
-    max-width: 85%;
+    max-width: 90%;
     border: 2px solid var(--primary-blue);
     border-radius: var(--radius-md);
     background: linear-gradient(135deg, var(--bg-gradient-blue-start) 0%, var(--bg-gradient-blue-end) 100%);
@@ -683,7 +689,7 @@ body {
 }
 
 .sources-title {
-    font-size: var(--font-size-sm);
+    font-size: 11px;
     font-weight: normal;
     color: var(--gray);
     margin-bottom: var(--spacing-xs);
@@ -700,7 +706,7 @@ body {
     transition: none;
     font-weight: normal;
     color: var(--gray);
-    font-size: var(--font-size-sm);
+    font-size: 11px;
     font-family: monospace;
 }
 
@@ -744,7 +750,7 @@ body {
 }
 
 .metadata-item {
-    font-size: var(--font-size-sm);
+    font-size: 11px;
     color: var(--gray);
     font-family: monospace;
 }
@@ -792,7 +798,7 @@ body {
    ============================================================================ */
 
 .chat-input-area {
-    padding: var(--spacing-xl);
+    padding: 12px var(--spacing-xl) 8px;
     background: var(--white);
     border-top: 1px solid var(--border-light);
     border-radius: 0 0 var(--radius-md) var(--radius-md);
@@ -803,7 +809,7 @@ body {
     display: flex;
     gap: var(--spacing-sm);
     background: var(--light-gray);
-    padding: var(--spacing-sm);
+    padding: 6px var(--spacing-sm);
     border-radius: var(--radius-input);
     box-shadow: var(--shadow-sm);
 }
@@ -840,7 +846,7 @@ body {
 }
 
 .input-note {
-    margin-top: var(--spacing-sm);
+    margin-top: 4px;
     text-align: center;
     font-size: var(--font-size-sm);
     color: var(--gray);
@@ -1486,3 +1492,130 @@ body {
     background: #FEE2E2;
     color: #DC2626;
 }
+
+/* ============================================================
+   Chat Feedback Widget
+   ============================================================ */
+
+.chat-feedback-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 6px 12px;
+    margin-top: 4px;
+}
+
+.feedback-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feedback-comment-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 360px;
+}
+
+.feedback-comment-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1F2937;
+    font-family: inherit;
+    resize: none;
+    background: #FAFAFA;
+    transition: border-color 0.15s;
+}
+
+.feedback-comment-input:focus {
+    outline: none;
+    border-color: #6366F1;
+}
+
+.feedback-comment-submit {
+    align-self: flex-end;
+    padding: 6px 16px;
+    background: linear-gradient(135deg, #1D4ED8 0%, #3B82F6 60%, #60A5FA 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.feedback-comment-submit:hover {
+    opacity: 0.9;
+}
+
+.feedback-label {
+    font-size: 12px;
+    color: var(--color-text-secondary, #6A7282);
+}
+
+.feedback-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--color-border, #E5E7EB);
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 5px 8px;
+    color: #6A7282;
+    line-height: 1;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.feedback-copy-btn:hover {
+    background: #F9FAFB;
+    border-color: #6366F1;
+    color: #6366F1;
+}
+
+.feedback-thumb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--color-border, #E5E7EB);
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 5px 8px;
+    color: #6A7282;
+    line-height: 1;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.feedback-thumb-up:hover:not(:disabled) {
+    background: #F0FDF4;
+    border-color: #16A34A;
+    color: #16A34A;
+}
+
+.feedback-thumb-down:hover:not(:disabled) {
+    background: #FFF1F2;
+    border-color: #E11D48;
+    color: #E11D48;
+}
+
+.feedback-thumb:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.feedback-thumb.feedback-submitted {
+    opacity: 0.35;
+}
+
+.feedback-sent {
+    font-size: 12px;
+    font-weight: 500;
+    color: #16A34A;
+}
+

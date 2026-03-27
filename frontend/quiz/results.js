@@ -10,6 +10,7 @@ class ResultsController {
         this.useCasesMetadata = {};
         this.featuresMetadata = {};
         this.currentLanguage = 'de';
+        this.quizTraceId = null;
         this.init();
     }
 
@@ -21,6 +22,7 @@ class ResultsController {
         this.sentimentCache = {};
         this.redditCache = {};
         this.loadQuizResults();
+        await this.loadQuizTraceId();
         await this.loadProductsMetadata();
         this.renderCarousel();
         this.updateHeader();
@@ -28,6 +30,7 @@ class ResultsController {
         this.loadReviewsForAllCards();
         this.loadRedditSentimentForAllCards();
         this.setupYoutubeModal();
+        this.setupFeedbackHandlers();
 
         if (typeof gtag !== 'undefined') {
             gtag('event', 'quiz_results_viewed', {
@@ -114,6 +117,123 @@ class ResultsController {
         const sentimentBox = card.querySelector('.amazon-sentiment-box');
         if (sentimentBox) {
             sentimentBox.innerHTML = this.renderSentimentWidget(data, productId);
+        }
+    }
+
+    async loadQuizTraceId() {
+        // Extract trace_id from stored quiz results (set by loading.html / features.js)
+        try {
+            const resultsJson = localStorage.getItem('verifyr_quiz_results');
+            if (resultsJson) {
+                const parsed = JSON.parse(resultsJson);
+                this.quizTraceId = parsed.trace_id || null;
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    setupFeedbackHandlers() {
+        // Per-product feedback — delegated from carouselTrack
+        const track = document.getElementById('carouselTrack');
+        if (track) {
+            track.addEventListener('click', (e) => {
+                const thumbBtn = e.target.closest('.product-feedback-thumb');
+                const copyBtn = e.target.closest('.product-copy-btn');
+
+                if (thumbBtn && !thumbBtn.disabled) {
+                    const card = thumbBtn.closest('.product-card');
+                    const productId = card?.dataset.productId;
+                    const value = thumbBtn.dataset.value === '1' ? 1 : 0;
+                    this._submitProductFeedback(productId, value, card);
+                }
+
+                if (copyBtn) {
+                    const card = copyBtn.closest('.product-card');
+                    this._copyProductRecommendation(card, copyBtn);
+                }
+            });
+        }
+
+    }
+
+    _submitProductFeedback(productId, value, card) {
+        // Update UI immediately — always
+        if (card) {
+            card.querySelectorAll('.product-feedback-thumb').forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('feedback-submitted');
+            });
+            const sent = card.querySelector('.product-feedback-sent');
+            if (sent) sent.style.display = 'inline';
+        }
+
+        if (!this.quizTraceId || !productId) return;
+        const token = localStorage.getItem('verifyr_access_token');
+        fetch('/feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({ trace_id: this.quizTraceId, name: `product_feedback_${productId}`, value })
+        }).catch(e => console.warn('Product feedback submission failed:', e));
+    }
+
+    _copyProductRecommendation(card, btn) {
+        if (!card) return;
+        const name = card.querySelector('.product-name')?.textContent?.trim() || '';
+        const reasoning = card.querySelector('.recommendation-text p')?.textContent?.trim() || '';
+        const strengths = [...card.querySelectorAll('.strengths-section .section-list li')]
+            .map(el => el.textContent.trim()).join('\n• ');
+        const weaknesses = [...card.querySelectorAll('.weaknesses-section .section-list li')]
+            .map(el => el.textContent.trim()).join('\n• ');
+
+        let text = name;
+        if (reasoning) text += `\n\n${reasoning}`;
+        if (strengths) text += `\n\nStärken:\n• ${strengths}`;
+        if (weaknesses) text += `\n\nSchwächen:\n• ${weaknesses}`;
+
+        const originalHTML = btn.innerHTML;
+
+        const onSuccess = () => {
+            if (this.quizTraceId) {
+                const token = localStorage.getItem('verifyr_access_token');
+                fetch('/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ trace_id: this.quizTraceId, name: `copy_recommendation_${productId}`, value: 1 })
+                }).catch(() => {});
+            }
+            btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Kopiert!</span>`;
+            btn.style.color = '#16A34A';
+            btn.style.borderColor = '#16A34A';
+            setTimeout(() => { btn.innerHTML = originalHTML; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+        };
+
+        const onFail = () => {
+            // Fallback: execCommand for non-HTTPS or restricted environments
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                onSuccess();
+            } catch (_) {
+                // Silent fail — user never sees an error
+            }
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(onSuccess).catch(onFail);
+        } else {
+            onFail();
         }
     }
 
@@ -456,6 +576,31 @@ class ResultsController {
                         ${match.dynamic_weakness ? `<li>- ${match.dynamic_weakness}</li>` : ''}
                     </ul>
                 </div>
+
+                <!-- Product Feedback & Copy -->
+                <div class="product-actions">
+                    <button class="product-copy-btn" title="Empfehlung kopieren">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                    </button>
+                    <div class="product-feedback">
+                        <button class="product-feedback-thumb" data-value="1" title="Passt gut">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                            </svg>
+                        </button>
+                        <button class="product-feedback-thumb" data-value="0" title="Passt nicht">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
+                                <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+                            </svg>
+                        </button>
+                        <span class="product-feedback-sent" style="display:none">&#10003;</span>
+                    </div>
+                </div>
             </div>
 
             <!-- 6. Price History -->
@@ -479,6 +624,7 @@ class ResultsController {
             <div class="reddit-sentiment-box" data-product-id="${match.product_id}">
                 ${this.renderRedditWidget(null, match.product_id)}
             </div>
+
         `;
     }
 
