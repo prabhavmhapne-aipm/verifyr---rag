@@ -1082,6 +1082,16 @@ async def score_quiz(
         if budget_reason:
             reasons.append(budget_reason)
 
+        # Apply display preference penalty (×0.60) when product lacks the selected display type
+        for display_feat in ("with_display", "no_display"):
+            if display_feat in quiz_answers.features:
+                product_rating = product.get("feature_priorities", {}).get(display_feat, {}).get("rating", 0)
+                if product_rating == 0:
+                    final_score = final_score * 0.60
+                    feat_name = products_metadata.get("features_metadata", {}).get(display_feat, {}).get("name", {}).get("en", display_feat)
+                    reasons.append(f"Doesn't match your display preference: {feat_name}")
+                break
+
         # Add product to results if category matches (don't show products from wrong categories)
         if scores["category"] > 0:
             matched_products.append({
@@ -1231,6 +1241,16 @@ async def score_quiz_with_rag(
         final_score = final_score * budget_multiplier
         if budget_reason:
             reasons.append(budget_reason)
+
+        # Apply display preference penalty (×0.60) when product lacks the selected display type
+        for display_feat in ("with_display", "no_display"):
+            if display_feat in quiz_answers.features:
+                product_rating = product.get("feature_priorities", {}).get(display_feat, {}).get("rating", 0)
+                if product_rating == 0:
+                    final_score = final_score * 0.60
+                    feat_name = products_metadata.get("features_metadata", {}).get(display_feat, {}).get("name", {}).get("en", display_feat)
+                    reasons.append(f"Doesn't match your display preference: {feat_name}")
+                break
 
         if scores["category"] > 0:
             scored.append({

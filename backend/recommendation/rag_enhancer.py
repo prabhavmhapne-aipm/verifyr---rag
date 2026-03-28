@@ -335,7 +335,10 @@ Rules:
 5. If a special request is provided and relevant, reference it
 6. Conversational, honest tone — like a knowledgeable friend
 7. 2-3 sentences max
-8. Plain text only — no markdown, no bullet points, no headers"""
+8. Plain text only — no markdown, no bullet points, no headers
+9. DISPLAY PENALTY RULE: If the scoring summary contains "Doesn't match your display preference", the product is ranked lower ONLY because of the display mismatch — not because it lacks other features. Never falsely claim the product is missing features it actually has. Check the product context carefully before making any capability claim.
+10. FACTUAL ACCURACY: Never contradict the product context. If the product context shows a feature exists, do not say it is missing.
+11. RATINGS ARE INTERNAL: The product context includes Feature Capabilities and Use Case Suitability ratings. Use these to inform your reasoning and make accurate claims — but never quote them, mention scores, or reference the rating labels (excellent/good/average etc.) directly in your output."""
 
         user_prompt = f"""Product: {product_name}
 Rank: {rank_desc} (score: {round(match_score * 100)}%)
@@ -366,7 +369,7 @@ Scoring summary:
         return (response.choices[0].message.content or "").strip(), tokens, cost
 
     def _get_product_context(self, product_id: str) -> str:
-        """Extract pros, cons and key specs in English for use in the reasoning prompt."""
+        """Extract pros, cons, key specs and ratings for use in the reasoning prompt."""
         product = next((p for p in self.products_metadata.get("products", []) if p["id"] == product_id), None)
         if not product:
             return ""
@@ -388,6 +391,36 @@ Scoring summary:
             value = spec.get("en") if isinstance(spec, dict) else str(spec)
             if value:
                 lines.append(f"{key.replace('_', ' ').title()}: {value}")
+
+        # Feature ratings — for internal reasoning only, not to be quoted in output
+        feat_meta = self.products_metadata.get("features_metadata", {})
+        feature_priorities = product.get("feature_priorities", {})
+        if feature_priorities:
+            rating_scale = {5: "excellent", 4: "good", 3: "average", 2: "limited", 1: "poor", 0: "not available"}
+            feat_lines = []
+            for feat_id, feat_data in feature_priorities.items():
+                rating = feat_data.get("rating", 0)
+                label = rating_scale.get(rating, "unknown")
+                feat_name = feat_meta.get(feat_id, {}).get("name", {}).get("en", feat_id.replace("_", " ").title())
+                notes = feat_data.get("notes", "")
+                entry = f"{feat_name}: {label}"
+                if notes:
+                    entry += f" ({notes})"
+                feat_lines.append(entry)
+            lines.append("Feature Capabilities:\n" + "\n".join(f"  - {fl}" for fl in feat_lines))
+
+        # Use case ratings — for internal reasoning only, not to be quoted in output
+        uc_meta = self.products_metadata.get("use_cases_metadata", {})
+        use_cases = product.get("use_cases", {})
+        if use_cases:
+            rating_scale = {5: "excellent", 4: "good", 3: "average", 2: "limited", 1: "poor", 0: "not suitable"}
+            uc_lines = []
+            for uc_id, uc_data in use_cases.items():
+                rating = uc_data.get("rating", 0)
+                label = rating_scale.get(rating, "unknown")
+                uc_name = uc_meta.get(uc_id, {}).get("name", {}).get("en", uc_id.replace("_", " ").title())
+                uc_lines.append(f"{uc_name}: {label}")
+            lines.append("Use Case Suitability:\n" + "\n".join(f"  - {ul}" for ul in uc_lines))
 
         return "\n".join(lines)
 

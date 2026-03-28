@@ -383,7 +383,7 @@
         "ecg_hrv": {
           "rating": 5,
           "value": "ECG, Blood Oxygen, Temperature, Sleep Apnea, Blood Pressure",
-          "notes": "Industry-leading health monitoring"
+          "notes": "True ECG electrode app (FDA-cleared); detects AFib and irregular rhythm. Best-in-class health suite among consumer wearables"
         },
         "smartphone_independent": {
           "rating": 5,
@@ -997,7 +997,7 @@
         "ecg_hrv": {
           "rating": 4,
           "value": "ECG, Pulse Ox, Skin Temperature, Body Battery",
-          "notes": "Comprehensive health tracking, slightly behind Apple"
+          "notes": "True ECG electrode app; detects AFib. Excellent HRV and recovery tracking via Body Battery. Slightly narrower health suite than Apple Watch"
         },
         "smartphone_independent": {
           "rating": 4,
@@ -1591,7 +1591,7 @@
         "ecg_hrv": {
           "rating": 5,
           "value": "EKG, Pulse Ox, HFV, Hauttemperatur, Body Battery™, Schlafcoach",
-          "notes": "Comprehensive health suite including ECG (Class IIa medical device)"
+          "notes": "Echtes EKG-Elektroden-App (Klasse IIa Medizinprodukt); erkennt Vorhofflimmern. Umfassendstes Gesundheits-Paket unter Garmin-Uhren"
         },
         "smartphone_independent": {
           "rating": 4,
@@ -1990,7 +1990,7 @@
           "notes": "Swim-proof; suitable for pool, open water, and showering"
         },
         "gps_accuracy": {
-          "rating": 0,
+          "rating": 2,
           "value": "No GPS",
           "notes": "No onboard GPS; relies on smartphone GPS for route tracking"
         },
@@ -2035,9 +2035,9 @@
           "notes": "Full stress and recovery suite: continuous HRV, daily Recovery Score, and Strain Score replacing traditional Body Battery"
         },
         "ecg_hrv": {
-          "rating": 4,
+          "rating": 3,
           "value": "Continuous HRV monitoring (no ECG)",
-          "notes": "Industry-leading HRV tracking; no ECG feature"
+          "notes": "Excellent passive HRV tracking for recovery and strain — but no ECG electrode. Cannot detect AFib or produce medical-grade heart readings"
         },
         "vo2_max": {
           "rating": 3,
@@ -2249,7 +2249,7 @@
         "light_comfortable":      { "rating": 5, "value": "3,3–5,2 g", "notes": "Sehr leicht, vollständig aus Titan, antiallergene Innenfläche mit medizinischer Einstufung, Ringform für 24/7-Tragekomfort" },
         "long_battery":           { "rating": 4, "value": "5–8 Tage", "notes": "Ladezeit 20–80 Minuten je nach Ladezustand" },
         "water_resistance":       { "rating": 4, "value": "100 m", "notes": "Geeignet für Sauna und Wassersport, nicht zum Tauchen" },
-        "gps_accuracy":           { "rating": 0, "value": "Kein GPS", "notes": "Kein integriertes GPS" },
+        "gps_accuracy":           { "rating": 2, "value": "Kein GPS", "notes": "Kein integriertes GPS" },
         "smartphone_independent": { "rating": 1, "value": null, "notes": "Benötigt Oura-App auf iOS oder Android" },
         "app_ecosystem":          { "rating": 4, "value": null, "notes": "Integration mit mehr als 40 Apps, KI-basierter Oura Advisor, Oura Labs" },
         "design_modern":          { "rating": 5, "value": null, "notes": "Minimalistisches Ring-Design, 6 Titan-Ausführungen + 4 Keramik-Ausführungen" },
@@ -2258,7 +2258,7 @@
         "no_display":             { "rating": 5, "value": null, "notes": "Displayfreier Ring für unauffälliges 24/7-Tragen" },
         "sleep_monitor":          { "rating": 5, "value": null, "notes": "Detaillierte Schlafphasen (Tiefschlaf, REM, Leichtschlaf), SpO2, Schlafzeitenkonstanz, Empfehlungen zur Schlafenszeit" },
         "stress_monitor":         { "rating": 4, "value": null, "notes": "Stress tagsüber, Resilienz-Tracking auf Basis von HFV" },
-        "ecg_hrv":                { "rating": 4, "value": null, "notes": "Herzfrequenzvariabilität (HFV) rund um die Uhr – kein EKG" },
+        "ecg_hrv":                { "rating": 3, "value": null, "notes": "Kontinuierliche HFV-Messung per optischem Sensor; kein EKG-Elektroden-Feature. Kein Vorhofflimmern-Erkennung" },
         "vo2_max":                { "rating": 3, "value": null, "notes": "Ausdauerleistungsfähigkeit (VO2max) unter Herzgesundheit" }
       },
       "pros": {
@@ -2561,7 +2561,7 @@
           "notes": "Geeignet für Schwimmen, Duschen und Wassersport; kein Taucheinsatz"
         },
         "gps_accuracy": {
-          "rating": 0,
+          "rating": 2,
           "value": "Kein GPS",
           "notes": "Kein integriertes GPS; Routendaten nur über verbundene Amazfit-Uhr oder Smartphone"
         },
@@ -2606,9 +2606,9 @@
           "notes": "Kontinuierliche Stressmessung auf Basis von HRV-Daten; kein dedizierter Stressscore wie bei Garmin"
         },
         "ecg_hrv": {
-          "rating": 4,
+          "rating": 3,
           "value": "Kontinuierliche HRV-Messung; kein EKG",
-          "notes": "BioTracker™ liefert hochwertige HRV-Daten; kein EKG-Feature vorhanden"
+          "notes": "BioTracker™ liefert solide HRV-Daten für Erholung und Stress; kein EKG-Elektroden-Feature, kein Vorhofflimmern-Erkennung"
         },
         "vo2_max": {
           "rating": 4,
@@ -2806,7 +2806,7 @@
         "light_comfortable":      { "rating": 5, "value": "2–3 g, 2 mm Dicke", "notes": "Dünnster und leichtester Smart Ring; Titanlegierung in Luft- und Raumfahrtqualität; 6,8 mm Breite" },
         "long_battery":           { "rating": 5, "value": "10–12 Tage", "notes": "Bis zu 150 Tage mit Ladeetui; ca. 90 Minuten Ladezeit; Offline-Speicher 5–7 Tage" },
         "water_resistance":       { "rating": 4, "value": "IP68 (100 m)", "notes": "Geeignet für Schwimmen und Wassersport" },
-        "gps_accuracy":           { "rating": 0, "value": "Kein GPS", "notes": "Kein integriertes GPS" },
+        "gps_accuracy":           { "rating": 2, "value": "Kein GPS", "notes": "Kein integriertes GPS" },
         "smartphone_independent": { "rating": 2, "value": null, "notes": "Benötigt RingConn App (iOS 14.0+ / Android 8.0+); Offline-Speicher für 5–7 Tage" },
         "app_ecosystem":          { "rating": 3, "value": null, "notes": "RingConn App für iOS und Android; keine Drittanbieter-Integrationen in der Spezifikation erwähnt" },
         "design_modern":          { "rating": 4, "value": null, "notes": "Minimalistisches Ring-Design; 4 Farboptionen: Zukunftssilber, Matt-Schwarz, Königsgold, Roségold" },
@@ -2815,7 +2815,7 @@
         "no_display":             { "rating": 5, "value": null, "notes": "Displayfreier Ring für unauffälliges 24/7-Tragen" },
         "sleep_monitor":          { "rating": 5, "value": null, "notes": "Schlafapnoe-Überwachung (90,7 % Genauigkeit), Schlafphasen (REM, Leicht-, Tiefschlaf), Atemqualität, Herzaktivität, Temperatur" },
         "stress_monitor":         { "rating": 4, "value": null, "notes": "Stresswert und Trends in Echtzeit; Einfluss von Routinen auf Stressmuster" },
-        "ecg_hrv":                { "rating": 3, "value": null, "notes": "HRV 24/7 überwacht – kein EKG" },
+        "ecg_hrv":                { "rating": 3, "value": null, "notes": "HRV rund um die Uhr per optischem Sensor; kein EKG-Elektroden-Feature, kein Vorhofflimmern-Erkennung" },
         "vo2_max":                { "rating": 1, "value": null, "notes": "Nicht in der Spezifikation erwähnt" }
       },
       "pros": {
