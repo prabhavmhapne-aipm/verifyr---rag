@@ -91,8 +91,8 @@
             </div>
         </div>
 
-        <!-- Model Selector -->
-        <div class="sidebar-section">
+        <!-- Model Selector (admin only) -->
+        <div class="sidebar-section" id="sidebarModelSelectorSection" style="display:none">
             <label for="sidebarModelSelector" class="sidebar-section-label">Model:</label>
             <select id="sidebarModelSelector" class="model-selector sidebar-model-selector" onchange="syncModelSelector(this, 'modelSelector')">
                 <option value="claude-sonnet-4.5">Sonnet 4.5</option>

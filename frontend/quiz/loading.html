@@ -199,7 +199,7 @@
     <!-- Top content block -->
     <div class="loading-main">
         <h1 class="loading-logo">Verifyr</h1>
-        <p class="loading-tagline" id="loadingTagline">Dein Health-Tech Kaufberater</p>
+        <p class="loading-tagline" id="loadingTagline">Dein vertrauensvoller KI-Produktberater</p>
         <div class="loading-spinner"></div>
         <div class="loading-status-log" id="statusLog"></div>
     </div>
@@ -226,7 +226,7 @@
         const lang = localStorage.getItem('verifyr-lang') || 'de';
 
         // ── Tagline (bilingual) ──
-        const taglines = { de: 'Dein Health-Tech Kaufberater', en: 'Your Health-Tech Advisor' };
+        const taglines = { de: 'Dein vertrauensvoller KI-Produktberater', en: 'Your trusted AI Product Recommender' };
         document.getElementById('loadingTagline').textContent = taglines[lang] || taglines.de;
 
         // ── Status message cycling ──

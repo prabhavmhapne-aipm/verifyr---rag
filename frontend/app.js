@@ -220,6 +220,13 @@ async function init() {
         userEmailEl.textContent = userEmail;
     }
 
+    // Show model selector only for admins
+    const isAdmin = localStorage.getItem('verifyr_is_admin') === 'true';
+    const modelSelectorSection = document.getElementById('sidebarModelSelectorSection');
+    if (modelSelectorSection && isAdmin) {
+        modelSelectorSection.style.display = '';
+    }
+
     // Sync selectedModel with actual dropdown value
     updateModelNote();
 

@@ -30,7 +30,8 @@ Rules:
    Example of what TO write when no data: ""
 5. Be honest about real limitations — do not soften weaknesses
 6. Do NOT duplicate points already listed under static strengths/weaknesses
-7. Output ONLY valid JSON with "strength" and "weakness" keys — no markdown, no preamble"""
+7. Do NOT start bullets with the product name — write the fact directly, e.g. "Up to 26 hours in GPS mode — enough for ultramarathons" not "The Garmin Forerunner 970 offers up to 26 hours..."
+8. Output ONLY valid JSON with "strength" and "weakness" keys — no markdown, no preamble"""
 
 
 class RAGEnhancer:
