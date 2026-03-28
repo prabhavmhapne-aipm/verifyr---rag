@@ -187,8 +187,12 @@
 
         <!-- Expanded: chat panel -->
         <div class="chat-widget-panel" id="chatWidgetPanel">
+            <div class="chat-widget-resize-handle" id="chatWidgetResizeHandle"></div>
             <div class="chat-widget-header">
-                <span class="chat-widget-title">Verifyr Chat</span>
+                <div class="chat-widget-branding">
+                    <span class="chat-widget-logo">Verifyr</span>
+                    <span class="chat-widget-badge" id="chatWidgetBadge">Dein vertrauensvoller KI-Produktberater</span>
+                </div>
                 <div class="chat-widget-actions">
                     <a href="/chat.html" class="chat-widget-action-btn" title="Open full chat">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -204,11 +208,11 @@
             </div>
             <div class="chat-widget-messages" id="chatWidgetMessages">
                 <div class="chat-widget-msg assistant">
-                    <span id="chatWidgetWelcome">Ask me anything about these products!</span>
+                    <span id="chatWidgetWelcome">Hallo! Wie kann ich dir helfen? Ich helfe dir gerne bei allen Fragen zu den Produkten. Was möchtest du wissen?</span>
                 </div>
             </div>
             <div class="chat-widget-input-row">
-                <input type="text" id="chatWidgetInput" placeholder="Ask a question..." maxlength="500"/>
+                <input type="text" id="chatWidgetInput" placeholder="Frag nach Produkteigenschaften..." maxlength="500"/>
                 <button id="chatWidgetSend">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
@@ -235,8 +239,8 @@
 
         const lang = localStorage.getItem('verifyr-lang') || 'de';
         const WIDGET_TEXT = {
-            welcome:     { de: 'Frag mich alles zu diesen Produkten!', en: 'Ask me anything about these products!' },
-            placeholder: { de: 'Stell eine Frage...', en: 'Ask a question...' },
+            welcome:     { de: 'Hallo! Wie kann ich dir helfen? Ich helfe dir gerne bei allen Fragen zu den Produkten. Was möchtest du wissen?', en: 'Hello! How can I help you? I\'m happy to help with all questions about products. What would you like to know?' },
+            placeholder: { de: 'Frag nach Produkteigenschaften...', en: 'Ask about product features...' },
             loading:     { de: 'Schreibe...', en: 'Typing...' }
         };
 
@@ -247,9 +251,11 @@
         const input      = document.getElementById('chatWidgetInput');
         const sendBtn    = document.getElementById('chatWidgetSend');
         const welcomeEl  = document.getElementById('chatWidgetWelcome');
+        const badgeEl    = document.getElementById('chatWidgetBadge');
 
         // Apply language
         welcomeEl.textContent = WIDGET_TEXT.welcome[lang] || WIDGET_TEXT.welcome.en;
+        if (badgeEl) badgeEl.textContent = lang === 'en' ? 'Your trusted AI Product Recommender' : 'Dein vertrauensvoller KI-Produktberater';
         input.placeholder     = WIDGET_TEXT.placeholder[lang] || WIDGET_TEXT.placeholder.en;
 
         // Conversation state — matches app.js structure
@@ -266,6 +272,24 @@
 
         closeBtn.addEventListener('click', () => {
             panel.classList.remove('open');
+        });
+
+        // ── Resize panel by dragging top handle ──
+        const resizeHandle = document.getElementById('chatWidgetResizeHandle');
+        resizeHandle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const startY = e.clientY;
+            const startHeight = panel.offsetHeight;
+            const onMove = (ev) => {
+                const newHeight = Math.min(Math.max(300, startHeight - (ev.clientY - startY)), window.innerHeight * 0.85);
+                panel.style.height = newHeight + 'px';
+            };
+            const onUp = () => {
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            };
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
         });
 
         // Send on Enter
@@ -362,7 +386,17 @@
                 const data = await res.json();
                 const answer = data.answer || data.detail || '—';
                 appendMessage(answer, 'assistant');
-                widgetHistory.push({ role: 'assistant', content: answer });
+                widgetHistory.push({
+                    role: 'assistant',
+                    content: answer,
+                    sources: data.sources || [],
+                    metadata: {
+                        query_id: data.query_id,
+                        model_used: data.model_used,
+                        response_time_ms: data.response_time_ms,
+                        chunks_retrieved: data.chunks_retrieved
+                    }
+                });
 
                 // Save after every assistant reply
                 saveConversation();

@@ -674,9 +674,9 @@ class ResultsController {
         const activePositives = lang === 'en' && top_positives_en?.length ? top_positives_en : top_positives;
         const activeNegatives = lang === 'en' && top_negatives_en?.length ? top_negatives_en : top_negatives;
 
-        const ratingStr  = amazon_rating != null ? amazon_rating.toFixed(1).replace('.', ',') : '—';
+        const ratingStr  = amazon_rating != null ? amazon_rating.toFixed(1) : '—';
         const starsHtml  = amazon_rating != null
-            ? `<span class="sentiment-stars">${this._renderStars(amazon_rating)}</span><span class="sentiment-rating-num">${ratingStr} von 5</span>`
+            ? `<span class="sentiment-stars">${this._renderStars(amazon_rating)}</span><span class="sentiment-rating-num">${ratingStr} / 5</span>`
             : '';
         const countStr  = amazon_review_count != null
             ? `${amazon_review_count.toLocaleString('de-DE')} ${t.reviews[lang]}`
@@ -698,11 +698,13 @@ class ResultsController {
 
         return `
             <div class="sentiment-header">
-                <span class="sentiment-title">${t.title[lang]}</span>
+                <div class="sentiment-title-row">
+                    <span class="sentiment-title">${t.title[lang]}</span>
+                    ${last_updated ? `<span class="sentiment-last-updated">${lang === 'de' ? 'Zuletzt aktualisiert' : 'Last updated'}: ${last_updated}</span>` : ''}
+                </div>
                 <div class="sentiment-score">
                     ${starsHtml}
                     ${countStr ? `<span class="sentiment-count">${countStr}</span>` : ''}
-                    ${last_updated ? `<span class="sentiment-last-updated">${lang === 'de' ? 'Zuletzt aktualisiert' : 'Last updated'}: ${last_updated}</span>` : ''}
                 </div>
             </div>
             ${activeSummary ? `<p class="sentiment-summary">${activeSummary}</p>` : ''}

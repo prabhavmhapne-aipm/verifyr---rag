@@ -104,7 +104,7 @@ const TRANSLATIONS = {
         // Chat
         welcomeMessage: "Hallo! Wie kann ich dir helfen? Ich helfe dir gerne bei allen Fragen zu den Produkten. Was möchtest du wissen?",
         placeholder: "Frag nach Produkteigenschaften...",
-        sendButton: "Senden",
+        sendButton: "↑",
 
         // Quick Replies
         quickReplies: [
@@ -132,7 +132,7 @@ const TRANSLATIONS = {
         // Chat
         welcomeMessage: "Hello! How can I help you? I'm happy to help with all questions about products. What would you like to know?",
         placeholder: "Ask about product features...",
-        sendButton: "Send",
+        sendButton: "↑",
 
         // Quick Replies
         quickReplies: [
@@ -186,6 +186,8 @@ async function init() {
     if (localStorage.getItem('verifyr_quiz_completed') === 'true') {
         const resultsBtn = document.getElementById('navResultsBtn');
         if (resultsBtn) resultsBtn.style.display = '';
+        const mobileResultsBtn = document.getElementById('mobileNavResultsBtn');
+        if (mobileResultsBtn) mobileResultsBtn.style.display = '';
     }
 
     // Check authentication (returns boolean)
@@ -742,7 +744,9 @@ async function loadConversation(conversationId) {
 
     // Append feedback widget on the last assistant message if we have a trace ID
     if (lastQueryId) {
-        appendChatFeedbackWidget(lastQueryId);
+        const allMsgs = chatMessages.querySelectorAll('.assistant-message');
+        const lastMsgDiv = allMsgs[allMsgs.length - 1] || null;
+        appendChatFeedbackWidget(lastQueryId, lastMsgDiv);
     }
 
     // Save as active conversation
@@ -1077,9 +1081,9 @@ function displayAssistantMessage(answer, sources, metadata) {
 
     chatMessages.appendChild(messageDiv);
 
-    // Append feedback widget after the message (only if we have a trace ID)
+    // Append feedback widget inside the message, before sources (only if we have a trace ID)
     if (lastQueryId) {
-        appendChatFeedbackWidget(lastQueryId);
+        appendChatFeedbackWidget(lastQueryId, messageDiv);
     }
 
     scrollToBottom();
@@ -1089,7 +1093,7 @@ function displayAssistantMessage(answer, sources, metadata) {
  * Append thumbs up/down feedback widget after the last assistant message.
  * Linked to the Langfuse trace via traceId.
  */
-function appendChatFeedbackWidget(traceId) {
+function appendChatFeedbackWidget(traceId, messageDiv) {
     const widget = document.createElement('div');
     widget.className = 'chat-feedback-widget';
     widget.dataset.traceId = traceId;
@@ -1177,8 +1181,7 @@ function appendChatFeedbackWidget(traceId) {
     const copyOriginalHTML = copyBtn.innerHTML;
     copyBtn.addEventListener('click', () => {
         // Grab text from the preceding assistant message div
-        const msgDiv = widget.previousElementSibling;
-        const text = msgDiv?.querySelector('.message-content')?.innerText?.trim() || '';
+        const text = widget.closest('.assistant-message')?.querySelector('.message-content')?.innerText?.trim() || '';
 
         const onSuccess = () => {
             copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
@@ -1221,7 +1224,12 @@ function appendChatFeedbackWidget(traceId) {
         }
     });
 
-    chatMessages.appendChild(widget);
+    const sourcesEl = messageDiv ? messageDiv.querySelector('.message-sources') : null;
+    if (messageDiv) {
+        messageDiv.insertBefore(widget, sourcesEl);
+    } else {
+        chatMessages.appendChild(widget);
+    }
 }
 
 /**

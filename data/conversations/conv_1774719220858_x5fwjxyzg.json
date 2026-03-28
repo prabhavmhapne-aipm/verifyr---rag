@@ -1,0 +1,25 @@
+{
+  "conversation_id": "conv_1774719220858_x5fwjxyzg",
+  "user_id": "cdabd22b-7e3a-4d29-b367-1dfcdd3d1496",
+  "user_email": "info@verifyr.de",
+  "title": "Wie ist der Akku-Vergleich?",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Wie ist der Akku-Vergleich?",
+      "timestamp": "2026-03-28T18:33:53.939591"
+    },
+    {
+      "role": "assistant",
+      "content": "Entscheidender Unterschied für dein Prioritätsfeld Akkulaufzeit: die Garmin Forerunner 970 ist klar auf lange Laufzeiten ausgelegt und bietet umfangreiche Power‑Management‑Funktionen. Im Handbuch sind Energiesparmodus, anpassbare Aktivitätsenergiemodi, automatische Aktivierungsoptionen und Anzeigen für Akku‑% sowie erwartete Restzeit beschrieben – das erlaubt gezieltes Verlängern der Laufzeit während Uhrbetrieb und Aktivitäten. Die Apple Watch Series 11 wird im Review als „starke Leistung mit langer Laufzeit“ beschrieben, liefert aber in den vorliegenden Texten keine Details zu speziellen Energiesparmodi oder Einstellmöglichkeiten. Konkrete Stunden‑/Tagesangaben zur Akkulaufzeit fehlen in den bereitgestellten Quellen; wenn hervorragende Akkulaufzeit für dich oberste Priorität ist, spricht die dokumentierte Power‑Management‑Ausstattung der Forerunner 970 eher dafür, bei Funktionalität und App‑Ökosystem wäre die Series 11 die Alternative.",
+      "timestamp": "2026-03-28T18:33:53.939595",
+      "metadata": {
+        "query_id": "5bad9a4d60ab008b2c1ca0925aeafd61",
+        "model_used": "gpt-5-mini",
+        "chunks_retrieved": 8
+      }
+    }
+  ],
+  "created_at": "2026-03-28T18:33:53.939068",
+  "updated_at": "2026-03-28T18:33:53.939599"
+}

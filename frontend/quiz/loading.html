@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Verifyr – Analysiert...</title>
     <meta name="robots" content="noindex, nofollow">
 
@@ -128,32 +128,50 @@
         /* ── Activation circle (bottom) ── */
         .loading-activation {
             position: absolute;
-            bottom: 9.4vh;
+            bottom: calc(9.4vh + env(safe-area-inset-bottom, 0px));
             left: 50%;
             transform: translateX(-50%);
             width: 119px;
             height: 119px;
             /* outer glow matching the ring colours */
-            filter: drop-shadow(0 0 18px rgba(236, 72, 153, 0.45))
-                    drop-shadow(0 0 32px rgba(56, 189, 248, 0.35));
+            filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.4))
+                    drop-shadow(0 0 32px rgba(59, 130, 246, 0.5));
+        }
+
+        @media (max-height: 750px) {
+            .loading-main {
+                padding-top: 10vh;
+                padding-bottom: calc(6vh + 143px + env(safe-area-inset-bottom, 0px));
+            }
+            .loading-tagline {
+                margin-bottom: 24px;
+            }
+            .loading-spinner {
+                margin-bottom: 24px;
+            }
+            .loading-activation {
+                bottom: calc(6vh + env(safe-area-inset-bottom, 0px));
+                width: 100px;
+                height: 100px;
+            }
         }
 
         @keyframes glow-spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Pink → purple → blue → cyan rotating ring */
+        /* White → blue rotating ring */
         .activation-glow-ring {
             position: absolute;
             inset: -3px;
             border-radius: 50%;
             background: conic-gradient(
                 from 0deg,
-                #ec4899   0deg,    /* pink/magenta */
-                #a855f7  90deg,    /* purple */
+                #ffffff   0deg,    /* white */
+                #93c5fd  90deg,    /* light blue */
                 #3b82f6  180deg,   /* blue */
-                #38bdf8  270deg,   /* cyan */
-                #ec4899  360deg    /* back to pink */
+                #1d4ed8  270deg,   /* deep blue */
+                #ffffff  360deg    /* back to white */
             );
             animation: glow-spin 3s linear infinite;
         }
