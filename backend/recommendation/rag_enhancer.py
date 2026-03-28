@@ -131,7 +131,7 @@ class RAGEnhancer:
             chunks = []
             try:
                 query = self._build_query(product_name, use_cases, features)
-                chunks = self._retrieve_chunks(query, product_name)
+                chunks = self._retrieve_chunks(query, product_id)
                 strength, weakness, b_tokens, b_cost = self._generate_bullets(
                     product_id=product_id,
                     product_name=product_name,
@@ -214,14 +214,14 @@ class RAGEnhancer:
     def _retrieve_chunks(
         self,
         query: str,
-        product_name: str,
+        product_id: str,
         top_k: int = 5
     ) -> List[Dict[str, Any]]:
         """Retrieve relevant chunks for the given product using hybrid search."""
         results = self.searcher.search_hybrid(
             query=query,
             top_k=top_k,
-            target_products=[product_name],
+            target_products=[product_id],
             apply_diversity=False
         )
         return [r["chunk"] for r in results]
