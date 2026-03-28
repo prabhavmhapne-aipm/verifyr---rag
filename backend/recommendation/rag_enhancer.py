@@ -18,13 +18,13 @@ from openai import OpenAI
 from generation.llm_client import MODEL_CONFIGS
 
 
-SYSTEM_PROMPT = """You are a product recommendation expert. Generate concise, evidence-based bullet points based strictly on the provided document excerpts.
+SYSTEM_PROMPT = """You are a product recommendation expert. Generate concise, evidence-based bullet points based strictly on the provided product context.
 
 Rules:
 1. ONE strength bullet and ONE weakness bullet — both must directly address the user's specific use cases and feature priorities
 2. Each bullet: 1-2 sentences max, conversational tone
-3. Ground every bullet in the provided excerpts — use specific numbers, feature names, or facts from the text
-4. If the excerpts do not contain relevant data for the user's use case, return an empty string "" for that bullet — do not invent a fallback, generic claim, or explanatory note
+3. Ground every bullet in the product context — use specific numbers, feature names, ratings, or facts from the data
+4. If the product context does not contain relevant data for the user's use case, return an empty string "" for that bullet — do not invent a fallback or generic claim
    Example of what NOT to write: "This device offers an excellent balance between features and usability."
    Example of what TO write: "The Garmin Forerunner 970 offers up to 26 hours in GPS mode — enough for ultramarathons without recharging."
    Example of what TO write when no data: ""
@@ -128,14 +128,10 @@ class RAGEnhancer:
             product_id = product_match["product_id"]
             product_name = self._get_display_name(product_id)
 
-            chunks = []
             try:
-                query = self._build_query(product_name, use_cases, features)
-                chunks = self._retrieve_chunks(query, product_id)
                 strength, weakness, b_tokens, b_cost = self._generate_bullets(
                     product_id=product_id,
                     product_name=product_name,
-                    chunks=chunks,
                     use_cases=use_cases,
                     features=features,
                     language=language,
@@ -145,7 +141,7 @@ class RAGEnhancer:
                 total_output += b_tokens["output"]
                 total_cost += b_cost
             except Exception as e:
-                print(f"WARNING: RAG enhancement failed for {product_name}: {e}")
+                print(f"WARNING: Bullet generation failed for {product_name}: {e}")
                 strength, weakness = "", ""
 
             product_context = self._get_product_context(product_id)
@@ -177,7 +173,6 @@ class RAGEnhancer:
                 "reasoning": reasoning,
                 "eval_context": {
                     "product_name": product_name,
-                    "chunks": [c["text"] for c in chunks],
                     "product_metadata": product_context,
                 },
             })
@@ -230,13 +225,12 @@ class RAGEnhancer:
         self,
         product_id: str,
         product_name: str,
-        chunks: List[Dict[str, Any]],
         use_cases: List[str],
         features: List[str],
         language: str,
         special_request: str = "",
     ) -> Tuple[str, str]:
-        """Call GPT-5 Mini to generate 1 strength + 1 weakness bullet."""
+        """Call GPT-4o Mini to generate 1 strength + 1 weakness bullet from product metadata."""
         use_case_names = [
             self.products_metadata.get("use_cases_metadata", {})
                 .get(uc, {}).get("name", {}).get("en", uc.replace("_", " "))
@@ -249,7 +243,7 @@ class RAGEnhancer:
         ]
 
         static_pros, static_cons = self._get_static_bullets(product_id, language)
-        chunks_text = self._format_chunks(chunks)
+        product_context = self._get_product_context(product_id)
 
         lang_instruction = (
             "Write the bullets in German." if language == "de"
@@ -262,8 +256,8 @@ class RAGEnhancer:
 User's Use Cases: {', '.join(use_case_names)}
 User's Feature Priorities: {', '.join(feature_names)}{special_block}
 
-Relevant excerpts from product documentation:
-{chunks_text}
+Product context (specs, feature capabilities, use case suitability):
+{product_context}
 
 Static strengths already shown to user (do not repeat):
 {chr(10).join(f'- {s}' for s in static_pros) if static_pros else 'None'}
@@ -277,8 +271,8 @@ Output as JSON only:
 {{"strength": "...", "weakness": "..."}}"""
 
         response = self._openai.chat.completions.create(
-            model="gpt-5-mini",
-            max_completion_tokens=4096 + 400,  # +4096 for reasoning model internal tokens
+            model="gpt-4o-mini",
+            max_tokens=300,
             messages=[
                 {"role": "developer", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt}
@@ -296,7 +290,7 @@ Output as JSON only:
         bullets = json.loads(content)
         usage = response.usage
         tokens = {"input": usage.prompt_tokens if usage else 0, "output": usage.completion_tokens if usage else 0}
-        cfg = MODEL_CONFIGS.get("gpt-5-mini", {})
+        cfg = MODEL_CONFIGS.get("gpt-4o-mini", {})
         cost = (tokens["input"] / 1000 * cfg.get("cost_per_1k_input", 0)) + (tokens["output"] / 1000 * cfg.get("cost_per_1k_output", 0))
         return bullets.get("strength", "").strip(), bullets.get("weakness", "").strip(), tokens, cost
 
