@@ -180,6 +180,7 @@ class ResultsController {
 
     _copyProductRecommendation(card, btn) {
         if (!card) return;
+        const productId = card.dataset.productId || '';
         const name = card.querySelector('.product-name')?.textContent?.trim() || '';
         const reasoning = card.querySelector('.recommendation-text p')?.textContent?.trim() || '';
         const strengths = [...card.querySelectorAll('.strengths-section .section-list li')]
