@@ -710,7 +710,11 @@ async def query(
             if root_span:
                 generation_span = root_span.start_generation(
                     name="llm_generation",
-                    input={"question": request.question, "chunks_count": len(retrieved_chunks)},
+                    input={
+                        "question": request.question,
+                        "context_chunks": [c["text"] for c in retrieved_chunks],
+                        "chunks_count": len(retrieved_chunks)
+                    },
                     model=request.model or "gpt-5-mini"
                 )
         except Exception as e:
@@ -1309,7 +1313,13 @@ async def score_quiz_with_rag(
             try:
                 if rag_gen_span:
                     rag_gen_span.update(
-                        output={"enhanced_count": len(enhanced_top)},
+                        output={
+                            "enhanced_count": len(enhanced_top),
+                            "eval_contexts": {
+                                p["product_id"]: p.get("eval_context", {})
+                                for p in enhanced_top
+                            }
+                        },
                         usage_details={"input": top_usage["input"], "output": top_usage["output"]},
                         cost_details={"total": top_usage["cost_usd"]},
                         metadata={"time_ms": int((time.time() - rag_start) * 1000)}

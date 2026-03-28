@@ -128,6 +128,7 @@ class RAGEnhancer:
             product_id = product_match["product_id"]
             product_name = self._get_display_name(product_id)
 
+            chunks = []
             try:
                 query = self._build_query(product_name, use_cases, features)
                 chunks = self._retrieve_chunks(query, product_name)
@@ -146,6 +147,8 @@ class RAGEnhancer:
             except Exception as e:
                 print(f"WARNING: RAG enhancement failed for {product_name}: {e}")
                 strength, weakness = "", ""
+
+            product_context = self._get_product_context(product_id)
 
             try:
                 reasoning, r_tokens, r_cost = self._generate_reasoning(
@@ -172,6 +175,11 @@ class RAGEnhancer:
                 "dynamic_strength": strength,
                 "dynamic_weakness": weakness,
                 "reasoning": reasoning,
+                "eval_context": {
+                    "product_name": product_name,
+                    "chunks": [c["text"] for c in chunks],
+                    "product_metadata": product_context,
+                },
             })
 
         return enhanced, {"input": total_input, "output": total_output, "cost_usd": round(total_cost, 6)}
