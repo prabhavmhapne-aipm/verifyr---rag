@@ -206,6 +206,15 @@ function handleSubmit() {
             'has_special_request': !!specialNote
         });
     }
+    if (typeof posthog !== 'undefined') {
+        posthog.capture('quiz_step_completed', {
+            step: 'budget',
+            step_number: 4,
+            budget_min: minBudget,
+            budget_max: maxBudget,
+            has_special_request: !!specialNote
+        });
+    }
 
     window.location.href = '/quiz/loading.html';
 }

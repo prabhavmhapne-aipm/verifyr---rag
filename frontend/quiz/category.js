@@ -175,6 +175,13 @@ class CategoryController {
                 'category': this.selectedCategory
             });
         }
+        if (typeof posthog !== 'undefined') {
+            posthog.capture('quiz_step_completed', {
+                step: 'category',
+                step_number: 1,
+                category: this.selectedCategory
+            });
+        }
 
         // Navigate to use-case page
         window.location.href = '/quiz/use-case.html';

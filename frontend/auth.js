@@ -214,6 +214,10 @@ async function handleLogin(event) {
                     'method': 'email'
                 });
             }
+            if (typeof posthog !== 'undefined') {
+                posthog.identify(data.session.user.id, { email: data.session.user.email });
+                posthog.capture('auth_login', { method: 'email' });
+            }
 
             showMessage('Login successful! Redirecting...', 'success');
             setTimeout(() => redirectAfterLogin(data.session), 500);
@@ -278,6 +282,12 @@ async function handleSignup(event) {
         }
 
         if (data.user) {
+            if (typeof posthog !== 'undefined') {
+                posthog.capture('auth_signup', { method: 'email' });
+                if (data.session) {
+                    posthog.identify(data.session.user.id, { email: data.session.user.email });
+                }
+            }
             // Check if email confirmation is required
             if (data.user.identities && data.user.identities.length === 0) {
                 showMessage('This email is already registered. Please login instead.', 'error');

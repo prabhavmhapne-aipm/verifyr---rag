@@ -183,6 +183,14 @@ class UseCaseController {
                 'usecase_count': this.selectedUseCases.length
             });
         }
+        if (typeof posthog !== 'undefined') {
+            posthog.capture('quiz_step_completed', {
+                step: 'use_case',
+                step_number: 2,
+                use_cases: this.selectedUseCases,
+                use_case_count: this.selectedUseCases.length
+            });
+        }
 
         // Navigate to features page
         window.location.href = '/quiz/features.html';

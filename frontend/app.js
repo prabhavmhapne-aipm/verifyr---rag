@@ -662,6 +662,9 @@ function createNewConversation() {
             'event_category': 'chat_engagement'
         });
     }
+    if (typeof posthog !== 'undefined') {
+        posthog.capture('new_conversation');
+    }
 
     // Show welcome message
     displayWelcomeMessage();
@@ -916,6 +919,13 @@ async function handleSend() {
             'event_category': 'chat_engagement',
             'model': selectedModel,
             'language': window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de'
+        });
+    }
+    if (typeof posthog !== 'undefined') {
+        posthog.capture('chat_message_sent', {
+            model: selectedModel,
+            language: window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de',
+            message_length: question.length
         });
     }
 

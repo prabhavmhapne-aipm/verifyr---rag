@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifyr – Your trusted AI Product Recommender</title>
 
+    <!-- PostHog Analytics -->
+    <script src="posthog.js"></script>
+
     <!-- Primary Meta Tags -->
     <meta name="description" content="Verifyr is your brand-independent AI assistant for wearable health-tech. Compare smartwatches, fitness trackers & rings – neutral, transparent, and in seconds.">
     <meta name="keywords" content="health tech, product recommendation, AI assistant, smartwatch comparison, fitness tracker, wearable, product advisor, neutral reviews, brand-independent, Kaufberatung, Produktvergleich">
@@ -3011,153 +3014,137 @@
 
             <h3>1. Verantwortlicher</h3>
             <p>
-                Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br><br>
-                <strong>Prabhav Mhapne</strong><br>
-                Kalkumer Straße 36<br>
-                40468 Düsseldorf<br>
-                E-Mail: info@verifyr.de
+                Verantwortlich für die Verarbeitung personenbezogener Daten auf dieser Website ist Prabhav Mhapne,
+                Kalkumer Straße 36, 40468 Düsseldorf, erreichbar unter info@verifyr.de.
             </p>
 
-            <h3>2. Erhobene Daten und Zwecke</h3>
-
-            <h3>2.1 Waitlist-Anmeldung</h3>
-            <p>Bei der Anmeldung zur Waitlist erheben wir folgende Daten:</p>
-            <ul>
-                <li><strong>E-Mail-Adresse:</strong> Zur Zusendung des Early-Access-Links und von Produktupdates</li>
-                <li><strong>Zeitstempel:</strong> Datum und Uhrzeit der Anmeldung</li>
-            </ul>
+            <h3>2. Allgemeines zur Datenverarbeitung</h3>
             <p>
-                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO – Sie erteilen diese
-                durch Ankreuzen der Einwilligungs-Checkbox und Absenden des Formulars.<br>
-                <strong>Speicherdauer:</strong> Maximal 12 Monate ab Anmeldung, oder bis Sie die Löschung beantragen.
+                Wir verarbeiten personenbezogene Daten unserer Nutzer grundsätzlich nur, soweit dies zur
+                Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und Leistungen erforderlich ist.
+                Die Verarbeitung personenbezogener Daten erfolgt regelmäßig nur nach Einwilligung des Nutzers.
+                Eine Ausnahme gilt in solchen Fällen, in denen eine vorherige Einholung einer Einwilligung aus
+                tatsächlichen Gründen nicht möglich ist und die Verarbeitung der Daten durch gesetzliche Vorschriften
+                gestattet ist oder auf Grundlage eines berechtigten Interesses im Sinne von Art. 6 Abs. 1 lit. f
+                DSGVO erfolgt.
             </p>
 
-            <h3>2.2 Anonyme Nutzungsstatistiken (nur mit Ihrer Einwilligung)</h3>
+            <h3>3. Waitlist-Anmeldung</h3>
             <p>
-                Mit Ihrer ausdrücklichen Einwilligung erfassen wir anonyme Nutzungsstatistiken über Supabase
-                (Seitenaufrufe, Button-Klicks, Zeitstempel). Diese Daten enthalten keinerlei personenbezogene
-                Informationen und können keiner Person zugeordnet werden.
-            </p>
-            <p>
-                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.<br>
-                <strong>Widerruf:</strong> Jederzeit über
-                <a href="#" onclick="openConsentModal(); return false;" style="color: var(--primary-blue); text-decoration: underline;">Cookie-Einstellungen</a>.
+                Wenn Sie sich für unsere Warteliste (Waitlist) registrieren, erheben wir Ihre E-Mail-Adresse
+                sowie den Zeitstempel der Anmeldung. Die E-Mail-Adresse wird ausschließlich dazu verwendet,
+                Ihnen den Early-Access-Link sowie Produktupdates zuzusenden. Eine Weitergabe an Dritte zu
+                Werbezwecken findet nicht statt. Rechtsgrundlage dieser Verarbeitung ist Ihre Einwilligung
+                gemäß Art. 6 Abs. 1 lit. a DSGVO, die Sie durch Ankreuzen der Einwilligungs-Checkbox und
+                Absenden des Formulars erteilen. Die gespeicherten Daten werden spätestens 12 Monate nach
+                Ihrer Anmeldung gelöscht, sofern Sie nicht zuvor die Löschung beantragen.
             </p>
 
-            <h3>2.3 Google Analytics 4 (nur mit Ihrer Einwilligung)</h3>
+            <h3>4. Nutzungsanalyse und Tracking</h3>
+
+            <h3>4.1 PostHog (Produktanalyse)</h3>
             <p>
-                Mit Ihrer ausdrücklichen Einwilligung verwenden wir Google Analytics 4 (Google LLC, USA).
-                Dabei werden anonymisierte Nutzungsdaten erhoben (Seitenaufrufe, Interaktionen, Geräteinformationen,
-                gekürzte IP-Adresse). Consent Mode V1 ist aktiviert – Tracking startet erst nach Ihrer Zustimmung.
+                Diese Website verwendet PostHog, einen Dienst der PostHog Inc., 2261 Market Street #4008,
+                San Francisco, CA 94114, USA. PostHog erfasst anonymisierte Nutzungsdaten wie Seitenaufrufe,
+                Klicks und Interaktionen innerhalb der Anwendung (z. B. Schritte im Produktberater-Quiz,
+                Chat-Nutzung). Für nicht eingeloggte Besucher werden dabei keinerlei persönliche Nutzerprofile
+                erstellt; die Verarbeitung erfolgt ausschließlich in anonymisierter Form. Die Daten werden auf
+                EU-Servern in Frankfurt am Main verarbeitet und verlassen die Europäische Union nicht.
+                IP-Adressen werden nicht in personenbezogener Form gespeichert. Nach erfolgreichem Login wird
+                die Sitzung anhand der internen Nutzer-ID — nicht der E-Mail-Adresse — zugeordnet, um eine
+                konsistente Produktverbesserung zu ermöglichen. Rechtsgrundlage für anonyme Besucher ist das
+                berechtigte Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO. Sie können der Verarbeitung jederzeit
+                über unsere <a href="#" onclick="openConsentModal(); return false;" style="color: var(--primary-blue); text-decoration: underline;">Cookie-Einstellungen</a>
+                widersprechen. Den Auftragsverarbeitungsvertrag sowie weitere Datenschutzinformationen finden
+                Sie unter <a href="https://posthog.com/privacy" target="_blank" rel="noopener">posthog.com/privacy</a>
+                und <a href="https://posthog.com/dpa" target="_blank" rel="noopener">posthog.com/dpa</a>.
             </p>
-            <ul>
-                <li>IP-Anonymisierung aktiv – vollständige IP wird nicht gespeichert</li>
-                <li>Datenlöschung nach 2 Monaten (Google Analytics Standardeinstellung)</li>
-            </ul>
+
+            <h3>4.2 Google Analytics 4</h3>
             <p>
-                <strong>Rechtsgrundlage:</strong> Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.<br>
-                <strong>Dienstleister:</strong> Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA –
-                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
-                <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">AVV</a><br>
-                <strong>Widerruf:</strong> Über
+                Mit Ihrer ausdrücklichen Einwilligung verwenden wir Google Analytics 4, einen Webanalysedienst
+                der Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA. Google Analytics
+                erhebt anonymisierte Nutzungsdaten wie Seitenaufrufe, Interaktionen sowie gekürzte
+                IP-Adressen; die vollständige IP-Adresse wird nicht gespeichert. Das Tracking startet
+                ausschließlich nach Erteilung Ihrer Einwilligung (Consent Mode). Die erhobenen Daten werden
+                nach zwei Monaten automatisch gelöscht. Rechtsgrundlage ist Ihre Einwilligung gemäß
+                Art. 6 Abs. 1 lit. a DSGVO. Diese können Sie jederzeit über unsere
                 <a href="#" onclick="openConsentModal(); return false;" style="color: var(--primary-blue); text-decoration: underline;">Cookie-Einstellungen</a>
-                oder das <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out Add-on</a>.
+                oder über das
+                <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out-Add-on</a>
+                widerrufen. Den Auftragsverarbeitungsvertrag finden Sie unter
+                <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">business.safety.google/adsprocessorterms</a>.
             </p>
 
-            <h3>3. Lokaler Speicher (localStorage)</h3>
+            <h3>5. Lokaler Browserspeicher (localStorage)</h3>
             <p>
-                Verifyr speichert folgende Daten ausschließlich lokal in Ihrem Browser (localStorage).
-                Diese Daten werden <strong>nicht an Server übertragen</strong> und verbleiben auf Ihrem Gerät.
-                Sie können diese jederzeit über die Browser-Einstellungen löschen.
-            </p>
-            <ul>
-                <li><strong>verifyr-consent</strong> – Ihre Cookie-Einwilligungsentscheidung. Zweck: Merkung Ihrer Auswahl, damit das Banner nicht bei jedem Besuch erscheint. Speicherdauer: Persistent.</li>
-                <li><strong>verifyr-lang</strong> – Ihre Sprachpräferenz (DE/EN). Zweck: Anzeige der Website in Ihrer bevorzugten Sprache. Speicherdauer: Persistent.</li>
-                <li><strong>Quiz-Antworten</strong> (verifyr-quiz-*) – Ihre Auswahl im Produktberater-Quiz (Kategorie, Budget, Prioritäten). Zweck: Ergebnisanzeige ohne erneute API-Abfrage. Speicherdauer: Sitzungsbasiert.</li>
-                <li><strong>Konversationshistorie</strong> – Ihr Chat-Verlauf im KI-Assistenten. Zweck: Anzeige gespeicherter Gespräche innerhalb der App. Speicherdauer: Bis zur manuellen Löschung durch Sie.</li>
-            </ul>
-            <p>
-                <strong>Rechtsgrundlage:</strong> Berechtigtes Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO
-                (technisch notwendige Funktionen) sowie Einwilligung für nicht notwendige Speicherungen.
+                Verifyr speichert bestimmte Daten ausschließlich lokal in Ihrem Browser (localStorage).
+                Diese Daten werden nicht an unsere Server übertragen und verbleiben vollständig auf Ihrem
+                Endgerät. Gespeichert werden Ihre Cookie-Einwilligungsentscheidung (verifyr-consent),
+                Ihre Sprachpräferenz (verifyr-lang), Ihre Auswahl im Produktberater-Quiz sowie Ihr
+                Chat-Verlauf im KI-Assistenten. Die Quiz-Daten werden sitzungsbasiert gespeichert;
+                der Chat-Verlauf verbleibt bis zur manuellen Löschung durch Sie. Sie können alle
+                lokal gespeicherten Daten jederzeit über die Einstellungen Ihres Browsers löschen.
+                Rechtsgrundlage ist das berechtigte Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO
+                für technisch notwendige Funktionen.
             </p>
 
-            <h3>4. Cookie- und Tracking-Inventar</h3>
-            <p>Die folgende Tabelle listet alle auf dieser Website verwendeten Cookies und Speichermechanismen:</p>
-
-            <p><strong>Notwendig (immer aktiv):</strong></p>
-            <ul>
-                <li><strong>verifyr-consent</strong> | localStorage | Speichert Ihre Cookie-Einstellungen | Persistent</li>
-                <li><strong>verifyr-lang</strong> | localStorage | Speichert Ihre Sprachpräferenz | Persistent</li>
-                <li><strong>verifyr-quiz-*</strong> | localStorage | Quiz-Fortschritt und Ergebnisse | Sitzungsbasiert</li>
-                <li><strong>Konversationshistorie</strong> | localStorage | Chat-Verlauf | Persistent, manuell löschbar</li>
-            </ul>
-
-            <p><strong>Analytics (nur mit Ihrer Einwilligung):</strong></p>
-            <ul>
-                <li><strong>_ga</strong> | Cookie | Google Analytics: Unterscheidet Nutzer anhand einer zufälligen ID | 2 Jahre</li>
-                <li><strong>_ga_1ZT0DR8VL1</strong> | Cookie | Google Analytics 4: Session-Status | 2 Jahre</li>
-            </ul>
-
-            <h3>5. Weitergabe von Daten an Dritte</h3>
+            <h3>6. Auftragsverarbeiter</h3>
             <p>
-                Ihre Daten werden nicht zu Werbezwecken an Dritte weitergegeben.
-                Wir setzen folgende Auftragsverarbeiter ein, mit denen jeweils ein
-                Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO besteht:
+                Ihre Daten werden nicht zu Werbezwecken an Dritte weitergegeben. Für den Betrieb dieser
+                Website setzen wir folgende Auftragsverarbeiter ein, mit denen jeweils ein
+                Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO geschlossen wurde: Für Hosting,
+                Backend und das KI-Empfehlungssystem nutzen wir Hostinger International Ltd., Litauen
+                (EU), auf einem dedizierten Server in Frankfurt, Deutschland
+                (<a href="https://www.hostinger.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a>,
+                <a href="https://www.hostinger.com/legal/data-processing-agreement" target="_blank" rel="noopener">AVV</a>).
+                Für Authentifizierung und Datenbankdienste (E-Mail-Adressen, Nutzerverwaltung) nutzen
+                wir Supabase Inc., USA, auf AWS-Servern in EU-Central-1, Frankfurt, Deutschland
+                (<a href="https://supabase.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a>,
+                <a href="https://supabase.com/legal/dpa" target="_blank" rel="noopener">AVV</a>).
+                Für Produktanalyse nutzen wir PostHog Inc., USA, mit ausschließlicher Datenverarbeitung
+                auf EU-Servern in Frankfurt, Deutschland
+                (<a href="https://posthog.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a>,
+                <a href="https://posthog.com/dpa" target="_blank" rel="noopener">AVV</a>).
+                Für Webanalyse (nur mit Ihrer Einwilligung) nutzen wir Google LLC, USA, mit
+                Standardvertragsklauseln für Drittlandübermittlungen
+                (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a>,
+                <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">AVV</a>).
             </p>
 
-            <p><strong>Hosting (Website, Backend, RAG-System):</strong></p>
-            <ul>
-                <li>Hostinger International Ltd., Litauen (EU) – VPS Frankfurt, Deutschland</li>
-                <li><a href="https://www.hostinger.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
-                    <a href="https://www.hostinger.com/legal/data-processing-agreement" target="_blank" rel="noopener">AVV</a></li>
-            </ul>
-
-            <p><strong>Datenbank (E-Mail-Adressen, Statistiken):</strong></p>
-            <ul>
-                <li>Supabase Inc., USA – Server: AWS EU-Central-1, Frankfurt, Deutschland</li>
-                <li><a href="https://supabase.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
-                    <a href="https://supabase.com/legal/dpa" target="_blank" rel="noopener">AVV</a></li>
-            </ul>
-
-            <p><strong>Webanalyse (nur mit Einwilligung):</strong></p>
-            <ul>
-                <li>Google LLC, USA – EU-Server bevorzugt, SCC abgeschlossen</li>
-                <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a> |
-                    <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">AVV</a></li>
-            </ul>
-
-            <h3>6. Ihre Rechte</h3>
-            <p>Sie haben gemäß DSGVO folgende Rechte:</p>
-            <ul>
-                <li><strong>Auskunft</strong> (Art. 15): Welche Daten wir über Sie gespeichert haben</li>
-                <li><strong>Berichtigung</strong> (Art. 16): Korrektur unrichtiger Daten</li>
-                <li><strong>Löschung</strong> (Art. 17): Vollständige Löschung Ihrer Daten</li>
-                <li><strong>Einschränkung</strong> (Art. 18): Beschränkung der Verarbeitung</li>
-                <li><strong>Widerruf</strong> (Art. 7 Abs. 3): Widerruf Ihrer Einwilligung jederzeit ohne Angabe von Gründen</li>
-                <li><strong>Beschwerde</strong> (Art. 77): Beschwerde bei der zuständigen Aufsichtsbehörde (LDI NRW, <a href="https://www.ldi.nrw.de" target="_blank" rel="noopener">ldi.nrw.de</a>)</li>
-            </ul>
+            <h3>7. Ihre Rechte</h3>
             <p>
-                Zur Ausübung Ihrer Rechte genügt eine E-Mail an <strong>info@verifyr.de</strong>.
-                Wir bearbeiten Ihre Anfrage innerhalb von 30 Tagen.
+                Ihnen stehen gemäß der Datenschutz-Grundverordnung folgende Rechte zu: das Recht auf
+                Auskunft über die von uns verarbeiteten Daten (Art. 15 DSGVO), das Recht auf Berichtigung
+                unrichtiger Daten (Art. 16 DSGVO), das Recht auf Löschung (Art. 17 DSGVO), das Recht auf
+                Einschränkung der Verarbeitung (Art. 18 DSGVO) sowie das Recht auf jederzeitigen Widerruf
+                einer erteilten Einwilligung ohne Angabe von Gründen (Art. 7 Abs. 3 DSGVO). Darüber hinaus
+                haben Sie das Recht, sich bei der zuständigen Datenschutzaufsichtsbehörde — der
+                Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (LDI NRW,
+                <a href="https://www.ldi.nrw.de" target="_blank" rel="noopener">ldi.nrw.de</a>) — zu beschweren.
+                Zur Ausübung Ihrer Rechte genügt eine formlose E-Mail an info@verifyr.de; wir bearbeiten
+                Ihre Anfrage innerhalb von 30 Tagen.
             </p>
 
-            <h3>7. Datensicherheit</h3>
-            <ul>
-                <li><strong>Übertragung:</strong> TLS/SSL-Verschlüsselung (HTTPS) für alle Verbindungen</li>
-                <li><strong>Hosting:</strong> Dedizierter VPS in Frankfurt, Deutschland</li>
-                <li><strong>Schriftfonts:</strong> Selbst gehostet – kein Aufruf externer Font-Server</li>
-                <li><strong>Firewall & Updates:</strong> Konfigurierte Firewall, automatische Sicherheitsupdates</li>
-                <li><strong>Datensparsamkeit:</strong> Nur die für den jeweiligen Zweck notwendigen Daten werden erhoben</li>
-            </ul>
-
-            <h3>8. Änderungen dieser Datenschutzerklärung</h3>
+            <h3>8. Datensicherheit</h3>
             <p>
-                Diese Datenschutzerklärung wird bei wesentlichen Änderungen an der Website oder der
-                Datenverarbeitung aktualisiert. Das Datum der letzten Aktualisierung ist unten angegeben.
+                Alle Datenübertragungen zwischen Ihrem Browser und unseren Servern erfolgen ausschließlich
+                über verschlüsselte HTTPS-Verbindungen (TLS/SSL). Die Website wird auf einem dedizierten
+                Server in Frankfurt am Main betrieben, der durch eine konfigurierte Firewall und
+                automatische Sicherheitsupdates geschützt ist. Schriftarten werden selbst gehostet,
+                sodass kein Kontakt zu externen Font-Servern entsteht. Wir erheben grundsätzlich nur
+                die Daten, die für den jeweiligen Verarbeitungszweck tatsächlich erforderlich sind
+                (Grundsatz der Datensparsamkeit, Art. 5 Abs. 1 lit. c DSGVO).
+            </p>
+
+            <h3>9. Aktualität dieser Erklärung</h3>
+            <p>
+                Diese Datenschutzerklärung wird bei wesentlichen Änderungen der Website oder der
+                Datenverarbeitung aktualisiert. Es gilt jeweils die zum Zeitpunkt des Abrufs veröffentlichte Fassung.
             </p>
 
             <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--gray);">
-                <strong>Stand:</strong> 14. März 2026
+                Stand: 28. März 2026
             </p>
         </div>
     </div>
@@ -3656,6 +3643,9 @@
                     'analytics_storage': 'granted'
                 });
             }
+            if (typeof posthog !== 'undefined') {
+                posthog.opt_in_capturing();
+            }
 
             hideBanner();
             console.log('✓ All consent accepted');
@@ -3679,6 +3669,9 @@
                     'analytics_storage': 'denied'
                 });
             }
+            if (typeof posthog !== 'undefined') {
+                posthog.opt_out_capturing();
+            }
 
             hideBanner();
             console.log('✓ Analytics consent rejected');
@@ -3699,6 +3692,9 @@
                 gtag('consent', 'update', {
                     'analytics_storage': analyticsCheckbox.checked ? 'granted' : 'denied'
                 });
+            }
+            if (typeof posthog !== 'undefined') {
+                analyticsCheckbox.checked ? posthog.opt_in_capturing() : posthog.opt_out_capturing();
             }
 
             closeConsentModal();

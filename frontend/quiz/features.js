@@ -240,6 +240,14 @@ class FeaturesController {
                 'feature_count': this.selectedFeatures.length
             });
         }
+        if (typeof posthog !== 'undefined') {
+            posthog.capture('quiz_step_completed', {
+                step: 'features',
+                step_number: 3,
+                features: this.selectedFeatures,
+                feature_count: this.selectedFeatures.length
+            });
+        }
 
         window.location.href = '/quiz/budget.html';
     }

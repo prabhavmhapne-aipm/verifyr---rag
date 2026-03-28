@@ -38,6 +38,14 @@ class ResultsController {
                 'authenticated': isAuthenticated
             });
         }
+        if (typeof posthog !== 'undefined') {
+            var _res = this.quizResults;
+            posthog.capture('results_viewed', {
+                authenticated: isAuthenticated,
+                product_count: _res?.matched_products?.length || 0,
+                top_product: _res?.matched_products?.[0]?.product_id || null
+            });
+        }
 
         // Show auth modal if not authenticated
         if (!isAuthenticated) {
