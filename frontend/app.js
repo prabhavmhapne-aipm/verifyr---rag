@@ -1097,32 +1097,33 @@ function appendChatFeedbackWidget(traceId, messageDiv) {
     const widget = document.createElement('div');
     widget.className = 'chat-feedback-widget';
     widget.dataset.traceId = traceId;
+    const isDE = currentLanguage === 'de';
     widget.innerHTML = `
         <div class="feedback-row">
-            <span class="feedback-label">War das hilfreich?</span>
-            <button class="feedback-copy-btn" title="Antwort kopieren">
+            <span class="feedback-label">${isDE ? 'War das hilfreich?' : 'Was this helpful?'}</span>
+            <button class="feedback-copy-btn" title="${isDE ? 'Antwort kopieren' : 'Copy answer'}">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                 </svg>
             </button>
-            <button class="feedback-thumb feedback-thumb-up" title="Ja, hilfreich">
+            <button class="feedback-thumb feedback-thumb-up" title="${isDE ? 'Ja, hilfreich' : 'Yes, helpful'}">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
                     <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
                 </svg>
             </button>
-            <button class="feedback-thumb feedback-thumb-down" title="Nein, nicht hilfreich">
+            <button class="feedback-thumb feedback-thumb-down" title="${isDE ? 'Nein, nicht hilfreich' : 'No, not helpful'}">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
                     <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
                 </svg>
             </button>
-            <span class="feedback-sent" style="display:none">&#10003; Danke!</span>
+            <span class="feedback-sent" style="display:none">&#10003; ${isDE ? 'Danke!' : 'Thank you!'}</span>
         </div>
         <div class="feedback-comment-row" style="display:none">
-            <textarea class="feedback-comment-input" placeholder="Was hätten wir besser machen können? (optional)" rows="2"></textarea>
-            <button class="feedback-comment-submit">Senden</button>
+            <textarea class="feedback-comment-input" placeholder="${isDE ? 'Was hätten wir besser machen können? (optional)' : 'What could we have done better? (optional)'}" rows="2"></textarea>
+            <button class="feedback-comment-submit">${isDE ? 'Senden' : 'Send'}</button>
         </div>
     `;
 

@@ -1368,10 +1368,31 @@ body {
 
 .chat-widget-msg.loading {
     background: var(--light-gray, #F1F5F9);
-    color: var(--gray, #94A3B8);
     align-self: flex-start;
-    font-style: italic;
     box-shadow: none;
+    padding: 10px 14px;
+}
+
+.chat-widget-loading-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.chat-widget-loading-dots span {
+    width: 7px;
+    height: 7px;
+    background: var(--gray, #94A3B8);
+    border-radius: 50%;
+    animation: widgetBounce 1.4s infinite ease-in-out both;
+}
+
+.chat-widget-loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.chat-widget-loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes widgetBounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
 }
 
 .chat-widget-input-row {
