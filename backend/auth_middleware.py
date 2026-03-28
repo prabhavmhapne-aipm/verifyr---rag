@@ -298,6 +298,8 @@ def get_config() -> dict:
         "enable_signup": ENABLE_SIGNUP,
         "langfuse_public_key": os.getenv("LANGFUSE_PUBLIC_KEY", ""),
         "langfuse_host": os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
+        "posthog_api_key": os.getenv("POSTHOG_API_KEY", ""),
+        "posthog_api_host": os.getenv("POSTHOG_API_HOST", "https://eu.i.posthog.com"),
     }
 
 
