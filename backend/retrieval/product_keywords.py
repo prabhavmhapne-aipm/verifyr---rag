@@ -19,21 +19,48 @@ PRODUCT_KEYWORD_MAPPING = {
         "apple watch 11"
     ],
     "garmin_forerunner_970_2025": [
-        "garmin",
         "forerunner",
         "970",
         "garmin forerunner",
         "garmin forerunner 970",
         "forerunner 970"
+    ],
+    "garmin_fenix_8_2024": [
+        "fenix",
+        "fénix",
+        "garmin fenix",
+        "garmin fénix",
+        "fenix 8",
+        "fénix 8"
+    ],
+    "oura_ring_4_2024": [
+        "oura",
+        "oura ring",
+        "oura ring 4",
+        "oura 4"
+    ],
+    "ringconn_gen2_2024": [
+        "ringconn",
+        "ring conn",
+        "ringconn gen 2",
+        "ringconn gen2",
+        "gen 2 ring",
+        "gen2 ring"
+    ],
+    "whoop_5_0_peak_2025": [
+        "whoop",
+        "whoop 5",
+        "whoop 5.0",
+        "whoop peak",
+        "whoop band"
+    ],
+    "amazfit_helio_strap_2025": [
+        "amazfit",
+        "helio",
+        "helio strap",
+        "amazfit helio",
+        "amazfit helio strap"
     ]
-    # Add new products here:
-    # "samsung_galaxy_watch7_2025": [
-    #     "samsung",
-    #     "galaxy watch",
-    #     "watch 7",
-    #     "galaxy watch 7",
-    #     "samsung galaxy"
-    # ]
 }
 
 
