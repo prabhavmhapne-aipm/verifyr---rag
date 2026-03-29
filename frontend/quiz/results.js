@@ -215,7 +215,7 @@ class ResultsController {
                     body: JSON.stringify({ trace_id: this.quizTraceId, name: `copy_recommendation_${productId}`, value: 1 })
                 }).catch(() => {});
             }
-            btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Kopiert!</span>`;
+            btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>${this.currentLanguage === 'de' ? 'Kopiert!' : 'Copied!'}</span>`;
             btn.style.color = '#16A34A';
             btn.style.borderColor = '#16A34A';
             setTimeout(() => { btn.innerHTML = originalHTML; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);

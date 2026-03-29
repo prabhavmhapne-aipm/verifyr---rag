@@ -151,12 +151,14 @@
                     </div>
                 </div>
 
-                <!-- Desktop: Navigation buttons (like quiz pages) -->
+                <!-- Desktop: Navigation buttons -->
                 <div class="header-nav desktop-nav">
-                    <a href="/" class="nav-btn">Home</a>
-                    <a href="/quiz/category.html" class="nav-btn">Quiz</a>
-                    <a href="/quiz/results.html" class="nav-btn" id="navResultsBtn" style="display:none;">Results</a>
-                    <a href="/chat.html" class="nav-btn active">Chat</a>
+                    <a href="/quiz/results.html" class="nav-btn results-back-btn" id="navResultsBtn" style="display:none;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                            <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Results
+                    </a>
                 </div>
 
                 <!-- Controls: Model Selection & User Menu (hidden on desktop) -->
@@ -205,10 +207,11 @@
                 </div>
                 <div class="mobile-menu-divider"></div>
 
-                <a href="/" class="mobile-menu-item">Home</a>
-                <a href="/quiz/category.html" class="mobile-menu-item">Quiz</a>
-                <a href="/quiz/results.html" class="mobile-menu-item" id="mobileNavResultsBtn" style="display:none;">Results</a>
-                <a href="/chat.html" class="mobile-menu-item active">Chat</a>
+                <a href="/quiz/results.html" class="mobile-menu-item" id="mobileNavResultsBtn" style="display:none;">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="vertical-align:middle;margin-right:4px;">
+                        <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>Results
+                </a>
                 <div class="mobile-menu-divider"></div>
 
                 <!-- Conversation History -->
