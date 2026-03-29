@@ -9,7 +9,8 @@
         .then(function (cfg) {
             if (!cfg.posthog_api_key) return;
             posthog.init(cfg.posthog_api_key, {
-                api_host: cfg.posthog_api_host || 'https://eu.i.posthog.com',
+                api_host: window.location.origin + '/ingest',
+                ui_host: 'https://eu.posthog.com',
                 defaults: '2026-01-30',
                 person_profiles: 'identified_only',
             });
