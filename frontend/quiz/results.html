@@ -266,6 +266,20 @@
         let isLoading = false;
         let convId = 'conv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
+        // Refresh Supabase token on widget init to avoid stale key issues
+        (async function refreshToken() {
+            try {
+                const config = await fetch(API_BASE + '/config').then(r => r.json());
+                if (config.supabase_url && config.supabase_anon_key && window.supabase) {
+                    const client = window.supabase.createClient(config.supabase_url, config.supabase_anon_key);
+                    const { data } = await client.auth.refreshSession();
+                    if (data?.session) {
+                        localStorage.setItem('verifyr_access_token', data.session.access_token);
+                    }
+                }
+            } catch(e) { /* silent — falls back to stored token */ }
+        })();
+
         // Toggle open/close
         toggleBtn.addEventListener('click', () => {
             const isOpen = panel.classList.contains('open');
