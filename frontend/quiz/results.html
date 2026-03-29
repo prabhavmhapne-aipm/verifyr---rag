@@ -489,6 +489,11 @@
                 if (btn) btn.style.display = "";
             }
         })();
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'verifyr_access_token' && !e.newValue) {
+                window.location.href = '/auth.html';
+            }
+        });
     </script>
     <script src="/version-check.js"></script>
 </body>

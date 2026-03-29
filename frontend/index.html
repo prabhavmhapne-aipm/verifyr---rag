@@ -3940,6 +3940,19 @@
                 }
             }
 
+            // Sync logout across tabs — reset button if token is removed in another tab
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'verifyr_access_token' && !e.newValue) {
+                    const loginBtn = document.querySelector('.nav-login');
+                    if (loginBtn) {
+                        loginBtn.href = '/auth.html';
+                        loginBtn.setAttribute('data-i18n', 'nav.login');
+                        const lang = localStorage.getItem('verifyr-lang') || 'de';
+                        loginBtn.textContent = lang === 'en' ? 'Login' : 'Login';
+                    }
+                }
+            });
+
             // Check and show consent banner
             checkAndShowConsentBanner();
 

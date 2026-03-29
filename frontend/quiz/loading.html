@@ -347,6 +347,12 @@
         }
 
         submitQuiz();
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'verifyr_access_token' && !e.newValue) {
+                window.location.href = '/auth.html';
+            }
+        });
     </script>
 
     <script>
