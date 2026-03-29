@@ -179,23 +179,6 @@ async def get_current_user(
             last_error = e
             print(f"⚠️  HS256 verification failed: {type(e).__name__}: {str(e)}")
 
-    # Method 3: Decode without verification (TEMPORARY - for debugging only)
-    # WARNING: This bypasses security and should only be used to diagnose the issue
-    if payload is None:
-        try:
-            print(f"⚠️  All verification methods failed, attempting unverified decode for debugging...")
-            payload = jwt.decode(
-                token,
-                options={"verify_signature": False, "verify_aud": False}
-            )
-            method_used = "UNVERIFIED (DEBUG ONLY)"
-            print(f"⚠️  Token decoded WITHOUT verification: {method_used}")
-            print(f"⚠️  Token payload: sub={payload.get('sub')}, email={payload.get('email')}")
-            print(f"⚠️  Token header: {jwt.get_unverified_header(token)}")
-        except Exception as e:
-            last_error = e
-            print(f"❌ Even unverified decode failed: {type(e).__name__}: {str(e)}")
-
     # If all methods failed, raise authentication error
     if payload is None:
         if isinstance(last_error, jwt.ExpiredSignatureError):
@@ -206,11 +189,10 @@ async def get_current_user(
                 headers={"WWW-Authenticate": "Bearer"}
             )
         else:
-            error_msg = str(last_error) if last_error else "Invalid token"
-            print(f"❌ Token verification failed: {error_msg}")
+            print(f"❌ Token verification failed: {str(last_error)}")
             raise HTTPException(
                 status_code=401,
-                detail=f"Invalid token: {error_msg}",
+                detail="Invalid token",
                 headers={"WWW-Authenticate": "Bearer"}
             )
 
