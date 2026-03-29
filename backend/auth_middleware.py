@@ -81,7 +81,7 @@ def get_jwks_client():
         # Construct JWKS URL from Supabase project URL
         jwks_url = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json"
         try:
-            _jwks_client = PyJWKClient(jwks_url)
+            _jwks_client = PyJWKClient(jwks_url, cache_jwk_set=True, lifespan=300)
             print(f"✅ JWKS client initialized: {jwks_url}")
         except Exception as e:
             print(f"⚠️  Could not initialize JWKS client: {e}")

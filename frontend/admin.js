@@ -71,7 +71,9 @@ async function checkAdminAuth() {
         if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            const { data: { session } } = await supabaseClient.auth.getSession();
+            // Force refresh to always get a token signed with the current Supabase key
+            const { data: refreshData } = await supabaseClient.auth.refreshSession();
+            const session = refreshData?.session;
 
             if (session) {
                 currentSession = session;
