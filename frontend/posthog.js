@@ -13,7 +13,9 @@
                 ui_host: 'https://eu.posthog.com',
                 defaults: '2026-01-30',
                 person_profiles: 'identified_only',
+                autocapture_exceptions: true,
             });
+            posthog.register({ language: localStorage.getItem('verifyr-lang') || 'de' });
         })
         .catch(function () { /* PostHog unavailable — analytics silently disabled */ });
 })();
