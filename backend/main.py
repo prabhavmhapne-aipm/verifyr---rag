@@ -692,6 +692,21 @@ async def query(
         # Extract chunks for LLM
         retrieved_chunks = [result["chunk"] for result in search_results]
 
+        # Build product metadata context for detected products
+        product_context = []
+        if target_products and products_metadata:
+            for p in products_metadata.get("products", []):
+                if p.get("id") in target_products:
+                    product_context.append({
+                        "id": p.get("id"),
+                        "display_name": p.get("display_name", {}),
+                        "key_specs": p.get("key_specs", {}),
+                        "pros": p.get("pros", {}),
+                        "cons": p.get("cons", {}),
+                        "best_for": p.get("best_for", {}),
+                        "price": p.get("price"),
+                    })
+
         retrieval_time_ms = int((time.time() - retrieval_start) * 1000)
 
         try:
@@ -733,7 +748,8 @@ async def query(
             retrieved_chunks,
             language=request.language or "en",
             conversation_history=request.conversation_history or [],
-            quiz_profile=request.quiz_profile
+            quiz_profile=request.quiz_profile,
+            product_context=product_context or None
         )
 
         generation_time_ms = int((time.time() - generation_start) * 1000)
