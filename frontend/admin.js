@@ -71,14 +71,6 @@ async function checkAdminAuth() {
         if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // Sync sign-out across tabs in real-time
-            supabaseClient.auth.onAuthStateChange((event) => {
-                if (event === 'SIGNED_OUT') {
-                    clearAuthData();
-                    window.location.href = '/auth.html';
-                }
-            });
-
             const { data: { session } } = await supabaseClient.auth.getSession();
 
             if (session) {
@@ -1149,3 +1141,11 @@ document.addEventListener('click', (e) => {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', init);
+
+// Sync sign-out across tabs — fires only in OTHER tabs, never the current one
+window.addEventListener('storage', function(e) {
+    if (e.key === 'verifyr_access_token' && !e.newValue) {
+        clearAuthData();
+        window.location.href = '/auth.html';
+    }
+});
