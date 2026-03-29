@@ -3643,7 +3643,7 @@
                     'analytics_storage': 'granted'
                 });
             }
-            if (typeof posthog !== 'undefined') {
+            if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
                 posthog.opt_in_capturing();
             }
 
@@ -3669,7 +3669,7 @@
                     'analytics_storage': 'denied'
                 });
             }
-            if (typeof posthog !== 'undefined') {
+            if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
                 posthog.opt_out_capturing();
             }
 
@@ -3693,7 +3693,7 @@
                     'analytics_storage': analyticsCheckbox.checked ? 'granted' : 'denied'
                 });
             }
-            if (typeof posthog !== 'undefined') {
+            if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
                 analyticsCheckbox.checked ? posthog.opt_in_capturing() : posthog.opt_out_capturing();
             }
 

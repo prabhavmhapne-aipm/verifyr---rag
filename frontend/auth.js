@@ -214,7 +214,7 @@ async function handleLogin(event) {
                     'method': 'email'
                 });
             }
-            if (typeof posthog !== 'undefined') {
+            if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
                 posthog.identify(data.session.user.id, { email: data.session.user.email });
                 posthog.capture('auth_login', { method: 'email' });
             }
@@ -282,7 +282,7 @@ async function handleSignup(event) {
         }
 
         if (data.user) {
-            if (typeof posthog !== 'undefined') {
+            if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
                 posthog.capture('auth_signup', { method: 'email' });
                 if (data.session) {
                     posthog.identify(data.session.user.id, { email: data.session.user.email });

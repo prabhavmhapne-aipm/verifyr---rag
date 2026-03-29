@@ -175,7 +175,7 @@ class CategoryController {
                 'category': this.selectedCategory
             });
         }
-        if (typeof posthog !== 'undefined') {
+        if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
             posthog.capture('quiz_step_completed', {
                 step: 'category',
                 step_number: 1,

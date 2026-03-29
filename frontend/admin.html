@@ -942,6 +942,99 @@
                 position: relative;
             }
         }
+
+        /* ── System Status ── */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: var(--spacing-lg);
+            padding: var(--spacing-xl);
+        }
+
+        .status-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-base);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .status-card:hover {
+            box-shadow: var(--shadow-card);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .status-dot.ok       { background: #22C55E; box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+        .status-dot.error    { background: #EF4444; box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+        .status-dot.unconfigured { background: #F59E0B; box-shadow: 0 0 6px rgba(245,158,11,0.4); }
+        .status-dot.checking { background: #94A3B8; animation: pulse-dot 1s ease-in-out infinite; }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-card-body { flex: 1; min-width: 0; }
+
+        .status-card-name {
+            font-weight: var(--font-weight-semibold);
+            color: var(--dark);
+            font-size: var(--font-size-base);
+            margin-bottom: 2px;
+        }
+
+        .status-card-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .status-card-badge.ok          { background: #DCFCE7; color: #16A34A; }
+        .status-card-badge.error       { background: #FEE2E2; color: #DC2626; }
+        .status-card-badge.unconfigured { background: #FEF3C7; color: #D97706; }
+        .status-card-badge.checking    { background: var(--light-gray); color: var(--gray); }
+
+        .status-card-msg {
+            font-size: var(--font-size-xs);
+            color: var(--gray);
+            word-break: break-word;
+        }
+
+        .status-card-latency {
+            font-size: var(--font-size-xs);
+            color: var(--gray);
+            margin-top: 2px;
+        }
+
+        .status-panel-header {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-last-checked {
+            font-size: var(--font-size-xs);
+            color: var(--gray);
+        }
+
+        @media (max-width: 768px) {
+            .status-grid { grid-template-columns: 1fr; padding: var(--spacing-base); }
+        }
     </style>
 </head>
 <body>
@@ -1035,6 +1128,7 @@
             <button class="admin-tab" onclick="showTab('users')">Users</button>
             <button class="admin-tab" onclick="showTab('scraper')">Web Scraper</button>
             <button class="admin-tab" onclick="showTab('reddit')">Reddit Analysis</button>
+            <button class="admin-tab" onclick="showTab('systemStatus')">System Status</button>
         </div>
 
         <!-- Conversations Panel -->
@@ -1301,6 +1395,25 @@
                         <div class="scraper-result-title">Reddit scrape successful</div>
                         <div class="scraper-result-grid" id="redditResultGrid"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status Panel -->
+        <div id="systemStatusTab" class="tab-content">
+            <div class="data-panel">
+                <div class="status-panel-header">
+                    <div>
+                        <div class="panel-title">System Status</div>
+                        <div class="panel-subtitle">Live connectivity check for all integrated services</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-base);">
+                        <span class="status-last-checked" id="statusLastChecked"></span>
+                        <button class="refresh-btn" onclick="loadSystemStatus()">Refresh</button>
+                    </div>
+                </div>
+                <div class="status-grid" id="statusGrid">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>

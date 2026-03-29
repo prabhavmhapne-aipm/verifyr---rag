@@ -206,7 +206,7 @@ function handleSubmit() {
             'has_special_request': !!specialNote
         });
     }
-    if (typeof posthog !== 'undefined') {
+    if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
         posthog.capture('quiz_step_completed', {
             step: 'budget',
             step_number: 4,

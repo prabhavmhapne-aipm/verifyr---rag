@@ -240,7 +240,7 @@ class FeaturesController {
                 'feature_count': this.selectedFeatures.length
             });
         }
-        if (typeof posthog !== 'undefined') {
+        if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
             posthog.capture('quiz_step_completed', {
                 step: 'features',
                 step_number: 3,

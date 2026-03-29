@@ -376,6 +376,8 @@ function showTab(tabName) {
         loadScraperProducts();
     } else if (tabName === 'reddit') {
         loadRedditProducts();
+    } else if (tabName === 'systemStatus') {
+        loadSystemStatus();
     }
 }
 
@@ -1044,6 +1046,84 @@ async function handleInviteUser(event) {
     } finally {
         submitBtn.disabled = false;
         submitBtn.classList.remove('loading');
+    }
+}
+
+// ============================================================
+// System Status
+// ============================================================
+
+const STATUS_META = {
+    server:    { label: 'VPS / Server'        },
+    qdrant:    { label: 'Qdrant (Vector DB)'  },
+    bm25:      { label: 'BM25 Index'          },
+    supabase:  { label: 'Supabase (Auth/DB)'  },
+    langfuse:  { label: 'Langfuse'            },
+    posthog:   { label: 'PostHog Analytics'   },
+    openai:    { label: 'OpenAI API'          },
+    anthropic: { label: 'Anthropic API'       },
+    google:    { label: 'Google AI API'       },
+};
+
+function renderStatusCards(data) {
+    const grid = document.getElementById('statusGrid');
+    if (!grid) return;
+
+    grid.innerHTML = Object.entries(STATUS_META).map(([key, meta]) => {
+        const svc = data[key] || { status: 'error', latency_ms: 0, message: 'No data' };
+        const st = svc.status;
+        const badgeLabel = st === 'ok' ? 'Connected' : st === 'unconfigured' ? 'Not configured' : 'Error';
+        const latencyStr = svc.latency_ms > 0 ? `${svc.latency_ms} ms` : '';
+
+        return `
+            <div class="status-card">
+                <div class="status-dot ${st}"></div>
+                <div class="status-card-body">
+                    <div class="status-card-name">${meta.label}</div>
+                    <div class="status-card-badge ${st}">${badgeLabel}</div>
+                    <div class="status-card-msg">${svc.message || ''}</div>
+                    ${latencyStr ? `<div class="status-card-latency">⏱ ${latencyStr}</div>` : ''}
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function renderStatusSkeleton() {
+    const grid = document.getElementById('statusGrid');
+    if (!grid) return;
+    grid.innerHTML = Object.values(STATUS_META).map(meta => `
+        <div class="status-card">
+            <div class="status-dot checking"></div>
+            <div class="status-card-body">
+                <div class="status-card-name">${meta.label}</div>
+                <div class="status-card-badge checking">Checking…</div>
+            </div>
+        </div>`).join('');
+}
+
+async function loadSystemStatus() {
+    renderStatusSkeleton();
+    document.getElementById('statusLastChecked').textContent = '';
+
+    try {
+        const token = getAccessToken();
+        const response = await fetch(`${API_BASE_URL}/admin/system-status`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        renderStatusCards(data);
+
+        const now = new Date();
+        document.getElementById('statusLastChecked').textContent =
+            `Last checked: ${now.toLocaleTimeString()}`;
+
+    } catch (error) {
+        console.error('System status error:', error);
+        const grid = document.getElementById('statusGrid');
+        if (grid) grid.innerHTML = `<div style="padding:var(--spacing-xl);color:var(--gray);">Failed to load status: ${error.message}</div>`;
     }
 }
 

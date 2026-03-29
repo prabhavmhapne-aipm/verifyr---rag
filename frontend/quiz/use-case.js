@@ -183,7 +183,7 @@ class UseCaseController {
                 'usecase_count': this.selectedUseCases.length
             });
         }
-        if (typeof posthog !== 'undefined') {
+        if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
             posthog.capture('quiz_step_completed', {
                 step: 'use_case',
                 step_number: 2,

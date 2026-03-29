@@ -38,7 +38,7 @@ class ResultsController {
                 'authenticated': isAuthenticated
             });
         }
-        if (typeof posthog !== 'undefined') {
+        if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
             var _res = this.quizResults;
             posthog.capture('results_viewed', {
                 authenticated: isAuthenticated,

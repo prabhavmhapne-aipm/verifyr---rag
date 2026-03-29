@@ -333,7 +333,7 @@
         if (typeof gtag !== 'undefined') {
             gtag('event', 'quiz_submitted', { 'event_category': 'quiz_funnel' });
         }
-        if (typeof posthog !== 'undefined') {
+        if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
             var _qa = JSON.parse(localStorage.getItem('verifyr_quiz_answers') || '{}');
             posthog.capture('quiz_completed', {
                 category: _qa.category,

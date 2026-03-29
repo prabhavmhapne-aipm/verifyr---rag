@@ -662,7 +662,7 @@ function createNewConversation() {
             'event_category': 'chat_engagement'
         });
     }
-    if (typeof posthog !== 'undefined') {
+    if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
         posthog.capture('new_conversation');
     }
 
@@ -921,7 +921,7 @@ async function handleSend() {
             'language': window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de'
         });
     }
-    if (typeof posthog !== 'undefined') {
+    if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
         posthog.capture('chat_message_sent', {
             model: selectedModel,
             language: window.currentLanguage || localStorage.getItem('verifyr-lang') || 'de',

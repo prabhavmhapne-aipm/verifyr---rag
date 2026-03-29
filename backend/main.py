@@ -67,6 +67,7 @@ def _get_deploy_version() -> str:
     return str(int(time.time()))
 
 DEPLOY_VERSION = _get_deploy_version()
+SERVER_START_TIME = time.time()  # Track uptime
 
 from retrieval.hybrid_search import HybridSearcher
 from generation.llm_client import RAGGenerator
@@ -2185,6 +2186,148 @@ async def admin_get_stats(user: AuthUser = Depends(require_admin)):
             status_code=500,
             detail=f"Error getting stats: {str(e)}"
         )
+
+
+@app.get("/admin/system-status", tags=["Admin"])
+async def admin_system_status(user: AuthUser = Depends(require_admin)):
+    """
+    Check connectivity and configuration status of all integrated services.
+    Returns per-service status, latency, and a short message.
+    """
+    import httpx
+
+    results = {}
+
+    # ------------------------------------------------------------------
+    # 0. Server (this instance)
+    # ------------------------------------------------------------------
+    import socket, platform
+    uptime_secs = int(time.time() - SERVER_START_TIME)
+    hours, rem = divmod(uptime_secs, 3600)
+    mins, secs = divmod(rem, 60)
+    uptime_str = f"{hours}h {mins}m {secs}s" if hours else f"{mins}m {secs}s"
+    try:
+        hostname = socket.gethostname()
+    except Exception:
+        hostname = "unknown"
+    results["server"] = {
+        "status": "ok",
+        "latency_ms": 0,
+        "message": f"{hostname} · up {uptime_str} · Python {platform.python_version()}"
+    }
+
+    # ------------------------------------------------------------------
+    # 1. Qdrant / Vector Index
+    # ------------------------------------------------------------------
+    t0 = time.time()
+    try:
+        if hybrid_searcher and hybrid_searcher.vector_store and hybrid_searcher.vector_store.client:
+            collections = hybrid_searcher.vector_store.client.get_collections()
+            count = len(collections.collections)
+            results["qdrant"] = {
+                "status": "ok",
+                "latency_ms": round((time.time() - t0) * 1000),
+                "message": f"{count} collection(s) loaded"
+            }
+        else:
+            results["qdrant"] = {"status": "error", "latency_ms": 0, "message": "Qdrant client not initialised"}
+    except Exception as e:
+        results["qdrant"] = {"status": "error", "latency_ms": round((time.time() - t0) * 1000), "message": str(e)[:120]}
+
+    # ------------------------------------------------------------------
+    # 2. BM25 Index
+    # ------------------------------------------------------------------
+    t0 = time.time()
+    try:
+        if hybrid_searcher and hybrid_searcher.bm25_index:
+            chunks = len(hybrid_searcher.bm25_index.chunks)
+            results["bm25"] = {
+                "status": "ok",
+                "latency_ms": round((time.time() - t0) * 1000),
+                "message": f"{chunks} chunks indexed"
+            }
+        else:
+            results["bm25"] = {"status": "error", "latency_ms": 0, "message": "BM25 index not loaded"}
+    except Exception as e:
+        results["bm25"] = {"status": "error", "latency_ms": round((time.time() - t0) * 1000), "message": str(e)[:120]}
+
+    # ------------------------------------------------------------------
+    # 3. Supabase
+    # ------------------------------------------------------------------
+    supabase_url = os.getenv("SUPABASE_URL", "")
+    supabase_anon_key = os.getenv("SUPABASE_ANON_KEY", "")
+    t0 = time.time()
+    if not supabase_url or not supabase_anon_key:
+        results["supabase"] = {"status": "unconfigured", "latency_ms": 0, "message": "SUPABASE_URL / SUPABASE_ANON_KEY not set"}
+    else:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(
+                    f"{supabase_url}/rest/v1/",
+                    headers={"apikey": supabase_anon_key, "Authorization": f"Bearer {supabase_anon_key}"}
+                )
+            latency = round((time.time() - t0) * 1000)
+            if resp.status_code < 500:
+                results["supabase"] = {"status": "ok", "latency_ms": latency, "message": f"HTTP {resp.status_code}"}
+            else:
+                results["supabase"] = {"status": "error", "latency_ms": latency, "message": f"HTTP {resp.status_code}"}
+        except Exception as e:
+            results["supabase"] = {"status": "error", "latency_ms": round((time.time() - t0) * 1000), "message": str(e)[:120]}
+
+    # ------------------------------------------------------------------
+    # 4. Langfuse
+    # ------------------------------------------------------------------
+    t0 = time.time()
+    if langfuse_client is None:
+        lf_pub = os.getenv("LANGFUSE_PUBLIC_KEY", "")
+        lf_sec = os.getenv("LANGFUSE_SECRET_KEY", "")
+        if not lf_pub or not lf_sec:
+            results["langfuse"] = {"status": "unconfigured", "latency_ms": 0, "message": "API keys not set"}
+        else:
+            results["langfuse"] = {"status": "error", "latency_ms": 0, "message": "Client failed to initialise at startup"}
+    else:
+        try:
+            ok = langfuse_client.auth_check()
+            latency = round((time.time() - t0) * 1000)
+            results["langfuse"] = {
+                "status": "ok" if ok else "error",
+                "latency_ms": latency,
+                "message": "Auth check passed" if ok else "Auth check failed"
+            }
+        except Exception as e:
+            results["langfuse"] = {"status": "error", "latency_ms": round((time.time() - t0) * 1000), "message": str(e)[:120]}
+
+    # ------------------------------------------------------------------
+    # 5. PostHog
+    # ------------------------------------------------------------------
+    posthog_key = os.getenv("POSTHOG_API_KEY", "")
+    posthog_host = os.getenv("POSTHOG_API_HOST", "https://eu.i.posthog.com")
+    t0 = time.time()
+    if not posthog_key:
+        results["posthog"] = {"status": "unconfigured", "latency_ms": 0, "message": "POSTHOG_API_KEY not set"}
+    else:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(f"{posthog_host}/decide/", params={"api_key": posthog_key})
+            latency = round((time.time() - t0) * 1000)
+            if resp.status_code < 500:
+                results["posthog"] = {"status": "ok", "latency_ms": latency, "message": f"Reachable (HTTP {resp.status_code})"}
+            else:
+                results["posthog"] = {"status": "error", "latency_ms": latency, "message": f"HTTP {resp.status_code}"}
+        except Exception as e:
+            results["posthog"] = {"status": "error", "latency_ms": round((time.time() - t0) * 1000), "message": str(e)[:120]}
+
+    # ------------------------------------------------------------------
+    # 6-8. LLM API keys (config check only — no live call to save credits)
+    # ------------------------------------------------------------------
+    for svc, env_var in [("openai", "OPENAI_API_KEY"), ("anthropic", "ANTHROPIC_API_KEY"), ("google", "GOOGLE_API_KEY")]:
+        key = os.getenv(env_var, "")
+        if key:
+            results[svc] = {"status": "ok", "latency_ms": 0, "message": f"{env_var} configured (key: …{key[-4:]})"}
+        else:
+            results[svc] = {"status": "unconfigured", "latency_ms": 0, "message": f"{env_var} not set"}
+
+    return results
 
 
 # ============================================================================
