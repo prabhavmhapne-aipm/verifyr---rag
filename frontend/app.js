@@ -294,6 +294,14 @@ async function checkAuth() {
         if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+            // Sync sign-out across tabs in real-time
+            supabaseClient.auth.onAuthStateChange((event) => {
+                if (event === 'SIGNED_OUT') {
+                    clearAuthData();
+                    window.location.href = '/auth.html';
+                }
+            });
+
             // Get current session
             const { data: { session } } = await supabaseClient.auth.getSession();
 
