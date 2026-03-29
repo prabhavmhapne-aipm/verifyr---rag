@@ -153,7 +153,8 @@ async def get_current_user(
                 signing_key.key,
                 algorithms=["RS256", "ES256"],
                 audience="authenticated",
-                options={"verify_aud": True}
+                options={"verify_aud": True},
+                leeway=10
             )
             method_used = "JWKS (RS256/ES256)"
             print(f"✅ Token verified using {method_used}")
@@ -171,7 +172,8 @@ async def get_current_user(
                 jwt_secret,
                 algorithms=["HS256"],
                 audience="authenticated",
-                options={"verify_aud": True}
+                options={"verify_aud": True},
+                leeway=10
             )
             method_used = "HS256 (JWT Secret)"
             print(f"✅ Token verified using {method_used}")

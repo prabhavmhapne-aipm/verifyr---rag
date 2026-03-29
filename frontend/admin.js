@@ -94,10 +94,12 @@ async function checkAdminAuth() {
                 if (!isAdmin) {
                     // Not an admin, redirect to chat
                     console.log('Not an admin, redirecting to chat...');
+                    localStorage.removeItem('verifyr_is_admin');
                     window.location.href = '/chat.html';
                     return false;
                 }
 
+                localStorage.setItem('verifyr_is_admin', 'true');
                 return true;
             }
         }
