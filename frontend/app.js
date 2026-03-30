@@ -385,7 +385,8 @@ async function handleLogout() {
             await supabaseClient.auth.signOut();
         }
 
-        // Clear localStorage
+        // Clear Supabase session keys and our custom keys
+        Object.keys(localStorage).forEach(k => { if (k.startsWith('sb-')) localStorage.removeItem(k); });
         localStorage.removeItem('verifyr_access_token');
         localStorage.removeItem('verifyr_user_id');
         localStorage.removeItem('verifyr_user_email');

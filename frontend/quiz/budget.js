@@ -243,9 +243,9 @@ function updateUserDisplay() {
 
 async function handleLogout() {
     try {
-        const supabaseClient = window.supabaseClient;
-        if (supabaseClient) await supabaseClient.auth.signOut();
+        if (window.supabaseClient) await window.supabaseClient.auth.signOut();
     } catch(e) { /* ignore */ }
+    Object.keys(localStorage).forEach(k => { if (k.startsWith('sb-')) localStorage.removeItem(k); });
     ['verifyr_access_token','verifyr_user_id','verifyr_user_email','verifyr_is_admin'].forEach(k => localStorage.removeItem(k));
     window.location.href = '/';
 }

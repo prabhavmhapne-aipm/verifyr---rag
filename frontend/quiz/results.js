@@ -1753,27 +1753,11 @@ function switchLanguage(lang) {
 // Handle logout
 async function handleLogout() {
     try {
-        // Get Supabase client from window (initialized by auth-modal.js)
-        const supabaseClient = window.supabaseClient;
-
-        // Sign out from Supabase
-        if (supabaseClient) {
-            await supabaseClient.auth.signOut();
-        }
-
-        // Clear localStorage
-        localStorage.removeItem('verifyr_access_token');
-        localStorage.removeItem('verifyr_user_id');
-        localStorage.removeItem('verifyr_user_email');
-        localStorage.removeItem('verifyr_is_admin');
-
-        // Redirect to home page
-        window.location.href = '/';
-    } catch (error) {
-        console.error('Logout error:', error);
-        // Redirect anyway
-        window.location.href = '/';
-    }
+        if (window.supabaseClient) await window.supabaseClient.auth.signOut();
+    } catch(e) { /* ignore */ }
+    Object.keys(localStorage).forEach(k => { if (k.startsWith('sb-')) localStorage.removeItem(k); });
+    ['verifyr_access_token','verifyr_user_id','verifyr_user_email','verifyr_is_admin'].forEach(k => localStorage.removeItem(k));
+    window.location.href = '/';
 }
 
 // Toggle sidebar
