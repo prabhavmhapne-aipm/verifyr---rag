@@ -284,11 +284,13 @@
         toggleBtn.addEventListener('click', () => {
             const isOpen = panel.classList.contains('open');
             panel.classList.toggle('open', !isOpen);
+            toggleBtn.style.display = isOpen ? '' : 'none';
             if (!isOpen) input.focus();
         });
 
         closeBtn.addEventListener('click', () => {
             panel.classList.remove('open');
+            toggleBtn.style.display = '';
         });
 
         // ── Resize panel by dragging top handle ──
