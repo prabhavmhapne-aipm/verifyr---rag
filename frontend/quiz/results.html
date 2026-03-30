@@ -394,7 +394,7 @@
                         question,
                         model: 'gpt-5-mini',
                         language: lang,
-                        conversation_history: widgetHistory.slice(0, -1),
+                        conversation_history: widgetHistory.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
                         conversation_id: convId,
                         quiz_profile: getQuizProfile()
                     })
