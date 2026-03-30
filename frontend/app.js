@@ -467,9 +467,7 @@ function switchLanguage(lang) {
     // Update chat input
     if (chatInput) chatInput.placeholder = t.placeholder;
 
-    // Update send button
-    const sendText = document.querySelector('.send-text');
-    if (sendText) sendText.textContent = t.sendButton;
+    // Send button uses SVG icon — no text to update
 
     // Update footer
     const footerText = document.querySelector('.chat-footer p');
