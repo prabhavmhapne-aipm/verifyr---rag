@@ -603,6 +603,145 @@ async def get_version():
     return {"version": DEPLOY_VERSION}
 
 
+@app.get("/system-status", tags=["Health"])
+async def public_system_status():
+    """
+    Public system status endpoint — no auth required.
+    Returns sanitized service health for the public status page.
+    """
+    import httpx
+
+    results = {}
+
+    # 1. Backend Server
+    uptime_secs = int(time.time() - SERVER_START_TIME)
+    hours, rem = divmod(uptime_secs, 3600)
+    mins, secs = divmod(rem, 60)
+    uptime_str = f"{hours}h {mins}m" if hours else f"{mins}m {secs}s"
+    results["server"] = {
+        "label": "FastAPI Server",
+        "status": "ok",
+        "latency_ms": 0,
+        "message": f"Up {uptime_str}"
+    }
+
+    # 2. AI Search Engine (Qdrant + BM25)
+    try:
+        qdrant_ok = (hybrid_searcher and hybrid_searcher.vector_store
+                     and hybrid_searcher.vector_store.client)
+        bm25_ok = (hybrid_searcher and hybrid_searcher.bm25_index)
+        if qdrant_ok and bm25_ok:
+            results["ai_engine"] = {"label": "Hybrid Search Engine — Qdrant + BM25", "status": "ok",
+                                    "latency_ms": 0, "message": "Operational"}
+        else:
+            results["ai_engine"] = {"label": "Hybrid Search Engine — Qdrant + BM25", "status": "error",
+                                    "latency_ms": 0, "message": "Unavailable"}
+    except Exception:
+        results["ai_engine"] = {"label": "Hybrid Search Engine — Qdrant + BM25", "status": "error",
+                                "latency_ms": 0, "message": "Unavailable"}
+
+    # 3. Authentication (Supabase)
+    supabase_url = os.getenv("SUPABASE_URL", "")
+    supabase_anon_key = os.getenv("SUPABASE_ANON_KEY", "")
+    t0 = time.time()
+    if not supabase_url or not supabase_anon_key:
+        results["auth"] = {"label": "Security", "status": "unconfigured",
+                           "latency_ms": 0, "message": "Not configured"}
+    else:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(
+                    f"{supabase_url}/rest/v1/",
+                    headers={"apikey": supabase_anon_key,
+                             "Authorization": f"Bearer {supabase_anon_key}"}
+                )
+            latency = round((time.time() - t0) * 1000)
+            results["auth"] = {
+                "label": "Security",
+                "status": "ok" if resp.status_code < 500 else "error",
+                "latency_ms": latency,
+                "message": "Connected" if resp.status_code < 500 else "Unavailable"
+            }
+        except Exception:
+            results["auth"] = {"label": "Security", "status": "error",
+                               "latency_ms": round((time.time() - t0) * 1000),
+                               "message": "Unavailable"}
+
+    # 4. AI Observability (Langfuse)
+    t0 = time.time()
+    if langfuse_client is None:
+        lf_pub = os.getenv("LANGFUSE_PUBLIC_KEY", "")
+        results["observability"] = {
+            "label": "AI Observability",
+            "status": "unconfigured" if not lf_pub else "error",
+            "latency_ms": 0,
+            "message": "Not configured" if not lf_pub else "Unavailable"
+        }
+    else:
+        try:
+            ok = langfuse_client.auth_check()
+            latency = round((time.time() - t0) * 1000)
+            results["observability"] = {
+                "label": "AI Observability",
+                "status": "ok" if ok else "error",
+                "latency_ms": latency,
+                "message": "Connected" if ok else "Unavailable"
+            }
+        except Exception:
+            results["observability"] = {"label": "AI Observability", "status": "error",
+                                        "latency_ms": round((time.time() - t0) * 1000),
+                                        "message": "Unavailable"}
+
+    # 5. Analytics (PostHog)
+    posthog_key = os.getenv("POSTHOG_API_KEY", "")
+    posthog_host = os.getenv("POSTHOG_API_HOST", "https://eu.i.posthog.com")
+    t0 = time.time()
+    if not posthog_key:
+        results["analytics"] = {"label": "Analytics", "status": "unconfigured",
+                                "latency_ms": 0, "message": "Not configured"}
+    else:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(f"{posthog_host}/decide/",
+                                        params={"api_key": posthog_key})
+            latency = round((time.time() - t0) * 1000)
+            results["analytics"] = {
+                "label": "Analytics",
+                "status": "ok" if resp.status_code < 500 else "error",
+                "latency_ms": latency,
+                "message": "Connected" if resp.status_code < 500 else "Unavailable"
+            }
+        except Exception:
+            results["analytics"] = {"label": "Analytics", "status": "error",
+                                    "latency_ms": round((time.time() - t0) * 1000),
+                                    "message": "Unavailable"}
+
+    # 6. AI Providers (OpenAI, Anthropic, Google)
+    configured = sum(1 for env in ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY"]
+                     if os.getenv(env, ""))
+    results["llm_providers"] = {
+        "label": "LLM Providers",
+        "status": "ok" if configured > 0 else "error",
+        "latency_ms": 0,
+        "message": f"{configured}/3 configured"
+    }
+
+    # Overall status
+    core = ["server", "ai_engine", "auth"]
+    if any(results[k]["status"] == "error" for k in core):
+        overall = "outage"
+    elif any(v["status"] == "error" for v in results.values()):
+        overall = "degraded"
+    else:
+        overall = "operational"
+
+    return {
+        "overall": overall,
+        "services": results,
+        "checked_at": time.time()
+    }
+
+
 @app.post("/query", response_model=QueryResponse, tags=["Query"])
 async def query(
     request: QueryRequest,

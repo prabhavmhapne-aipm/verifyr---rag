@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Status – Verifyr</title>
+    <meta name="description" content="Current operational status of Verifyr services.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.verifyr.de/status.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="design-system/design-system.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            font-family: var(--font-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--dark);
+        }
+
+        /* ── Navigation ── */
+        .status-nav {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 40px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px var(--shadow-dark-light);
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xl);
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover { color: var(--primary-blue); }
+
+        .nav-badge {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        /* ── Main content ── */
+        .status-main {
+            flex: 1;
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-xl) 60px;
+        }
+
+        /* ── Page header ── */
+        .page-header {
+            margin-bottom: var(--spacing-2xl);
+            padding-top: var(--spacing-xl);
+        }
+
+        .page-header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: var(--spacing-xs);
+            flex-wrap: wrap;
+        }
+
+        .page-header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .page-header p {
+            color: var(--gray);
+            font-size: var(--font-size-sm);
+        }
+
+        /* ── Overall status banner ── */
+        .overall-banner {
+            border-radius: 20px;
+            padding: 5px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 0;
+            transition: background 0.4s ease;
+            vertical-align: middle;
+        }
+
+        .overall-banner.operational { background: #F0FDF4; border: 1px solid #BBF7D0; }
+        .overall-banner.degraded    { background: #FFFBEB; border: 1px solid #FDE68A; }
+        .overall-banner.outage      { background: #FFF5F5; border: 1px solid #FECACA; }
+        .overall-banner.checking    { background: var(--light-gray); border: 1px solid var(--border-light); }
+
+        .overall-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .overall-banner.operational .overall-icon { background: #22C55E; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+        .overall-banner.degraded .overall-icon    { background: #F59E0B; box-shadow: 0 0 0 3px rgba(245,158,11,0.2); }
+        .overall-banner.outage .overall-icon      { background: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.2); }
+        .overall-banner.checking .overall-icon    { background: #94A3B8; animation: pulse-dot 1.2s ease-in-out infinite; }
+
+        .overall-text h2 {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            margin: 0;
+        }
+
+        .overall-banner.operational .overall-text h2 { color: #15803D; }
+        .overall-banner.degraded .overall-text h2    { color: #B45309; }
+        .overall-banner.outage .overall-text h2      { color: #B91C1C; }
+        .overall-banner.checking .overall-text h2    { color: var(--gray); }
+
+        .overall-text p { display: none; }
+
+        /* ── Section ── */
+        .status-section {
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 11px;
+        }
+
+        .section-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-base);
+        }
+
+        .last-checked {
+            font-size: var(--font-size-xs);
+            color: var(--gray);
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            color: var(--gray);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+            font-family: var(--font-primary);
+            padding: 4px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .refresh-btn.spinning svg {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+
+        /* ── Service cards ── */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: var(--spacing-base);
+        }
+
+        .service-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-base);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .service-card:hover { box-shadow: 0 4px 12px var(--shadow-dark-light); }
+
+        .service-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .service-dot.ok           { background: #22C55E; box-shadow: 0 0 0 3px rgba(34,197,94,0.15); }
+        .service-dot.error        { background: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+        .service-dot.unconfigured { background: #F59E0B; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+        .service-dot.checking     { background: #94A3B8; animation: pulse-dot 1.2s ease-in-out infinite; }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .service-body { flex: 1; min-width: 0; }
+
+        .service-name {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .service-badge {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: 4px;
+        }
+
+        .service-badge.ok           { background: #DCFCE7; color: #16A34A; }
+        .service-badge.error        { background: #FEE2E2; color: #DC2626; }
+        .service-badge.unconfigured { background: #FEF3C7; color: #D97706; }
+        .service-badge.checking     { background: var(--light-gray); color: var(--gray); }
+
+        .service-msg {
+            font-size: var(--font-size-xs);
+            color: var(--gray);
+        }
+
+        .service-latency {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+
+        /* ── Skeleton loading ── */
+        .skeleton-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-base);
+        }
+
+        .skeleton-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .skeleton-body { flex: 1; }
+
+        .skeleton-line {
+            height: 12px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            margin-bottom: 6px;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+
+        .skeleton-line.short { width: 60%; }
+        .skeleton-line.shorter { width: 40%; }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ── Divider ── */
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border-light);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        /* ── Footer ── */
+        .status-footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .status-footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .status-footer a:hover {
+            color: var(--dark-blue);
+            text-decoration: underline;
+        }
+
+        .trust-badges-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .trust-badge-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .trust-badge-icon svg {
+            border-radius: 3px;
+            display: block;
+        }
+
+        .trust-badge-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.05rem;
+        }
+
+        .trust-badge-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .trust-badge-sub {
+            font-size: 0.72rem;
+            color: var(--gray);
+            line-height: 1.2;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .status-main { padding: var(--spacing-lg); }
+            .overall-banner { padding: var(--spacing-lg); }
+            .services-grid { grid-template-columns: 1fr; }
+
+            .nav-links { gap: var(--spacing-lg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="status-nav">
+        <a href="/" class="nav-logo">Verifyr</a>
+        <div class="nav-links">
+            <span class="nav-badge">Status</span>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="status-main">
+
+        <!-- Page header -->
+        <div class="page-header">
+            <div class="page-header-top">
+                <h1>System Status</h1>
+                <div class="overall-banner checking" id="overallBanner">
+                    <div class="overall-icon" id="overallIcon"></div>
+                    <div class="overall-text">
+                        <h2 id="overallTitle">Checking…</h2>
+                    </div>
+                </div>
+            </div>
+            <p>Live health of all Verifyr services and infrastructure.</p>
+        </div>
+
+        <!-- Internal Services -->
+        <div class="status-section">
+            <div class="section-header">
+                <span class="section-title">System Services</span>
+                <div class="section-meta">
+                    <span class="last-checked" id="lastChecked"></span>
+                    <button class="refresh-btn" id="refreshBtn" onclick="loadStatus()">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                             style="display:inline;vertical-align:middle;margin-right:4px;">
+                            <path d="M23 4v6h-6M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="services-grid" id="servicesGrid">
+                <!-- Skeleton placeholders -->
+                <div class="skeleton-card"><div class="skeleton-dot"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+                <div class="skeleton-card"><div class="skeleton-dot"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+                <div class="skeleton-card"><div class="skeleton-dot"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+                <div class="skeleton-card"><div class="skeleton-dot"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+                <div class="skeleton-card"><div class="skeleton-dot"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+                <div class="skeleton-card"><div class="skeleton-dot"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- External Monitors (Betterstack) -->
+        <div class="status-section">
+            <div class="section-header">
+                <span class="section-title">Infrastructure Monitoring</span>
+                <a href="https://status.verifyr.de" target="_blank" rel="noopener"
+                   style="font-size:var(--font-size-xs);color:var(--primary-blue);text-decoration:none;">
+                    Full history →
+                </a>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);overflow:hidden;">
+                <iframe src="https://status-verifyr.betteruptime.com"
+                        width="100%" height="900" frameborder="0" scrolling="no"
+                        style="display:block;"></iframe>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- EU star SVG definition -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <defs>
+            <polygon id="eu-star-status" fill="#FFCC00" points="0,-1.1 0.33,-0.45 1.05,-0.34 0.52,0.18 0.65,0.9 0,0.55 -0.65,0.9 -0.52,0.18 -1.05,-0.34 -0.33,-0.45"/>
+        </defs>
+    </svg>
+
+    <!-- Footer -->
+    <footer class="status-footer">
+        <p>
+            © 2026 Verifyr<br>
+            100% unabhängig | Verifiziert | Für dich
+        </p>
+
+        <p style="margin-top: 1rem;">
+            <a href="/">Home</a> |
+            <a href="/chat.html">Chat</a> |
+            <a href="/quiz/category.html">Quiz</a> |
+            <a href="/status.html">System Status</a>
+        </p>
+
+        <div class="trust-badges-row" style="margin-top: 1.25rem;">
+            <div class="trust-badge-card">
+                <span class="trust-badge-icon">
+                    <svg width="28" height="19" viewBox="0 0 28 19" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="19" fill="#003399"/>
+                        <use href="#eu-star-status" transform="translate(14,3.5)"/>
+                        <use href="#eu-star-status" transform="translate(17,4.3)"/>
+                        <use href="#eu-star-status" transform="translate(19.2,6.5)"/>
+                        <use href="#eu-star-status" transform="translate(20,9.5)"/>
+                        <use href="#eu-star-status" transform="translate(19.2,12.5)"/>
+                        <use href="#eu-star-status" transform="translate(17,14.7)"/>
+                        <use href="#eu-star-status" transform="translate(14,15.5)"/>
+                        <use href="#eu-star-status" transform="translate(11,14.7)"/>
+                        <use href="#eu-star-status" transform="translate(8.8,12.5)"/>
+                        <use href="#eu-star-status" transform="translate(8,9.5)"/>
+                        <use href="#eu-star-status" transform="translate(8.8,6.5)"/>
+                        <use href="#eu-star-status" transform="translate(11,4.3)"/>
+                    </svg>
+                </span>
+                <div class="trust-badge-text">
+                    <span class="trust-badge-title">DSGVO-konform</span>
+                    <span class="trust-badge-sub">Gehostet in der EU</span>
+                </div>
+            </div>
+            <div class="trust-badge-card">
+                <span class="trust-badge-icon">
+                    <svg width="28" height="19" viewBox="0 0 28 19" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="6.33" fill="#000"/>
+                        <rect y="6.33" width="28" height="6.34" fill="#DD0000"/>
+                        <rect y="12.67" width="28" height="6.33" fill="#FFCE00"/>
+                    </svg>
+                </span>
+                <div class="trust-badge-text">
+                    <span class="trust-badge-title">Made in Germany</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+        let autoRefreshTimer = null;
+
+        const BADGE_LABELS = {
+            ok: 'Operational',
+            error: 'Outage',
+            unconfigured: 'Not Configured',
+            checking: 'Checking…'
+        };
+
+        const SERVICE_LOGOS = {
+            server:        `<img src="https://cdn.simpleicons.org/fastapi" width="52" height="52" alt="FastAPI" style="border-radius:4px;">`,
+            ai_engine:     `<img src="https://qdrant.tech/favicon/favicon-32x32.png" width="52" height="52" alt="Qdrant" style="border-radius:4px;">`,
+            auth:          `<img src="https://cdn.simpleicons.org/supabase" width="52" height="52" alt="Supabase" style="border-radius:4px;">`,
+            observability: `<img src="https://langfuse.com/favicon.ico" width="52" height="52" alt="Langfuse" style="border-radius:4px;">`,
+            analytics:     `<img src="https://cdn.simpleicons.org/posthog" width="52" height="52" alt="PostHog" style="border-radius:4px;">`,
+            llm_providers: `<span style="display:flex;align-items:center;gap:4px;">
+                <img src="https://openai.com/favicon.ico" width="36" height="36" alt="OpenAI" style="border-radius:3px;">
+                <img src="https://www.anthropic.com/favicon.ico" width="36" height="36" alt="Anthropic" style="border-radius:3px;">
+                <img src="https://cdn.simpleicons.org/google" width="36" height="36" alt="Google" style="border-radius:3px;">
+            </span>`
+        };
+
+        const OVERALL_CONFIG = {
+            operational: { title: 'All Systems Operational' },
+            degraded:    { title: 'Degraded Performance' },
+            outage:      { title: 'Partial Outage' },
+            checking:    { title: 'Checking status…' }
+        };
+
+        function updateOverallBanner(overall) {
+            const banner = document.getElementById('overallBanner');
+            const title = document.getElementById('overallTitle');
+            const cfg = OVERALL_CONFIG[overall] || OVERALL_CONFIG.checking;
+            banner.className = `overall-banner ${overall}`;
+            title.textContent = cfg.title;
+        }
+
+        function renderServices(services) {
+            const grid = document.getElementById('servicesGrid');
+            const order = ['server', 'ai_engine', 'auth', 'observability', 'analytics', 'llm_providers'];
+            const keys = order.filter(k => services[k]);
+
+            grid.innerHTML = keys.map(key => {
+                const svc = services[key];
+                const st = svc.status;
+                const badge = key === 'llm_providers' ? 'Configured' : (BADGE_LABELS[st] || st);
+                const logo = SERVICE_LOGOS[key] || '';
+                const latency = svc.latency_ms > 0
+                    ? `<div class="service-latency">⏱ ${svc.latency_ms} ms</div>` : '';
+
+                return `
+                    <div class="service-card" style="justify-content:space-between;">
+                        <div style="display:flex;align-items:flex-start;gap:10px;flex:1;">
+                            <div class="service-dot ${st}" style="margin-top:5px;"></div>
+                            <div class="service-body">
+                                <div class="service-name">${svc.label}</div>
+                                <div class="service-badge ${st}">${badge}</div>
+                                <div class="service-msg">${svc.message || ''}</div>
+                                ${latency}
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;padding-left:12px;flex-shrink:0;">
+                            ${logo}
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function renderError(msg) {
+            document.getElementById('servicesGrid').innerHTML =
+                `<div style="grid-column:1/-1;padding:var(--spacing-xl);color:var(--gray);font-size:var(--font-size-sm);">${msg}</div>`;
+        }
+
+        async function loadStatus() {
+            const btn = document.getElementById('refreshBtn');
+            btn.classList.add('spinning');
+            document.getElementById('lastChecked').textContent = '';
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/system-status`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                updateOverallBanner(data.overall);
+                renderServices(data.services);
+
+                const now = new Date();
+                document.getElementById('lastChecked').textContent =
+                    `Updated ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+
+            } catch (err) {
+                updateOverallBanner('outage');
+                renderError(`Could not reach the API: ${err.message}`);
+            } finally {
+                btn.classList.remove('spinning');
+            }
+        }
+
+        // Auto-refresh every 60 seconds
+        function startAutoRefresh() {
+            clearInterval(autoRefreshTimer);
+            autoRefreshTimer = setInterval(loadStatus, 60000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatus();
+            startAutoRefresh();
+        });
+    </script>
+</body>
+</html>
