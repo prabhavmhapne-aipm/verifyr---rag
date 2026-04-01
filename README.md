@@ -69,6 +69,8 @@ Powered by a **conversational RAG pipeline**, Verifyr covers the full buyer jour
 - **Price history chart** — Interactive SVG price chart with min/max markers and Idealo.de integration
 - **Amazon Customer Reviews widget** — Aggregated star rating, sentiment breakdown (positive/neutral/negative %), and top pros/cons in German and English
 - **Expert review boxes** — Curated summaries from tech publications (Chip.de, TechRadar, Heise, Computerbild) with sentiment badges, publish dates, and direct links
+- **Reddit sentiment** — Community sentiment aggregated from relevant subreddits per product
+- **YouTube video review widget** — Embedded video reviews from trusted tech creators per product
 - **Conversational RAG chat** — Natural language questions answered with source citations grounded in product manuals and specifications
 - **Hybrid retrieval** — BM25 keyword search + semantic vector search fused via RRF for maximum accuracy
 - **Source-backed answers** — Every response cites `[Product, Document Type, Page X]`
@@ -103,7 +105,7 @@ Powered by a **conversational RAG pipeline**, Verifyr covers the full buyer jour
 |---|---|---|
 | 1 | **Frontend** | Vanilla HTML/CSS/JS served as static files by FastAPI. Landing page, quiz advisor, results carousel, chat interface, admin panel, auth. No framework — fast first paint, SEO-friendly. |
 | 2 | **FastAPI Backend** | 20+ async endpoints. Supabase JWT middleware. `Cache-Control: no-cache` on all HTML/JS/CSS ensures users always get fresh code without hard refreshes. |
-| 3 | **Recommendation Engine** | Two-tier quiz system. Tier 1: weighted metadata scorer (40% category / 35% use-cases / 25% features). Tier 2: RAG-enhanced personalised strength + weakness bullets per product via Claude. |
+| 3 | **Recommendation Engine** | Two-tier quiz system. Tier 1: weighted metadata scorer (15% category / 45% use-cases / 40% features). Tier 2: RAG-enhanced personalised strength + weakness bullets and rank-aware LLM reasoning per product. |
 | 4 | **Hybrid Retrieval** | BM25 + Qdrant vector search run in parallel, fused via RRF. Product diversity guard ensures balanced context for comparison queries. Adaptive top-K (K=5 simple / K=8 complex). |
 | 5 | **LLM Generation** | Multi-provider abstraction (Claude, OpenAI, Gemini). Inline citation enforcement via system prompt + regex extraction. Language-aware and quiz-profile-aware responses. |
 | 6 | **Data Layer** | Qdrant (embedded) + BM25 (in-memory) + `chunks.json` + `products_metadata.json` + review JSONs per product |
