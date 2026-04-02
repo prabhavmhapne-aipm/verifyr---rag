@@ -277,7 +277,7 @@
         (function(){
             if (localStorage.getItem("verifyr_quiz_completed") === "true") {
                 var rb = document.getElementById("navResultsBtn");
-                if (rb) rb.style.display = "";
+                if (rb) { rb.style.display = ""; rb.textContent = localStorage.getItem("verifyr-lang") === "en" ? "Results" : "Ergebnisse"; }
             }
             if (!localStorage.getItem("verifyr_access_token")) {
                 var btn = document.getElementById("navLoginBtn");

@@ -25,7 +25,7 @@ const QUIZ_CATEGORY_LABELS = {
     "smartwatch_fitness": { en: "Smartwatch & Fitness Trackers", de: "Smartwatch & Fitnesstrackers" },
     "recovery_sleep":     { en: "Recovery & Sleep",              de: "Recovery & Sleep" },
     "heart_rate_monitors":{ en: "Heart Rate Monitors",           de: "Herzfrequenzmesser" },
-    "sport_earbuds":      { en: "Sport Earbuds",                 de: "Sport Earbuds" },
+    "home_health":        { en: "Home Health",                  de: "Heimgesundheit" },
     "metabolic_monitors": { en: "Metabolic Monitors",            de: "Metabolische Monitore" },
     "womens_health":      { en: "Women's Health Tech",           de: "Frauen Health Tech" }
 };
@@ -185,7 +185,11 @@ async function init() {
     // Show Results nav button if quiz has been completed
     if (localStorage.getItem('verifyr_quiz_completed') === 'true') {
         const resultsBtn = document.getElementById('navResultsBtn');
-        if (resultsBtn) resultsBtn.style.display = '';
+        if (resultsBtn) {
+            resultsBtn.style.display = '';
+            const label = document.getElementById('navResultsBtnLabel');
+            if (label) label.textContent = localStorage.getItem('verifyr-lang') === 'en' ? 'Results' : 'Ergebnisse';
+        }
         const mobileResultsBtn = document.getElementById('mobileNavResultsBtn');
         if (mobileResultsBtn) mobileResultsBtn.style.display = '';
     }
@@ -1298,15 +1302,7 @@ function setLoading(loading) {
     sendButton.disabled = loading || !chatInput.value.trim();
     chatInput.disabled = loading;
 
-    const sendText = sendButton.querySelector('.send-text');
-    const loadingSpinner = sendButton.querySelector('.loading');
-
-    if (loading) {
-        sendText.style.display = 'none';
-        loadingSpinner.style.display = 'inline-block';
-    } else {
-        sendText.style.display = 'inline';
-        loadingSpinner.style.display = 'none';
+    if (!loading) {
         chatInput.focus();
     }
 }

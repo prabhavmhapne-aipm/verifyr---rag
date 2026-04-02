@@ -18,6 +18,13 @@ PRODUCT_KEYWORD_MAPPING = {
         "apple watch series 11",
         "apple watch 11"
     ],
+    "apple_watch_ultra3_2025": [
+        "ultra",
+        "ultra 3",
+        "apple watch ultra",
+        "apple watch ultra 3",
+        "watch ultra"
+    ],
     "garmin_forerunner_970_2025": [
         "forerunner",
         "970",

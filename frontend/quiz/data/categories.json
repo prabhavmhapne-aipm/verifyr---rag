@@ -66,22 +66,22 @@
       }
     },
     {
-      "id": "sport_earbuds",
+      "id": "home_health",
       "coming_soon": true,
       "title": {
-        "de": "Sport Earbuds",
-        "en": "Sport Earbuds"
+        "de": "Heimgesundheit",
+        "en": "Home Health"
       },
       "subtitle": {
-        "de": "Für dein Workout",
-        "en": "For Your Workout"
+        "de": "Für ein gesundes Zuhause",
+        "en": "For a Healthy Home"
       },
       "description": {
-        "de": "Wasserdichte Kopfhörer für Sport und Training",
-        "en": "Waterproof earbuds for sports and training"
+        "de": "Geräte für Luftqualität, Filterung, Luftfeuchtigkeit und Sauerstoffmessung zu Hause",
+        "en": "Devices for air quality, filtration, humidity, and oxygen monitoring at home"
       },
-      "icon": "/images/quiz/earbuds.png",
-      "icon_emoji": "🎧",
+      "icon": "/images/quiz/home_health.png",
+      "icon_emoji": "🏠",
       "position": {
         "row": 2,
         "col": 2

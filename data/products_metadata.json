@@ -126,7 +126,9 @@
           "always_on": true,
           "touchscreen": true,
           "brightness_nits": 2000,
-          "citation": "Apple Watch Series 11, Technische Daten, Seite 3"
+          "citation": "Apple Watch Series 11, Technische Daten, Seite 3",
+          "size": "1.69\"-1.77\" (42 mm / 46 mm)",
+          "size_inch": 1.77
         },
         "os": {
           "de": "watchOS (iOS), Apple S10",
@@ -1322,7 +1324,8 @@
           "color_display": true,
           "always_on": true,
           "touchscreen": true,
-          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
+          "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com",
+          "size": "1.2\"-1.4\" (43 mm / 47 mm / 51 mm)"
         },
         "os": {
           "de": "Garmin OS, kompatibel mit iOS und Android",
@@ -1448,15 +1451,9 @@
           "citation": "Garmin fēnix 8, Produktspezifikation, garmin.com"
         },
         "storage": {
-          "de": "Intern (Musik offline: Spotify, Deezer, Amazon Music, YouTube Music)",
-          "en": "Internal (offline music: Spotify, Deezer, Amazon Music, YouTube Music)",
-          "gb": null,
-          "music_streaming": [
-            "Spotify",
-            "Deezer",
-            "Amazon Music",
-            "YouTube Music"
-          ]
+          "de": "32 GB",
+          "en": "32 GB",
+          "gb": 32
         },
         "weight": {
           "de": "60–102 g (je nach Größe und Material)",
@@ -1784,6 +1781,16 @@
           "title": "Garmin Fenix 8 Hands-On Review - More Options, More Features, More Expensive!",
           "channel": "Chase the Summit",
           "video_id": "WmMwfXL_SeI"
+        },
+        {
+          "title": "Apple Watch Ultra 3 vs Garmin Fenix 8 Pro - Do not Buy Until You See THIS!",
+          "channel": "TechTriangle",
+          "video_id": "gPXPoPkm_H8"
+        },
+        {
+          "title": "Apple Watch Ultra 3 vs Garmin Fenix 8 Pro: Satellite SOS Tested",
+          "channel": "HikingGuy.com",
+          "video_id": "TNRP1bHN1hM"
         }
       ]
     },
@@ -1890,7 +1897,11 @@
           "type": "none",
           "color_display": false,
           "touchscreen": false,
-          "always_on": false
+          "always_on": false,
+          "glass_type": {
+            "de": "Kein Display",
+            "en": "No display"
+          }
         },
         "os": {
           "de": "WHOOP App (iOS & Android), kein eigenständiges OS",
@@ -1968,8 +1979,8 @@
           "nfc": false
         },
         "storage": {
-          "de": "Kein lokaler Speicher — alle Daten in der WHOOP App",
-          "en": "No local storage — all data in the WHOOP App"
+          "de": "Bis zu 14 Tage ungesynchronisierte Offline-Daten",
+          "en": "Up to 14 days of unsynced offline data"
         },
         "weight": {
           "de": "ca. 21 g (Gerät), ca. 74 g mit Armband",
@@ -2381,7 +2392,14 @@
         }
       ],
       "key_specs": {
-        "display": "Kein Display",
+        "display": {
+          "de": "Kein Display",
+          "en": "No display",
+          "glass_type": {
+            "de": "Kein Display",
+            "en": "No display"
+          }
+        },
         "battery_life": "5–8 Tage",
         "weight": "3,3–5,2 g (je nach Ringgröße)",
         "water_resistance": "100 m (Sauna und Wassersport, nicht zum Tauchen)",
@@ -2831,6 +2849,11 @@
           "de": "Ja — Echtzeit-HF-Übertragung an Amazfit-Uhren, Fahrradcomputer und Fitness-Apps",
           "en": "Yes — real-time HR broadcast to Amazfit watches, bike computers, and fitness apps",
           "enabled": true
+        },
+        "storage": {
+          "de": "Nicht zutreffend (kein Display, kein Nutzer-Speicher)",
+          "en": "Not applicable (no display, no user storage)",
+          "gb": null
         }
       },
       "use_cases": {
@@ -3220,7 +3243,14 @@
         }
       ],
       "key_specs": {
-        "display": "Kein Display",
+        "display": {
+          "de": "Kein Display",
+          "en": "No display",
+          "glass_type": {
+            "de": "Kein Display",
+            "en": "No display"
+          }
+        },
         "battery_life": "10–12 Tage (bis zu 150 Tage mit Ladeetui)",
         "weight": "2–3 g (je nach Ringgröße)",
         "water_resistance": "IP68 (100 m)",
@@ -3485,6 +3515,623 @@
           "video_id": "XhrCnA2HdSg"
         }
       ]
+    },
+    {
+      "id": "apple_watch_ultra3_2025",
+      "display_name": {
+        "de": "Apple Watch Ultra 3",
+        "en": "Apple Watch Ultra 3"
+      },
+      "reddit_search_term": "Apple Watch Ultra 3",
+      "reddit_subreddits": [
+        "AppleWatch"
+      ],
+      "brand": "Apple",
+      "category": [
+        "smartwatch_fitness",
+        "running_watch"
+      ],
+      "price": 765,
+      "release_year": 2025,
+      "image_url": "/images/products/apple_watch_ultra3_2025_1.png",
+      "image_urls": [
+        "/images/products/apple_watch_ultra3_2025_1.png",
+        "/images/products/apple_watch_ultra3_2025_2.png",
+        "/images/products/apple_watch_ultra3_2025_3.png",
+        "/images/products/apple_watch_ultra3_2025_4.png",
+        "/images/products/apple_watch_ultra3_2025_5.png",
+        "/images/products/apple_watch_ultra3_2025_6.png",
+        "/images/products/apple_watch_ultra3_2025_7.png",
+        "/images/products/apple_watch_ultra3_2025_8.png"
+      ],
+      "amazon_url": "https://www.amazon.de/dp/B0FQFBW86Q/",
+      "idealo_url": null,
+      "price_history": [
+        {
+          "date": "2025-09-01",
+          "price": 899
+        },
+        {
+          "date": "2025-09-15",
+          "price": 880
+        },
+        {
+          "date": "2025-10-01",
+          "price": 865
+        },
+        {
+          "date": "2025-10-10",
+          "price": 850
+        },
+        {
+          "date": "2025-10-20",
+          "price": 660
+        },
+        {
+          "date": "2025-10-25",
+          "price": 875
+        },
+        {
+          "date": "2025-11-01",
+          "price": 840
+        },
+        {
+          "date": "2025-11-15",
+          "price": 820
+        },
+        {
+          "date": "2025-11-25",
+          "price": 660
+        },
+        {
+          "date": "2025-12-01",
+          "price": 800
+        },
+        {
+          "date": "2025-12-15",
+          "price": 795
+        },
+        {
+          "date": "2026-01-01",
+          "price": 800
+        },
+        {
+          "date": "2026-01-15",
+          "price": 790
+        },
+        {
+          "date": "2026-01-26",
+          "price": 690
+        },
+        {
+          "date": "2026-02-01",
+          "price": 800
+        },
+        {
+          "date": "2026-02-15",
+          "price": 790
+        },
+        {
+          "date": "2026-03-01",
+          "price": 785
+        },
+        {
+          "date": "2026-03-15",
+          "price": 780
+        },
+        {
+          "date": "2026-03-26",
+          "price": 745
+        },
+        {
+          "date": "2026-04-01",
+          "price": 795
+        }
+      ],
+      "manufacturer_link": {
+        "de": "Mehr Info beim Hersteller",
+        "en": "More info from manufacturer",
+        "url": "https://www.apple.com/de/apple-watch-ultra-2/"
+      },
+      "buy_links": [
+        {
+          "shop": "Kaufland.de",
+          "url": "https://www.kaufland.de/product/542700897/?search_value=ultra+3++watch",
+          "price": 795
+        },
+        {
+          "shop": "Apple.de",
+          "url": "https://www.apple.com/de-edu/shop/buy-watch/apple-watch-ultra/49mm-cellular-black-titan-black-ocean-armband",
+          "price": 899
+        },
+        {
+          "shop": "Amazon.de",
+          "url": "https://www.amazon.de/dp/B0FQFBW86Q/",
+          "price": 820
+        }
+      ],
+      "key_specs": {
+        "display": {
+          "de": "Always-On LTPO3 OLED, 49 mm, 1,91 Zoll, 422×514 px, 326 ppi, bis zu 3.000 Nits, Saphirglas",
+          "en": "Always-On LTPO3 OLED, 49 mm, 1.91 inch, 422×514 px, 326 ppi, up to 3,000 nits, Sapphire glass",
+          "type": "AMOLED",
+          "resolution": "422×514 Pixel",
+          "shape": "rechteckig",
+          "color_display": true,
+          "always_on": true,
+          "touchscreen": true,
+          "brightness_nits": 3000,
+          "size": "1.91\"",
+          "size_inch": 1.91,
+          "glass_type": {
+            "de": "Saphirglas",
+            "en": "Sapphire glass"
+          }
+        },
+        "battery_life": {
+          "de": "Bis zu 42 Std. (72 Std. im Stromsparmodus)",
+          "en": "Up to 42 hours (72 hours in power-saving mode)",
+          "typical_hours": 42,
+          "power_save_hours": 72
+        },
+        "weight": {
+          "de": "61,6 g (Natur) / 61,8 g (Schwarz)",
+          "en": "61.6 g (Natural) / 61.8 g (Black)",
+          "grams": 62
+        },
+        "water_resistance": {
+          "de": "100 m (ISO 22810:2010), IP6X, Tauchen bis 40 m (EN13319)",
+          "en": "100 m (ISO 22810:2010), IP6X, Diving to 40 m (EN13319)",
+          "meters": 100,
+          "diving_meters": 40
+        },
+        "gps": "Dual-Frequenz GPS (L1 + L5), GLONASS, Galileo, BeiDou, QZSS",
+        "connectivity": {
+          "de": "5G/LTE, Wi-Fi 4 (2,4 und 5 GHz), Bluetooth 5.3, UWB (2. Gen), NFC",
+          "en": "5G/LTE, Wi-Fi 4 (2.4 and 5 GHz), Bluetooth 5.3, UWB (2nd gen), NFC",
+          "gps": true,
+          "cellular": true,
+          "wifi": true,
+          "bluetooth": "5.3",
+          "nfc": true,
+          "uwb": true
+        },
+        "case_material": "Titan Klasse 5 (Natur / Schwarz)",
+        "band_material": "Alpine Loop, Trail Loop oder Ocean Band (je nach Modell)",
+        "strap": {
+          "de": "Alpine Loop, Trail Loop oder Ocean Band",
+          "en": "Alpine Loop, Trail Loop, or Ocean Band",
+          "material": "Nylon / Fluorelastomer"
+        },
+        "materials": {
+          "de": "Titan Klasse 5, Saphirglas, Keramikrückseite",
+          "en": "Grade 5 Titanium, Sapphire glass, Ceramic back",
+          "case_options": [
+            "titanium"
+          ],
+          "glass_type": [
+            "sapphire"
+          ]
+        },
+        "sensors": {
+          "de": "Elektrischer + optischer Herzfrequenzsensor (3. Gen), EKG, SpO₂, Hauttemperatursensor, Tiefenmesser, Wassertemperatursensor, Kompass, Barometrischer Höhenmesser, Beschleunigungssensor, Gyrosensor, Umgebungslichtsensor",
+          "en": "Electrical + optical heart rate sensor (3rd gen), ECG, SpO₂, Skin temperature sensor, Depth gauge, Water temperature sensor, Compass, Barometric altimeter, Accelerometer, Gyroscope, Ambient light sensor",
+          "list": [
+            "ecg",
+            "blood_oxygen",
+            "temperature",
+            "depth_gauge",
+            "water_temperature",
+            "compass",
+            "altimeter",
+            "barometer",
+            "optical_heart_rate",
+            "gyroscope",
+            "accelerometer",
+            "light_sensor",
+            "crash_detection",
+            "fall_detection"
+          ]
+        },
+        "os": {
+          "de": "watchOS (iOS), Apple S10 SiP",
+          "en": "watchOS (iOS), Apple S10 SiP",
+          "name": "watchOS",
+          "chip": "Apple S10 SiP",
+          "compatibility": [
+            "iOS"
+          ]
+        },
+        "pulse_measurement": {
+          "de": "Integriert (optisch + elektrisch), EKG",
+          "en": "Integrated (optical + electrical), ECG",
+          "optical": true,
+          "ecg": true,
+          "chest_strap_compatible": false
+        },
+        "measurement_functions": {
+          "de": "Herzfrequenz, SpO₂, EKG, Hauttemperatur, Wassertemperatur, Tauchtiefe, Schritte, Distanz, Geschwindigkeit, Kalorien, Rundenzeiten, Schwimmzüge, Höhenmesser, Luftdruck, HFV, Atemfrequenz, Zyklusüberwachung",
+          "en": "Heart rate, SpO₂, ECG, Skin temperature, Water temperature, Dive depth, Steps, Distance, Speed, Calories, Lap times, Swim strokes, Altimeter, Air pressure, HRV, Respiratory rate, Cycle tracking",
+          "list": [
+            "heart_rate",
+            "blood_oxygen",
+            "ecg",
+            "temperature",
+            "water_temperature",
+            "dive_depth",
+            "step_counter",
+            "distance",
+            "speed",
+            "calories",
+            "lap_times",
+            "swim_strokes",
+            "altimeter",
+            "air_pressure",
+            "hrv",
+            "respiratory_rate",
+            "cycle_tracking"
+          ]
+        },
+        "navigation": {
+          "de": "Dual-Frequenz GPS (L1+L5), GLONASS, Galileo, BeiDou, Kompass, Barometrischer Höhenmesser, Offline-Karten, Topografische Karten, Wegpunkte, Backtrack, Waypoints",
+          "en": "Dual-frequency GPS (L1+L5), GLONASS, Galileo, BeiDou, Compass, Barometric altimeter, Offline maps, Topographic maps, Waypoints, Backtrack",
+          "enabled": true,
+          "compass": true,
+          "dual_frequency_gps": true,
+          "systems": [
+            "GPS",
+            "GLONASS",
+            "Galileo",
+            "BeiDou",
+            "QZSS"
+          ]
+        },
+        "health_status": {
+          "de": "Ja — EKG, SpO₂, HFV, Schlafcoach, Schlafapnoe-Erkennung, Bluthochdruckmitteilungen, Zyklusüberwachung, Unfallerkennung, Sturzerkennung, Satelliten-Notruf",
+          "en": "Yes — ECG, SpO₂, HRV, Sleep coach, Sleep apnea detection, Blood pressure notifications, Cycle tracking, Crash detection, Fall detection, Emergency SOS via satellite",
+          "hrv": true,
+          "sleep_coach": true,
+          "skin_temperature": true,
+          "ecg_app": true,
+          "blood_oxygen_app": true,
+          "womens_health": true,
+          "blood_pressure_notifications": true,
+          "sleep_apnea_detection": true,
+          "crash_detection": true,
+          "fall_detection": true,
+          "satellite_sos": true,
+          "siren": true,
+          "last_emergency_waypoint": true
+        },
+        "training": {
+          "de": "Ja — Triathlon, Multisport, Laufen, Radfahren, Schwimmen, Wandern, Tauchen (40 m), Ski/Snowboard, über 100 Sportarten, Training Load, VO2max, Erholungsanzeige",
+          "en": "Yes — Triathlon, Multisport, Running, Cycling, Swimming, Hiking, Diving (40m), Ski/Snowboard, 100+ sports, Training Load, VO2max, Recovery advisor",
+          "workouts": true,
+          "multisport": true,
+          "triathlon": true,
+          "diving": true,
+          "vo2max": true,
+          "training_load": true,
+          "custom_workouts": true,
+          "fitness_plus": true,
+          "activity_rings": true,
+          "pacer": true
+        },
+        "live_tracking": {
+          "de": "Ja (via iPhone / LTE / Satellit)",
+          "en": "Yes (via iPhone / LTE / Satellite)",
+          "enabled": true
+        },
+        "contactless_payment": {
+          "de": "Ja, Apple Pay",
+          "en": "Yes, Apple Pay",
+          "enabled": true,
+          "provider": "Apple Pay"
+        },
+        "storage": {
+          "de": "64 GB",
+          "en": "64 GB",
+          "gb": 64
+        },
+        "quick_charge": {
+          "de": "0–80 % in ca. 1 Std. (Schnellladung); 15 Min. für bis zu 12 Std. Nutzung; 5 Min. für bis zu 8 Std. Schlaferfassung",
+          "en": "0–80% in approx. 1 hour (Fast Charging); 15 min for up to 12 hours use; 5 min for up to 8 hours sleep tracking",
+          "enabled": true,
+          "minutes_to_80pct": 60
+        }
+      },
+      "use_cases": {
+        "lifestyle_fitness": {
+          "supported": true,
+          "rating": 4,
+          "features": [
+            "notifications",
+            "calls",
+            "messaging",
+            "apple_pay",
+            "music_playback",
+            "siri",
+            "app_ecosystem"
+          ],
+          "notes": "Leistungsstark im Alltag, aber für reine Lifestyle-Nutzung überdimensioniert und schwerer als die Standard-Modelle."
+        },
+        "running_cycling": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "dual_frequency_gps",
+            "pace_tracking",
+            "route_tracking",
+            "stride_length",
+            "heart_rate_zones",
+            "vo2max",
+            "training_load",
+            "pacer",
+            "backtrack"
+          ],
+          "notes": "Klasse-5-Titangehäuse, Dual-Frequenz GPS und bis zu 42 Stunden Akku — ideal für Ultra-Läufer, Triathleten und Langdistanz-Radfahrer."
+        },
+        "competition_performance": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "triathlon_mode",
+            "training_load",
+            "vo2max",
+            "race_predictor",
+            "multisport",
+            "heart_rate_zones",
+            "power_zones"
+          ],
+          "notes": "Speziell für Wettkampfsport entwickelt — Triathlon-Modus, Training Load, Race Predictor und fortgeschrittene Metriken für Profis und ambitionierte Amateure."
+        },
+        "hiking": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "dual_frequency_gps",
+            "compass",
+            "altimeter",
+            "backtrack",
+            "offline_maps",
+            "topographic_maps",
+            "waypoints",
+            "satellite_sos",
+            "siren"
+          ],
+          "notes": "Bestes Apple Watch für Outdoor-Abenteuer: Dual-GPS, Offline-Karten, Siren, Notruf via Satellit und 72 Stunden Akku im Stromsparmodus."
+        },
+        "swimming": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "pool_swimming",
+            "open_water",
+            "dive_mode_40m",
+            "water_temperature",
+            "depth_gauge",
+            "stroke_detection",
+            "swolf",
+            "100m_water_resistance"
+          ],
+          "notes": "Einzige Apple Watch mit Tauchmodus bis 40 m (EN13319), Tiefenmesser und Wassertemperatursensor — Spitzenklasse für Schwimmer und Taucher."
+        },
+        "health_wellbeing": {
+          "supported": true,
+          "rating": 5,
+          "features": [
+            "ecg",
+            "blood_oxygen",
+            "temperature",
+            "sleep_tracking",
+            "sleep_apnea",
+            "blood_pressure_notifications",
+            "cycle_tracking",
+            "hrv",
+            "fall_detection",
+            "crash_detection",
+            "satellite_sos"
+          ],
+          "notes": "Umfassendstes Gesundheitspaket aller Apple Watches — EKG, SpO₂, Schlafapnoe, Blutdruckbenachrichtigungen und Sicherheitsfeatures inklusive Satelliten-Notruf."
+        }
+      },
+      "feature_priorities": {
+        "light_comfortable": {
+          "rating": 2,
+          "value": "61,6 g, 49 mm Titan",
+          "notes": "Mit 61,6 g und 49 mm deutlich schwerer und größer als andere Smartwatches — kein Alltagsbegleiter für schmale Handgelenke."
+        },
+        "long_battery": {
+          "rating": 4,
+          "value": "42 Std. / 72 Std. Stromsparmodus",
+          "notes": "Klarer Vorteil gegenüber Standard Apple Watches. Für mehrtägige Outdoor-Aktivitäten im Stromsparmodus geeignet, aber kein Garmin-Niveau (14+ Tage)."
+        },
+        "water_resistance": {
+          "rating": 5,
+          "value": "100 m / ISO 22810 / Tauchen 40 m",
+          "notes": "Stärkste Wasserresistenz aller Consumer-Smartwatches — Tauchmodus bis 40 m, Tiefenmesser, Wassertemperatursensor."
+        },
+        "gps_accuracy": {
+          "rating": 5,
+          "value": "Dual-Frequenz GPS (L1+L5)",
+          "notes": "Dual-Frequenz GPS liefert präziseste Ortung auch unter Baumkronen und in Städten — bestes GPS unter allen Apple Watches."
+        },
+        "smartphone_independent": {
+          "rating": 5,
+          "value": "LTE, 64 GB, Satelliten-Notruf",
+          "notes": "Vollständig iPhone-unabhängig über LTE und sogar per Satellit erreichbar — ideal für Expeditionen."
+        },
+        "app_ecosystem": {
+          "rating": 5,
+          "value": "App Store, 10.000+ Watch Apps, Apple Pay, Siri",
+          "notes": "Vollständiger Zugriff auf das Apple-Ökosystem — beste Smartwatch-App-Auswahl am Markt."
+        },
+        "design_modern": {
+          "rating": 4,
+          "value": "Titan Klasse 5, 49 mm, Natur / Schwarz",
+          "notes": "Robustes, sportliches Titandesign — nicht für alle Stilpräferenzen geeignet, aber hochwertig und unverwechselbar."
+        },
+        "design_classic": {
+          "rating": 0,
+          "value": "Digitales Touchscreen-Display",
+          "notes": "Kein analoges oder klassisches Uhrendesign — rein digitales OLED-Display."
+        },
+        "with_display": {
+          "rating": 5,
+          "value": "Always-On OLED, 3.000 Nits, Saphirglas",
+          "notes": "Hellstes Display aller Apple Watches — auch bei direkter Sonneneinstrahlung gut lesbar."
+        },
+        "no_display": {
+          "rating": 0,
+          "value": "Always-On Display vorhanden",
+          "notes": "Display ist ein Kernmerkmal — kein Betrieb ohne Display möglich."
+        },
+        "sleep_monitor": {
+          "rating": 4,
+          "value": "Schlafphasen, SpO₂, Schlafapnoe-Erkennung",
+          "notes": "Umfassendes Schlaftracking mit Schlafapnoe-Erkennung (FDA-zugelassen). Das große Gehäuse kann für manche Nutzer beim Schlafen unangenehm sein."
+        },
+        "stress_monitor": {
+          "rating": 3,
+          "value": "HFV, Achtsamkeits-App",
+          "notes": "Kein dedizierter Stressscore — Stressindikation über HFV-Trends und die Achtsamkeits-App."
+        },
+        "ecg_hrv": {
+          "rating": 5,
+          "value": "EKG (Klasse II), HFV, SpO₂, Schlafapnoe, Blutdruck",
+          "notes": "Bestes Gesundheitspaket unter Consumer-Wearables — EKG, HFV, SpO₂, Schlafapnoe und Bluthochdruckmitteilungen."
+        },
+        "vo2_max": {
+          "rating": 5,
+          "value": "VO2max, Training Load, Erholungsanzeige",
+          "notes": "Fortgeschrittene Trainingsmetriken für Wettkampfsportler — VO2max, Training Load und Erholungsempfehlungen."
+        },
+        "price_value": {
+          "rating": 1,
+          "value": "ab 999 €",
+          "notes": "Teuerste Consumer-Smartwatch von Apple — nur für Nutzer gerechtfertigt, die alle Extremsport-Features tatsächlich nutzen."
+        },
+        "offline_maps": {
+          "rating": 5,
+          "value": "Offline-Karten, Topografische Karten, Wegpunkte",
+          "notes": "Vollständige Offline-Navigation mit topografischen Karten, Backtrack und Wegpunkten — ideal für Bergtouren und Expeditionen."
+        },
+        "notifications": {
+          "rating": 5,
+          "value": "Alle iPhone-Benachrichtigungen",
+          "notes": "Nahtlose Integration aller iPhone-Benachrichtigungen — Anrufe, Nachrichten, Apps."
+        }
+      },
+      "ecosystem": "apple",
+      "compatibility": {
+        "de": "iPhone 11 oder neuer mit iOS 26 oder neuer",
+        "en": "iPhone 11 or newer with iOS 26 or newer",
+        "platforms": [
+          "iOS"
+        ]
+      },
+      "pros": {
+        "de": [
+          "Dual-Frequenz GPS (L1+L5) für präziseste Ortung auch in Städten und unter Baumkronen",
+          "Bis zu 42 Std. Akku (72 Std. im Stromsparmodus) — deutlich mehr als Standard Apple Watches",
+          "100 m Wasserdichtigkeit + Tauchmodus bis 40 m mit Tiefenmesser und Wassertemperatursensor",
+          "Hellstes Display aller Apple Watches — 3.000 Nits OLED mit Saphirglas",
+          "Vollständiges Gesundheitspaket: EKG, SpO₂, HFV, Schlafapnoe, Blutdruck-Mitteilungen",
+          "Gehäuse aus Titan Klasse 5 — leichter und robuster als Stahl",
+          "Satelliten-Notruf SOS und eingebaute Sirene für Extremsituationen",
+          "Triathlon-Modus, Training Load, VO2max — bestes Trainingspaket aller Apple Watches",
+          "Action Button für schnellen Zugriff auf Funktionen",
+          "Vollständiges Apple-Ökosystem: App Store, Apple Pay, Siri, LTE"
+        ],
+        "en": [
+          "Dual-frequency GPS (L1+L5) for precise tracking in cities and under tree cover",
+          "Up to 42 hours battery life (72 hours in power-saving mode) — significantly more than standard Apple Watches",
+          "100m water resistance + dive mode to 40m with depth gauge and water temperature sensor",
+          "Brightest display of all Apple Watches — 3,000 nits OLED with sapphire glass",
+          "Complete health suite: ECG, SpO₂, HRV, sleep apnea, blood pressure notifications",
+          "Grade 5 titanium case — lighter and more durable than steel",
+          "Emergency SOS via satellite and built-in siren for extreme situations",
+          "Triathlon mode, training load, VO2max — best training package of all Apple Watches",
+          "Action button for quick access to functions",
+          "Full Apple ecosystem: App Store, Apple Pay, Siri, LTE"
+        ]
+      },
+      "cons": {
+        "de": [
+          "Sehr teuer — ab 999 € (höchster Preis aller Apple Watches)",
+          "Schwer und groß (61,6 g, 49 mm) — nicht für schmale Handgelenke oder Lifestyle-Nutzung geeignet",
+          "Ausschließlich mit iPhone kompatibel",
+          "Für reine Alltags- oder Lifestyle-Nutzer deutlich überdimensioniert",
+          "Akkulaufzeit zwar besser als Standard Apple Watch, aber weit hinter Garmin und anderen Sport-Uhren",
+          "Kein dedizierter Stressscore (nur HFV-basiert)"
+        ],
+        "en": [
+          "Very expensive — from €999 (highest price of all Apple Watches)",
+          "Heavy and large (61.6g, 49mm) — not suitable for slim wrists or lifestyle use",
+          "Exclusively compatible with iPhone",
+          "Significantly over-engineered for casual or lifestyle users",
+          "Battery life better than standard Apple Watch, but far behind Garmin and other sports watches",
+          "No dedicated stress score (HRV-based only)"
+        ]
+      },
+      "best_for": {
+        "de": [
+          "Triathleten und Ultra-Sportler, die ein Apple-Ökosystem bevorzugen",
+          "Outdoor-Abenteurer (Trekking, Klettern, Ski, Tauchen)",
+          "iPhone-Nutzer, die maximale GPS-Präzision und lange Akkulaufzeit brauchen",
+          "Nutzer, die Sicherheitsfeatures in Extremsituationen benötigen (Notruf, Sirene, Satellit)",
+          "Leistungssportler, die erweiterte Trainingsmetriken (VO2max, Training Load) und Apple-Ökosystem kombinieren wollen"
+        ],
+        "en": [
+          "Triathletes and ultra-athletes who prefer the Apple ecosystem",
+          "Outdoor adventurers (trekking, climbing, skiing, diving)",
+          "iPhone users who need maximum GPS precision and long battery life",
+          "Users who need safety features in extreme situations (emergency SOS, siren, satellite)",
+          "Performance athletes who want advanced training metrics (VO2max, Training Load) combined with the Apple ecosystem"
+        ]
+      },
+      "youtube_videos": [
+        {
+          "title": "Apple Watch Ultra 3 Review - I am NEVER Going Back!",
+          "channel": "ZONEofTECH",
+          "video_id": "kuESZABa_BU"
+        },
+        {
+          "title": "Apple Watch Ultra 3 In-Depth Review: Worth The Upgrade?",
+          "channel": "DC Rainmaker",
+          "video_id": "P2yPX_jizMM"
+        },
+        {
+          "title": "Is The Apple Watch ULTRA 3 Actually WORTH IT? Full Review",
+          "channel": "Tech Fowler",
+          "video_id": "H-BD6g_Ynvk"
+        },
+        {
+          "title": "7 Years on Garmin, 1 Week on Apple Watch Ultra 3. Here is the Truth (from a Real Athlete)",
+          "channel": "Luke Cameron",
+          "video_id": "lrmM5RJeCVw"
+        },
+        {
+          "title": "Apple Watch Ultra 3 Review: A Perfect Mix of Smartwatch & Sports Watch?",
+          "channel": "German Accent Reviews",
+          "video_id": "e-jtLvYrz3c"
+        },
+        {
+          "title": "Apple Watch Ultra 3 In-Depth Review (Not Just a Spec Bump!)",
+          "channel": "Chase the Summit",
+          "video_id": "Cgzu65Jt74c"
+        },
+        {
+          "title": "Apple Watch Ultra 3 vs Garmin Fenix 8 Pro - Do not Buy Until You See THIS!",
+          "channel": "TechTriangle",
+          "video_id": "gPXPoPkm_H8"
+        },
+        {
+          "title": "Apple Watch Ultra 3 vs Garmin Fenix 8 Pro: Satellite SOS Tested",
+          "channel": "HikingGuy.com",
+          "video_id": "TNRP1bHN1hM"
+        }
+      ]
     }
   ],
   "categories": {
@@ -3510,7 +4157,8 @@
         "whoop_5_0_peak_2025",
         "amazfit_helio_strap_2025",
         "oura_ring_4_2024",
-        "ringconn_gen2_2024"
+        "ringconn_gen2_2024",
+        "apple_watch_ultra3_2025"
       ]
     },
     "running_watch": {
@@ -3529,7 +4177,8 @@
       },
       "icon": "/images/quiz/running.svg",
       "products": [
-        "garmin_forerunner_970_2025"
+        "garmin_forerunner_970_2025",
+        "apple_watch_ultra3_2025"
       ]
     },
     "recovery_sleep": {

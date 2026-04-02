@@ -134,7 +134,7 @@ class HybridSearcher:
         if is_complex:
             top_k = 8  # More chunks for complex queries
         elif is_comparison:
-            top_k = 5  # Balanced for comparisons
+            top_k = max(5, len(target_products) * 3)  # 3 chunks per product: 2→6, 3→9
         else:
             top_k = 5  # Default for simple queries
         

@@ -586,7 +586,11 @@ body {
     font-weight: 400;
     color: #4A5565;
     line-height: 18px;
-    margin-bottom: 16px;
+    margin-bottom: 4px;
+}
+
+.recommendation-text p {
+    margin: 0;
 }
 
 .strengths-section,
@@ -958,6 +962,7 @@ body {
 
     .sentiment-last-updated {
         font-size: 7px !important;
+        white-space: nowrap;
     }
 
     /* Compact dots — sits between subtitle and carousel with minimal height */
@@ -1006,17 +1011,36 @@ body {
         min-height: 0 !important;
     }
 
-    /* Price history: keep side-by-side layout, shrink text to fit on mobile */
+    /* Preisverlauf title matches Amazon title size on mobile */
     .price-history-title {
-        font-size: 12px;
-    }
-
-    .price-history-idealo-btn {
-        font-size: 9px;
+        font-size: 13px;
     }
 
     .price-history-updated {
         font-size: 7px !important;
+        white-space: nowrap;
+    }
+
+    /* Pin chevron to far right edge, same position as Reddit chevron */
+    .price-history-header,
+    .sentiment-title-row {
+        position: relative;
+        padding-right: 28px;
+        align-items: flex-start;
+    }
+
+    .price-history-header .section-toggle[data-section="price"],
+    .sentiment-title-row .section-toggle[data-section="amazon"] {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+
+    /* Text column: stack Idealo link + Zuletzt aktualisiert, right-aligned */
+    .section-header-right {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
     }
 }
 
@@ -1502,7 +1526,7 @@ body {
 .amazon-sentiment-box {
     margin: 12px 0;
     padding: 16px;
-    background: #F8FAFC;
+    background: #fff;
     border: 1px solid #E2E8F0;
     border-radius: 12px;
 }
@@ -1538,7 +1562,7 @@ body {
 
 .sentiment-title {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     color: #0F172A;
 }
 
@@ -1730,7 +1754,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 600;
     color: #3B82F6;
     text-decoration: none;
@@ -1750,6 +1774,19 @@ body {
 .price-history-updated {
     font-size: 9px;
     color: #C4CADB;
+}
+
+.price-history-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.section-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .price-history-single {
@@ -1783,16 +1820,18 @@ body {
    ============================================================ */
 
 .reddit-widget {
-    background: #fff;
-    border: 1px solid #E2E8F0;
+    background: #F8FAFC;
+    border: 1.333px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     padding: 14px 16px;
     margin-top: 12px;
+    margin-bottom: 12px;
 }
 
 .reddit-widget-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
     margin-bottom: 10px;
 }
@@ -2005,7 +2044,14 @@ body {
 .product-feedback {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+}
+
+.product-feedback-label {
+    font-size: 11px;
+    color: var(--gray, #6B7280);
+    margin-right: 2px;
+    white-space: nowrap;
 }
 
 .product-feedback-thumb {
@@ -2053,5 +2099,145 @@ body {
     font-weight: 600;
     color: #16A34A;
     letter-spacing: 0.01em;
+}
+
+/* ── Accordion ─────────────────────────────────────────────── */
+.section-body {
+    display: none;
+}
+
+.recommendation-box .section-body {
+    border-top: 1px solid #E5E7EB;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+}
+
+.recommendation-expand-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.1rem;
+}
+
+.recommendation-expand-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50% !important;
+    border: 1px solid #E5E7EB !important;
+    background: #F9FAFB !important;
+    justify-content: center;
+}
+
+.section-toggle {
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    cursor: pointer;
+    color: var(--gray, #6B7280);
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    transition: color 0.15s ease, background 0.15s ease;
+    flex-shrink: 0;
+}
+
+.section-toggle:hover {
+    color: var(--primary-blue, #3B5BDB);
+    background: var(--light-blue, #EEF2FF);
+}
+
+.section-toggle svg {
+    transition: transform 0.2s ease;
+}
+
+.section-toggle.expanded svg {
+    transform: rotate(180deg);
+}
+
+.acc-section-wrap {
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.acc-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.85rem;
+    background: #fff;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease;
+}
+
+.acc-section-header:hover {
+    background: #F3F4F6;
+}
+
+.acc-section-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.acc-section-wrap .section-body {
+    padding: 0.75rem 0.85rem 0.85rem;
+    border-top: 1px solid #E5E7EB;
+}
+
+/* ============================================================
+   Swimlane Floating Name Chip (Desktop only)
+   One chip per card, fixed above its column
+   ============================================================ */
+
+.swimlane-name-chip {
+    position: fixed;
+    top: 0; /* overridden by JS using nav.getBoundingClientRect().bottom */
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.swimlane-name-chip.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+@media (max-width: 767px) {
+    .swimlane-name-chip {
+        display: none !important;
+    }
+}
+
+.swimlane-rank {
+    background: #3B82F6;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.swimlane-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0F172A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 

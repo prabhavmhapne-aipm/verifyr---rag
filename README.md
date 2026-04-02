@@ -20,7 +20,7 @@
   🌐 <a href="https://verifyr.de">www.verifyr.de</a>
 </p>
 
-Verifyr is a brand-independent AI assistant that compares and recommends health-tech wearables (smartwatches, fitness trackers, rings), curates expert reviews, and guides you from pre-purchase questions to post-purchase support — neutral, transparent, and in seconds.
+Verifyr is a brand-independent AI assistant that compares and recommends health-tech products, curates expert reviews, and guides you from pre-purchase questions to post-purchase support — neutral, transparent, and in seconds.
 
 Powered by a **conversational RAG pipeline**, Verifyr covers the full buyer journey: a guided 4-step quiz delivers personalised product matches with price history, Amazon sentiment analysis, and expert review summaries — while the chat interface handles pre- and post-purchase questions, grounded in verified product documents.
 

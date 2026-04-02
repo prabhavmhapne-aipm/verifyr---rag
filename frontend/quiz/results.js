@@ -31,6 +31,8 @@ class ResultsController {
         this.loadRedditSentimentForAllCards();
         this.setupYoutubeModal();
         this.setupFeedbackHandlers();
+        this.setupAccordionHandlers();
+        this.setupFloatingMiniHeader();
 
         if (typeof gtag !== 'undefined') {
             gtag('event', 'quiz_results_viewed', {
@@ -161,6 +163,85 @@ class ResultsController {
             });
         }
 
+    }
+
+    setupAccordionHandlers() {
+        document.addEventListener('click', (e) => {
+            const toggle = e.target.closest('.section-toggle') || e.target.closest('.acc-section-header');
+            if (!toggle) return;
+            const key = toggle.dataset.section || toggle.querySelector('.section-toggle')?.dataset.section;
+            if (!key) return;
+            const isExpanded = toggle.classList.contains('expanded') ||
+                toggle.querySelector('.section-toggle')?.classList.contains('expanded');
+            // Toggle all section bodies with this key across all cards
+            document.querySelectorAll(`.section-body[data-section="${key}"]`).forEach(body => {
+                body.style.display = isExpanded ? 'none' : 'block';
+            });
+            // Rotate all matching chevrons
+            document.querySelectorAll(`.section-toggle[data-section="${key}"]`).forEach(btn => {
+                btn.classList.toggle('expanded', !isExpanded);
+            });
+
+            // Re-sync heights after content is shown/hidden
+            // Double RAF ensures browser completes reflow after display:block before measuring
+            requestAnimationFrame(() => requestAnimationFrame(() => this.synchronizeSectionHeights()));
+        });
+    }
+
+    setupFloatingMiniHeader() {
+        // Desktop only
+        if (window.innerWidth < 768) return;
+
+        const cards = document.querySelectorAll('#carouselTrack .product-card');
+        if (!cards.length) return;
+
+        const chips = [];
+
+        cards.forEach((card, i) => {
+            const productId = card.dataset.productId;
+            const product = this.productsMetadata[productId];
+            if (!product) return;
+            const name = product.display_name?.[this.currentLanguage] || product.display_name?.de || productId;
+
+            const chip = document.createElement('div');
+            chip.className = 'swimlane-name-chip';
+            chip.innerHTML = `<span class="swimlane-rank">#${i + 1}</span><span class="swimlane-name">${name}</span>`;
+            document.body.appendChild(chip);
+            chips.push({ chip, card });
+        });
+
+        const headerEl = document.querySelector('.quiz-container nav') || document.querySelector('nav');
+        const positionChips = () => {
+            const topOffset = (headerEl ? headerEl.getBoundingClientRect().bottom : 61) + 12;
+            const cardPadding = 16;
+            chips.forEach(({ chip, card }) => {
+                const rect = card.getBoundingClientRect();
+                chip.style.top = `${topOffset}px`;
+                chip.style.left = `${rect.left + cardPadding}px`;
+                chip.style.width = `${rect.width - cardPadding * 2}px`;
+            });
+        };
+
+        // Reposition on horizontal card scroll and window resize
+        const container = document.getElementById('carouselContainer');
+        if (container) container.addEventListener('scroll', positionChips, { passive: true });
+        window.addEventListener('resize', positionChips);
+        positionChips();
+
+        // Show chips once product-meta scrolls out of view
+        const firstMeta = document.querySelector('#carouselTrack .product-card .product-meta');
+        if (!firstMeta) return;
+
+        const headerHeight = headerEl ? headerEl.getBoundingClientRect().bottom : 61;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                const show = !entry.isIntersecting;
+                chips.forEach(({ chip }) => chip.classList.toggle('visible', show));
+                if (show) positionChips();
+            },
+            { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0 }
+        );
+        observer.observe(firstMeta);
     }
 
     _submitProductFeedback(productId, value, card) {
@@ -400,14 +481,25 @@ class ResultsController {
             '.tab-container',
             '.purchase-section',
             '.recommendation-text',
-            '.strengths-section',
-            '.weaknesses-section',
             '.recommendation-box',
             '.price-history-section',
             '.produktdaten-content'
         ];
         sections.forEach(selector => {
             const els = document.querySelectorAll(`#carouselTrack .product-card ${selector}`);
+            if (els.length < 2) return;
+            els.forEach(el => { el.style.minHeight = ''; });
+            const maxH = Math.max(...Array.from(els).map(el => el.offsetHeight));
+            els.forEach(el => { el.style.minHeight = `${maxH}px`; });
+        });
+
+        // Sync visible section-body containers (accordion sections that are open)
+        const openKeys = new Set();
+        document.querySelectorAll('#carouselTrack .section-body[data-section]').forEach(el => {
+            if (el.style.display === 'block') openKeys.add(el.dataset.section);
+        });
+        openKeys.forEach(key => {
+            const els = document.querySelectorAll(`#carouselTrack .section-body[data-section="${key}"]`);
             if (els.length < 2) return;
             els.forEach(el => { el.style.minHeight = ''; });
             const maxH = Math.max(...Array.from(els).map(el => el.offsetHeight));
@@ -570,20 +662,28 @@ class ResultsController {
                     ${match.reasoning ? `<p>${match.reasoning}</p>` : this.generateRecommendationText(match, product)}
                 </div>
 
-                <div class="strengths-section">
-                    <h4 class="section-title">${t.strengths[this.currentLanguage]}</h4>
-                    <ul class="section-list">
-                        ${(product.pros?.[this.currentLanguage] || product.pros?.en || []).map(s => `<li>+ ${s}</li>`).join('')}
-                        ${match.dynamic_strength ? `<li>+ ${match.dynamic_strength}</li>` : ''}
-                    </ul>
+                <div class="recommendation-expand-row">
+                    <button class="section-toggle recommendation-expand-btn" data-section="recommendation" title="${this.currentLanguage === 'de' ? 'Stärken & Schwächen anzeigen' : 'Show strengths & weaknesses'}">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
                 </div>
 
-                <div class="weaknesses-section">
-                    <h4 class="section-title">${t.weaknesses[this.currentLanguage]}</h4>
-                    <ul class="section-list">
-                        ${(product.cons?.[this.currentLanguage] || product.cons?.en || []).map(w => `<li>- ${w}</li>`).join('')}
-                        ${match.dynamic_weakness ? `<li>- ${match.dynamic_weakness}</li>` : ''}
-                    </ul>
+                <div class="section-body" data-section="recommendation">
+                    <div class="strengths-section">
+                        <h4 class="section-title">${t.strengths[this.currentLanguage]}</h4>
+                        <ul class="section-list">
+                            ${(product.pros?.[this.currentLanguage] || product.pros?.en || []).map(s => `<li>+ ${s}</li>`).join('')}
+                            ${match.dynamic_strength ? `<li>+ ${match.dynamic_strength}</li>` : ''}
+                        </ul>
+                    </div>
+
+                    <div class="weaknesses-section">
+                        <h4 class="section-title">${t.weaknesses[this.currentLanguage]}</h4>
+                        <ul class="section-list">
+                            ${(product.cons?.[this.currentLanguage] || product.cons?.en || []).map(w => `<li>- ${w}</li>`).join('')}
+                            ${match.dynamic_weakness ? `<li>- ${match.dynamic_weakness}</li>` : ''}
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Product Feedback & Copy -->
@@ -595,6 +695,7 @@ class ResultsController {
                         </svg>
                     </button>
                     <div class="product-feedback">
+                        <span class="product-feedback-label">${this.currentLanguage === 'de' ? 'War die Empfehlung hilfreich?' : 'Was this recommendation helpful?'}</span>
                         <button class="product-feedback-thumb" data-value="1" title="Passt gut">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
@@ -615,24 +716,31 @@ class ResultsController {
             <!-- 6. Price History -->
             ${this.renderPriceHistorySection(product)}
 
-            <!-- 7. Amazon Sentiment Box -->
+            <!-- 7. Amazon Sentiment -->
             <div class="amazon-sentiment-box">
                 ${this.renderSentimentWidget(null, match.product_id)}
             </div>
 
-            <!-- 8. Reviews Header -->
-            <p class="section-label">${t.verifiedTests[this.currentLanguage]}</p>
-
-            <!-- 9. Review Boxes -->
-            ${this.renderReviewBoxes(product)}
-
-            <!-- 10. YouTube Video Reviews -->
-            ${this.renderYoutubeSection(product)}
-
-            <!-- 11. Reddit Community -->
+            <!-- 8. Reddit Community -->
             <div class="reddit-sentiment-box" data-product-id="${match.product_id}">
                 ${this.renderRedditWidget(null, match.product_id)}
             </div>
+
+            <!-- 9. Reviews Header + 10. Review Boxes -->
+            <div class="acc-section-wrap">
+                <div class="acc-section-header">
+                    <span class="acc-section-title">${t.verifiedTests[this.currentLanguage]}</span>
+                    <button class="section-toggle" data-section="reviews" title="${this.currentLanguage === 'de' ? 'Anzeigen' : 'Expand'}">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                </div>
+                <div class="section-body" data-section="reviews">
+                    ${this.renderReviewBoxes(product)}
+                </div>
+            </div>
+
+            <!-- 11. YouTube Video Reviews -->
+            ${this.renderYoutubeSection(product)}
 
         `;
     }
@@ -708,13 +816,19 @@ class ResultsController {
             <div class="sentiment-header">
                 <div class="sentiment-title-row">
                     <span class="sentiment-title">${t.title[lang]}</span>
-                    ${last_updated ? `<span class="sentiment-last-updated">${lang === 'de' ? 'Zuletzt aktualisiert' : 'Last updated'}: ${last_updated}</span>` : ''}
+                    <div class="section-header-right">
+                        ${last_updated ? `<span class="sentiment-last-updated">${lang === 'de' ? 'Zuletzt aktualisiert' : 'Last updated'}: ${last_updated}</span>` : ''}
+                        <button class="section-toggle" data-section="amazon" title="${lang === 'de' ? 'Anzeigen' : 'Expand'}">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="sentiment-score">
                     ${starsHtml}
                     ${countStr ? `<span class="sentiment-count">${countStr}</span>` : ''}
                 </div>
             </div>
+            <div class="section-body" data-section="amazon">
             ${activeSummary ? `<p class="sentiment-summary">${activeSummary}</p>` : ''}
             <div class="sentiment-bars">
                 <div class="sentiment-bar-row">
@@ -746,7 +860,8 @@ class ResultsController {
             </ul>` : ''}
             <a href="${amazonUrl}" target="_blank" class="sentiment-amazon-link">
                 ${countStr ? `${countStr} ` : ''}${t.readAll[lang]}
-            </a>`;
+            </a>
+            </div>`;
     }
 
     renderProduktdatenTab(product) {
@@ -1097,9 +1212,16 @@ class ResultsController {
                         <span class="price-history-title">${t.title[lang]}</span>
                         ${changeBadge}
                     </div>
-                    ${idealoLink}
+                    <div class="section-header-right">
+                        ${idealoLink}
+                        <button class="section-toggle" data-section="price" title="${lang === 'de' ? 'Anzeigen' : 'Expand'}">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                    </div>
                 </div>
-                ${chartHtml}
+                <div class="section-body" data-section="price">
+                    ${chartHtml}
+                </div>
             </div>`;
     }
 
@@ -1248,9 +1370,16 @@ class ResultsController {
             </div>`).join('');
 
         return `
-            <div class="youtube-section">
-                <p class="youtube-section-heading">${heading}</p>
-                <div class="youtube-cards-row">${cards}</div>
+            <div class="youtube-section acc-section-wrap">
+                <div class="acc-section-header">
+                    <span class="acc-section-title">${heading}</span>
+                    <button class="section-toggle" data-section="youtube" title="${lang === 'de' ? 'Anzeigen' : 'Expand'}">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                </div>
+                <div class="section-body" data-section="youtube">
+                    <div class="youtube-cards-row">${cards}</div>
+                </div>
             </div>`;
     }
 
@@ -1440,16 +1569,21 @@ class ResultsController {
         return `
             <div class="reddit-widget">
                 <div class="reddit-widget-header">
-                    <span class="reddit-widget-icon">
-                        <svg width="16" height="16" viewBox="0 0 20 20" fill="#FF4500" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="10"/>
-                            <path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101.06-1 1 1 0 00-.96.68l-2.38-.5a.27.27 0 00-.32.2l-.73 3.44a7.14 7.14 0 00-3.82 1.23 1.46 1.46 0 10-1.61 2.39 2.87 2.87 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.87 2.87 0 000-.44 1.46 1.46 0 00.55-1.58zM7.27 11a1 1 0 111 1 1 1 0 01-1-1zm5.58 2.65a3.59 3.59 0 01-2.85.77 3.59 3.59 0 01-2.85-.77.27.27 0 01.38-.38 3.08 3.08 0 002.47.6 3.08 3.08 0 002.47-.6.27.27 0 01.38.38zm-.17-1.65a1 1 0 111-1 1 1 0 01-1 1z" fill="white"/>
-                        </svg>
-                    </span>
-                    <span class="reddit-widget-title">${t.title[lang]}</span>
-                    ${postCountBadge}
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span class="reddit-widget-icon">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="#FF4500" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="10" cy="10" r="10"/>
+                                <path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101.06-1 1 1 0 00-.96.68l-2.38-.5a.27.27 0 00-.32.2l-.73 3.44a7.14 7.14 0 00-3.82 1.23 1.46 1.46 0 10-1.61 2.39 2.87 2.87 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.87 2.87 0 000-.44 1.46 1.46 0 00.55-1.58zM7.27 11a1 1 0 111 1 1 1 0 01-1-1zm5.58 2.65a3.59 3.59 0 01-2.85.77 3.59 3.59 0 01-2.85-.77.27.27 0 01.38-.38 3.08 3.08 0 002.47.6 3.08 3.08 0 002.47-.6.27.27 0 01.38.38zm-.17-1.65a1 1 0 111-1 1 1 0 01-1 1z" fill="white"/>
+                            </svg>
+                        </span>
+                        <span class="reddit-widget-title">${t.title[lang]}</span>
+                        ${postCountBadge}
+                    </div>
+                    <button class="section-toggle" data-section="reddit" title="${lang === 'de' ? 'Anzeigen' : 'Expand'}">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
                 </div>
-
+                <div class="section-body" data-section="reddit">
                 ${subredditPills ? `<div class="reddit-subreddit-pills">${subredditPills}</div>` : ''}
 
                 ${summary ? `<p class="reddit-summary">${summary}</p>` : ''}
@@ -1482,6 +1616,7 @@ class ResultsController {
                     <span class="reddit-top-posts-label">${t.topPosts[lang]}</span>
                     ${topPostsHtml}
                 </div>` : ''}
+                </div>
             </div>`;
     }
 
@@ -1723,7 +1858,7 @@ class ResultsController {
             smartwatch_fitness:   { de: 'Smartwatch & Fitnesstrackers', en: 'Smartwatch & Fitness Trackers' },
             recovery_sleep:       { de: 'Recovery & Sleep',             en: 'Recovery & Sleep' },
             heart_rate_monitors:  { de: 'Herzfrequenzmesser',           en: 'Heart Rate Monitors' },
-            sport_earbuds:        { de: 'Sport Earbuds',                en: 'Sport Earbuds' },
+            home_health:          { de: 'Heimgesundheit',               en: 'Home Health' },
             metabolic_monitors:   { de: 'Metabolische Monitore',        en: 'Metabolic Monitors' },
             womens_health:        { de: 'Frauen Health Tech',           en: "Women's Health Tech" },
         };

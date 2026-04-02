@@ -1,0 +1,30 @@
+{
+  "product_id": "apple_watch_ultra3_2025",
+  "source_url": "https://amazon.de.manual",
+  "source_name": "Amazon.de",
+  "doc_type": "review",
+  "language": "de",
+  "scraped_date": "2026-04-01",
+  "title": "Amazon.de — Manuelle Bewertungen",
+  "content": "Die Kunden sagen\nDie Kunden sind mit der Qualität, Akkulaufzeit und Funktionalität der Smartwatch sehr zufrieden. Sie beschreiben sie als hochwertig, technisch super und ein tolles Produkt von Apple. Die Akkulaufzeit wird als deutlich besser als erwartet und der Ladevorgang als sehr schnell gelobt. Das Design wird als elegant, edel und durchdacht beschrieben. Die Leistung und Konnektivität werden ebenfalls positiv hervorgehoben. Einige Kunden sind mit dem Preis zufrieden, andere haben gemischte Gefühle dazu.\n\nQualität: Kunden sind mit der Qualität der Uhr zufrieden. Sie beschreiben sie als hochwertig, technisch super und zuverlässig. Die Verarbeitung wird als top beschrieben. Außerdem wird sie als optisch und haptisch schön wahrgenommen.\n\nAkkulaufzeit: Kunden sind mit der Akkulaufzeit des Produkts zufrieden. Sie berichten, dass sie deutlich besser als erwartet ist und zwischen 3 und 4 Tagen hält. Der Ladevorgang geht zudem sehr schnell, sodass die Uhr meist beim Duschen oder Frühstücken aufgeladen werden kann.\n\nFunktionalität: Kunden sind mit der Funktionalität des Produkts zufrieden. Sie loben die smarten Funktionen, die Verbindungsstabilität zum Handy und die vielen Fitness- und Gesundheitsfunktionen. Die Sportfunktionen werden als hervorragend beschrieben. Außerdem gefallen ihnen die vielen Smart-Home-Funktionen.\n\nHaltbarkeit: Kunden sind mit der Haltbarkeit des Produkts zufrieden. Sie beschreiben es als extrem robust und sagen, dass es trotz Training zwei Tage hält. Das Uhrenglas ist absolut unbeschädigt. Es hält locker bis zu 3 vollen Tagen mit einer Akkulaufzeit, ohne grobe Kratzer oder ähnliches. Einige bezeichnen es als Traum und loben die Gesundheitsfunktionen wie Pulsmesser über Schlaftracking.\n\nKonnektivität: Kunden sind mit der Konnektivität des Produkts zufrieden. Sie berichten, dass die Verbindung mit dem iPhone tadellos funktioniert und problemlos mit anderen Geräten über Bluetooth hergestellt werden kann. Das Produkt funktioniert sehr gut mit Siri zusammen und bietet neben normalem Mobilfunk auch Empfang über Satelliten. Das Gespräch über die Uhr kann geführt werden.\n\nPreis: Kunden haben unterschiedliche Meinungen zum Preis des Produkts. Einige finden, dass es sein Geld wert ist und premium ist. Andere empfinden es jedoch als teuer.",
+  "amazon_rating": 4.6,
+  "amazon_review_count": 567,
+  "amazon_price": "820",
+  "product_url": "https://www.amazon.de/dp/B0FQFBW86Q/",
+  "sentiment": {
+    "positive_pct": 80,
+    "neutral_pct": 10,
+    "negative_pct": 10,
+    "top_positives": [
+      "hochwertig und technisch super",
+      "Akkulaufzeit deutlich besser als erwartet",
+      "elegantes und durchdachtes Design"
+    ],
+    "top_negatives": [
+      "Preis als teuer empfunden",
+      "gemischte Gefühle zum Preis",
+      "keine nennenswerten Mängel"
+    ],
+    "summary": "Die Kunden sind insgesamt sehr zufrieden mit der Smartwatch, insbesondere mit der Qualität, Akkulaufzeit und Funktionalität. Die Uhr wird als hochwertig und elegant beschrieben, mit einer Akkulaufzeit, die die Erwartungen übertrifft. Einige Kunden haben jedoch gemischte Gefühle bezüglich des Preises, wobei einige ihn als gerechtfertigt empfinden, während andere ihn als teuer ansehen. Insgesamt eignet sich das Produkt für Technikliebhaber und Fitness-Enthusiasten, die Wert auf Qualität und Funktionalität legen."
+  }
+}

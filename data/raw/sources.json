@@ -1,6 +1,36 @@
 {
   "_comment": "This is an example sources.json file. Copy this to sources.json and update with your actual URLs.",
   "_instructions": "For each product, map PDF filenames to their source URLs and names. Use forward slashes for paths.",
+  "apple_watch_ultra3_2025": {
+    "specification.docx": {
+      "source_url": "https://www.apple.com/de/apple-watch-ultra/specs/",
+      "source_name": "Apple Official"
+    },
+    "verifyr_recommendation.pdf": {
+      "source_url": "",
+      "source_name": "Verifyr"
+    },
+    "reviews/chip.de_review_17102025.docx": {
+      "source_url": "https://www.chip.de/test/Apple-Watch-Ultra-3-im-Test_186289434.html",
+      "source_name": "Chip.de"
+    },
+    "reviews/computerbild.de_review_17022026.docx": {
+      "source_url": "https://www.computerbild.de/artikel/Tests-Wearables-Apple-Watch-Ultra-3-Review-40376915.html",
+      "source_name": "Computerbild.de"
+    },
+    "reviews/macwelt.de_review_30092025.docx": {
+      "source_url": "https://www.macwelt.de/article/2917465/apple-watch-ultra-3-test.html",
+      "source_name": "Macwelt.de"
+    },
+    "reviews/outdoorgearlab.com_review_18112025.docx": {
+      "source_url": "https://www.outdoorgearlab.com/reviews/camping-and-hiking/gps-watch/apple-watch-ultra-3",
+      "source_name": "OutdoorGearLab"
+    },
+    "reviews/runnersworld.de_review_17022026.docx": {
+      "source_url": "https://www.runnersworld.de/laufuhren/apple-watch-11-und-ultra-3-im-test/",
+      "source_name": "Runnersworld.de"
+    }
+  },
   "garmin_fenix_8_2024": {
     "user_manual.pdf": {
       "source_url": "https://www.garmin.com/de-DE/p/735542/",

@@ -912,9 +912,10 @@ body {
 }
 
 .submit-btn:disabled {
-    background: var(--primary-blue);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    background: var(--light-gray, #F1F5F9);
+    box-shadow: none;
     cursor: not-allowed;
+    transform: none;
 }
 
 .submit-btn svg {
@@ -922,7 +923,7 @@ body {
 }
 
 .submit-btn:disabled svg {
-    fill: white;
+    fill: var(--gray, #94A3B8);
 }
 
 .input-note {

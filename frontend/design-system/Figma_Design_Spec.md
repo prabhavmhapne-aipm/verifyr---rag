@@ -190,9 +190,9 @@ Chat Interface (Existing)
    - Icon: Heart with ECG line (~64px)
    - Subtitle: "Präzise Herzfrequenz"
 
-4. **Sport Earbuds**
-   - Icon: Earbuds (57px × 57px)
-   - Subtitle: "Für dein Workout"
+4. **Heimgesundheit**
+   - Icon: Home Health (57px × 57px)
+   - Subtitle: "Für ein gesundes Zuhause"
 
 5. **Metabolic Monitors**
    - Icon: Blood drop + checkmark (~35px)
