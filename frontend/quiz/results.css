@@ -2216,11 +2216,7 @@ body {
     pointer-events: auto;
 }
 
-@media (max-width: 767px) {
-    .swimlane-name-chip {
-        display: none !important;
-    }
-}
+/* Mobile chip is full-width, handled by JS positioning */
 
 .swimlane-rank {
     background: #3B82F6;

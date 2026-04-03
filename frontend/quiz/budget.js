@@ -13,7 +13,7 @@ const texts = {
         budgetCard:     'Was ist dein Budget?',
         priceRange:     'Preis Range',
         specialCard:    'Haben wir alles gefragt?',
-        inputLabel:     'Besondere Anforderungen',
+        inputLabel:     'Hast du individuelle Wünsche?',
         placeholder:    'Hier beschreiben...',
         cta:            'Produkte Empfehlen',
         showResults:    'Ergebnisse anzeigen',
@@ -27,7 +27,7 @@ const texts = {
         budgetCard:     'What is your budget?',
         priceRange:     'Price Range',
         specialCard:    'Did we ask everything?',
-        inputLabel:     'Special requirements',
+        inputLabel:     'Do you have any specific requests?',
         placeholder:    'Describe here...',
         cta:            'Recommend Products',
         showResults:    'Show Results',
@@ -151,8 +151,8 @@ function doReset() {
     delete qa.special_request;
     localStorage.setItem('verifyr_quiz_answers', JSON.stringify(qa));
     localStorage.removeItem('verifyr_quiz_completed');
-    sliderMin.value = 300;
-    sliderMax.value = 800;
+    sliderMin.value = 200;
+    sliderMax.value = 500;
     document.getElementById('specialRequest').value = '';
     updateSlider.call(sliderMin);
     document.getElementById('ctaText').textContent = t.cta;

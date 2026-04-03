@@ -189,12 +189,59 @@ class ResultsController {
     }
 
     setupFloatingMiniHeader() {
-        // Desktop only
-        if (window.innerWidth < 768) return;
-
         const cards = document.querySelectorAll('#carouselTrack .product-card');
         if (!cards.length) return;
 
+        const headerEl = document.querySelector('.quiz-container nav') || document.querySelector('nav');
+        const firstMeta = document.querySelector('#carouselTrack .product-card .product-meta');
+        if (!firstMeta) return;
+        const headerHeight = headerEl ? headerEl.getBoundingClientRect().bottom : 61;
+
+        // Mobile: single chip that updates as user swipes
+        if (window.innerWidth < 768) {
+            const chip = document.createElement('div');
+            chip.className = 'swimlane-name-chip';
+            chip.innerHTML = `<span class="swimlane-rank"></span><span class="swimlane-name"></span>`;
+            document.body.appendChild(chip);
+
+            const rankEl = chip.querySelector('.swimlane-rank');
+            const nameEl = chip.querySelector('.swimlane-name');
+
+            const updateContent = () => {
+                const container = document.getElementById('carouselContainer');
+                if (!container) return;
+                const containerRect = container.getBoundingClientRect();
+                let activeIndex = 0, maxVisible = -1;
+                cards.forEach((card, i) => {
+                    const r = card.getBoundingClientRect();
+                    const overlap = Math.min(r.right, containerRect.right) - Math.max(r.left, containerRect.left);
+                    if (overlap > maxVisible) { maxVisible = overlap; activeIndex = i; }
+                });
+                const product = this.productsMetadata[cards[activeIndex].dataset.productId];
+                rankEl.textContent = `#${activeIndex + 1}`;
+                nameEl.textContent = product?.display_name?.[this.currentLanguage] || product?.display_name?.de || '';
+            };
+
+            const positionChip = () => {
+                chip.style.top = `${(headerEl ? headerEl.getBoundingClientRect().bottom : 61) + 12}px`;
+                chip.style.left = '12px';
+                chip.style.width = 'calc(100vw - 24px)';
+            };
+
+            const container = document.getElementById('carouselContainer');
+            if (container) container.addEventListener('scroll', () => { updateContent(); positionChip(); }, { passive: true });
+            window.addEventListener('resize', positionChip);
+            updateContent();
+            positionChip();
+
+            new IntersectionObserver(
+                ([entry]) => chip.classList.toggle('visible', !entry.isIntersecting),
+                { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0 }
+            ).observe(firstMeta);
+            return;
+        }
+
+        // Desktop only — original code below, unchanged
         const chips = [];
 
         cards.forEach((card, i) => {
@@ -210,7 +257,6 @@ class ResultsController {
             chips.push({ chip, card });
         });
 
-        const headerEl = document.querySelector('.quiz-container nav') || document.querySelector('nav');
         const positionChips = () => {
             const topOffset = (headerEl ? headerEl.getBoundingClientRect().bottom : 61) + 12;
             const cardPadding = 16;
@@ -229,10 +275,6 @@ class ResultsController {
         positionChips();
 
         // Show chips once product-meta scrolls out of view
-        const firstMeta = document.querySelector('#carouselTrack .product-card .product-meta');
-        if (!firstMeta) return;
-
-        const headerHeight = headerEl ? headerEl.getBoundingClientRect().bottom : 61;
         const observer = new IntersectionObserver(
             ([entry]) => {
                 const show = !entry.isIntersecting;

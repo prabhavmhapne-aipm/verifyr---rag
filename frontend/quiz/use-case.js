@@ -227,7 +227,7 @@ class UseCaseController {
                 next: 'Weiter'
             },
             en: {
-                heading: 'What mainly for?',
+                heading: 'What will you use it for?',
                 subheading: 'Choose all that apply',
                 back: 'Back',
                 next: 'Next'

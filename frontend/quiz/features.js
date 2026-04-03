@@ -321,14 +321,14 @@ class FeaturesController {
     updateUIText() {
         const texts = {
             de: {
-                heading: 'Was ist dir am wichtigsten?',
+                heading: 'Was ist dir besonders wichtig?',
                 subheading: 'Wähle bis zu 5 Prioritäten',
                 back: 'Zurück',
                 next: 'Weiter',
                 selected: 'ausgewählt'
             },
             en: {
-                heading: 'What is most important to you?',
+                heading: 'What is especially important to you?',
                 subheading: 'Choose up to 5 priorities',
                 back: 'Back',
                 next: 'Next',
