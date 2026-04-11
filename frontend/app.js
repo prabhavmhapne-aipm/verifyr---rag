@@ -88,6 +88,23 @@ function getQuizProfileString() {
     }
 }
 
+/**
+ * Reads verifyr_quiz_results from localStorage and returns the top 3 ranked
+ * product IDs, or null if no quiz results exist.
+ */
+function getQuizTopProducts() {
+    try {
+        const raw = localStorage.getItem('verifyr_quiz_results');
+        if (!raw) return null;
+        const results = JSON.parse(raw);
+        return (results.ranked_products || [])
+            .slice(0, 3)
+            .map(p => p.product_id);
+    } catch (e) {
+        return null;
+    }
+}
+
 // Unified Translations - Single source of truth for all UI text
 const TRANSLATIONS = {
     de: {
@@ -966,7 +983,8 @@ async function handleSend() {
                 language: currentLanguage,
                 conversation_history: conversationHistory.slice(0, -1).map(m => ({ role: m.role, content: m.content })), // Strip sources/metadata — backend expects Dict[str, str]
                 conversation_id: currentConversationId,
-                quiz_profile: getQuizProfileString()
+                quiz_profile: getQuizProfileString(),
+                quiz_top_products: getQuizTopProducts()
             })
         });
 

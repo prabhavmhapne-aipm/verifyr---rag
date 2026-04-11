@@ -95,6 +95,7 @@ class QueryRequest(BaseModel):
     conversation_id: Optional[str] = Field(default=None, description="Conversation ID for tracking")
     skip_langfuse_trace: Optional[bool] = Field(default=False, description="Skip Langfuse trace creation (for experiment runs where trace is created externally)")
     quiz_profile: Optional[str] = Field(default=None, description="Human-readable quiz profile resolved on the frontend, e.g. 'Category: Smartwatch | Use Cases: Running | Budget: Mid-range | Feature Priorities: GPS, Battery'")
+    quiz_top_products: Optional[List[str]] = Field(default=None, description="Top 3 ranked product IDs from quiz results, used as fallback context when no products are detected in the query")
 
 
 class Source(BaseModel):
@@ -832,10 +833,12 @@ async def query(
         retrieved_chunks = [result["chunk"] for result in search_results]
 
         # Build product metadata context for detected products
+        # If no products detected in query, fall back to quiz top products
+        effective_products = target_products or request.quiz_top_products or []
         product_context = []
-        if target_products and products_metadata:
+        if effective_products and products_metadata:
             for p in products_metadata.get("products", []):
-                if p.get("id") in target_products:
+                if p.get("id") in effective_products:
                     product_context.append({
                         "id": p.get("id"),
                         "display_name": p.get("display_name", {}),
