@@ -885,13 +885,25 @@ async def query(
         else:
             generator = rag_generator
 
+        # Build lightweight product catalog string (display names only) for meta query support
+        available_products = None
+        if products_metadata:
+            names = [
+                p.get("display_name", {}).get("en") or p.get("id", "")
+                for p in products_metadata.get("products", [])
+                if p.get("display_name", {}).get("en") or p.get("id")
+            ]
+            if names:
+                available_products = ", ".join(names)
+
         llm_result = generator.generate_answer(
             request.question,
             retrieved_chunks,
             language=request.language or "en",
             conversation_history=request.conversation_history or [],
             quiz_profile=request.quiz_profile,
-            product_context=product_context or None
+            product_context=product_context or None,
+            available_products=available_products
         )
 
         generation_time_ms = int((time.time() - generation_start) * 1000)

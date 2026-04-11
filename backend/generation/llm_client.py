@@ -375,7 +375,8 @@ class RAGGenerator:
         language: str = "en",
         conversation_history: Optional[List[Dict[str, str]]] = None,
         quiz_profile: Optional[str] = None,
-        product_context: Optional[List[Dict[str, Any]]] = None
+        product_context: Optional[List[Dict[str, Any]]] = None,
+        available_products: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Generate answer from query and retrieved chunks.
@@ -387,6 +388,7 @@ class RAGGenerator:
             conversation_history: Optional list of previous messages [{'role': 'user'/'assistant', 'content': '...'}]
             quiz_profile: Optional user quiz profile string
             product_context: Optional list of product metadata dicts (key_specs, pros, cons, best_for)
+            available_products: Optional comma-separated string of all product display names in the knowledge base
 
         Returns:
             Dictionary with answer, sources, and metadata
@@ -406,8 +408,9 @@ class RAGGenerator:
         # Create user prompt with explicit language instruction
         language_instruction = "English" if language == "en" else "German"
         profile_block = f"User Profile: {quiz_profile}\n\n" if quiz_profile else ""
+        catalog_block = f"Verifyr's knowledge base covers: {available_products}\n\n" if available_products else ""
 
-        user_prompt = f"""{profile_block}Context:
+        user_prompt = f"""{profile_block}{catalog_block}Context:
 {context}
 
 Question: {query}
